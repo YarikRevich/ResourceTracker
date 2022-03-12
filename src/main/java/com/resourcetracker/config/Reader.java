@@ -6,24 +6,33 @@ import java.util.*;
 import org.yaml.snakeyaml.Yaml;
 
 
+interface IReader {
+	public Object getConfig();
+};
+
 /**
  * Represents config file
  * 
  * @author YarikRevich
  */
-public class Config {
-	Map<String, Object> config;
-		
+public class Reader implements IReader {
+	private Object config;
 	
-	public void main(String[] args) {
+		
+	public Reader() {
 		InputStream inputStream = null;
 		try {
-			inputStream = new FileInputStream(new File(getConfigPath()));
+			File file = new File(getConfigPath());
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			};
+			inputStream = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		
-
 		 Yaml yaml = new Yaml();
 		 config = yaml.load(inputStream);
 	};
@@ -38,24 +47,17 @@ public class Config {
 	 * 
 	 * @return path to a config file
 	 */
-	public String getConfigPath() {
+	private String getConfigPath() {
 		String os = System.getProperty("os.name");
 		if (os.contains("Windows")){
 			return windowsPath.toString();
-		}else if (os.contains("Linux") || os.contains("MacOS")) {
+		}else if (os.contains("Linux") || os.contains("Mac OS X")) {
 			return unixPath.toString();
 		}
 		return "";
 	};
-
 	
-	/**
-	 * Gets value from config by key
-	 * 
-	 * @param key names key from config file
-	 * @return value from config file gotten by key
-	 */
-	public Object getFromConfig(String key) {
-		return config.get(key);
+	public Object getConfig() {
+		return this.config;
 	}
 };

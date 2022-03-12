@@ -18,10 +18,12 @@ mavenCentral()
 dependencies {
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
 	testImplementation('org.junit.jupiter:junit-jupiter')
-  	//testImplementation('org.junit.jupiter:junit-jupiter:5.5.2')
-    //testRuntimeOnly("org.junit.platform:junit-platform-runner:1.5.2")
   
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.19'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.19';
+    implementation group: 'org.javatuples', name: 'javatuples', version: '1.2';
+    
+  	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+    implementation 'com.amazonaws:aws-java-sdk-s3';
 }
 
 test {
