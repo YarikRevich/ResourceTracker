@@ -10,31 +10,25 @@ Trackes state of API's. In order to work with ResourceTracker, you should fill s
 
 ```
 local:
-	addresses:
-		all: true
-		//or
-		include = ["192.168.0.120:9999", ...]
-		//or
-		include = {
-			"some_tag_1": "192.168.0.120:9999",
-			...
-		}
+	raw_addresses: ["192.168.0.120:9999", ...] 
+	//or
+	raw_addresses: {
+		"some_tag_1": "192.168.0.120:9999",
+		...
+	}
 cloud:
-	provider = "aws"
+	provider: "aws"
 	credentials:
 		file: "/usr/local/etc/aws_creds.yaml"
 		//or
-		access_key = "..."
-		secret_key = "..."
-	addresses:
-		all: true
-		//or
-		include = ["172.0.0.1:9999", ...]
-		//or
-		include = {	
-			"some_tag_1": "172.0.0.1:9999",
-			...
-		}
+		access_key: "..."
+		secret_key: "..."
+	raw_addresses: ["172.0.0.1:9999", ...]
+	//or
+	raw_addresses: {	
+		"some_tag_1": "172.0.0.1:9999",
+		...
+	}
 ```
 
 To get more information about syntax of YAML config files, you can look at Wiki

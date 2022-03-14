@@ -1,8 +1,6 @@
 package com.resourcetracker.cloud;
 
 /**
- * Represents all the supported cloud providers
- * 
  * @author YarikRevich
  *
  */
