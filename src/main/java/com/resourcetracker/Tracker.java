@@ -1,6 +1,8 @@
 package com.resourcetracker;
 
 import com.resourcetracker.config.*;
+
+import org.apache.log4j.*;
 import com.resourcetracker.listenerpoll.ListenerPoll;
 import com.resourcetracker.cloud.Provider;
 import com.resourcetracker.cloud.Providers;
@@ -15,14 +17,16 @@ import java.util.Queue;
 
 public class Tracker {
 	public static void main(String[] args) throws Throwable {
+		BasicConfigurator.configure();
+		
 		Config reader = new Config();
 		Parser parser = new Parser(reader);
 		parser.validate();
 		
-		ListenerPoll listenerPoll = null;
+		ListenerPoll listenerPoll = new ListenerPoll();
 		
 		if (parser.isCloud()) {
-			listenerPoll.add(parser.getCloudProviderPublicAddresses());
+			listenerPoll.add(parser.getCloudProviderRawPublicAddresses());
 			
 			Provider cloudProvider = null;
 			switch (parser.getCloudProvider()) {
@@ -38,7 +42,7 @@ public class Tracker {
 			cloudProvider.init(parser.getCloudProviderCredentials());
 		}
 		
-		listenerPoll.add(parser.getLocalPublicAddresses());
+		listenerPoll.add(parser.getLocalRawPublicAddresses());
 		listenerPoll.listen();
 	};
 }

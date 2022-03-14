@@ -1,6 +1,7 @@
 package com.resourcetracker.config;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Queue;
@@ -264,25 +265,40 @@ public class Parser implements Parsable {
 	}
 
 	@Override
-	public InetAddress[] getCloudProviderRawPublicAddresses() {
+	public ArrayList<InetAddress> getCloudProviderRawPublicAddresses() {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
-		Object rawAddressesObject = cloud.get("raw_addresses");
-		if (rawAddressesObject instanceof ArrayList<String>) {
-			
-		}
-		ArrayList<String> rawAddresses = (ArrayList<String>)cloud.get("raw_addresses");
+		Map<String, Object> local = (Map<String, Object>) this.obj.get("cloud");
+		ArrayList<String> rawAddresses = (ArrayList<String>)local.get("raw_addresses");
 		
-		return null;
+		ArrayList<InetAddress> inetAddresses = new ArrayList<InetAddress>();
+		
+		rawAddresses.forEach(address -> {
+			try {
+				inetAddresses.add(InetAddress.getByName(address));
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+		});
+		
+		return inetAddresses;
 	}
 
 	@Override
-	public InetAddress[] getLocalRawPublicAddresses() {
+	public ArrayList<InetAddress> getLocalRawPublicAddresses() {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> local = (Map<String, Object>) this.obj.get("local");
-		ArrayList<String> raw_addresses = (ArrayList<String>)local.get("raw_addresses");
+		ArrayList<String> rawAddresses = (ArrayList<String>)local.get("raw_addresses");
 		
+		ArrayList<InetAddress> inetAddresses = new ArrayList<InetAddress>();
 		
-		return null;
+		rawAddresses.forEach(address -> {
+			try {
+				inetAddresses.add(InetAddress.getByName(address));
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+		});
+		
+		return inetAddresses;
 	}
 }
