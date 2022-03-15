@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import org.javatuples.*;
 
 import com.resourcetracker.cloud.Provider;
-import com.resourcetracker.config.parsable.Parsable;
 
 /**
  * AWS implementation of Provider

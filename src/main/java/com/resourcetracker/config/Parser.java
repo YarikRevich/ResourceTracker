@@ -304,6 +304,7 @@ public class Parser implements Parsable {
 		} catch(ClassCastException e) {
 			//STUB
 		}
+		return rawAddresses;
 	}
 
 	@Override

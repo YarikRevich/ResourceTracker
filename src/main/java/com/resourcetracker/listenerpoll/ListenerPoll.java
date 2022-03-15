@@ -7,13 +7,14 @@ import java.util.Queue;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ListenerPoll {
 	private Queue<String> poll = new LinkedList<String>();
 	private Queue<AddressWithTag> pollWithTags = new LinkedList<AddressWithTag>();
 	
-	final static Logger logger = Logger.getLogger(ListenerPoll.class);
+	final static Logger logger = LogManager.getLogger(ListenerPoll.class);
 
 	private final int timeout = 5000;
 

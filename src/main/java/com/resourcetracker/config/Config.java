@@ -4,6 +4,7 @@ import java.nio.file.*;
 import java.io.*;
 import java.util.*;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
 
 /**
@@ -29,7 +30,7 @@ public class Config implements Reader {
 			e.printStackTrace();
 		}
 		
-		 Yaml yaml = new Yaml();
+		 Yaml yaml = new Yaml(new CustomClassLoaderConstructor(Config.class.getClassLoader()));
 		 config = yaml.load(inputStream);
 	};
 
