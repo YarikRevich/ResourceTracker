@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.net.InetAddress;
 
 public interface Parsable {	
-	public ArrayList<InetAddress> getCloudProviderRawPublicAddresses();
-	public Map<String, InetAddress> getCloudProviderRawPublicAddressesWithTags();
-	public ArrayList<InetAddress> getLocalRawPublicAddresses();
-	public Map<String, InetAddress> getLocalRawPublicAddressesWithTags();
+	public ArrayList<String> getCloudProviderRawPublicAddresses();
+	public Map<String, String> getCloudProviderRawPublicAddressesWithTags();
+	public ArrayList<String> getLocalRawPublicAddresses();
+	public Map<String, String> getLocalRawPublicAddressesWithTags();
 	public Pair<String, String> getCloudProviderCredentials() throws Exception;
 }

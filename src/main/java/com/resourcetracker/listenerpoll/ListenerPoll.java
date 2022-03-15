@@ -10,30 +10,33 @@ import java.util.LinkedList;
 import org.apache.log4j.Logger;
 
 public class ListenerPoll {
-	private Queue<InetAddress> poll = new LinkedList<InetAddress>();
+	private Queue<String> poll = new LinkedList<String>();
 	private Queue<AddressWithTag> pollWithTags = new LinkedList<AddressWithTag>();
 	
 	final static Logger logger = Logger.getLogger(ListenerPoll.class);
 
 	private final int timeout = 5000;
 
-	private boolean isReachable(InetAddress publicAddress) {
+	private boolean isReachable(String publicAddress) {
 		try {
-			System.out.println(publicAddress);
-			return publicAddress.isReachable(this.timeout);
+			InetAddress createdAddress = InetAddress.getByName(publicAddress);
+			if (createdAddress == null) {
+				return false;
+			}
+			return true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//STUB
 		}
 		return false;
 	};
 
-	public void add(ArrayList<InetAddress> addresses) {
-		for (InetAddress address : addresses) {
+	public void add(ArrayList<String> addresses) {
+		for (String address : addresses) {
 			poll.add(address);
 		}
 	}
 
-	public void add(Map<String, InetAddress> addresses) {
+	public void add(Map<String, String> addresses) {
 		addresses.forEach((tag, address) -> {
 			pollWithTags.add(new AddressWithTag(tag, address));
 		});

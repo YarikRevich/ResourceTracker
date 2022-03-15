@@ -27,6 +27,7 @@ public class Tracker {
 		
 		if (parser.isCloud()) {
 			listenerPoll.add(parser.getCloudProviderRawPublicAddresses());
+			listenerPoll.add(parser.getCloudProviderRawPublicAddressesWithTags());
 			
 			Provider cloudProvider = null;
 			switch (parser.getCloudProvider()) {
@@ -43,6 +44,7 @@ public class Tracker {
 		}
 		
 		listenerPoll.add(parser.getLocalRawPublicAddresses());
+		listenerPoll.add(parser.getLocalRawPublicAddressesWithTags());
 		listenerPoll.listen();
 	};
 }

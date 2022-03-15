@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Arrays;
 import java.io.*;
 
@@ -78,19 +79,20 @@ public class Parser implements Parsable {
 				throw new Exception(
 						"'credentials' declaration should have 'file' one or 'access_key' and 'secret_key' ones too");
 			}
-			
+
 			boolean isCloudProviderRawPublicAddresses = this.isCloudProviderRawPublicAddresses();
-			if (!isCloudProviderRawPublicAddresses ) {
+			if (!isCloudProviderRawPublicAddresses) {
 				throw new Exception("'cloud' should contain though one raw address");
 			}
 		}
-		
+
 		if (isLocal) {
 			boolean isLocalRawPublicAddresses = this.isLocalRawPublicAddresses();
 			if (!isLocalRawPublicAddresses) {
 				throw new Exception("'local' should contain though one raw address");
 			}
-		};
+		}
+		;
 
 		return false;
 	};
@@ -110,18 +112,18 @@ public class Parser implements Parsable {
 		}
 		return true;
 	};
-	
+
 	private boolean isLocalRawPublicAddresses() {
-		Map<String, Object> local = (Map<String, Object>)this.obj.get("local");
+		Map<String, Object> local = (Map<String, Object>) this.obj.get("local");
 		Object rawAddresses = local.get("raw_addresses");
 		if (rawAddresses == null) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	private boolean isCloudProviderRawPublicAddresses() {
-		Map<String, Object> cloud = (Map<String, Object>)this.obj.get("cloud");
+		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
 		Object rawAddresses = cloud.get("raw_addresses");
 		if (rawAddresses == null) {
 			return false;
@@ -265,40 +267,55 @@ public class Parser implements Parsable {
 	}
 
 	@Override
-	public ArrayList<InetAddress> getCloudProviderRawPublicAddresses() {
+	public ArrayList<String> getCloudProviderRawPublicAddresses() {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> local = (Map<String, Object>) this.obj.get("cloud");
-		ArrayList<String> rawAddresses = (ArrayList<String>)local.get("raw_addresses");
+		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
+		ArrayList<String> rawAddresses = new ArrayList<String>();
+		try {
+			rawAddresses = (ArrayList<String>) cloud.get("raw_addresses");
+		} catch(ClassCastException e) {
+			//STUB
+		}
 		
-		ArrayList<InetAddress> inetAddresses = new ArrayList<InetAddress>();
-		
-		rawAddresses.forEach(address -> {
-			try {
-				inetAddresses.add(InetAddress.getByName(address));
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			}
-		});
-		
-		return inetAddresses;
+		return rawAddresses;
 	}
 
 	@Override
-	public ArrayList<InetAddress> getLocalRawPublicAddresses() {
+	public ArrayList<String> getLocalRawPublicAddresses() {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> local = (Map<String, Object>) this.obj.get("local");
-		ArrayList<String> rawAddresses = (ArrayList<String>)local.get("raw_addresses");
+		ArrayList<String> rawAddresses = new ArrayList<String>();
+		try {
+			rawAddresses = (ArrayList<String>) local.get("raw_addresses");
+		} catch(ClassCastException e) {
+			//STUB
+		}
 		
-		ArrayList<InetAddress> inetAddresses = new ArrayList<InetAddress>();
-		
-		rawAddresses.forEach(address -> {
-			try {
-				inetAddresses.add(InetAddress.getByName(address));
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			}
-		});
-		
-		return inetAddresses;
+		return rawAddresses;
+	}
+
+	@Override
+	public Map<String, String> getCloudProviderRawPublicAddressesWithTags() {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
+		Map<String, String> rawAddresses = new HashMap<String, String>();
+		try {
+			rawAddresses = (Map<String, String>) cloud.get("raw_addresses");
+		} catch(ClassCastException e) {
+			//STUB
+		}
+	}
+
+	@Override
+	public Map<String, String> getLocalRawPublicAddressesWithTags() {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> local = (Map<String, Object>) this.obj.get("local");
+		Map<String, String> rawAddresses = new HashMap<String, String>();
+		try {
+			rawAddresses = (Map<String, String>) local.get("raw_addresses");
+		} catch(ClassCastException e) {
+			//STUB
+		}
+		return rawAddresses;
 	}
 }
