@@ -14,6 +14,7 @@ import com.resourcetracker.cloud.Providers;
 import com.resourcetracker.config.parsable.*;
 import org.javatuples.*;
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 
 /**
  * Parses YAML config file
@@ -245,6 +246,8 @@ public class Parser implements Parsable {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CsvValidationException e){
 			e.printStackTrace();
 		}
 		return new Pair<String, String>(accessKey, secretKey);

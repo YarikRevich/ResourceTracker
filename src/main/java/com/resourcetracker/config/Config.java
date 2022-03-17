@@ -3,8 +3,8 @@ package com.resourcetracker.config;
 import java.nio.file.*;
 import java.io.*;
 import java.util.*;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+import org.yaml.snakeyaml.*;
+import org.yaml.snakeyaml.constructor.*;
 
 
 /**
@@ -29,8 +29,8 @@ public class Config implements Reader {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		 Yaml yaml = new Yaml(new CustomClassLoaderConstructor(Config.class.getClassLoader()));
+
+		Yaml yaml = new Yaml();
 		 config = yaml.load(inputStream);
 	};
 
