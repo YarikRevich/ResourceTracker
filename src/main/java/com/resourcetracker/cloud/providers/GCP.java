@@ -6,7 +6,6 @@ package com.resourcetracker.cloud.providers;
 import java.net.InetAddress;
 
 import com.resourcetracker.cloud.Provider;
-import com.resourcetracker.config.parsable.Parsable;
 
 import org.javatuples.*;
 
@@ -15,7 +14,6 @@ import org.javatuples.*;
  *
  */
 public class GCP implements Provider {
-
 	@Override
 	public boolean isResourceOnline(InetAddress publicAddress) {
 		return false;
@@ -24,5 +22,4 @@ public class GCP implements Provider {
 	@Override
 	public void init(Pair<String, String> credentials) {
 	}
-
 }

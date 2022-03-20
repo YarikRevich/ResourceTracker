@@ -32,3 +32,9 @@ cloud:
 ```
 
 To get more information about syntax of YAML config files, you can look at Wiki
+
+```mermaid
+  graph TD;
+      CLI-->LOG;
+      LOG-->S3;
+```

@@ -2,7 +2,6 @@ package com.resourcetracker;
 
 import com.resourcetracker.config.*;
 
-import org.apache.logging.log4j.*;
 import com.resourcetracker.listenerpoll.ListenerPoll;
 import com.resourcetracker.cloud.Provider;
 import com.resourcetracker.cloud.providers.*;
@@ -10,9 +9,7 @@ import com.resourcetracker.cloud.providers.*;
 public class Tracker {
 	@SuppressWarnings("null")
 	public static void main(String[] args) throws Throwable {
-		Config reader = new Config();
-		Parser parser = new Parser(reader);
-		parser.validate();
+		Parser parser = new Parser();
 
 		ListenerPoll listenerPoll = new ListenerPoll();
 
@@ -36,6 +33,8 @@ public class Tracker {
 
 		listenerPoll.add(parser.getLocalRawPublicAddresses());
 		listenerPoll.add(parser.getLocalRawPublicAddressesWithTags());
+		
+		if 
 		listenerPoll.listen();
 	};
 }

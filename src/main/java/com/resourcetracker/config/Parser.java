@@ -1,20 +1,20 @@
 package com.resourcetracker.config;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.Map;
-import java.util.Queue;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Arrays;
 import java.io.*;
 
-import com.resourcetracker.cloud.Providers;
+import com.resourcetracker.cloud.Provider.Providers;
 import com.resourcetracker.config.parsable.*;
+import com.resourcetracker.listenerpoll.Address;
+import com.resourcetracker.tools.utils.*;
+
 import org.javatuples.*;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * Parses YAML config file
@@ -23,37 +23,44 @@ import com.opencsv.exceptions.CsvValidationException;
  *
  */
 public class Parser implements Parsable {
-	Reader reader;
+	TreeMap<String, Object> obj;
 
 	/**
 	 * Parsed file. Assigned after validation
+	 * 
+	 * @exception throws exception if YAML config is empty
 	 */
-	Map<String, Object> obj;
+	public Parser() throws Exception{
+		File file = new File(new ConfigPath(null).configPath().toString());
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
-	public Parser(Reader reader) {
-		this.reader = reader;
+		Yaml yaml = new Yaml();
+		Object config = yaml.load(inputStream);
+		if (config == null) {
+			throw new Exception("YAML config file should not be empty");
+		}
+
+		this.obj = new RawMapConverter<Object>(config).getResObj();
+		this.validate();
 	}
-//
-//	public ArrayList<String> getIPs() {
-//		return new ArrayList<String>() {
-//		};
-//	};
 
 	/**
 	 * Validates YAML config file
 	 * 
 	 * @return if YAML config file passes validation
+	 * @exception 
 	 */
-	public boolean validate() throws Exception {
-		Object config = this.reader.getConfig();
-		if (config == null) {
-			throw new Exception("YAML config file should not be empty");
-		}
-
-		@SuppressWarnings("unchecked")
-		Map<String, Object> obj = (Map<String, Object>) config;
-		this.obj = obj;
-
+	private boolean validate() throws Exception {
 		boolean isLocal = this.isLocal();
 		boolean isCloud = this.isCloud();
 
@@ -93,7 +100,6 @@ public class Parser implements Parsable {
 				throw new Exception("'local' should contain though one raw address");
 			}
 		}
-		;
 
 		return false;
 	};
@@ -115,7 +121,7 @@ public class Parser implements Parsable {
 	};
 
 	private boolean isLocalRawPublicAddresses() {
-		Map<String, Object> local = (Map<String, Object>) this.obj.get("local");
+		TreeMap<String, Object> local = (TreeMap<String, Object>) this.obj.get("local");
 		Object rawAddresses = local.get("raw_addresses");
 		if (rawAddresses == null) {
 			return false;
@@ -124,7 +130,7 @@ public class Parser implements Parsable {
 	}
 
 	private boolean isCloudProviderRawPublicAddresses() {
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
 		Object rawAddresses = cloud.get("raw_addresses");
 		if (rawAddresses == null) {
 			return false;
@@ -134,8 +140,8 @@ public class Parser implements Parsable {
 
 	private boolean isCredentials() throws Exception {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
-		Map<String, Object> credentials = (Map<String, Object>) cloud.get("credentials");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> credentials = (TreeMap<String, Object>) cloud.get("credentials");
 		if (credentials == null) {
 			throw new Exception("'crendetials' should contain credentials 'file' or 'access_key' or 'secret_key'");
 		}
@@ -145,8 +151,8 @@ public class Parser implements Parsable {
 
 	private boolean isCredentialsFile() throws Exception {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
-		Map<String, Object> credentials = (Map<String, Object>) cloud.get("credentials");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> credentials = (TreeMap<String, Object>) cloud.get("credentials");
 		if (credentials == null) {
 			throw new Exception("'credentials' should contain credentials 'file' or 'access_key' or 'secret_key'");
 		}
@@ -161,8 +167,8 @@ public class Parser implements Parsable {
 
 	private boolean isAccessKey() throws Exception {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
-		Map<String, Object> credentials = (Map<String, Object>) cloud.get("credentials");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> credentials = (TreeMap<String, Object>) cloud.get("credentials");
 		if (credentials == null) {
 			throw new Exception("'credentials' should contain credentials 'file' or 'access_key' or 'secret_key'");
 		}
@@ -177,8 +183,8 @@ public class Parser implements Parsable {
 
 	private boolean isSecretKey() throws Exception {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
-		Map<String, Object> credentials = (Map<String, Object>) cloud.get("credentials");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> credentials = (TreeMap<String, Object>) cloud.get("credentials");
 		if (credentials == null) {
 			throw new Exception("'credentials' should contain credentials 'file' or 'access_key' or 'secret_key'");
 		}
@@ -193,16 +199,16 @@ public class Parser implements Parsable {
 
 	private boolean isCloudProvider() {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
 		String cloudProvider = (String) cloud.get("provider");
 
 		switch (cloudProvider) {
-		case "aws":
-			return true;
-		case "gcp":
-			return true;
-		case "az":
-			return true;
+			case "aws":
+				return true;
+			case "gcp":
+				return true;
+			case "az":
+				return true;
 		}
 		return false;
 	}
@@ -214,21 +220,21 @@ public class Parser implements Parsable {
 	 */
 	public Providers getCloudProvider() {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
 		String cloudProvider = (String) cloud.get("provider");
 
 		switch (cloudProvider) {
-		case "aws":
-			return Providers.AWS;
-		case "gcp":
-			return Providers.GCP;
-		case "az":
-			return Providers.AZ;
+			case "aws":
+				return Providers.AWS;
+			case "gcp":
+				return Providers.GCP;
+			case "az":
+				return Providers.AZ;
 		}
 		return Providers.NONE;
 	}
 
-	private Pair<String, String> getCloudProviderCredentialsFromCSVFile(Map<String, Object> credentials) {
+	private Pair<String, String> getCloudProviderCredentialsFromCSVFile(TreeMap<String, Object> credentials) {
 		String accessKey = null, secretKey = null;
 		String credentialsFile = (String) credentials.get("file");
 		try (CSVReader csvReader = new CSVReader(new FileReader(credentialsFile));) {
@@ -247,7 +253,7 @@ public class Parser implements Parsable {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (CsvValidationException e){
+		} catch (CsvValidationException e) {
 			e.printStackTrace();
 		}
 		return new Pair<String, String>(accessKey, secretKey);
@@ -256,8 +262,8 @@ public class Parser implements Parsable {
 	@Override
 	public Pair<String, String> getCloudProviderCredentials() throws Exception {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
-		Map<String, Object> credentials = (Map<String, Object>) cloud.get("credentials");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> credentials = (TreeMap<String, Object>) cloud.get("credentials");
 
 		if (this.isAccessKey() && this.isSecretKey()) {
 			return new Pair<String, String>((String) credentials.get("access_key"),
@@ -272,54 +278,87 @@ public class Parser implements Parsable {
 	@Override
 	public ArrayList<String> getCloudProviderRawPublicAddresses() {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
 		ArrayList<String> rawAddresses = new ArrayList<String>();
 		try {
 			rawAddresses = (ArrayList<String>) cloud.get("raw_addresses");
-		} catch(ClassCastException e) {
-			//STUB
+		} catch (ClassCastException e) {
+			// STUB
 		}
-		
+
 		return rawAddresses;
 	}
 
 	@Override
 	public ArrayList<String> getLocalRawPublicAddresses() {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> local = (Map<String, Object>) this.obj.get("local");
+		TreeMap<String, Object> local = (TreeMap<String, Object>) this.obj.get("local");
 		ArrayList<String> rawAddresses = new ArrayList<String>();
 		try {
 			rawAddresses = (ArrayList<String>) local.get("raw_addresses");
-		} catch(ClassCastException e) {
-			//STUB
+		} catch (ClassCastException e) {
+			// STUB
 		}
-		
+
 		return rawAddresses;
 	}
 
 	@Override
-	public Map<String, String> getCloudProviderRawPublicAddressesWithTags() {
+	public TreeMap<String, Address> getCloudProviderRawPublicAddressesWithTags() {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> cloud = (Map<String, Object>) this.obj.get("cloud");
-		Map<String, String> rawAddresses = new HashMap<String, String>();
+		TreeMap<String, Object> cloud = (TreeMap<String, Object>) this.obj.get("cloud");
+		TreeMap<String, Address> resultAddresses = new TreeMap<String, Address>();
+		TreeMap<String, String> rawAddresses = new TreeMap<String, String>();
 		try {
-			rawAddresses = (Map<String, String>) cloud.get("raw_addresses");
-		} catch(ClassCastException e) {
-			//STUB
+			rawAddresses = (TreeMap<String, String>) cloud.get("raw_addresses");
+		} catch (ClassCastException e) {
+			// STUB
 		}
-		return rawAddresses;
+		int index = 0;
+		for (Map.Entry<String, String> value : rawAddresses.entrySet()) {
+			resultAddresses.put(value.getKey(), new Address(index, value.getValue()));
+			index++;
+		}
+		return resultAddresses;
 	}
 
 	@Override
-	public Map<String, String> getLocalRawPublicAddressesWithTags() {
-		@SuppressWarnings("unchecked")
-		Map<String, Object> local = (Map<String, Object>) this.obj.get("local");
-		Map<String, String> rawAddresses = new HashMap<String, String>();
+	public TreeMap<String, Address> getLocalRawPublicAddressesWithTags() {
+		TreeMap<String, Object> local = null;
 		try {
-			rawAddresses = (Map<String, String>) local.get("raw_addresses");
-		} catch(ClassCastException e) {
-			//STUB
+			local = new RawMapConverter<Object>(this.obj.get("local")).getResObj();
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
-		return rawAddresses;
+		TreeMap<String, Address> resultAddresses = new TreeMap<String, Address>();
+		TreeMap<String, String> rawAddresses = new TreeMap<String, String>();
+		try {
+			try {
+				rawAddresses = new RawMapConverter<String>(local.get("raw_addresses")).getResObj();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (ClassCastException e) {
+			// STUB
+		}
+		int index = 0;
+		for (Map.Entry<String, String> value : rawAddresses.entrySet()) {
+			resultAddresses.put(value.getKey(), new Address(index, value.getValue()));
+			index++;
+		}
+		return resultAddresses;
+	}
+
+	public boolean isSaveToBucket() {
+		return false;
+	}
+
+	public boolean isDemon() {
+		try {
+			new RawMapConverter(this.obj.get("demon")).getResObj();
+		} catch (Exception e) {
+			return false;
+		}
+		return false;
 	}
 }

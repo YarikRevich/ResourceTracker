@@ -2,7 +2,6 @@ package com.resourcetracker.cloud;
 
 import java.net.*;
 
-import com.resourcetracker.config.parsable.Parsable;
 import org.javatuples.*;
 
 
@@ -11,9 +10,16 @@ import org.javatuples.*;
  * 
  * @author YarikRevich
  *
+ * @see
  */
 public interface Provider {
-	
 	public void init(Pair<String, String> credentials);
 	public boolean isResourceOnline(InetAddress publicAddress);
+
+	public enum Providers {
+		NONE,
+		AWS,
+		GCP,
+		AZ
+	}
 }

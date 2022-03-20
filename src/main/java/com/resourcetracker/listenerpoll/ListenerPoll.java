@@ -2,16 +2,17 @@ package com.resourcetracker.listenerpoll;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Map;
+import java.util.TreeMap;
 import java.util.Queue;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Collections;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 public class ListenerPoll {
-	private Queue<String> poll = new LinkedList<String>();
+	private Queue<Address> poll = new LinkedList<Address>();
 	private Queue<AddressWithTag> pollWithTags = new LinkedList<AddressWithTag>();
 	
 	final static Logger logger = LogManager.getLogger(ListenerPoll.class);
@@ -32,30 +33,30 @@ public class ListenerPoll {
 	};
 
 	public void add(ArrayList<String> addresses) {
-		for (String address : addresses) {
-			poll.add(address);
+		for (int i = 0; i < addresses.size(); i++) {
+			poll.add(new Address(i, addresses.get(i)));
 		}
 	}
 
-	public void add(Map<String, String> addresses) {
-		addresses.forEach((tag, address) -> {
-			pollWithTags.add(new AddressWithTag(tag, address));
+	public void add(TreeMap<String, Address> addresses) {
+		addresses.forEach((key, value) -> {
+			pollWithTags.add(new AddressWithTag(value.index(), key, value.address()));
 		});
 	}
 
-	synchronized public void listen() {
+	synchronized public void listen(boolean demon) {
+		ArrayList<ListenerResult> infoResult = new ArrayList<ListenerResult>();
 		synchronized (this) {
 			ListenerPoll.logger.info("Scanning standard poll with tags...");
 			this.poll.forEach(address -> {
 				new Thread(() -> {
-					boolean isReachable = this.isReachable(address);
+					boolean isReachable = this.isReachable(address.address());
 					if (isReachable) {
-						ListenerPoll.logger.info(String.format("%s: ok", address.toString()));
+						infoResult.add(new ListenerResult(address.index(), String.format("%s: ok", address.toString())));
 					}else {
-						ListenerPoll.logger.info(String.format("%s: bad", address.toString()));
+						infoResult.add(new ListenerResult(address.index(), String.format("%s: bad", address.toString())));
 					}
 				}).start();
-				;
 			});
 		}
 
@@ -66,14 +67,18 @@ public class ListenerPoll {
 					new Thread(() -> {
 						boolean isReachable = this.isReachable(addressWithTag.address());
 						if (isReachable) {
-							ListenerPoll.logger.info(String.format("%s: ok", addressWithTag.tag()));
+							infoResult.add(new ListenerResult(addressWithTag.index(), String.format("%s(%s): ok", addressWithTag.tag(), addressWithTag.address().toString())));
 						} else {
-							ListenerPoll.logger.info(String.format("%s: bad", addressWithTag.tag()));
+							infoResult.add(new ListenerResult(addressWithTag.index(), String.format("%s(%s): bad", addressWithTag.tag(), addressWithTag.address().toString())));
 						}
 					}).start();
-					;
 				});
 			}
+		}
+		Collections.sort(infoResult, new ListenerResultSort());
+		
+		for (ListenerResult res : infoResult){
+			ListenerPoll.logger.info(res.message());
 		}
 	};
 }
