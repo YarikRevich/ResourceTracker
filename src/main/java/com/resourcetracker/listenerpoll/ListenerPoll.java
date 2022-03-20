@@ -8,16 +8,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Collections;
 
+import com.resourcetracker.config.*;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 public class ListenerPoll {
 	private Queue<Address> poll = new LinkedList<Address>();
 	private Queue<AddressWithTag> pollWithTags = new LinkedList<AddressWithTag>();
-	
-	final static Logger logger = LogManager.getLogger(ListenerPoll.class);
 
-	private final int timeout = 5000;
+	final static Config config = Config.getInstance();
+	final static Logger logger = LogManager.getLogger(ListenerPoll.class);
 
 	private boolean isReachable(String publicAddress) {
 		try {
@@ -44,7 +45,7 @@ public class ListenerPoll {
 		});
 	}
 
-	synchronized public void listen(boolean demon) {
+	synchronized public void listen() {
 		ArrayList<ListenerResult> infoResult = new ArrayList<ListenerResult>();
 		synchronized (this) {
 			ListenerPoll.logger.info("Scanning standard poll with tags...");
