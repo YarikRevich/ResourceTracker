@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "com.resourcetracker.Tracker",
+            "projectName": "ResourceTracker",
+            "args": ["-javaagent:shiftone-jrat.jar"],
+        },
+    ]
+}
