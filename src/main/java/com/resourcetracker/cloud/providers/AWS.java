@@ -8,6 +8,8 @@ import org.javatuples.*;
 
 import com.resourcetracker.cloud.Provider;
 
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+
 /**
  * AWS implementation of Provider
  * 
@@ -23,7 +25,7 @@ public class AWS implements Provider {
 
 	@Override
 	public void init(Pair<String, String> credentials) {
-		
+		AwsBasicCredentials.
 		// TODO Auto-generated method stub
 	
 	}

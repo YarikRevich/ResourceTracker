@@ -1,11 +1,13 @@
 package com.resourcetracker;
 
-import com.resourcetracker.listenerpoll.ListenerPoll;
+import com.resourcetracker.loop.Loop;
 
 public class Tracker {
 	public static void main(String[] args) throws Throwable {
-		ListenerPoll listenerPoll = new ListenerPoll();
-		listenerPoll.listen();
+		Loop.prerun();
+		Loop.run();
+		
+
 		// if (parser.isCloud()) {
 		// 	listenerPoll.add(parser.getCloudProviderRawPublicAddresses());
 		// 	listenerPoll.add(parser.getCloudProviderRawPublicAddressesWithTags());
