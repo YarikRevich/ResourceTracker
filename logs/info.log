@@ -3,3 +3,7 @@
 2022-03-17 18:26:59,400 INFO c.r.l.ListenerPoll [Thread-0] tag_1: bad
 2022-03-17 18:26:59,426 INFO c.r.l.ListenerPoll [Thread-1] tag_2: ok
 2022-03-20 22:03:58,624 INFO c.r.l.ListenerPoll [main] Scanning standard poll with tags...
+2022-03-23 12:38:40,449 INFO c.r.l.Loop [main] ResourceTracker is already started
+2022-03-23 12:39:19,486 INFO c.r.l.Loop [main] ResourceTracker is already started
+2022-03-23 12:45:53,112 INFO c.r.l.Loop [main] ResourceTracker is already started
+2022-03-23 12:46:00,661 INFO c.r.l.Loop [main] ResourceTracker is already started

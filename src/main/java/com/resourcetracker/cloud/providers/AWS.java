@@ -25,7 +25,7 @@ public class AWS implements Provider {
 
 	@Override
 	public void init(Pair<String, String> credentials) {
-		AwsBasicCredentials.
+		
 		// TODO Auto-generated method stub
 	
 	}

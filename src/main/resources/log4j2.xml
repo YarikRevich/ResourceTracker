@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Appenders>
-        <Log4j2Appender name="Log4j2Appender">
-            <s3Bucket>resourcetracker</s3Bucket>
-            <s3Path>logs</s3Path>
-            <s3Region>us-west-2</s3Region>
-            <s3AwsKey>$AWS_KEY</s3AwsKey>
-            <s3AwsSecret>$AWS_SECRET</s3AwsSecret>
-        </Log4j2Appender>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>

@@ -333,7 +333,7 @@ public final class Config implements Parsable {
 
 	public boolean getDemon() {
 		try {
-			new RawMapConverter<Object>(this.obj.get("demon")).getResObj();
+			// new ConvertMapToTreeMap<Object>(this.obj.get("demon")).getValue();
 		} catch (Exception e) {
 			return false;
 		}

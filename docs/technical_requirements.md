@@ -6,7 +6,7 @@ Aim of the project - to create a cloud native tool, which tracks pointed targets
 
 The system consists of such components:
 1. Functionality of the configuration the work of the tool via YAML config file
-2. Functionality of the tool controlling via CLI. It can’t replace the configuration file
+2. Functionality of the tool controlling via CLI, GUI or WEB interfaces. It can’t replace the configuration file
 3. Functionality of the caching of the configuration file to the chosen cloud provider
 4. Functionality of the mailing with certain conditions with certain frequency
 Design of the tool is monolith, minimal customization, maximal usefullness! 
@@ -33,6 +33,12 @@ Each cloud provider has its own credentials file in the certain location in the 
 ## 2.4. Reports
 
 If request to the set host with pathes fails, there will be sent a message to the set email address. By default, a good report will sent each day to the set email address. Reports yet can only be sent via email.
+
+# 2.5. Interfaces
+
+- CLI(Command Line Interface)
+- GUI(Global User Interface)
+- WEB
 
 # 3. Technology stack
 
