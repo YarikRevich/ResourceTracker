@@ -1,4 +1,4 @@
-package com.resourcetracker.daemonizer;
+package com.resourcetracker.process;
 
 /**
  * Manages demonizing process dependeing on the
@@ -27,5 +27,17 @@ public class Manager {
         } else if (os.contains("Linux") || os.contains("Other")) {
             Unix.stop();
         }
+    }
+
+    public boolean isOk(){
+        String os = System.getProperty("os.name");
+        if (os.contains("Windows")) {
+            return Windows.isOk();
+        } else if (os.contains("Mac OS X")) {
+            return MacOS.isOk();
+        } else if (os.contains("Linux") || os.contains("Other")) {
+            return Unix.isOk();
+        }
+        return false;
     }
 }

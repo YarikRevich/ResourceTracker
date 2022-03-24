@@ -1,4 +1,4 @@
-package com.resourcetracker.daemonizer;
+package com.resourcetracker.process;
 
 public class Windows {
     public static void start(){
@@ -7,5 +7,9 @@ public class Windows {
 
     public static void stop(){
         
+    }
+
+    public static boolean isOk(){
+        return false;
     }
 }

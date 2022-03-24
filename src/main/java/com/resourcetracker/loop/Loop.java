@@ -7,11 +7,14 @@ import java.lang.Process;
 
 import com.resourcetracker.tools.params.Params;
 import com.resourcetracker.tools.params.ParamCallbackDefault;
-import com.resourcetracker.daemonizer.Manager;
 import com.resourcetracker.status.Status;
+import com.resourcetracker.api.API;
+import com.resourcetracker.process.Manager;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.springframework.boot.SpringApplication;
 
 public class Loop {
     private static String[] args;
@@ -27,6 +30,8 @@ public class Loop {
     }
 
     public static void run() {
+        SpringApplication.run(API.class, args);
+
         Params.ifValidateDo(new ParamCallbackDefault() {
             public void call() {
 
@@ -37,37 +42,7 @@ public class Loop {
             public void call() {
                 if (!Status.isStarted()) {
                     Manager.start();
-                    ProcessBuilder ps = new ProcessBuilder("pwd");
-
-                    // From the DOC: Initially, this property is false, meaning that the
-                    // standard output and error output of a subprocess are sent to two
-                    // separate streams
-                    ps.redirectErrorStream(true);
-
-                    Process pr = null;
-                    try {
-                        pr = ps.start();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-                    String line;
-                    try {
-                        while ((line = in.readLine()) != null) {
-                            System.out.println(line);
-                        }
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    try {
-                        pr.waitFor();
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    
                     System.out.println("ok!");
                     // Process process;
                     // try {
