@@ -1,4 +1,4 @@
-package com.resourcetracker.cloud.providers;
+package com.resourcetrackersdk.cloud.providers;
 
 import static org.junit.jupiter.api.Assertions.*;
 

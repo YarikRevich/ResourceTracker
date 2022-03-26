@@ -1,3 +1,10 @@
+# Vagrant
+Vagrantfile
+
+# Terraform
+
+src/main/java/tf/root/.terraform
+
 # Ignore Log4J log files
 
 log

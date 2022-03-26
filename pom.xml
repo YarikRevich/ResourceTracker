@@ -26,7 +26,7 @@
         <!-- Enable "paths" Toolchain provided by Exec Maven Plugin -->
         <extensions>true</extensions>
         <configuration>
-          <mainClass>com.resourcetracker.Tracker</mainClass>
+          <mainClass>com.resourcetrackersdk.Tracker</mainClass>
           <toolchain>paths</toolchain>
         </configuration>
 
@@ -40,7 +40,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.resourcetracker.Tracker</mainClass>
+              <mainClass>com.resourcetrackersdk.Tracker</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
@@ -148,6 +148,16 @@
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-invoker</artifactId>
       <version>3.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.terraform</groupId>
+      <artifactId>terraform-client</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20220320</version>
     </dependency>
   </dependencies>
 </project>

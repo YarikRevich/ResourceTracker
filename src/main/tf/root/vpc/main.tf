@@ -2,17 +2,17 @@ resource  "aws_vpc" "resourcetracker_vpc"{
     cidr_block = "10.0.0.0/16"
 }
 
-resource "aws_security_group" "allow_tls" {
-  name        = "allow_tls"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = "${aws_vpc.main.id}"
+resource "aws_security_group" "allow_resourcetracker_api_calls" {
+  name        = "allow_resourcetracker_api_calls"
+  description = "Allow ResourceTracker external API calls"
+  vpc_id      = "${aws_vpc.resourcetracker_vpc.id}"
 
   ingress {
     description = ""
-    from_port   = 443
-    to_port     = 443
+    from_port   = 0
+    to_port     = 10075
     protocol    = "tcp"
-    cidr_blocks = aws_vpc.main.cidr_block
+    cidr_blocks = ["${aws_vpc.resourcetracker_vpc.cidr_block}"]
   }
 
   egress {
@@ -23,6 +23,6 @@ resource "aws_security_group" "allow_tls" {
   }
 
   tags = {
-    Name = "allow_tls"
+    Type = "integrated_tool"
   }
 }

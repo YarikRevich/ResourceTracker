@@ -1,15 +1,10 @@
-package com.resourcetracker.loop;
+package com.resourcetrackersdk.loop;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.lang.Process;
-
-import com.resourcetracker.tools.params.Params;
-import com.resourcetracker.tools.params.ParamCallbackDefault;
-import com.resourcetracker.status.Status;
-import com.resourcetracker.api.API;
-import com.resourcetracker.process.Manager;
+import com.resourcetrackersdk.tools.params.Params;
+import com.resourcetrackersdk.tools.params.ParamCallbackDefault;
+import com.resourcetrackersdk.status.Status;
+import com.resourcetrackersdk.api.API;
+import com.resourcetrackersdk.process.Manager;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -40,18 +35,8 @@ public class Loop {
 
         Params.ifStartDo(new ParamCallbackDefault() {
             public void call() {
-                if (!Status.isStarted()) {
+                if (!Manager.isOk()) {
                     Manager.start();
-                    
-                    System.out.println("ok!");
-                    // Process process;
-                    // try {
-                    // process = Runtime.getRuntime().exec("ls");
-                    // } catch (IOException e) {
-                    // // TODO Auto-generated catch block
-                    // e.printStackTrace();
-                    // }
-                    // process.inputReader().;
                 } else {
                     logger.info("ResourceTracker is already started");
                 }
@@ -60,7 +45,7 @@ public class Loop {
 
         Params.ifStopDo(new ParamCallbackDefault() {
             public void call() {
-                if (!Status.isStoped()) {
+                if (Manager.isOk()) {
                     Manager.stop();
                 } else {
                     logger.info("ResourceTracker is already stoped");
