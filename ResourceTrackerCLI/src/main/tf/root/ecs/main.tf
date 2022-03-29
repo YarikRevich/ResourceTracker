@@ -28,6 +28,7 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
     subnets = [
       "${module.vpc.resourcetracker_vpc_id}"
     ]
+    assign_public_ip = true
     security_groups = [
       "${module.vpc.allow_resourcetracker_api_calls_id}",
     ]
@@ -36,8 +37,7 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
 
 resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition" {
   family                = "resourcetracker_ecs_instance_task_definition"
-  container_definitions = <<DEFINITION
-  [
+  container_definitions = jsonencode([
     {
        "name": "reosourcetracker",
        "environment": [{context: "${var.resourcetracker_container_image_context}"}]
@@ -46,13 +46,11 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
         {
           "containerPort": 10075,
           "hostPort": 10075
-        },
+        }],
         memory: 512,
         cpu: 128,
-      ],
     }
-  ]
-  DEFINITION
+  ])
 }
 
 

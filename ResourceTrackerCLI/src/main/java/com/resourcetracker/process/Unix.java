@@ -1,6 +1,6 @@
-package com.resourcetrackersdk.process;
+package com.resourcetracker.process;
 
-import com.resourcetrackersdk.processcreator.ProcessCreator;
+import com.resourcetracker.processcreator.ProcessCreator;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;

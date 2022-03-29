@@ -5,18 +5,12 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>ResourceTrackerCLI components</name>
   <description>CLI for cloud-native distributed tracker for resources</description>
-  
+
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.6.4</version>
   </parent>
-  <!-- <distributionManagement>
-    <repository>
-      <id></id>
-      <url>https://maven.pkg.jetbrains.space/mycompany/p/projectkey/my-maven-repo</url>
-    </repository>
-  </distributionManagement> -->
 
   <dependencies>
     <dependency>
@@ -120,6 +114,21 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.github.terratest-maven-plugin</groupId>
+        <artifactId>terratest-maven-plugin</artifactId>
+        <version>1.0.1</version>
+        <configuration>
+          <terraTestPath>./src/main/tf/tests</terraTestPath>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run-tests</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>

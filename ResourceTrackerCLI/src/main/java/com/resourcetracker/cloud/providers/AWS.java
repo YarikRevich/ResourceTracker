@@ -1,12 +1,12 @@
 /**
  * 
  */
-package com.resourcetrackersdk.cloud.providers;
+package com.resourcetracker.cloud.providers;
 
 import java.net.InetAddress;
 import org.javatuples.*;
 
-import com.resourcetrackersdk.cloud.Provider;
+import com.resourcetracker.cloud.Provider;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 

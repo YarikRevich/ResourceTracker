@@ -28,7 +28,11 @@ public class Loop {
 
         Params.ifValidateDo(new ParamCallbackDefault() {
             public void call() {
-
+                if (config.isOk()){
+                    logger.info("config file is valid!")
+                }else{
+                    logger.info("config file is not valid!")
+                }
             };
         });
 
@@ -37,7 +41,7 @@ public class Loop {
                 if (!Manager.isOk()) {
                     Manager.start();
                 } else {
-                    logger.info("ResourceTracker is already started");
+                    logger.info("tracker is already started");
                 }
             };
         });
@@ -47,7 +51,7 @@ public class Loop {
                 if (Manager.isOk()) {
                     Manager.stop();
                 } else {
-                    logger.info("ResourceTracker is already stoped");
+                    logger.info("tracker is already stoped");
                 }
             };
         });

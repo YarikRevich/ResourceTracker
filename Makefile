@@ -1,12 +1,18 @@
 .PHONY: stub, build, install
-.ONESHELL
+.ONESHELL:
+
+include .env
+export
 
 stub:
 	@echo "Available commands: build, install"
 
-build_deploy_docker_image:
+build_dev:
+ifeq ($(RESOURCETRACKER_DEV), true)
+	@echo "itworks"
 	@cd ResourceTrackerDeployment
-	@docker build -f src/main/resources/Dockerfile -t resourcetrackerdeploy:latest .
+	@docker build -f ResourceTrackerDeployment/src/main/resources/Dockerfile -t resourcetrackerdeployment .
+endif
 
 build:
 	@cd ResourceTrackerCLI

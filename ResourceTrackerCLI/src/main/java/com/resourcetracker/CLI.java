@@ -1,6 +1,6 @@
-package com.resourcetrackersdk;
+package com.resourcetracker;
 
-import com.resourcetrackersdk.loop.Loop;
+import com.resourcetracker.loop.Loop;
 
 public class CLI {
 	public static void main(String[] args) throws Throwable {

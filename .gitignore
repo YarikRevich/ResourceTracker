@@ -1,0 +1,15 @@
+# Vagrant
+Vagrantfile
+
+# Terraform
+ResourceTrackerCLI/src/main/tf/root/.terraform
+
+# Ignore Log4J log files
+ResourceTracekrCLI/log/
+ResourceTrackerCLI/target/
+
+ResourceTrackerDeployment/log/
+ResourceTrackerDeployment/target/
+
+# Env vars
+.env
