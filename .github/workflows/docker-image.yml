@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file deploy/src/java/resources/Dockerfile --tag resourcetrackerdeploy:latest
+      run: docker build . --file deploy/src/main/java/resources/Dockerfile --tag resourcetrackerdeploy:latest
