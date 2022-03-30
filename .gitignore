@@ -1,15 +1,17 @@
+.DS_Store
+cli/.DS_Store
+deploy/.DS_Store
+
 # Vagrant
 Vagrantfile
 
-# Terraform
-ResourceTrackerCLI/src/main/tf/root/.terraform
+# CLI
 
-# Ignore Log4J log files
-ResourceTracekrCLI/log/
-ResourceTrackerCLI/target/
+cli/src/main/tf/root/.terraform
+cli/log
+cli/target
 
-ResourceTrackerDeployment/log/
-ResourceTrackerDeployment/target/
+# Deploy
 
-# Env vars
-.env
+deploy/log/
+deploy/target/
