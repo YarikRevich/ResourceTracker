@@ -8,7 +8,7 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopOnEntry": false,
-            "mainClass": "com.resourcetrackersdk.Tracker",
+            "mainClass": "com.resourcetracker.Tracker",
             "projectName": "ResourceTracker",
             "args": ["-javaagent:shiftone-jrat.jar"],
         },
