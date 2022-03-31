@@ -32,12 +32,12 @@ public final class Config {
 	private static TreeMap<String, Object> obj;
 
 	/**
-	 * Parsed file. Assigned after validation
+	 * 
 	 * 
 	 * @exception throws exception if YAML config is empty
 	 */
-	static {
-		File file = new File(new ConfigPath(null).configPath().toString());
+	private Object getInputStreamOfLocalConfigFile() {
+		File file = new File(ConfigPath.getConfigPath());
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
@@ -51,7 +51,12 @@ public final class Config {
 		}
 
 		Yaml yaml = new Yaml();
-		Object config = yaml.load(inputStream);
+		return yaml.load(inputStream);
+	}
+
+	public Config() {
+		Yaml yaml = new Yaml();
+		yaml.load(this.getInputStreamOfLocalConfigFile());
 		try {
 			Config.obj = new ConvertMapToTreeMap<Object>(config).getValue();
 		} catch (Exception e) {
@@ -59,6 +64,20 @@ public final class Config {
 		}
 	}
 
+	/**
+	 * Constructor used for testing purpose
+	 * @param contains YAML config file
+	 */
+	public Config(String src) {
+		Yaml yaml = new Yaml();
+		yaml.load(IOUtils.toInputStream(src));
+		try {
+			Config.obj = new ConvertMapToTreeMap<Object>(config).getValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Validates YAML config file
 	 * 
@@ -150,7 +169,7 @@ public final class Config {
 		FileInputStream fis = new FileInputStream(credentials);
 		return IOUtils.toString(fis, "UTF-8");
 	}
-	
+
 	/**
 	 * 
 	 * @return ordered map of addresses with tags or not

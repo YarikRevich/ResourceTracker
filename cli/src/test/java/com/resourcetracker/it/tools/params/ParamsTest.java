@@ -1,6 +1,6 @@
-package com.resourcetracker.tools.params;
+package com.resourcetracker.it.tools.params;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import com.resourcetracker.tools.params.Params;
@@ -12,39 +12,35 @@ public class ParamsTest {
     }
 
     @Test
-    public void testIfValid() throws Exception {
-        boolean ok = Params.ifValidateDo(new ParamCallbackDefault() {
+    public void canIfValid() throws Exception {
+        if (!Params.ifValidateDo(new ParamCallbackDefault() {
             public void call() throws Exception {
                 assertTrue(true);
             };
-        });
-        if (!ok){
+        })){
             fail();
-        }
+        };
     }
 
     @Test
-    public void testIfStart() throws Exception {
-        
-        boolean ok = Params.ifStartDo(new ParamCallbackDefault() {
+    public void canIfStart() throws Exception {
+        if (!Params.ifStartDo(new ParamCallbackDefault() {
             public void call() throws Exception {
                 assertTrue(true);
             };
-        });
-        if (!ok){
+        })){
             fail();
-        }
+        };
     }
 
     @Test
-    public void testIfStop() throws Exception {
-        boolean ok = Params.ifStopDo(new ParamCallbackDefault() {
+    public void canIfStop() throws Exception {
+        if (!Params.ifStopDo(new ParamCallbackDefault() {
             public void call() throws Exception {
                 assertTrue(true);
             };
-        });
-        if (!ok){
+        })){
             fail();
-        }
+        };
     }
 }

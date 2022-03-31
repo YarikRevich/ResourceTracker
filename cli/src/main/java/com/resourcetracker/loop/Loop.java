@@ -17,6 +17,7 @@ public class Loop {
 
     public static void setContext(String[] args) {
         Loop.args = args;
+        new Config();
     }
 
     public static void prerun() {

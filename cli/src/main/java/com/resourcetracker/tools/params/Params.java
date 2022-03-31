@@ -48,9 +48,6 @@ public class Params {
                 }
             } else {
                 Param<Boolean> obj = availableBooleanCommands.get(arg);
-                // System.out.println(obj);
-                // System.out.println(availableBooleanCommands);
-                // System.out.println(arg.replaceAll("--", ""));
                 if (obj != null) {
                     obj.setValue(true);
                 }
