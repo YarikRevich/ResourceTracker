@@ -8,7 +8,7 @@ build_deploy:
 	@cd deploy && docker build -f src/main/resources/Dockerfile -t resourcetrackerdeployment .
 
 build_cli:
-	@cd cli && mvn clean package -T100 -DskipTests -q
+	@cd cli && mvn clean compile assembly:single -T100 -DskipTests -q
 
 build: build_cli
 

@@ -150,51 +150,7 @@ public final class Config {
 		FileInputStream fis = new FileInputStream(credentials);
 		return IOUtils.toString(fis, "UTF-8");
 	}
-
-	// private Pair<String, String>
-	// getCloudProviderCredentialsFromCSVFile(TreeMap<String, Object> credentials) {
-	// String accessKey = null, secretKey = null;
-	// String credentialsFile = (String) credentials.get("file");
-	// try (CSVReader csvReader = new CSVReader(new FileReader(credentialsFile));) {
-	// String[] line = null;
-	// while ((line = csvReader.readNext()) != null) {
-	// for (String word : line) {
-	// int index = word.indexOf("=") + 1;
-	// if (word.contains("AWSAccessKeyId")) {
-	// accessKey = word.substring(index);
-	// } else if (word.contains("AWSSecretKey")) {
-	// secretKey = word.substring(index);
-	// }
-	// }
-	// }
-	// } catch (FileNotFoundException e) {
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// } catch (CsvValidationException e) {
-	// e.printStackTrace();
-	// }
-	// return new Pair<String, String>(accessKey, secretKey);
-	// }
-
-	// @Override
-	// public Pair<String, String> getCloudProviderCredentials() throws Exception {
-	// @SuppressWarnings("unchecked")
-	// TreeMap<String, Object> cloud = (TreeMap<String, Object>)
-	// this.obj.get("cloud");
-	// TreeMap<String, Object> credentials = (TreeMap<String, Object>)
-	// cloud.get("credentials");
-
-	// if (this.isAccessKey() && this.isSecretKey()) {
-	// return new Pair<String, String>((String) credentials.get("access_key"),
-	// (String) credentials.get("secret_key"));
-	// } else if (this.isCredentialsFile()) {
-	// return this.getCloudProviderCredentialsFromCSVFile(credentials);
-	// }
-
-	// return null;
-	// }
-
+	
 	/**
 	 * 
 	 * @return ordered map of addresses with tags or not

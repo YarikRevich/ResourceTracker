@@ -3,6 +3,7 @@
   <groupId>com.resourcetracker</groupId>
   <artifactId>cli</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
   <name>CLI for ResourceTracker</name>
   <description>CLI for cloud-native distributed tracker for resources</description>
 
@@ -33,6 +34,12 @@
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
       <version>2.17.2</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -115,7 +122,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
-      <plugin>
+      <!-- <plugin>
         <groupId>com.github.terratest-maven-plugin</groupId>
         <artifactId>terratest-maven-plugin</artifactId>
         <version>1.0.1</version>
@@ -129,7 +136,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
