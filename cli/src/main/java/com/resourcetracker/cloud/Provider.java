@@ -1,9 +1,7 @@
 package com.resourcetracker.cloud;
 
 import java.net.*;
-
 import org.javatuples.*;
-
 
 /**
  * Interface for different cloud providers
@@ -13,9 +11,8 @@ import org.javatuples.*;
  * @see
  */
 public interface Provider {
-	public void start(String context);
+	public void start();
 	public void stop();
-	// public boolean isResourceOnline(InetAddress publicAddress);
 
 	public enum Providers {
 		NONE,

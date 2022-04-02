@@ -17,19 +17,19 @@ public class Loop {
 
     public static void setContext(String[] args) {
         Loop.args = args;
-        new Config();
     }
 
     public static void prerun() {
         Params.parse(args);
+        Config.setSrc();
     }
 
     public static void run() throws Exception {
         Params.ifValidateDo(new ParamCallbackDefault() {
             public void call() throws Exception {
-                if (Config.isValid()){
+                if (Config.isValid()) {
                     logger.info("config file is valid!");
-                }else{
+                } else {
                     logger.info("config file is not valid!");
                 }
             };
@@ -37,20 +37,24 @@ public class Loop {
 
         Params.ifStartDo(new ParamCallbackDefault() {
             public void call() throws Exception {
-                if (!Manager.isOk()) {
-                    Manager.start(Config.formatContext());
-                } else {
-                    logger.info("tracker is already started");
+                if (Config.isValid()) {
+                    if (!Manager.isOk()) {
+                        Manager.start(Config.formatContext());
+                    } else {
+                        logger.info("tracker is already started");
+                    }
                 }
             };
         });
 
         Params.ifStopDo(new ParamCallbackDefault() {
             public void call() throws Exception {
-                if (Manager.isOk()) {
-                    Manager.stop();
-                } else {
-                    logger.info("tracker is already stoped");
+                if (Config.isValid()) {
+                    if (Manager.isOk()) {
+                        Manager.stop();
+                    } else {
+                        logger.info("tracker is already stoped");
+                    }
                 }
             };
         });

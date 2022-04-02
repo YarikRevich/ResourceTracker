@@ -4,10 +4,17 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map;
 import java.io.*;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.javatuples.Pair;
 
 import com.resourcetracker.cloud.Provider.Providers;
 import com.resourcetracker.tools.utils.*;
 import com.resourcetracker.tools.exceptions.ConfigError;
+import com.resourcetracker.tools.utils.EmailValidation;
+import com.resourcetracker.tools.utils.ReportFrequencyValidation;
+import com.resourcetracker.tools.parser.ReportFrequencyParser;
 
 import java.time.LocalDate;
 import com.resourcetracker.entities.Entity;
@@ -36,7 +43,7 @@ public final class Config {
 	 * 
 	 * @exception throws exception if YAML config is empty
 	 */
-	private Object getInputStreamOfLocalConfigFile() {
+	private static InputStream getInputStreamOfLocalConfigFile() {
 		File file = new File(ConfigPath.getConfigPath());
 		try {
 			file.createNewFile();
@@ -49,14 +56,18 @@ public final class Config {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		Yaml yaml = new Yaml();
-		return yaml.load(inputStream);
+		return inputStream;
 	}
 
-	public Config() {
+	public static void setSrc(String... src) {
 		Yaml yaml = new Yaml();
-		yaml.load(this.getInputStreamOfLocalConfigFile());
+		InputStream inputStream = null;
+		if (src.length > 0) {
+			inputStream = IOUtils.toInputStream(src[0]);
+		} else {
+			inputStream = Config.getInputStreamOfLocalConfigFile();
+		}
+		yaml.load(inputStream);
 		try {
 			Config.obj = new ConvertMapToTreeMap<Object>(config).getValue();
 		} catch (Exception e) {
@@ -64,20 +75,6 @@ public final class Config {
 		}
 	}
 
-	/**
-	 * Constructor used for testing purpose
-	 * @param contains YAML config file
-	 */
-	public Config(String src) {
-		Yaml yaml = new Yaml();
-		yaml.load(IOUtils.toInputStream(src));
-		try {
-			Config.obj = new ConvertMapToTreeMap<Object>(config).getValue();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 	/**
 	 * Validates YAML config file
 	 * 
@@ -103,17 +100,34 @@ public final class Config {
 		return true;
 	};
 
-	public static String getReportEmail() {
+	public static String getReportEmail() throws Exception {
 		@SuppressWarnings("unchecked")
 		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("mailing");
-		return (String) cloud.get("email");
+		String res = (String) cloud.get("email");
+		if (!EmailValidation.patternMatches(res)){
+			throw new Exception("Email validation failed");
+		}
+		return res;
 	}
 
-	public static LocalDate getReportFrequency() {
+	/**
+	 * 
+	 * @return Delay for report sending mechanism
+	 */
+	public static Date getReportFrequency() {
 		@SuppressWarnings("unchecked")
 		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("settings");
-		// (String) cloud.get("report_frequency");
-		return null;
+		String res = (String) cloud.get("report_frequency");
+		if (!ReportFrequencyValidation.patternMatches(res)){
+			throw new Exception("Report frequency validation failed");
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		Pair<Calendar.Field, Integer> parsedReportFrequency = ReportFrequencyParser.parse(res);
+
+		calendar.add(parsedReportFrequency.getValue0(), parsedReportFrequency.getValue1());
+		return calendar.getTime();
 	}
 
 	/**

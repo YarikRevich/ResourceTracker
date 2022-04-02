@@ -1,14 +1,14 @@
-/**
- * 
- */
 package com.resourcetracker.cloud.providers;
+
+import com.resourcetracker.cloud.Provider;
+import com.resourcetracker.config.Config;
+import com.resourcetracker.tf.TF;
 
 import java.net.InetAddress;
 import org.javatuples.*;
-import com.microsoft.terraform.TerraformClient;
-import com.microsoft.terraform.TerraformOptions;
 
-import com.resourcetracker.cloud.Provider;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 
@@ -19,29 +19,29 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
  *
  */
 public class AWS implements Provider {
+	final static Logger logger = LogManager.getLogger(AWS.class);
 
-
-	// @Override
-	// public boolean isResourceOnline(InetAddress publicAddress) {
-	// 	return false;
-	// }
-
-	// @Override
-	// public void init(Pair<String, String> credentials) {
-		
-	// 	// TODO Auto-generated method stub
-	
-	// }
+	private TF tf = new TF();
 
 	@Override
-	public void start(String context){
-		//TODO: start remote infrastructure
+	public void start() {
+		tf.setVar("context", Config.formatContext());
 
-		// new TerraformClient(new TerraformOptions());
+		tf.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", "");
+		tf.setEnvVar("AWS_REGION", "");
+		tf.setEnvVar("AWS_PROFILE", "");
+
+		tf.start();
+
+		if (tf.isOk()) {
+			logger.info("AWS tracker is started!");
+		} else {
+			logger.error("AWS tracker is not started..");
+		}
 	}
 
 	@Override
-	public   void stop(){
-		//TODO: stops remote infrastructure
+	public void stop() {
+		tf.stop();
 	}
 }
