@@ -1,0 +1,7 @@
+spring:
+    server:
+        port: 9099
+    jwt:
+        secret: resourcetracker
+        expirationDateInMs: 0
+        refreshExpirationDateInMs: 9000000
