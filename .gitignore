@@ -15,3 +15,7 @@ cli/target
 
 deploy/log/
 deploy/target/
+
+# Web front-end
+
+**/node_modules
