@@ -4,6 +4,7 @@ import com.resourcetracker.cloud.Provider;
 
 import java.net.InetAddress;
 import org.javatuples.*;
+import com.resourcetracker.tf.TF;
 
 public class AZ implements Provider {
 	private TF tf = new TF();

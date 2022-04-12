@@ -3,18 +3,24 @@ package com.resourcetracker.cloud.providers;
 import com.resourcetracker.config.Config;
 import com.resourcetracker.cloud.Provider;
 
+import com.resourcetracker.tf.TF;
+
 import java.net.InetAddress;
-import org.javatuples.*;
+import org.javatuples.Pair;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author YarikRevich
  *
  */
 public class GCP implements Provider {
-	private TF tf = new TF(); 
+	final static Logger logger = LogManager.getLogger(Loop.class);
+
+	private TF tf = new TF();
 
 	@Override
-	public  void start(){
+	public void start() {
 		tf.setVar("context", Config.formatContext());
 
 		tf.setEnvVar("GOOGLE_CREDENTIALS", "");
@@ -32,7 +38,7 @@ public class GCP implements Provider {
 	};
 
 	@Override
-	public  void stop(){
+	public void stop() {
 		tf.stop();
 	};
 }

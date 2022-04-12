@@ -52,3 +52,15 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
     }
   ])
 }
+
+
+resource "null_resource" "resourcetracker_ecs_instance_task_definition_run" {
+  provisioner "local-exec" {
+   command = "${aws_ecs_task_definition.resourcetracker_ecs_instance_task_definition.arn} ${aws_ecs_cluster.resourcetracker_ecs_cluster.id}"
+   interpreter = ["/bin/bash", "./run-task.sh"]
+  }
+
+  depends_on = [
+    aws_ecs_task_definition.resourcetracker_ecs_instance_task_definition,
+  ]
+}

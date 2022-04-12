@@ -7,11 +7,11 @@ stub:
 	@echo "Available commands: build, install"
 
 check_os:
-	ifeq ($(OS), Darwin)
-	else if ($(OS), Linux)
-	else
-		$(error Your OS is not supported)
-	endif
+ifeq ($(OS), Darwin)
+else ifeq ($(OS), Linux)
+else
+	$(error Your OS is not supported)
+endif
 
 build_deploy:
 	@cd deploy && docker build -f src/main/resources/Dockerfile -t resourcetrackerdeployment .
@@ -21,11 +21,6 @@ build_cli: check_os
 
 build_web: check_os
 	@echo "it works"
-
-	ifeq ($(OS), Darwin)
-
-	else if ($(OS), Linux)
-	endif
 
 build_gui: check_os
 	@echo "it works"

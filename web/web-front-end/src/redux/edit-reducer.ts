@@ -5,6 +5,7 @@ import {saveChangesPUT, getCloudProvidersGET, getFrequencyModifiersGET} from "..
 const initialState = {
 	project: [] as ReceivedData.Project[],
 	cloudProviders: [] as string[],
+	frequencyModifiers: [] as string[],
 }
 
 type initialStateType = typeof initialState

@@ -8,7 +8,7 @@ import com.resourcetracker.proc.Proc;
 public class TF {
     private String src;
     private Proc proc;
-    private HashMap<String, String> envVars = new HashMap<String, String>();
+    private TreeMap<String, String> envVars = new TreeMap<String, String>();
     private TreeMap<String, String> vars = new TreeMap<String, String>();
 
     public void setSrc(String src) {

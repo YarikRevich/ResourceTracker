@@ -1,12 +1,13 @@
-import com.resourcetracker.tools.parsers;
+package com.resourcetracker.tools.parsers;
 
 import org.javatuples.Pair;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.ArrayList;
 
 public class ReportFrequencyParser {
-    public static Pair<Calendar.Field, Integer> parse(String reportFrequency) {
-        Calendar.Field firstVal = null;
+    public static Pair<Integer, Integer> parse(String reportFrequency) {
+        Calendar firstVal = null;
         Integer secondVal = 0;
 
         if (reportFrequency.endsWith("d")) {

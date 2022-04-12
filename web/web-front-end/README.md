@@ -1,3 +1,3 @@
-# Demo
+# Web interface front-end
 
-Template for React app with TypeScript
+Front-end for web interface of ResourceTracker

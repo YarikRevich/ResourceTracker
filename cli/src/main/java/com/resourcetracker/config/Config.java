@@ -11,10 +11,14 @@ import org.javatuples.Pair;
 
 import com.resourcetracker.cloud.Provider.Providers;
 import com.resourcetracker.tools.utils.*;
-import com.resourcetracker.tools.exceptions.ConfigError;
-import com.resourcetracker.tools.utils.EmailValidation;
-import com.resourcetracker.tools.utils.ReportFrequencyValidation;
-import com.resourcetracker.tools.parser.ReportFrequencyParser;
+
+import com.resourcetracker.tools.exceptions.ConfigException;
+import com.resourcetracker.tools.exceptions.ValidationException;
+
+import com.resourcetracker.tools.parsers.ReportFrequencyParser;
+
+import com.resourcetracker.tools.utils.validation.EmailValidation;
+import com.resourcetracker.tools.utils.validation.ReportFrequencyValidation;
 
 import java.time.LocalDate;
 import com.resourcetracker.entities.Entity;
@@ -31,7 +35,7 @@ import org.yaml.snakeyaml.Yaml;
 
 /**
  * Parses YAML config file
- * 
+ *
  * @author YarikRevich
  *
  */
@@ -39,8 +43,8 @@ public final class Config {
 	private static TreeMap<String, Object> obj;
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @exception throws exception if YAML config is empty
 	 */
 	private static InputStream getInputStreamOfLocalConfigFile() {
@@ -77,9 +81,9 @@ public final class Config {
 
 	/**
 	 * Validates YAML config file
-	 * 
+	 *
 	 * @return if YAML config file passes validation
-	 * 
+	 *
 	 */
 	public static boolean isValid() throws Exception {
 		Config.getAddresses();
@@ -104,38 +108,43 @@ public final class Config {
 		@SuppressWarnings("unchecked")
 		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("mailing");
 		String res = (String) cloud.get("email");
-		if (!EmailValidation.patternMatches(res)){
-			throw new Exception("Email validation failed");
-		}
+
+		new EmailValidation(res, "Email is not valid");
+
 		return res;
 	}
 
 	/**
-	 * 
 	 * @return Delay for report sending mechanism
 	 */
-	public static Date getReportFrequency() {
+	public static int getReportFrequency() throws ValidationException {
 		@SuppressWarnings("unchecked")
 		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("settings");
 		String res = (String) cloud.get("report_frequency");
-		if (!ReportFrequencyValidation.patternMatches(res)){
-			throw new Exception("Report frequency validation failed");
-		}
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		Pair<Calendar.Field, Integer> parsedReportFrequency = ReportFrequencyParser.parse(res);
+		new ReportFrequencyValidation(res, "Report frequency is not valid");
 
-		calendar.add(parsedReportFrequency.getValue0(), parsedReportFrequency.getValue1());
-		return calendar.getTime();
+		String number = res.substring(0, res.length() - 1);
+		if (res.endsWith("s")){
+			return number * Frequency.secondInMilliseconds;
+		} else if (res.endsWith("m")){
+			return number * Frequency.minuteInMilliseconds;
+		} else if (res.endsWith("h")){
+			return number * Frequency.hourInMilliseconds;
+		} else if (res.endsWith("d")){
+			return number * Frequency.dayInMilliseconds;
+		} else if (res.endsWith("w")){
+			return number * Frequency.weekInMilliseconds;
+		};
+		return 0;
 	}
 
 	/**
 	 * looks for cloud provider set in YAML config file
-	 * 
+	 *
 	 * @return cloud provider set in YAML config file
 	 */
-	public static Providers getCloudProvider() throws ConfigError {
+	public static Providers getCloudProvider() throws ConfigException {
 		@SuppressWarnings("unchecked")
 		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
 		String cloudProvider = (String) cloud.get("provider");
@@ -148,7 +157,7 @@ public final class Config {
 			case "az":
 				return Providers.AZ;
 		}
-		throw new ConfigError("Provider is not available");
+		throw new ConfigException("Provider is not available");
 	}
 
 	public static String getProfile() {
@@ -185,10 +194,10 @@ public final class Config {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return ordered map of addresses with tags or not
 	 */
-	private static TreeMap<String, Entity> getAddresses() throws ConfigError {
+	private static TreeMap<String, Entity> getAddresses() throws ConfigException {
 		TreeMap<String, Entity> result = new TreeMap<String, Entity>();
 
 		ArrayList<ArrayList<String>> rawAddressesArray = null;
@@ -215,16 +224,17 @@ public final class Config {
 				index++;
 			}
 		} else {
-			throw new ConfigError("'addresses' can't be converted to array or map");
+			throw new ConfigException("'addresses' can't be converted to array or map");
 		}
 
 		return result;
 	}
 
-	public static String formatContext() throws ConfigError {
+	public static String formatContext() throws ConfigException {
 		JSONObject jo = new JSONObject();
 		jo.put("addresses", Config.getAddresses());
 		jo.put("report_email", Config.getReportEmail());
+		jo.put("report_frequency", Config.getReportFrequency());
 		return jo.toString();
 	}
 }

@@ -25,7 +25,7 @@ export const Edit = (props: any) => {
 								cloudProvider: Yup.string().oneOf(["aws", "gcp", "az"], "Choose valid cloud provider").required(),
 								credentials: Yup.string().matches(/^(~\/\.|\/)[a-z]*.*\.(json|yaml)/, "Choose valid file with credentials").required(),
 								profile: Yup.string().required("Profile is required"),
-								region: Yup.string().withContext().required("Region if required"),
+								region: Yup.string().required("Region if required"),
 								zone: Yup.string().required(),
 								email: Yup.string().email("Invalid email").required("Email is required"),
 								reportFrequency: Yup.number().required("Report frequency is required"),

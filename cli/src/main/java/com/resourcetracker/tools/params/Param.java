@@ -1,7 +1,23 @@
 package com.resourcetracker.tools.params;
 
-public interface Param<T> {
-    public void setValue(T value);
+import java.util.ArrayList;
 
-    public T getValue();
+/**
+ *
+ *
+ * @author YarikRevich
+ * @since 10 April 2022
+ */
+public interface Param<T> {
+	public void setValue(T value);
+
+	public T getValue();
+
+	public void setPositionalArg(String posArg);
+
+	public ArrayList<String> getPositionalArgs();
+
+	public boolean isWithPositionalArgs();
+
+	public BooleanParam withPositionalArgs();
 }

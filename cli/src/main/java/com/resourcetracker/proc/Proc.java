@@ -5,30 +5,34 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.StringBuilder;
 
-import java.util.hash.HashMap;
+import java.util.TreeMap;
+import java.util.ArrayList;
 
 public class Proc {
-    // public final static String ACTIVE_UNIX = "active";
-    // public final static String INACTIVE_UNIX = "inactive";
-
-    private String[] commands;
+    private ArrayList<String> commands;
     private String stdout;
     private String stderr;
-    private HashMap<String, String> envVars;
+    private TreeMap<String, String> envVars = new TreeMap<String, String>();
 
-    public Proc(String... command) {
-        this.commands = command;
+    public Proc(String... commands) {
+		for (String command : commands){
+			this.commands.add(command);
+		}
     }
 
-    public void setCommands(String... command) {
-        this.commands = command;
+    public void setCommands(String... commands) {
+        for (String command : commands){
+			this.commands.add(command);
+		}
     }
 
-    public void appendCommands(String ...command){
-        this.commands.append(command);
+    public void appendCommands(String ...commands){
+		for (String command : commands){
+			this.commands.add(command);
+		}
     }
 
-    public void setEnvVars(HashMap<String, String> envVars){
+    public void setEnvVars(TreeMap<String, String> envVars){
         this.envVars = envVars;
     }
 
@@ -78,7 +82,7 @@ public class Proc {
         return this.stdout;
     }
 
-   
+
 
     public String getStderr() {
         return this.stderr;
@@ -94,10 +98,10 @@ public class Proc {
 
 
 
-    // public <T>void setFlags(HashMap<String, T> flags){
+    // public <T>void setFlags(TreeMap<String, T> flags){
     //     for (var flag : flags){
     //         StringBuilder flagVal = new StringBuilder();
-    //         if (flag instanceof HashMap<?, ?>){
+    //         if (flag instanceof TreeMap<?, ?>){
     //             for (var entity : flag){
     //                 flagVal.append(entity.getKey());
     //                 flagVal.append("=");

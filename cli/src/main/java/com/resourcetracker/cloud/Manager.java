@@ -4,7 +4,7 @@ import org.javatuples.Pair;
 
 import com.resourcetracker.config.*;
 import com.resourcetracker.cloud.providers.*;
-import com.resourcetracker.tools.exceptions.*;
+import com.resourcetracker.tools.exceptions.ConfigException;
 import com.resourcetracker.config.Config;
 
 public class Manager {
@@ -20,7 +20,7 @@ public class Manager {
                 case AZ:
                     provider = new AZ();
             }
-        } catch (ConfigError e) {
+        } catch (ConfigException e) {
             e.printStackTrace();
         }
     }

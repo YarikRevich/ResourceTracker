@@ -1,4 +1,4 @@
-resource  "aws_vpc" "resourcetracker_vpc"{ 
+resource  "aws_vpc" "resourcetracker_vpc"{
     cidr_block = "10.0.0.0/16"
 }
 
@@ -6,6 +6,8 @@ resource "aws_security_group" "allow_resourcetracker_api_calls" {
   name        = "allow_resourcetracker_api_calls"
   description = "Allow ResourceTracker external API calls"
   vpc_id      = "${aws_vpc.resourcetracker_vpc.id}"
+
+
 
   ingress {
     description = ""
