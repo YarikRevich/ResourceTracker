@@ -36,28 +36,31 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
 }
 
 resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition" {
-  family                = "resourcetracker_ecs_instance_task_definition"
+  family = "resourcetracker_ecs_instance_task_definition"
   container_definitions = jsonencode([
     {
-       "name": "resourcetracker",
-       "environment": [{"RESOURCETRACKER_CONTEXT": "${var.context}"}]
-       "image": "resourcetrackerdeploy:latest",
-       "portMappings": [
+      "name" : "resourcetracker",
+      #   "environment" : [{ "RESOURCETRACKER_CONTEXT" : "${var.context}" }]
+      #   "image" : "resourcetrackerdeploy:latest",
+      "image" : "debian:latest",
+      "portMappings" : [
         {
-          "containerPort": 10075,
-          "hostPort": 10075
-        }],
-        memory: 512,
-        cpu: 128,
+          "containerPort" : 10075,
+          "hostPort" : 10075
+      }],
+      memory : 512,
+      cpu : 128,
     }
   ])
+
+  network_mode = "awsvpc"
 }
 
 
 resource "null_resource" "resourcetracker_ecs_instance_task_definition_run" {
   provisioner "local-exec" {
-   command = "${aws_ecs_task_definition.resourcetracker_ecs_instance_task_definition.arn} ${aws_ecs_cluster.resourcetracker_ecs_cluster.id}"
-   interpreter = ["/bin/bash", "./run-task.sh"]
+    command     = "${aws_ecs_task_definition.resourcetracker_ecs_instance_task_definition.arn} ${aws_ecs_cluster.resourcetracker_ecs_cluster.id}"
+    interpreter = ["/bin/bash", "./run-task.sh"]
   }
 
   depends_on = [
