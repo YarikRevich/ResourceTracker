@@ -19,4 +19,6 @@ Then, install Kafka for [Linux](https://hevodata.com/blog/how-to-install-kafka-o
 
 The main part of _*ResourceTracker*_ is terraform, you can install it via [this link](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
+## Conclusion
+
 See more at [Wiki](../../wiki)
