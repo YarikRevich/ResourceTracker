@@ -1,9 +1,15 @@
+# MacOS
+
 .DS_Store
-cli/.DS_Store
-deploy/.DS_Store
+
+# IDE
+
+.vscode
 
 # Vagrant
+
 Vagrantfile
+.vagrant
 
 # CLI
 
@@ -19,3 +25,11 @@ deploy/target/
 # Web front-end
 
 **/node_modules
+
+# Gradle
+
+.gradle
+
+# Eclipse
+
+.settings 
