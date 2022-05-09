@@ -37,22 +37,23 @@ public class Proc {
     }
 
     public void start() {
-        ProcessBuilder ps = new ProcessBuilder(this.commands);
-        ps.redirectErrorStream(true);
+        ProcessBuilder processBuilder = new ProcessBuilder(this.commands);
+        processBuilder.redirectErrorStream(true);
 
-        Map<String, String> env = pb.environment();
-        for (var envVar : this.envVars){
+        Map<String, String> env = processBuilder.environment();
+
+        for (var envVar : this.envVars.entrySet()){
             env.put(envVar.getKey(), envVar.getValue());
         }
 
-        Process pr = null;
+        Process process = null;
         try {
-            pr = ps.start();
+            process = processBuilder.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         try {
             while ((line = in.readLine()) != null) {
@@ -62,7 +63,7 @@ public class Proc {
             e.printStackTrace();
         }
 
-        in = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+        in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         line = "";
         try {
             while ((line = in.readLine()) != null) {
@@ -72,7 +73,7 @@ public class Proc {
             e.printStackTrace();
         }
         try {
-            pr.waitFor();
+            process.waitFor();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -81,8 +82,6 @@ public class Proc {
     public String getStdout() {
         return this.stdout;
     }
-
-
 
     public String getStderr() {
         return this.stderr;

@@ -5,6 +5,10 @@ import java.util.TreeMap;
 
 import com.resourcetracker.proc.Proc;
 
+/**
+ * Application API for executing external terraform
+ * There are two core methods: start and stop.
+ */
 public class TF {
     private String src;
     private Proc proc;

@@ -15,7 +15,7 @@ public class Params {
 	private static Param<Boolean> start = new BooleanParam(false).withPositionalArgs();
 	private static Param<Boolean> stop = new BooleanParam(false).withPositionalArgs();
 	private static Param<Boolean> validate = new BooleanParam(false);
-	private static Param<Boolean> log = new BooleanParam(false).withPositionalArgs();
+	private static Param<Boolean> logs = new BooleanParam(false).withPositionalArgs();
 
 	/**
 	 * Flags

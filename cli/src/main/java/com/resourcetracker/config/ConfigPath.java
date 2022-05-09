@@ -11,6 +11,7 @@ import java.nio.file.*;
  */
 public class ConfigPath {
     private static String configPath;
+
     static {
         String os = System.getProperty("os.name");
         if (os.contains("Windows")){
