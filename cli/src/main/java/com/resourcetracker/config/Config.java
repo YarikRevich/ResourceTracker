@@ -31,7 +31,12 @@ import com.opencsv.exceptions.CsvValidationException;
 
 import org.apache.commons.io.IOUtils;
 
-import org.yaml.snakeyaml.Yaml;
+// import org.yaml.snakeyaml.Yaml;
+
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.resourcetracker.models.ConfigModel;
 
 /**
  * Parses YAML config file
@@ -40,43 +45,40 @@ import org.yaml.snakeyaml.Yaml;
  *
  */
 public final class Config {
+	final static Logger logger = LogManager.getLogger(Loop.class);
+
 	private static TreeMap<String, Object> obj;
 
+	private InputStream configFile;
+	private ConfigModel parsedConfigFile;
+
 	/**
-	 *
-	 *
-	 * @exception throws exception if YAML config is empty
+	 * Opens YAML configuration file
 	 */
-	private static InputStream getInputStreamOfLocalConfigFile() {
-		File file = new File(ConfigPath.getConfigPath());
+	public Config() {
+		var os = System.getProperty("os.name");
+		String configFilePath;
+		if (os.contains("Windows")) {
+			configFilePath = Paths.get("/usr/local/etc/resourcetracker.yaml").toString();
+		} else if (os.contains("Linux") || os.contains("Mac OS X")) {
+			configFilePath = Paths.get("/usr/local/etc/resourcetracker.yaml").toString();
+		}
+
 		try {
-			file.createNewFile();
+			configFile = new FileInputStream(new File(configFilePath));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		InputStream inputStream = null;
-		try {
-			inputStream = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return inputStream;
 	}
 
-	public static void setSrc(String... src) {
-		Yaml yaml = new Yaml();
-		InputStream inputStream = null;
-		if (src.length > 0) {
-			inputStream = IOUtils.toInputStream(src[0]);
-		} else {
-			inputStream = Config.getInputStreamOfLocalConfigFile();
-		}
-		yaml.load(inputStream);
-		try {
-			Config.obj = new ConvertMapToTreeMap<Object>(config).getValue();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	/**
+	 * Parses opened YAML configuration file
+	 */
+	public void parse() {
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		parsedConfigFile = mapper.readValue(configFile, ConfigModel.class);
 	}
 
 	/**
@@ -125,17 +127,17 @@ public final class Config {
 		new ReportFrequencyValidation(res, "Report frequency is not valid");
 
 		String number = res.substring(0, res.length() - 1);
-		if (res.endsWith("s")){
+		if (res.endsWith("s")) {
 			return number * Frequency.secondInMilliseconds;
-		} else if (res.endsWith("m")){
+		} else if (res.endsWith("m")) {
 			return number * Frequency.minuteInMilliseconds;
-		} else if (res.endsWith("h")){
+		} else if (res.endsWith("h")) {
 			return number * Frequency.hourInMilliseconds;
-		} else if (res.endsWith("d")){
+		} else if (res.endsWith("d")) {
 			return number * Frequency.dayInMilliseconds;
-		} else if (res.endsWith("w")){
+		} else if (res.endsWith("w")) {
 			return number * Frequency.weekInMilliseconds;
-		};
+		}
 		return 0;
 	}
 
