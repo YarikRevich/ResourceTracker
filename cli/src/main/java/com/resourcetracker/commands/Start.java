@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Command(name = "start")
 public class Start implements Runnable{
-	@Option(names = {"-p", "--project"}, description = "project name to start")
+	@Option(names = {"-p", "--project"}, description = "project name to start", required = true)
 	private String project;
 
 	@Option(names = {"-r", "--request"}, description = "request to start if mode is direct")
