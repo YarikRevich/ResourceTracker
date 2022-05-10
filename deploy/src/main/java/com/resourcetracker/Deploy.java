@@ -1,14 +1,17 @@
 package com.resourcetracker;
 
-import com.resourcetracker.loop.Loop;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * @author YarikRevich
- */
-public class Deploy
-{
-    public static void main( String[] args )
-    {
-        Loop.run();
-    }
+@SpringBootApplication
+public class Deploy {
+
+	/**
+	 * Runs application
+	 *
+	 * @param args command line arguments
+	 *
+	 */
+	public static void main(String[] args) throws Exception {
+		SpringApplication.run(Deploy.class, args);
+	}
 }

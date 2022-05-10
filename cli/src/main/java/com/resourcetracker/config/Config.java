@@ -50,7 +50,7 @@ public final class Config {
 	private static TreeMap<String, Object> obj;
 
 	private InputStream configFile;
-	private ConfigModel parsedConfigFile;
+	public ConfigModel parsedConfigFile;
 
 	/**
 	 * Opens YAML configuration file
@@ -81,162 +81,118 @@ public final class Config {
 		parsedConfigFile = mapper.readValue(configFile, ConfigModel.class);
 	}
 
-	/**
-	 * Validates YAML config file
-	 *
-	 * @return if YAML config file passes validation
-	 *
-	 */
-	public static boolean isValid() throws Exception {
-		Config.getAddresses();
-		Providers provider = Config.getCloudProvider();
-		switch (provider) {
-			case AWS:
-				Config.getProfile();
-			case GCP:
-				Config.getProject();
-				Config.getRegion();
-				Config.getZone();
-			case AZ:
-		}
-		Config.getCredentials();
-		Config.getReportEmail();
-		Config.getReportFrequency();
-
-		return true;
-	};
-
-	public static String getReportEmail() throws Exception {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("mailing");
-		String res = (String) cloud.get("email");
-
-		new EmailValidation(res, "Email is not valid");
-
-		return res;
+	//Checks if configuration file is valid
+	public boolean isValid(){
+		System.out.println(parsedConfigFile.Requests);
+		return false;
 	}
 
-	/**
-	 * @return Delay for report sending mechanism
-	 */
-	public static int getReportFrequency() throws ValidationException {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("settings");
-		String res = (String) cloud.get("report_frequency");
+	// /**
+	//  * Validates YAML config file
+	//  *
+	//  * @return if YAML config file passes validation
+	//  *
+	//  */
+	// public static boolean isValid() throws Exception {
+	// 	Config.getAddresses();
+	// 	Providers provider = Config.getCloudProvider();
+	// 	switch (provider) {
+	// 		case AWS:
+	// 			Config.getProfile();
+	// 		case GCP:
+	// 			Config.getProject();
+	// 			Config.getRegion();
+	// 			Config.getZone();
+	// 		case AZ:
+	// 	}
+	// 	Config.getCredentials();
+	// 	Config.getReportEmail();
+	// 	Config.getReportFrequency();
 
-		new ReportFrequencyValidation(res, "Report frequency is not valid");
+	// 	return true;
+	// };
 
-		String number = res.substring(0, res.length() - 1);
-		if (res.endsWith("s")) {
-			return number * Frequency.secondInMilliseconds;
-		} else if (res.endsWith("m")) {
-			return number * Frequency.minuteInMilliseconds;
-		} else if (res.endsWith("h")) {
-			return number * Frequency.hourInMilliseconds;
-		} else if (res.endsWith("d")) {
-			return number * Frequency.dayInMilliseconds;
-		} else if (res.endsWith("w")) {
-			return number * Frequency.weekInMilliseconds;
-		}
-		return 0;
-	}
+	// public static String getReportEmail() throws Exception {
+	// 	@SuppressWarnings("unchecked")
+	// 	TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("mailing");
+	// 	String res = (String) cloud.get("email");
+
+	// 	new EmailValidation(res, "Email is not valid");
+
+	// 	return res;
+	// }
 
 	/**
 	 * looks for cloud provider set in YAML config file
 	 *
 	 * @return cloud provider set in YAML config file
 	 */
-	public static Providers getCloudProvider() throws ConfigException {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
-		String cloudProvider = (String) cloud.get("provider");
+	// public static Providers getCloudProvider() throws ConfigException {
+	// 	@SuppressWarnings("unchecked")
+	// 	TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
+	// 	String cloudProvider = (String) cloud.get("provider");
 
-		switch (cloudProvider) {
-			case "aws":
-				return Providers.AWS;
-			case "gcp":
-				return Providers.GCP;
-			case "az":
-				return Providers.AZ;
-		}
-		throw new ConfigException("Provider is not available");
-	}
+	// 	switch (cloudProvider) {
+	// 		case "aws":
+	// 			return Providers.AWS;
+	// 		case "gcp":
+	// 			return Providers.GCP;
+	// 		case "az":
+	// 			return Providers.AZ;
+	// 	}
+	// 	throw new ConfigException("Provider is not available");
+	// }
+	// private static String getCredentials() throws Exception {
+	// 	@SuppressWarnings("unchecked")
+	// 	TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
+	// 	String credentials = (String) cloud.get("credentials");
 
-	public static String getProfile() {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
-		return (String) cloud.get("profile");
-	}
+	// 	FileInputStream fis = new FileInputStream(credentials);
+	// 	return IOUtils.toString(fis, "UTF-8");
+	// }
 
-	public static String getRegion() {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
-		return (String) cloud.get("region");
-	}
+	// /**
+	//  *
+	//  * @return ordered map of addresses with tags or not
+	//  */
+	// private static TreeMap<String, Entity> getAddresses() throws ConfigException {
+	// 	TreeMap<String, Entity> result = new TreeMap<String, Entity>();
 
-	public static String getProject() {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
-		return (String) cloud.get("project");
-	}
+	// 	ArrayList<ArrayList<String>> rawAddressesArray = null;
+	// 	TreeMap<String, ArrayList<String>> rawAddressesMap = null;
+	// 	try {
+	// 		rawAddressesArray = new ConvertObjectToArray<ArrayList<String>>(Config.obj.get("addresses")).getValue();
+	// 	} catch (Exception e) {
+	// 		try {
+	// 			rawAddressesMap = new ConvertMapToTreeMap<ArrayList<String>>(Config.obj.get("addresses")).getValue();
+	// 		} catch (Exception e1) {
+	// 			e1.printStackTrace();
+	// 		}
+	// 	}
 
-	public static String getZone() {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
-		return (String) cloud.get("zone");
-	}
+	// 	int index = 0;
+	// 	if (rawAddressesArray != null) {
+	// 		for (var value : rawAddressesArray) {
+	// 			result.put(Integer.toString(index), new Entity(index, value));
+	// 			index++;
+	// 		}
+	// 	} else if (rawAddressesMap != null) {
+	// 		for (var value : rawAddressesMap.entrySet()) {
+	// 			result.put(value.getKey(), new Entity(index, value.getValue()));
+	// 			index++;
+	// 		}
+	// 	} else {
+	// 		throw new ConfigException("'addresses' can't be converted to array or map");
+	// 	}
 
-	private static String getCredentials() throws Exception {
-		@SuppressWarnings("unchecked")
-		TreeMap<String, Object> cloud = (TreeMap<String, Object>) obj.get("cloud");
-		String credentials = (String) cloud.get("credentials");
+	// 	return result;
+	// }
 
-		FileInputStream fis = new FileInputStream(credentials);
-		return IOUtils.toString(fis, "UTF-8");
-	}
-
-	/**
-	 *
-	 * @return ordered map of addresses with tags or not
-	 */
-	private static TreeMap<String, Entity> getAddresses() throws ConfigException {
-		TreeMap<String, Entity> result = new TreeMap<String, Entity>();
-
-		ArrayList<ArrayList<String>> rawAddressesArray = null;
-		TreeMap<String, ArrayList<String>> rawAddressesMap = null;
-		try {
-			rawAddressesArray = new ConvertObjectToArray<ArrayList<String>>(Config.obj.get("addresses")).getValue();
-		} catch (Exception e) {
-			try {
-				rawAddressesMap = new ConvertMapToTreeMap<ArrayList<String>>(Config.obj.get("addresses")).getValue();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		}
-
-		int index = 0;
-		if (rawAddressesArray != null) {
-			for (var value : rawAddressesArray) {
-				result.put(Integer.toString(index), new Entity(index, value));
-				index++;
-			}
-		} else if (rawAddressesMap != null) {
-			for (var value : rawAddressesMap.entrySet()) {
-				result.put(value.getKey(), new Entity(index, value.getValue()));
-				index++;
-			}
-		} else {
-			throw new ConfigException("'addresses' can't be converted to array or map");
-		}
-
-		return result;
-	}
-
-	public static String formatContext() throws ConfigException {
-		JSONObject jo = new JSONObject();
-		jo.put("addresses", Config.getAddresses());
-		jo.put("report_email", Config.getReportEmail());
-		jo.put("report_frequency", Config.getReportFrequency());
-		return jo.toString();
-	}
+	// public static String formatContext() throws ConfigException {
+		// JSONObject jo = new JSONObject();
+		// jo.put("addresses", Config.getAddresses());
+		// jo.put("report_email", Config.getReportEmail());
+		// jo.put("report_frequency", Config.getReportFrequency());
+		// return jo.toString();
+	// }
 }

@@ -103,6 +103,16 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
+		<plugin>
+			<groupId>com.google.cloud.tools</groupId>
+			<artifactId>jib-maven-plugin</artifactId>
+			<version>2.8.0</version>
+			<configuration>
+			  <to>
+				<image>registry.hub.docker.com/yariksvitlitskiy/resourcetracker</image>
+			  </to>
+			</configuration>
+		  </plugin>
       </plugins>
     </pluginManagement>
   </build>
