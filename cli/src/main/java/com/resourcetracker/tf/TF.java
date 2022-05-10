@@ -10,14 +10,19 @@ import com.resourcetracker.proc.Proc;
  * There are two core methods: start and stop.
  */
 public class TF {
-    private String src;
+	/**
+	 * Path to terraform files source
+	 */
+    private String path;
+
     private Proc proc;
+
     private TreeMap<String, String> envVars = new TreeMap<String, String>();
     private TreeMap<String, String> vars = new TreeMap<String, String>();
 
-    public void setSrc(String src) {
-        this.src = src;
-    }
+	public TF(String path){
+		this.path = path;
+	}
 
     public void setEnvVar(String key, String value) {
         this.envVars.put(key, value);
@@ -40,7 +45,7 @@ public class TF {
         });
 
         StringBuilder command = new StringBuilder();
-        command.append("-chdir").append("=").append(this.src);
+        command.append("-chdir").append("=").append(this.path);
         proc.appendCommands(command.toString());
 
         proc.setEnvVars(this.envVars);

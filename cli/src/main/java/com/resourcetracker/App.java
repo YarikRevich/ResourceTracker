@@ -1,20 +1,8 @@
 package com.resourcetracker;
 
-import com.resourcetracker.tools.params.Params;
-import com.resourcetracker.tools.params.ParamCallbackDefault;
-import com.resourcetracker.config.Config;
-import com.resourcetracker.cloud.Manager;
 import com.resourcetracker.commands.Base;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
-
-import org.springframework.boot.SpringApplication;
+import org.springframework.stereotype.Component;
+import org.springframework.boot.CommandLineRunner;
 
 @Component
 public class App implements CommandLineRunner {

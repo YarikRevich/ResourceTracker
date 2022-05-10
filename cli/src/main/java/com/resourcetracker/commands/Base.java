@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 		Stop.class,
 		Status.class,
 		Validate.class,
-	}, mixinStandardHelpOptions = true, version = "1.0"
+	},
+	mixinStandardHelpOptions = true,
+	description = "Cloud-based remote resource tracker",
+	version = "1.0"
 )
 public class Base implements Runnable{
 	@Override

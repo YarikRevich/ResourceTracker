@@ -1,7 +1,9 @@
 package com.resourcetracker;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 @SpringBootApplication
-public class ResourceTracker {
+public class CLI {
 
 	/**
 	 * Runs application
@@ -10,6 +12,6 @@ public class ResourceTracker {
 	 *
 	 */
 	public static void main(String[] args) throws Exception {
-		SpringApplication.run(ResourceTracker.class, args);
+		SpringApplication.run(CLI.class, args);
 	}
 }
