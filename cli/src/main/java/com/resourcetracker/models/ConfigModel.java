@@ -23,6 +23,9 @@ public class ConfigModel {
 		public Optional<Method> method;
 
 		public Optional<String> data;
+
+		@Pattern(regexp="^((^((([0-9]*)(s|m|h|d|w))))|(^once))$")
+		public String frequency;
 	}
 
 	public ArrayList<Request> requests;
@@ -36,7 +39,7 @@ public class ConfigModel {
 
 		public Providers provider;
 
-		@Pattern(regexp="^((~./)?)((~/.)?)((/?)([a-zA-Z_-]*))$")
+		@Pattern(regexp="^(((~./)?)|((~/.)?)|((/?))?)([a-zA-Z/]*)$")
 		public String credentials;
 
 
@@ -54,9 +57,8 @@ public class ConfigModel {
 	public Mailing mailing;
 
 	class Scheduler {
-		@Pattern(regexp="^([0-9]*)(s|m|h|d|w)")
+		@Pattern(regexp="^([0-9]*)(s|m|h|d|w)$")
 		public String frequency;
-
 
 		/**
 		 * Parses raw string frequency and converts it to int

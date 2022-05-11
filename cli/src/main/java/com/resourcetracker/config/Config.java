@@ -3,9 +3,6 @@ package com.resourcetracker.config;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map;
-import java.io.*;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.javatuples.Pair;
 
@@ -20,19 +17,11 @@ import com.resourcetracker.tools.parsers.ReportFrequencyParser;
 import com.resourcetracker.tools.utils.validation.EmailValidation;
 import com.resourcetracker.tools.utils.validation.ReportFrequencyValidation;
 
-import java.time.LocalDate;
-import com.resourcetracker.entities.Entity;
-
-import org.json.JSONObject;
-
 import org.javatuples.*;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
 
 import org.apache.commons.io.IOUtils;
 
-// import org.yaml.snakeyaml.Yaml;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,7 +31,6 @@ import com.resourcetracker.models.ConfigModel;
  * Parses YAML config file
  *
  * @author YarikRevich
- *
  */
 public final class Config {
 	final static Logger logger = LogManager.getLogger(Loop.class);
@@ -77,7 +65,8 @@ public final class Config {
 	 * Parses opened YAML configuration file
 	 */
 	public void parse() {
-		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
+		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 		parsedConfigFile = mapper.readValue(configFile, ConfigModel.class);
 	}
 
