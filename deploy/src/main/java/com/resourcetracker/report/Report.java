@@ -1,6 +1,7 @@
 package com.resourcetracker.report;
 
-import com.resourcetracker.ticker.Ticker;
+import com.resourcetracker.storage.entities.Record;
+import java.util.ArrayList;
 
 /**
  * Sends reports with stated frequency
@@ -8,7 +9,14 @@ import com.resourcetracker.ticker.Ticker;
  * @author YarikRevich
  */
 public class Report{
-    public static boolean (){
-        return false;
-    }
+
+	//Creates report from the given records
+	public Report(Record... records){
+
+	}
+
+	//Sends general report to the given email
+	public void sendTo(String email){
+
+	}
 }

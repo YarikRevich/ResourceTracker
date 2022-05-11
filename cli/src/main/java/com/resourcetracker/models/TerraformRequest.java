@@ -1,6 +1,7 @@
 package com.resourcetracker.entities;
 
 import java.util.ArrayList;
+import org.json.JSONObject;
 
 /**
  * @author YarikRevich
