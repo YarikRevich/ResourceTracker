@@ -14,28 +14,51 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.release>17</maven.compiler.release>
 	</properties>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.4</version>
+		<relativePath/>
+	</parent>
+
 	<dependencies>
+
+		<!-- JUnit dependencies -->
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Spring Boot dependencies -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20220320</version>
 		</dependency>
+
+		<!-- Hibernate dependencies -->
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>6.0.1.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>net.kemitix</groupId>
+			<artifactId>sqlite-dialect</artifactId>
+			<version>0.1.0</version>
 		</dependency>
 	</dependencies>
 

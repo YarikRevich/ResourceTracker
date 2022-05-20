@@ -2,9 +2,8 @@ package com.resourcetracker.config;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.Map;
-
-import org.javatuples.Pair;
 
 import com.resourcetracker.cloud.Provider.Providers;
 import com.resourcetracker.tools.utils.*;
@@ -14,18 +13,13 @@ import com.resourcetracker.tools.exceptions.ValidationException;
 
 import com.resourcetracker.tools.parsers.ReportFrequencyParser;
 
-import com.resourcetracker.tools.utils.validation.EmailValidation;
-import com.resourcetracker.tools.utils.validation.ReportFrequencyValidation;
-
-import org.javatuples.*;
-
 import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.resourcetracker.models.ConfigModel;
+import com.resourcetracker.config.entity.ConfigEntity;
 
 /**
  * Parses YAML config file
@@ -33,47 +27,50 @@ import com.resourcetracker.models.ConfigModel;
  * @author YarikRevich
  */
 public final class Config {
-	final static Logger logger = LogManager.getLogger(Loop.class);
+	final static Logger logger = LogManager.getLogger(Config.class);
 
 	private static TreeMap<String, Object> obj;
 
 	private InputStream configFile;
-	public ConfigModel parsedConfigFile;
+	public ConfigEntity parsedConfigFile;
 
 	/**
 	 * Opens YAML configuration file
 	 */
 	public Config() {
-		var os = System.getProperty("os.name");
+		try {
+			configFile = new FileInputStream(new File(this.getConfigFilePath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		logger.info("config file is read");
+	}
+
+	private String getConfigFilePath(){
+		String os = System.getProperty("os.name");
 		String configFilePath;
 		if (os.contains("Windows")) {
 			configFilePath = Paths.get("/usr/local/etc/resourcetracker.yaml").toString();
 		} else if (os.contains("Linux") || os.contains("Mac OS X")) {
 			configFilePath = Paths.get("/usr/local/etc/resourcetracker.yaml").toString();
 		}
-
-		try {
-			configFile = new FileInputStream(new File(configFilePath));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		return configFilePath;
 	}
 
 	/**
 	 * Parses opened YAML configuration file
 	 */
-	public void parse() {
+	public void parse() throws ConfigException {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-		parsedConfigFile = mapper.readValue(configFile, ConfigModel.class);
+		parsedConfigFile = mapper.readValue(configFile, ConfigEntity.class);
+		logger.info("config file was parsed");
 	}
 
-	//Checks if configuration file is valid
-	public boolean isValid(){
-		System.out.println(parsedConfigFile.Requests);
-		return false;
+	public ConfigEntity getParsedConfigFile(){
+		return this.parsedConfigFile;
 	}
 
 	// /**
