@@ -17,6 +17,8 @@ public class Start implements Runnable{
 	private String request;
 
 	public void run() {
-
+		Config config = new Config();
+		config.parse();
+		TerraformManager terraformManager = new TerraformManager(config);
 	}
 }

@@ -2,6 +2,16 @@
 
 .DS_Store
 
+# Terraform
+
+**/.tf
+**/.terraform
+
+# APT
+
+.apt_generated
+.apt_generated_tests
+
 # IDE
 
 .vscode
@@ -11,16 +21,13 @@
 Vagrantfile
 .vagrant
 
-# CLI
+# Maven
 
-cli/src/main/tf/root/.terraform
-cli/log
-cli/target
+**/target
 
-# Deploy
+# Logs
 
-deploy/log/
-deploy/target/
+**/logs
 
 # Web front-end
 
@@ -32,4 +39,4 @@ deploy/target/
 
 # Eclipse
 
-.settings 
+.settings

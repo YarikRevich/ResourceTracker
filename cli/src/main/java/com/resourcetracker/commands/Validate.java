@@ -15,13 +15,14 @@ public class Validate implements Runnable {
 
 	@Override
 	public void run() {
-		var config = new Config();
-		config.parse();
-
-		if (config.isValid()) {
-
-		} else {
-			System.out.println("");
+		Config config = new Config();
+		try {
+			config.parse();
+		} catch (ConfigException e) {
+			System.out.println("Configuration file is not valid");
+			e.printStackTrace();
+		} finally {
+			System.out.println("Configuration file is valid");
 		}
 	}
 }
