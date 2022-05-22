@@ -7,6 +7,7 @@ import com.resourcetracker.terraform.common.TerraformAPI;
 
 import java.net.InetAddress;
 import org.javatuples.Pair;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 

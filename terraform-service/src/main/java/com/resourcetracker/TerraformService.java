@@ -2,25 +2,24 @@ package com.resourcetracker;
 
 import org.javatuples.Pair;
 
-import com.resourcetracker.config.*;
-import com.resourcetracker.cloud.providers.*;
-import com.resourcetracker.tools.exceptions.ConfigException;
-import com.resourcetracker.config.Config;
+import com.resourcetracker.ConfigService;
+import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.exception.ConfigException;
+
+import com.resourcetracker.providers.common.IProvider;
 
 public class TerraformService {
-	private Provider provider;
-	public Config config;
+	private IProvider chosenProvider;
 
-	public TerraformService(Config config) {
+	public TerraformService(ConfigEntity.Provider provider) {
 		try {
-			var parsedConfigFile = config .getParsedConfigFile();
-			switch (parsedConfigFile.cloud.provider) {
+			switch (provider) {
 				case AWS:
-					provider = new AWS();
+					chosenProvider = new AWS();
 				case GCP:
-					provider = new GCP();
+					chosenProvider = new GCP();
 				case AZ:
-					provider = new AZ();
+					chosenProvider = new AZ();
 			}
 		} catch (ConfigException e) {
 			e.printStackTrace();
