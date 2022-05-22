@@ -5,6 +5,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import com.resourcetracker.config_service.ConfigService;
+import com.resourcetracker.config_service.exception.ConfigException;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,8 +20,8 @@ public class Start implements Runnable{
 	private String request;
 
 	public void run() {
-		Config config = new Config();
-		config.parse();
-		TerraformManager terraformManager = new TerraformManager(config);
+		ConfigService configService = new ConfigService();
+		configService.parse();
+		TerraformService terraformService = new TerraformService(configService);
 	}
 }

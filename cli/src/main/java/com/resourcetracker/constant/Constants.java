@@ -1,6 +1,6 @@
 package com.resourcetracker.constant;
 
 public class Constants {
-	public static final String homeFolder = "/usr/local/etc/";
-	public static final String configFile = "resourcetracker.yaml";
+	public static final String HOME_FOLDER_PATH = "/usr/local/etc/";
+	public static final String CONFIG_FILE_NAME = "resourcetracker.yaml";
 }

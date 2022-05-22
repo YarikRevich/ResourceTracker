@@ -12,7 +12,7 @@ WEB_SHARED_TARGET_PATH := /usr/share/java/web*
 RESOURCETRACKER_CONFIG_PATH := /usr/local/etc/resourcetracker
 RESOURCETRACKER_BINARY_FILE := /usr/local/bin/resourcetracker
 
-DEFAULT_CONFIG_PATH := configs/resourcetracker.yaml
+DEFAULT_CONFIG_PATH := default/resourcetracker.yaml
 
 # Init targets
 

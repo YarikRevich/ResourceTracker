@@ -15,9 +15,9 @@ public class Validate implements Runnable {
 
 	@Override
 	public void run() {
-		Config config = new Config();
+		ConfigService configService = new ConfigService();
 		try {
-			config.parse();
+			configService.parse();
 		} catch (ConfigException e) {
 			System.out.println("Configuration file is not valid");
 			e.printStackTrace();
