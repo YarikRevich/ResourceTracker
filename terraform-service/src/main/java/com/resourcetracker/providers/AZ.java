@@ -1,17 +1,21 @@
 package com.resourcetracker.terraform.providers;
 
-import com.resourcetracker.cloud.Provider;
+import com.resourcetracker.providers.common.IProvider;
+import com.resourcetracker.terraform.services.TerraformAPIService;
 
-import java.net.InetAddress;
-import org.javatuples.*;
-import com.resourcetracker.terraform.common.TerraformAPI;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class AZ implements IProvider {
-	private TerraformAPI terraformAPI = new TerraformAPI();
+	final static Logger logger = LogManager.getLogger(AZ.class);
+
+	@Autowired
+	private TerraformAPIService terraformAPIService;
 
 	@Override
 	public void start(String context) {
-		terraformAPI.setVar("context", Config.formatContext());
+		// terraformAPI.setVar("context", Config.formatContext());
+
 		terraformAPI.setEnvVar("ARM_CLIENT_ID", "");
 		terraformAPI.setEnvVar("ARM_CLIENT_SECRET", "");
 		terraformAPI.setEnvVar("ARM_SUBSCRIPTION_ID", "");
@@ -30,4 +34,9 @@ public class AZ implements IProvider {
 	public void stop() {
 		terraformAPI.stop();
 	};
+
+	@Override
+	public void setTerraformAPI(TerraformAPI terraformAPI) {
+		this.terraformAPI = terraformAPI;
+	}
 }

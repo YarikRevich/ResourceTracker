@@ -1,16 +1,14 @@
 package com.resourcetracker.terraform.providers;
 
-import com.resourcetracker.cloud.Provider;
-import com.resourcetracker.config.Config;
-import com.resourcetracker.terraform.common.TerraformAPI;
-
-import java.net.InetAddress;
-import org.javatuples.*;
+import com.resourcetracker.providers.common.IProvider;
+import com.resourcetracker.terraform.services.TerraformAPIService;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+// import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+
+import org.springframework.stereotype.Autowired;
 
 /**
  * AWS implementation of Provider
@@ -21,27 +19,35 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 public class AWS implements IProvider {
 	final static Logger logger = LogManager.getLogger(AWS.class);
 
-	private TerraformAPI terraformAPI = new TerraformAPI();
+	@Autowired
+	private TerraformAPIService terraformAPIService;
 
 	@Override
 	public void start() {
-		terraformAPI.setVar("context", Config.formatContext());
+		// terraformAPI.setVar("context", Config.formatContext());
 
 		terraformAPI.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", "");
 		terraformAPI.setEnvVar("AWS_REGION", "");
 		terraformAPI.setEnvVar("AWS_PROFILE", "");
 
-		terraformAPI.start();
-
-		if (terraformAPI.isError()) {
-			logger.error("AWS tracker is not started..");
+		if (terraformAPI.start()) {
+			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
 		} else {
-			logger.info("AWS tracker is started!");
+			logger.error(String.format("Provider(%s) is not started", this.getClass().toString()));
 		}
 	}
 
 	@Override
 	public void stop() {
-		terraformAPI.stop();
+		if (terraformAPI.stop()){
+			logger.error(String.format("Provider(%s) is stoped", this.getClass().toString()));
+		}else{
+			logger.error(String.format("Provider(%s) is not stoped", this.getClass().toString()));
+		}
+	}
+
+	@Override
+	public void setTerraformAPI(TerraformAPI terraformAPI) {
+		this.terraformAPI = terraformAPI;
 	}
 }

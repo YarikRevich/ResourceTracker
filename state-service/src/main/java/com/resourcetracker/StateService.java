@@ -30,12 +30,31 @@ public class StateService {
 		if (parsedStateFile == null) {
 			objectMapper = objectMapper = new ObjectMapper()
 					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+			File stateFile = new File(Constants.STATE_FILE_PATH);
+			if (stateFile.createNewFile()) {
+				try {
+					objectMapper.writeValue(stateFile, this.getDefaultStateEntity());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			try {
-				parsedStateFile = objectMapper.readValue(new File(Constants.STATE_FILE_PATH), StateEntity.class);
+				parsedStateFile = objectMapper.readValue(stateFile, StateEntity.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * @return default StateEntity entity
+	 */
+	private StateEntity getDefaultStateEntity() {
+		StateEntry stateEntry = new StateEntry();
+		stateEntry.mode = StateEntity.Mode.STOPED;
+		File configFile = new File(Constants.CONFIG_FILE_PATH);
+		stateEntry.configFileHash = configFile.hashCode();
+		return stateEntry;
 	}
 
 	/**

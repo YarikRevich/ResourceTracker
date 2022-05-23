@@ -1,28 +1,20 @@
 package com.resourcetracker.commands;
 
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
+
+import com.resourcetracker.ConfigService;
 
 import org.springframework.stereotype.Component;
-
-import com.resourcetracker.config.Config;
+import org.springframework.stereotype.Autowired;
 
 @Component
 @Command(name = "validate")
 public class Validate implements Runnable {
 
+	@Autowired
+	ConfigService configService;
+
 	@Override
 	public void run() {
-		ConfigService configService = new ConfigService();
-		try {
-			configService.parse();
-		} catch (ConfigException e) {
-			System.out.println("Configuration file is not valid");
-			e.printStackTrace();
-		} finally {
-			System.out.println("Configuration file is valid");
-		}
 	}
 }

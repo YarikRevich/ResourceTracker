@@ -1,27 +1,32 @@
-package com.resourcetracker.terraform.common;
+package com.resourcetracker.terraform.api;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.resourcetracker.tools.proc.Proc;
 
+import org.springframework.stereotype.Service;
+
 /**
  * Application API for executing external terraform
  * There are two core methods: start and stop.
  */
-public class TerraformAPI {
+@Service
+public class TerraformAPIService {
+	final static Logger logger = LogManager.getLogger(TerraformAPI.class);
+
 	/**
 	 * Path to terraform files source
 	 */
-	private String path;
+	// private String path;
 
 	private Proc proc;
 
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 	private TreeMap<String, String> vars = new TreeMap<String, String>();
 
-	public TerraformAPI(String path) {
-		this.path = path;
+	public TerraformAPI() {
+		// this.path = path;
 	}
 
 	public void setEnvVar(String key, String value) {
@@ -32,7 +37,7 @@ public class TerraformAPI {
 		this.vars.put(key, value);
 	}
 
-	public void start() {
+	public boolean start() {
 		proc = new Proc();
 
 		proc.setCommands("terraform", "init");
@@ -53,16 +58,24 @@ public class TerraformAPI {
 		}
 
 		proc.setEnvVars(this.envVars);
-		proc.start();
+		try {
+			proc.start();
+		} catch (ProcException e) {
+			logger.error(e.getMessage(), e);
+			return false;
+		}
+		return true;
 	}
 
-	public void stop() {
+	public boolean stop() {
 		proc = new Proc();
 		proc.setCommands("terraform", "destroy");
-		proc.start();
-	}
-
-	public boolean isError() {
-		return proc.isError();
+		try {
+			proc.start();
+		} catch (ProcException e) {
+			logger.error(e.getMessage(), e);
+			return false;
+		}
+		return true;
 	}
 }
