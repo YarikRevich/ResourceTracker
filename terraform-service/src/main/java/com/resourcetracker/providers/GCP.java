@@ -1,12 +1,8 @@
 package com.resourcetracker.terraform.providers;
 
-import com.resourcetracker.config.Config;
-import com.resourcetracker.cloud.Provider;
+import com.resourcetracker.providers.common.IProvider;
 
-import com.resourcetracker.terraform.common.TerraformAPI;
-
-import java.net.InetAddress;
-import org.javatuples.Pair;
+import com.resourcetracker.terraform.services.TerraformAPIService;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -16,13 +12,14 @@ import org.apache.logging.log4j.LogManager;
  *
  */
 public class GCP implements IProvider {
-	final static Logger logger = LogManager.getLogger(Loop.class);
+	final static Logger logger = LogManager.getLogger(GCP.class);
 
-	private TerraformAPI terraformAPI = new TerraformAPI();
+	@Autowired
+	private TerraformAPIService terraformAPIService;
 
 	@Override
 	public void start() {
-		terraformAPI.setVar("context", Config.formatContext());
+		// terraformAPI.setVar("context", Config.formatContext());
 
 		terraformAPI.setEnvVar("GOOGLE_CREDENTIALS", "");
 		terraformAPI.setEnvVar("GOOGLE_PROJECT", "");
@@ -42,4 +39,9 @@ public class GCP implements IProvider {
 	public void stop() {
 		terraformAPI.stop();
 	};
+
+	@Override
+	public void setTerraformAPI(TerraformAPI terraformAPI) {
+		this.terraformAPI = terraformAPI;
+	}
 }
