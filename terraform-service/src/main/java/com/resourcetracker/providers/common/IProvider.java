@@ -1,7 +1,6 @@
-package com.resourcetracker.terraform.providers.common;
+package com.resourcetracker.providers.common;
 
 public interface IProvider {
 	public void start();
 	public void stop();
-	public void setTerraformAPI();
 }

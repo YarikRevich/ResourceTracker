@@ -7,7 +7,7 @@
 	<artifactId>deploy</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<name>Deploy component for ResourceTracker</name>
+	<name>deploy</name>
 	<description>Deploy for cloud-native distributed tracker for resources</description>
 
 	<properties>

@@ -1,8 +1,9 @@
-package com.resourcetracker.terraform.providers;
+package com.resourcetracker.providers;
 
 import com.resourcetracker.providers.common.IProvider;
+import com.resourcetracker.services.TerraformAPIService;
 
-import com.resourcetracker.terraform.services.TerraformAPIService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -17,31 +18,22 @@ public class GCP implements IProvider {
 	@Autowired
 	private TerraformAPIService terraformAPIService;
 
-	@Override
 	public void start() {
-		// terraformAPI.setVar("context", Config.formatContext());
+		// terraformAPIService.setVar("context", Config.formatContext());
 
-		terraformAPI.setEnvVar("GOOGLE_CREDENTIALS", "");
-		terraformAPI.setEnvVar("GOOGLE_PROJECT", "");
-		terraformAPI.setEnvVar("GOOGLE_REGION", "");
-		terraformAPI.setEnvVar("GOOGLE_ZONE", "");
+		terraformAPIService.setEnvVar("GOOGLE_CREDENTIALS", "");
+		terraformAPIService.setEnvVar("GOOGLE_PROJECT", "");
+		terraformAPIService.setEnvVar("GOOGLE_REGION", "");
+		terraformAPIService.setEnvVar("GOOGLE_ZONE", "");
 
-		terraformAPI.start();
-
-		if (terraformAPI.isError()) {
-			logger.error("GCP tracker is not started..");
+		if (terraformAPIService.start()) {
+			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
 		} else {
-			logger.info("GCP tracker is started!");
+			logger.error(String.format("Provider(%s) is not started", this.getClass().toString()));
 		}
 	};
 
-	@Override
 	public void stop() {
-		terraformAPI.stop();
+		terraformAPIService.stop();
 	};
-
-	@Override
-	public void setTerraformAPI(TerraformAPI terraformAPI) {
-		this.terraformAPI = terraformAPI;
-	}
 }
