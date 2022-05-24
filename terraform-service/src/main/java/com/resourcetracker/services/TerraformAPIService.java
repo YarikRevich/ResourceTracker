@@ -1,11 +1,15 @@
-package com.resourcetracker.terraform.api;
+package com.resourcetracker.services;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.resourcetracker.tools.proc.Proc;
+import com.resourcetracker.exception.ProcException;
 
 import org.springframework.stereotype.Service;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Application API for executing external terraform
@@ -13,7 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TerraformAPIService {
-	final static Logger logger = LogManager.getLogger(TerraformAPI.class);
+	final static Logger logger = LogManager.getLogger(TerraformAPIService.class);
 
 	/**
 	 * Path to terraform files source
@@ -24,10 +28,6 @@ public class TerraformAPIService {
 
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 	private TreeMap<String, String> vars = new TreeMap<String, String>();
-
-	public TerraformAPI() {
-		// this.path = path;
-	}
 
 	public void setEnvVar(String key, String value) {
 		this.envVars.put(key, value);
@@ -41,7 +41,11 @@ public class TerraformAPIService {
 		proc = new Proc();
 
 		proc.setCommands("terraform", "init");
-		proc.start();
+		try {
+			proc.start();
+		} catch (ProcException e) {
+			e.printStackTrace();
+		}
 
 		proc.setCommands("terraform", "plan");
 
@@ -51,11 +55,11 @@ public class TerraformAPIService {
 			proc.appendCommands(command.toString());
 		});
 
-		if (!path.isEmpty()) {
-			StringBuilder command = new StringBuilder();
-			command.append("-chdir").append("=").append(this.path);
-			proc.appendCommands(command.toString());
-		}
+		// if (!path.isEmpty()) {
+		StringBuilder command = new StringBuilder();
+		command.append("-chdir").append("=").append(".");
+		proc.appendCommands(command.toString());
+		// }
 
 		proc.setEnvVars(this.envVars);
 		try {

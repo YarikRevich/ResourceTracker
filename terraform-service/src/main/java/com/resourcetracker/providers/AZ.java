@@ -1,7 +1,9 @@
-package com.resourcetracker.terraform.providers;
+package com.resourcetracker.providers;
 
 import com.resourcetracker.providers.common.IProvider;
-import com.resourcetracker.terraform.services.TerraformAPIService;
+import com.resourcetracker.services.TerraformAPIService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -12,31 +14,22 @@ public class AZ implements IProvider {
 	@Autowired
 	private TerraformAPIService terraformAPIService;
 
-	@Override
-	public void start(String context) {
-		// terraformAPI.setVar("context", Config.formatContext());
+	public void start() {
+		// terraformAPIService.setVar("context", Config.formatContext());
 
-		terraformAPI.setEnvVar("ARM_CLIENT_ID", "");
-		terraformAPI.setEnvVar("ARM_CLIENT_SECRET", "");
-		terraformAPI.setEnvVar("ARM_SUBSCRIPTION_ID", "");
-		terraformAPI.setEnvVar("ARM_TENANT_ID", "");
+		terraformAPIService.setEnvVar("ARM_CLIENT_ID", "");
+		terraformAPIService.setEnvVar("ARM_CLIENT_SECRET", "");
+		terraformAPIService.setEnvVar("ARM_SUBSCRIPTION_ID", "");
+		terraformAPIService.setEnvVar("ARM_TENANT_ID", "");
 
-		terraformAPI.start();
-
-		if (terraformAPI.isError()) {
-			logger.error("AZ tracker is not started..");
+		if (terraformAPIService.start()) {
+			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
 		} else {
-			logger.info("AZ tracker is started!");
+			logger.error(String.format("Provider(%s) is not started", this.getClass().toString()));
 		}
 	};
 
-	@Override
 	public void stop() {
-		terraformAPI.stop();
+		terraformAPIService.stop();
 	};
-
-	@Override
-	public void setTerraformAPI(TerraformAPI terraformAPI) {
-		this.terraformAPI = terraformAPI;
-	}
 }

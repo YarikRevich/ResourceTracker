@@ -1,5 +1,6 @@
 package com.resourcetracker;
 
+import picocli.CommandLine;
 import com.resourcetracker.commands.Base;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.CommandLineRunner;

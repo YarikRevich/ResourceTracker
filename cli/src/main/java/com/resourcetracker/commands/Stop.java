@@ -10,7 +10,7 @@ import com.resourcetracker.entity.StateEntity.Mode;
 import com.resourcetracker.ConfigService;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 @Command(name = "stop")

@@ -45,7 +45,7 @@ public class ConfigEntity {
 	public ArrayList<Request> requests;
 
 	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-	enum Provider {
+	public enum Provider {
 		GCP("gpc"),
 		AWS("aws"),
 		AZ("az");

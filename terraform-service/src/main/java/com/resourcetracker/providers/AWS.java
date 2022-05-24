@@ -1,14 +1,14 @@
-package com.resourcetracker.terraform.providers;
+package com.resourcetracker.providers;
 
 import com.resourcetracker.providers.common.IProvider;
-import com.resourcetracker.terraform.services.TerraformAPIService;
+import com.resourcetracker.services.TerraformAPIService;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 // import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 
-import org.springframework.stereotype.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * AWS implementation of Provider
@@ -22,32 +22,25 @@ public class AWS implements IProvider {
 	@Autowired
 	private TerraformAPIService terraformAPIService;
 
-	@Override
 	public void start() {
-		// terraformAPI.setVar("context", Config.formatContext());
+		// terraformAPIService.setVar("context", Config.formatContext());
 
-		terraformAPI.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", "");
-		terraformAPI.setEnvVar("AWS_REGION", "");
-		terraformAPI.setEnvVar("AWS_PROFILE", "");
+		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", "");
+		terraformAPIService.setEnvVar("AWS_REGION", "");
+		terraformAPIService.setEnvVar("AWS_PROFILE", "");
 
-		if (terraformAPI.start()) {
+		if (terraformAPIService.start()) {
 			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
 		} else {
 			logger.error(String.format("Provider(%s) is not started", this.getClass().toString()));
 		}
 	}
 
-	@Override
 	public void stop() {
-		if (terraformAPI.stop()){
+		if (terraformAPIService.stop()){
 			logger.error(String.format("Provider(%s) is stoped", this.getClass().toString()));
 		}else{
 			logger.error(String.format("Provider(%s) is not stoped", this.getClass().toString()));
 		}
-	}
-
-	@Override
-	public void setTerraformAPI(TerraformAPI terraformAPI) {
-		this.terraformAPI = terraformAPI;
 	}
 }

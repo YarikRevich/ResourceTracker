@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.StringBuilder;
 
+import com.resourcetracker.exception.ProcException;
+
 import java.util.TreeMap;
 import java.util.ArrayList;
 
@@ -32,13 +34,13 @@ public class Proc {
 
     public void start() throws ProcException{
 		if (this.commands.isEmpty()){
-			throw new ProcException("there are no commads");
+			throw new ProcException();
 		}
 
         ProcessBuilder processBuilder = new ProcessBuilder(this.commands);
         processBuilder.redirectErrorStream(true);
 
-        Map<String, String> env = processBuilder.environment();
+        var env = processBuilder.environment();
 
         for (var envVar : this.envVars.entrySet()){
             env.put(envVar.getKey(), envVar.getValue());
