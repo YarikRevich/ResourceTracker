@@ -2,10 +2,14 @@ package com.resourcetracker;
 
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.springframework.boot.CommandLineRunner;
 
-import java.util.concurrent.ScheduledExecutorService;
-import static java.util.concurrent.TimeUnit;
+// import java.util.concurrent.ScheduledExecutorService;
+import static java.util.concurrent.TimeUnit.*;
+// import static java.util.concurrent.TimeUnit;
 
 @Component
 public class App implements CommandLineRunner {
@@ -19,7 +23,7 @@ public class App implements CommandLineRunner {
 			public void run() {
 
 			}
-		}, 0, 500, TimeUnit.MILLISECONDS);
+		}, 0, 500, MILLISECONDS);
 	}
 
 }

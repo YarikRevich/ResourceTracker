@@ -9,8 +9,9 @@
 	<description>Cloud-native resource tracking tool</description>
 
 	<properties>
-		<java.release>8</java.release>
-		<!-- <maven.compiler.release>11</maven.compiler.release> -->
+		<java.release>17</java.release>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 
 	<parent>
@@ -25,7 +26,7 @@
 		<module>state-service</module>
 		<module>config-service</module>
 		<module>terraform-service</module>
-		<module>cli</module>
 		<module>deploy</module>
+		<module>cli</module>
 	</modules>
 </project>

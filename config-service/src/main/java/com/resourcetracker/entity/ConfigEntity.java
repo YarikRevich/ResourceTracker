@@ -57,7 +57,7 @@ public class ConfigEntity {
 		}
 	};
 
-	class Cloud {
+	public class Cloud {
 		public Provider provider;
 
 		@Pattern(regexp = "^(((~./)?)|((~/.)?)|((/?))?)([a-zA-Z/]*)$")

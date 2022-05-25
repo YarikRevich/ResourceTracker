@@ -8,6 +8,8 @@ import picocli.CommandLine.Parameters;
 import com.resourcetracker.StateService;
 import com.resourcetracker.entity.StateEntity.Mode;
 
+import com.resourcetracker.TerraformService;
+
 import com.resourcetracker.ConfigService;
 
 import org.springframework.stereotype.Component;
@@ -35,8 +37,8 @@ public class Start implements Runnable{
 
 	public void run() {
 		if (stateService.isMode(Mode.STOPED)){
-			TerraformService terraformService = new TerraformService(configService.cloud.provider);
-			terraformService.start(configService.toTerraformRequestEntity().toJSON());
+			TerraformService terraformService = new TerraformService(configService.getParsedConfigFile().cloud.provider);
+			terraformService.start(configService.getParsedConfigFile().toTerraformRequestEntity().toJSON());
 		}else{
 			logger.info("ResourceTracker is already started!");
 		}

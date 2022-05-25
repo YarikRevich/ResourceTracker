@@ -17,9 +17,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 
+import org.springframework.stereotype.Service;
+
 /**
  * State of terraform service
  */
+@Service
 public class StateService {
 	private static final Logger logger = LogManager.getLogger(StateService.class);
 
