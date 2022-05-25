@@ -9,7 +9,7 @@ public class Config {
 	}
 
 	public void parse(){
-		ObjectMapper mapper = new ObjectMapper()
-		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+		// ObjectMapper mapper = new ObjectMapper()
+		// .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 	}
 }

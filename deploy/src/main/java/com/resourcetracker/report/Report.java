@@ -1,6 +1,6 @@
 package com.resourcetracker.report;
 
-import com.resourcetracker.storage.entities.Record;
+// import com.resourcetracker.storage.entities.Record;
 import java.util.ArrayList;
 
 /**
@@ -10,13 +10,13 @@ import java.util.ArrayList;
  */
 public class Report{
 
-	//Creates report from the given records
-	public Report(Record... records){
+	// //Creates report from the given records
+	// public Report(Record... records){
 
-	}
+	// }
 
-	//Sends general report to the given email
-	public void sendTo(String email){
+	// //Sends general report to the given email
+	// public void sendTo(String email){
 
-	}
+	// }
 }

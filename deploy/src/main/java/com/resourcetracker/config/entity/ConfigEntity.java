@@ -1,5 +1,9 @@
 package com.resourcetracker.entity;
 
+import java.util.Optional;
+import java.util.ArrayList;
+import javax.validation.constraints.*;
+
 public class ConfigEntity {
 	// Represents request, which will be executed on a remote machine
 	public class Request {
@@ -10,6 +14,12 @@ public class ConfigEntity {
 			POST("post"),
 			GET("get"),
 			PUT("put");
+
+			private String method;
+
+			private Method(String method){
+				this.method = method;
+			}
 		}
 
 		public Optional<Method> method;

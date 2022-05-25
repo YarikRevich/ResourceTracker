@@ -1,15 +1,15 @@
 package com.resourcetracker.dao;
 
-import org.hibernate.Criteria;
+// import org.hibernate.Criteria;
 import org.hibernate.LazyInitializationException;
-import org.hibernate.Query;
+// import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Example;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+// import org.hibernate.criterion.Example;
+// import org.hibernate.criterion.Order;
+// import org.hibernate.criterion.Projections;
+// import org.hibernate.criterion.Restrictions;
 
 /**
  * Static class which contains all types
