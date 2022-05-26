@@ -28,6 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.resourcetracker.entity.ConfigEntity;
 
+
+
+import com.resourcetracker.Constants;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -50,28 +54,18 @@ public final class ConfigService {
 	 */
 	public ConfigService() {
 		try {
-			configFile = new FileInputStream(new File(this.getConfigFilePath()));
+			configFile = new FileInputStream(new File(Constants.CONFIG_FILE_PATH));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+				// .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		try {
 			parsedConfigFile = mapper.readValue(configFile, ConfigEntity.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private String getConfigFilePath() {
-		String os = System.getProperty("os.name");
-		String configFilePath = "";
-		if (os.contains("Windows")) {
-			configFilePath = Paths.get("/usr/local/etc/resourcetracker.yaml").toString();
-		} else if (os.contains("Linux") || os.contains("Mac OS X")) {
-			configFilePath = Paths.get("/usr/local/etc/resourcetracker.yaml").toString();
-		}
-		return configFilePath;
 	}
 
 	public ConfigEntity getParsedConfigFile() {
