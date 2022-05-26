@@ -51,7 +51,9 @@ build_web: check_os prepare_pre_build
 build_gui: check_os prepare_pre_build
 	@echo "it works"
 
-build: build_gui build_web build_cli build_deploy
+# build: build_gui build_web build_cli build_deploy
+build:
+	@mvn clean install -q -T100
 
 # Installs for such kinds of components of ResoureTracker as cli, web, gui
 

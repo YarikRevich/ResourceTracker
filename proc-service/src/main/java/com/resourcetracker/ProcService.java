@@ -1,4 +1,4 @@
-package com.resourcetracker.tools.proc;
+package com.resourcetracker;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,12 +6,14 @@ import java.io.InputStreamReader;
 import java.lang.StringBuilder;
 
 import com.resourcetracker.exception.ProcException;
+import org.springframework.stereotype.Service;
 
 import java.util.TreeMap;
 import java.util.ArrayList;
 
-public class Proc {
-    private ArrayList<String> commands;
+@Service
+public class ProcService {
+    private ArrayList<String> commands = new ArrayList<String>();
     private String stdout;
     private String stderr;
     private TreeMap<String, String> envVars = new TreeMap<String, String>();

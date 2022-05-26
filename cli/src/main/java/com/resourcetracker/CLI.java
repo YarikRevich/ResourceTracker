@@ -7,8 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.resourcetracker.commands.Base;
 
+import com.resourcetracker.Constants;
+
 import picocli.CommandLine;
 import picocli.CommandLine.IFactory;
+
+import org.springframework.boot.context.ApplicationPidFileWriter;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class CLI implements CommandLineRunner, ExitCodeGenerator{
@@ -25,7 +30,8 @@ public class CLI implements CommandLineRunner, ExitCodeGenerator{
 
     @Override
     public void run(String... args) {
-        exitCode = new CommandLine(base, factory).execute(args);
+       	CommandLine cmd = new CommandLine(base, factory);
+		exitCode = cmd.execute(args);
     }
 
     @Override
@@ -34,6 +40,8 @@ public class CLI implements CommandLineRunner, ExitCodeGenerator{
     }
 
 	public static void main(String[] args) {
-		System.exit(SpringApplication.exit(SpringApplication.run(CLI.class, args)));
+		SpringApplication application = new SpringApplication(CLI.class);
+		application.addListeners(new ApplicationPidFileWriter(Constants.PID_FILE_PATH));
+		System.exit(SpringApplication.exit(application.run(args)));
 	}
 }

@@ -1,3 +1,9 @@
 spring:
     server:
         port : 10075
+    main:
+        banner-mode: off
+        web-environment: false
+        web-application-type: NONE
+    profiles:
+        active: dev

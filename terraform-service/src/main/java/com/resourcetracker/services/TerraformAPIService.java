@@ -3,13 +3,15 @@ package com.resourcetracker.services;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.resourcetracker.tools.proc.Proc;
+import com.resourcetracker.ProcService;
 import com.resourcetracker.exception.ProcException;
 
 import org.springframework.stereotype.Service;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Application API for executing external terraform
@@ -24,7 +26,8 @@ public class TerraformAPIService {
 	 */
 	// private String path;
 
-	private Proc proc;
+	@Autowired
+	private ProcService procService;
 
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 	private TreeMap<String, String> vars = new TreeMap<String, String>();
@@ -38,32 +41,28 @@ public class TerraformAPIService {
 	}
 
 	public boolean start() {
-		proc = new Proc();
-
-		proc.setCommands("terraform", "init");
+		procService.setCommands("terraform", "init");
 		try {
-			proc.start();
+			procService.start();
 		} catch (ProcException e) {
 			e.printStackTrace();
 		}
 
-		proc.setCommands("terraform", "plan");
+		procService.setCommands("terraform", "plan");
 
 		vars.forEach((k, v) -> {
 			StringBuilder command = new StringBuilder();
 			command.append("-var").append(" ").append(k).append("=").append(v);
-			proc.appendCommands(command.toString());
+			procService.appendCommands(command.toString());
 		});
 
-		// if (!path.isEmpty()) {
 		StringBuilder command = new StringBuilder();
 		command.append("-chdir").append("=").append(".");
-		proc.appendCommands(command.toString());
-		// }
+		procService.appendCommands(command.toString());
 
-		proc.setEnvVars(this.envVars);
+		procService.setEnvVars(this.envVars);
 		try {
-			proc.start();
+			procService.start();
 		} catch (ProcException e) {
 			logger.error(e.getMessage(), e);
 			return false;
@@ -72,10 +71,9 @@ public class TerraformAPIService {
 	}
 
 	public boolean stop() {
-		proc = new Proc();
-		proc.setCommands("terraform", "destroy");
+		procService.setCommands("terraform", "destroy");
 		try {
-			proc.start();
+			procService.start();
 		} catch (ProcException e) {
 			logger.error(e.getMessage(), e);
 			return false;
