@@ -1,6 +1,8 @@
 package com.resourcetracker.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
 import org.json.JSONObject;
 
 import com.resourcetracker.entity.ConfigEntity;
@@ -9,7 +11,7 @@ import com.resourcetracker.entity.ConfigEntity;
  * @author YarikRevich
  *
 */
-public class TerraformRequestEntity {
+public class TerraformRequestEntity implements Serializable {
 	private ArrayList<ConfigEntity.Request> requests;
 	private String email;
 	private int frequency;
@@ -28,5 +30,3 @@ public class TerraformRequestEntity {
 		return jsonObject.toString();
 	}
 }
-
-// public record Entity(int index, ArrayList<String> schemas){};

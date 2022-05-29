@@ -6,4 +6,13 @@ spring:
         web-environment: false
         web-application-type: NONE
     profiles:
-        active: dev
+        active: prod
+
+logging:
+    level:
+        root: OFF
+
+endpoints:
+    shutdown:
+        sensetive: false
+        enabled: true

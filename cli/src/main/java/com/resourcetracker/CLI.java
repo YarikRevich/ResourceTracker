@@ -5,8 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.resourcetracker.commands.Base;
-
 import com.resourcetracker.Constants;
 
 import picocli.CommandLine;
@@ -15,25 +13,23 @@ import picocli.CommandLine.IFactory;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import org.springframework.stereotype.Component;
+import java.util.concurrent.Callable;
+
+import com.resourcetracker.command.TopCommand;
+
 @SpringBootApplication
 public class CLI implements CommandLineRunner, ExitCodeGenerator{
-
-	private IFactory factory;
-    private Base base;
     private int exitCode;
-
-    // constructor injection
-    public CLI(IFactory factory, Base mailCommand) {
-        this.factory = factory;
-        this.base = base;
-    }
 
     @Override
     public void run(String... args) {
-       	CommandLine cmd = new CommandLine(base, factory);
+		CommandLine cmd = new CommandLine(new TopCommand());
+		cmd.setUnmatchedOptionsAllowedAsOptionParameters(true);
 		exitCode = cmd.execute(args);
     }
-
     @Override
     public int getExitCode() {
         return exitCode;

@@ -1,65 +1,115 @@
 package com.resourcetracker.entity;
 
-import java.util.Optional;
-import java.util.List;
-import javax.validation.constraints.*;
-import com.resourcetracker.tools.parsing.Frequency;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.io.Serializable;
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 
-import com.resourcetracker.entity.TerraformRequestEntity;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.resourcetracker.ProcService;
 import com.resourcetracker.exception.ProcException;
+import com.resourcetracker.exception.ConfigException;
+import com.resourcetracker.exception.DataFieldException;
 import com.resourcetracker.Constants;
+import com.resourcetracker.tools.parsing.Frequency;
+import com.resourcetracker.services.DataFieldMatchService;
+import com.resourcetracker.services.DataFieldMatchService.DataFieldType;
+import com.resourcetracker.entity.TerraformRequestEntity;
+
+import jakarta.inject.Inject;
+import io.micronaut.http.client.annotation.*;
+import io.micronaut.http.client.HttpClient;
+import static io.micronaut.http.HttpRequest.*;
 
 /**
  * Model used for YAML configuration file parsing
  */
-public class ConfigEntity {
+public class ConfigEntity implements Serializable {
+	@Client("http://localhost:10075")
+    @Inject RxHttpClient client; // example injected service
+
 	private boolean example;
 
 	public void setExample(boolean example){
 		if (example){
-			ProcService procService = new ProcService();
-			System.out.println("Remove 'example' field from configuration file to run ResourceTracker");
-			procService.setCommands("kill", "-9", String.format("`cat %s`", Constants.PID_FILE_PATH));
-			try {
-				procService.start();
-			} catch (ProcException e) {
-				e.printStackTrace();
-			}
+			HttpClient.POST("/shutdown");
+			// ProcService procService = new ProcService();
+			// System.out.println("Remove 'example' field from configuration file to run ResourceTracker");
+			// procService.setCommands("cat", Constants.PID_FILE_PATH);
+			// String pid = procService.getStdout();
+			// procService.setCommands("kill", pid);
+			// System.out.println(procService.getStdout());
+			// System.out.println(procService.getStderr());
+			// try {
+			// 	procService.start();
+			// } catch (ProcException e) {
+			// 	e.printStackTrace();
+			// }
 		}
 	}
 
-	public class Project {
+	static class Project {
 		public String name;
 	}
 
 	public Project project;
 
 	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-	enum Method {
+	public static enum Method {
 		POST("post"),
 		GET("get"),
 		PUT("put");
 
-		private String method;
+		public String method;
 
 		private Method(String method) {
 			this.method = method;
 		}
 	}
 
+
+
 	// Represents request, which will be executed on a remote machine
-	static class Request {
-		public Optional<String> tag;
+	public static class Request {
+		public String tag;
 		public String url;
-		public Optional<Method> method;
-		public Optional<String> data;
+		public Method method;
+		public String data;
+
+		public void setData(String data) throws ConfigException {
+			DataFieldType match = DataFieldMatchService.matches(data);
+			switch (match){
+				case FILE:
+					File file = new File(data);
+					if (!file.exists()){
+						throw new ConfigException();
+					}
+					BufferedReader reader = null;
+					try{
+						reader = new BufferedReader(new FileReader(file));
+					} catch (IOException e){
+						e.printStackTrace();
+					}
+					try{
+						this.data = reader.readLine();
+					} catch (IOException e){
+						e.printStackTrace();
+					}
+				case SCRIPT:
+					this.data = data;
+			}
+		}
 
 		@Pattern(regexp = "^((^((([0-9]*)(s|m|h|d|w))))|(^once))$")
 		public String frequency;
@@ -68,38 +118,35 @@ public class ConfigEntity {
 	public List<Request> requests;
 
 	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-	public enum Provider {
-		GCP("gpc"),
-		AWS("aws"),
-		AZ("az");
-
-		private String provider;
-
-		private Provider(String provider) {
-			this.provider = provider;
-		}
+	public static enum Provider {
+		@JsonProperty("gcp")
+		GCP,
+		@JsonProperty("aws")
+		AWS,
+		@JsonProperty("az")
+		AZ;
 	};
 
-	public class Cloud {
+	public static class Cloud {
 		public Provider provider;
 
-		@Pattern(regexp = "^(((~./)?)|((~/.)?)|((/?))?)([a-zA-Z/]*)$")
+		@Pattern(regexp = "^(((~./)?)|((~/.)?)|((/?))?)([a-zA-Z/]*)((\\.([a-z]+))?)$")
 		public String credentials;
 
 		public String profile;
-		public Optional<String> region;
+		public String region;
 	};
 
 	public Cloud cloud;
 
-	class Mailing {
+	static class Mailing {
 		@Email(message = "Report email should be valid")
 		public String email;
 	}
 
 	public Mailing mailing;
 
-	class Scheduler {
+	static class Scheduler {
 		@Pattern(regexp = "^([0-9]*)(s|m|h|d|w)$")
 		public String frequency;
 

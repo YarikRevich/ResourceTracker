@@ -1,4 +1,4 @@
-package com.resourcetracker.tools.exception;
+package com.resourcetracker.exception;
 
 /**
  * Handles errors thrown in config class
