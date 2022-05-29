@@ -15,8 +15,8 @@ import java.nio.file.Paths;
 // import com.resourcetracker.cloud.Provider.Providers;
 // import com.resourcetracker.tools.utils.*;
 
-import com.resourcetracker.tools.exception.ConfigException;
-import com.resourcetracker.tools.exception.ValidationException;
+import com.resourcetracker.exception.ConfigException;
+import com.resourcetracker.exception.ValidationException;
 
 // import com.resourcetracker.tools.parsers.ReportFrequencyParser;
 
@@ -25,6 +25,8 @@ import org.apache.commons.io.IOUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 
 import com.resourcetracker.entity.ConfigEntity;
 
@@ -61,6 +63,7 @@ public final class ConfigService {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 				// .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+		mapper.registerModule(new JSR310Module());
 		try {
 			parsedConfigFile = mapper.readValue(configFile, ConfigEntity.class);
 		} catch (IOException e) {
