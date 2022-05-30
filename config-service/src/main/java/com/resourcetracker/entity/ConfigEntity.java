@@ -5,59 +5,48 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.resourcetracker.ProcService;
 import com.resourcetracker.exception.ProcException;
 import com.resourcetracker.exception.ConfigException;
-import com.resourcetracker.exception.DataFieldException;
 import com.resourcetracker.Constants;
 import com.resourcetracker.tools.parsing.Frequency;
 import com.resourcetracker.services.DataFieldMatchService;
 import com.resourcetracker.services.DataFieldMatchService.DataFieldType;
-import com.resourcetracker.entity.TerraformRequestEntity;
-
-import jakarta.inject.Inject;
-import io.micronaut.http.client.annotation.*;
-import io.micronaut.http.client.HttpClient;
-import static io.micronaut.http.HttpRequest.*;
 
 /**
  * Model used for YAML configuration file parsing
  */
 public class ConfigEntity implements Serializable {
-	@Client("http://localhost:10075")
-    @Inject RxHttpClient client; // example injected service
-
-	private boolean example;
 
 	public void setExample(boolean example){
 		if (example){
-			HttpClient.POST("/shutdown");
-			// ProcService procService = new ProcService();
-			// System.out.println("Remove 'example' field from configuration file to run ResourceTracker");
-			// procService.setCommands("cat", Constants.PID_FILE_PATH);
-			// String pid = procService.getStdout();
-			// procService.setCommands("kill", pid);
-			// System.out.println(procService.getStdout());
-			// System.out.println(procService.getStderr());
-			// try {
-			// 	procService.start();
-			// } catch (ProcException e) {
-			// 	e.printStackTrace();
-			// }
+			 ProcService procService = new ProcService();
+			 System.out.println("Remove 'example' field from configuration file to run ResourceTracker");
+			 procService.setCommands("cat", Constants.PID_FILE_PATH);
+			try {
+				procService.start();
+			} catch (ProcException e) {
+				e.printStackTrace();
+			}
+			 String pid = procService.getStdout();
+			 procService.setCommands("kill", "-9", pid);
+			 try {
+			 	procService.start();
+			 } catch (ProcException e) {
+			 	e.printStackTrace();
+			 }
 		}
+		this.example = example;
 	}
+
+	public boolean example;
 
 	static class Project {
 		public String name;
@@ -77,8 +66,6 @@ public class ConfigEntity implements Serializable {
 			this.method = method;
 		}
 	}
-
-
 
 	// Represents request, which will be executed on a remote machine
 	public static class Request {

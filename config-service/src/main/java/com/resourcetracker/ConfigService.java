@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 // import com.resourcetracker.cloud.Provider.Providers;
 // import com.resourcetracker.tools.utils.*;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.resourcetracker.exception.ConfigException;
 import com.resourcetracker.exception.ValidationException;
 
@@ -62,13 +63,13 @@ public final class ConfigService {
 		}
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-				// .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-		mapper.registerModule(new JSR310Module());
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		try {
 			parsedConfigFile = mapper.readValue(configFile, ConfigEntity.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+//		System.out.println(configFile.toString());
 	}
 
 	public ConfigEntity getParsedConfigFile() {

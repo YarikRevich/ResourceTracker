@@ -19,6 +19,7 @@ public class ProcService {
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 
 	public void setCommands(String... commands) {
+		this.commands.clear();
 		for (String command : commands) {
 			this.commands.add(command);
 		}
