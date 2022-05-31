@@ -1,26 +1,21 @@
 package com.resourcetracker.command;
 
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
-
-import com.resourcetracker.StateService;
-import com.resourcetracker.entity.StateEntity.Mode;
 
 import com.resourcetracker.TerraformService;
-
-import com.resourcetracker.ConfigService;
-
+import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.entity.StateEntity;
 import org.springframework.stereotype.Component;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import com.resourcetracker.StateService;
+import com.resourcetracker.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+@Component
 @Command(name = "base", mixinStandardHelpOptions = true, description = "Cloud-based remote resource tracker", version = "1.0")
-public class TopCommand implements Runnable{
+public class TopCommand{
 	private static final Logger logger = LogManager.getLogger(TopCommand.class);
 
 	@Autowired
@@ -29,35 +24,39 @@ public class TopCommand implements Runnable{
 	@Autowired
 	StateService stateService;
 
-	// @Component
+	@Autowired
+	TerraformService terraformService;
+
 	@Command
 	void start(
 			@Option(names = { "-p", "--project" }, description = "project name to start", required = true) String project,
 			@Option(names = { "-r", "--request" }, description = "request to start if mode is direct", required = true) String request) {
-		System.out.println("start command");
-		// if (stateService.isMode(Mode.STOPED)) {
-		// TerraformService terraformService = new TerraformService(
-		// configService.getParsedConfigFile().cloud.provider);
+		configService.parse();
+
+		 if (stateService.isMode(StateEntity.Mode.STOPED)) {
+			 ConfigEntity parsedConfigFile = configService.getParsedConfigFile();
+			 terraformService.setProvider(parsedConfigFile.getCloud().getProvider());
+			 System.out.println(parsedConfigFile.toTerraformRequestEntity().toJSON());
+//			 System.out.println(configService.getParsedConfigFile().cloud.provider.toString());
+//			terraformService.setProvider()
+//		 configService.getParsedConfigFile().cloud.provider);
 		// terraformService.start(configService.getParsedConfigFile().toTerraformRequestEntity().toJSON());
-		// } else {
-		// logger.info("ResourceTracker is already started!");
-		// }
+		 } else {
+		 logger.info("ResourceTracker is already started!");
+		 }
 	}
 
-	// @Component
 	@Command
 	void validate(){
-
-		System.out.println("it is validated");
+		configService.parse();
+		System.out.println("Configuration file is valid!");
 	}
 
-	// @Component
 	@Command
 	void status(@Option(names = { "-p", "--project" }, description = "project name to start") String project){
 		System.out.println("It works");
 	}
 
-	// @Component
 	@Command
 	void stop(@Option(names = {"-p", "--project"}, description = "project name to start") String project){
 		// if (stateService.isMode(Mode.STARTED)){
@@ -66,11 +65,11 @@ public class TopCommand implements Runnable{
 		// }else{
 		// 	logger.info("ResourceTracker is already stoped!");
 		// }
+		configService.parse();
 		System.out.println("stoped");
 	}
 
-	@Override
-	public void run(){
-
-	}
+//	public Integer call()  {
+//		return 0;
+//	}
 }

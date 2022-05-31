@@ -11,7 +11,7 @@ import com.resourcetracker.providers.GCP;
 public class TerraformService {
 	private IProvider chosenProvider;
 
-	public TerraformService(ConfigEntity.Provider provider) {
+	public TerraformService setProvider(ConfigEntity.Provider provider){
 		switch (provider) {
 			case AWS:
 				chosenProvider = new AWS();
@@ -20,10 +20,11 @@ public class TerraformService {
 			case AZ:
 				chosenProvider = new AZ();
 		}
-	}
+		return this;
+	};
 
 	public void start(String context) {
-		chosenProvider.start();
+		chosenProvider.start(context);
 	}
 
 	public void stop() {
