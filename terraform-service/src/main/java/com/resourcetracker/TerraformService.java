@@ -7,7 +7,11 @@ import com.resourcetracker.providers.common.IProvider;
 import com.resourcetracker.providers.AWS;
 import com.resourcetracker.providers.AZ;
 import com.resourcetracker.providers.GCP;
+import org.springframework.stereotype.Service;
 
+import java.net.URL;
+
+@Service
 public class TerraformService {
 	private IProvider chosenProvider;
 
@@ -23,8 +27,14 @@ public class TerraformService {
 		return this;
 	};
 
-	public void start(String context) {
-		chosenProvider.start(context);
+	/**
+	 * Starts remote execution on a chosen provider
+	 * @param context Context created from parsed configuration file
+	 * @return URL endpoint to the remote resources where execution is
+	 * going
+	 */
+	public URL start(String context) {
+		return chosenProvider.start(context);
 	}
 
 	public void stop() {

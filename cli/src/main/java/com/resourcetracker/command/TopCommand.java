@@ -36,13 +36,11 @@ public class TopCommand{
 		 if (stateService.isMode(StateEntity.Mode.STOPED)) {
 			 ConfigEntity parsedConfigFile = configService.getParsedConfigFile();
 			 terraformService.setProvider(parsedConfigFile.getCloud().getProvider());
-			 System.out.println(parsedConfigFile.toTerraformRequestEntity().toJSON());
-//			 System.out.println(configService.getParsedConfigFile().cloud.provider.toString());
-//			terraformService.setProvider()
-//		 configService.getParsedConfigFile().cloud.provider);
-		// terraformService.start(configService.getParsedConfigFile().toTerraformRequestEntity().toJSON());
+			 terraformService.start(parsedConfigFile.toTerraformRequestEntity().toJSON());
+			 stateService.setMode(StateEntity.Mode.STARTED);
+			 stateService.actualizeConfigFileHash();
 		 } else {
-		 logger.info("ResourceTracker is already started!");
+		 	logger.info("ResourceTracker is already started!");
 		 }
 	}
 
@@ -54,7 +52,11 @@ public class TopCommand{
 
 	@Command
 	void status(@Option(names = { "-p", "--project" }, description = "project name to start") String project){
-		System.out.println("It works");
+		if (!stateService.isConfigFileHashActual() && stateService.isMode(StateEntity.Mode.STARTED)){
+			System.out.println("It seems, that you have modified configuration file. Please, restart current remote execution");
+		}else{
+
+		}
 	}
 
 	@Command

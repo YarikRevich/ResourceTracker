@@ -11,4 +11,8 @@ public class Constants {
 	 * Represent file which are used by state manager
 	 */
 	public static final String STATE_FILE_PATH = HOME_FOLDER_PATH.concat(".state");
+
+	public static final String PATH_TO_AWS_PROVIDER_TERRAFORM_CONFIGURATION = "aws";
+	public static final String PATH_TO_GCP_PROVIDER_TERRAFORM_CONFIGURATION = "gcp";
+	public static final String PATH_TO_AZ_PROVIDER_TERRAFORM_CONFIGURATION = "az";
 }

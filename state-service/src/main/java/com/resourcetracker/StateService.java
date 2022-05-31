@@ -7,6 +7,7 @@ import com.resourcetracker.Constants;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 
 import com.resourcetracker.entity.StateEntity;
 
@@ -111,5 +112,10 @@ public class StateService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setPublicEndpoint(URL publicEndpoint){}
+	public URL getPublicEndpoint(){
+		return null;
 	}
 }

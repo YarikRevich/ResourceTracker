@@ -1,6 +1,9 @@
 package com.resourcetracker.services;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import com.resourcetracker.ProcService;
@@ -24,8 +27,6 @@ public class TerraformAPIService {
 	/**
 	 * Path to terraform files source
 	 */
-	// private String path;
-
 	@Autowired
 	private ProcService procService;
 
@@ -40,7 +41,12 @@ public class TerraformAPIService {
 		this.vars.put(key, value);
 	}
 
-	public boolean start() {
+	/**
+	 *
+	 * @param pathToConfiguration Optional path to terraform configuration files conserning special provider
+	 * @return URL endpoint to the remote resources where execution is
+	 */
+	public URL start(Optional<String> pathToConfiguration) {
 		procService.setCommands("terraform", "init");
 		try {
 			procService.start();
@@ -57,7 +63,7 @@ public class TerraformAPIService {
 		});
 
 		StringBuilder command = new StringBuilder();
-		command.append("-chdir").append("=").append(ClassLoader.getSystemResource("tf").getPath());
+		command.append("-chdir").append("=").append(ClassLoader.getSystemResource("tf").getPath()).append(pathToConfiguration.isPresent() ? pathToConfiguration.get() : ".");
 		procService.appendCommands(command.toString());
 
 		procService.setEnvVars(this.envVars);
@@ -65,9 +71,15 @@ public class TerraformAPIService {
 			procService.start();
 		} catch (ProcException e) {
 			logger.error(e.getMessage(), e);
-			return false;
+			return null;
 		}
-		return true;
+		URL publicEndpoint = null;
+		try {
+			publicEndpoint = new URL("");
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+		return publicEndpoint;
 	}
 
 	public boolean stop() {
