@@ -1,5 +1,6 @@
 package com.resourcetracker.providers;
 
+import com.resourcetracker.Constants;
 import com.resourcetracker.providers.common.IProvider;
 import com.resourcetracker.services.TerraformAPIService;
 
@@ -9,6 +10,9 @@ import org.apache.logging.log4j.LogManager;
 // import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.net.URL;
+import java.util.Optional;
 
 /**
  * AWS implementation of Provider
@@ -22,7 +26,7 @@ public class AWS implements IProvider {
 	@Autowired
 	private TerraformAPIService terraformAPIService;
 
-	public void start(String context) {
+	public URL start(String context) {
 		// terraformAPIService.setVar("context", Config.formatContext());
 
 		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", "");
@@ -31,11 +35,13 @@ public class AWS implements IProvider {
 
 		terraformAPIService.setVar("RESOURCETRACKER_CONTEXT", context);
 
-		if (terraformAPIService.start()) {
+		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_AWS_PROVIDER_TERRAFORM_CONFIGURATION));
+		if (publicEndpoint != null) {
 			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
 		} else {
 			logger.error(String.format("Provider(%s) is not started", this.getClass().toString()));
 		}
+		return publicEndpoint;
 	}
 
 	public void stop() {
