@@ -57,7 +57,7 @@ public class TerraformAPIService {
 		});
 
 		StringBuilder command = new StringBuilder();
-		command.append("-chdir").append("=").append(".");
+		command.append("-chdir").append("=").append(ClassLoader.getSystemResource("tf").getPath());
 		procService.appendCommands(command.toString());
 
 		procService.setEnvVars(this.envVars);

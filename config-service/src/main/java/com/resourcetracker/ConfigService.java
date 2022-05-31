@@ -1,39 +1,18 @@
 package com.resourcetracker;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.Map;
-
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import java.nio.file.Paths;
-
-// import com.resourcetracker.cloud.Provider.Providers;
-// import com.resourcetracker.tools.utils.*;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.resourcetracker.exception.ConfigException;
-import com.resourcetracker.exception.ValidationException;
-
-// import com.resourcetracker.tools.parsers.ReportFrequencyParser;
-
-import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-
 import com.resourcetracker.entity.ConfigEntity;
-
-
-
-import com.resourcetracker.Constants;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +25,7 @@ import org.springframework.stereotype.Service;
  * @author YarikRevich
  */
 @Service
-public final class ConfigService {
+public class ConfigService {
 	private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
 	private InputStream configFile;
@@ -61,15 +40,21 @@ public final class ConfigService {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Parses opened configuration file
+	 */
+
+	public void parse(){
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		try {
 			parsedConfigFile = mapper.readValue(configFile, ConfigEntity.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-//		System.out.println(configFile.toString());
 	}
 
 	public ConfigEntity getParsedConfigFile() {

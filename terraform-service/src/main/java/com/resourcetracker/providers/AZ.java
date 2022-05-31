@@ -14,13 +14,13 @@ public class AZ implements IProvider {
 	@Autowired
 	private TerraformAPIService terraformAPIService;
 
-	public void start() {
-		// terraformAPIService.setVar("context", Config.formatContext());
-
+	public void start(String context) {
 		terraformAPIService.setEnvVar("ARM_CLIENT_ID", "");
 		terraformAPIService.setEnvVar("ARM_CLIENT_SECRET", "");
 		terraformAPIService.setEnvVar("ARM_SUBSCRIPTION_ID", "");
 		terraformAPIService.setEnvVar("ARM_TENANT_ID", "");
+
+		terraformAPIService.setVar("RESOURCETRACKER_CONTEXT", context);
 
 		if (terraformAPIService.start()) {
 			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));

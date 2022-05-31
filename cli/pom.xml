@@ -13,6 +13,12 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
+	<properties>
+		<start-class>
+			com.resourcetracker.CLI
+		</start-class>
+	</properties>
+
 
 	<dependencies>
 
@@ -127,10 +133,14 @@
 			<version>4.6.3</version>
 		</dependency>
 
+<!--		<dependency>-->
+<!--			<groupId>com.kakawait</groupId>-->
+<!--			<artifactId>picocli-spring-boot-starter</artifactId>-->
+<!--			<version>0.2.0</version>-->
+<!--		</dependency>-->
 		<dependency>
-			<groupId>com.kakawait</groupId>
-			<artifactId>picocli-spring-boot-starter</artifactId>
-			<version>0.2.0</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-indexer</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -162,6 +172,30 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>org.graalvm.nativeimage</groupId>-->
+<!--				<artifactId>native-image-maven-plugin</artifactId>-->
+<!--				<version>20.0.0</version>-->
+<!--				<configuration>-->
+<!--&lt;!&ndash;					<buildArgs>&ndash;&gt;-->
+<!--&lt;!&ndash;						-Dspring.graal.mode=initialization-only -Dspring.graal.dump-config=/tmp/computed-reflect-config.json -Dspring.graal.verbose=true -Dspring.graal.skip-logback=true &#45;&#45;initialize-at-run-time=org.springframework.data.r2dbc.connectionfactory.ConnectionFactoryUtils &#45;&#45;initialize-at-build-time=io.r2dbc.spi.IsolationLevel,io.r2dbc.spi &#45;&#45;initialize-at-build-time=io.r2dbc.spi.ConstantPool,io.r2dbc.spi.Assert,io.r2dbc.spi.ValidationDepth &#45;&#45;initialize-at-build-time=org.springframework.data.r2dbc.connectionfactory -H:+TraceClassInitialization &#45;&#45;no-fallback &#45;&#45;allow-incomplete-classpath &#45;&#45;report-unsupported-elements-at-runtime -H:+ReportExceptionStackTraces &#45;&#45;no-server &#45;&#45;initialize-at-build-time=org.reactivestreams.Publisher &#45;&#45;initialize-at-build-time=com.example.reactive.ReservationRepository &#45;&#45;initialize-at-run-time=io.netty.channel.unix.Socket &#45;&#45;initialize-at-run-time=io.netty.channel.unix.IovArray &#45;&#45;initialize-at-run-time=io.netty.channel.epoll.EpollEventLoop &#45;&#45;initialize-at-run-time=io.netty.channel.unix.Errors&ndash;&gt;-->
+<!--&lt;!&ndash;					</buildArgs>&ndash;&gt;-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<goals>-->
+<!--							<goal>native-image</goal>-->
+<!--						</goals>-->
+<!--						<phase>package</phase>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
 
 			<!-- <plugin>
 				<artifactId>maven-assembly-plugin</artifactId>

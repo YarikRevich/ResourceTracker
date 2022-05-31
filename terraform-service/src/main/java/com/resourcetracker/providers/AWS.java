@@ -22,12 +22,14 @@ public class AWS implements IProvider {
 	@Autowired
 	private TerraformAPIService terraformAPIService;
 
-	public void start() {
+	public void start(String context) {
 		// terraformAPIService.setVar("context", Config.formatContext());
 
 		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", "");
 		terraformAPIService.setEnvVar("AWS_REGION", "");
 		terraformAPIService.setEnvVar("AWS_PROFILE", "");
+
+		terraformAPIService.setVar("RESOURCETRACKER_CONTEXT", context);
 
 		if (terraformAPIService.start()) {
 			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));

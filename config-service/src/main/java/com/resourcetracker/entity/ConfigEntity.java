@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.*;
 
@@ -102,7 +103,7 @@ public class ConfigEntity implements Serializable {
 		public String frequency;
 	}
 
-	public List<Request> requests;
+	public ArrayList<Request> requests;
 
 	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 	public static enum Provider {
@@ -122,16 +123,32 @@ public class ConfigEntity implements Serializable {
 
 		public String profile;
 		public String region;
+
+		public Provider getProvider(){
+			return this.provider;
+		}
 	};
 
 	public Cloud cloud;
 
+	public Cloud getCloud(){
+		return this.cloud;
+	}
+
 	static class Mailing {
 		@Email(message = "Report email should be valid")
 		public String email;
+
+		public String getEmail(){
+			return this.email;
+		}
 	}
 
 	public Mailing mailing;
+
+	public Mailing getMailing(){
+		return this.mailing;
+	}
 
 	static class Scheduler {
 		@Pattern(regexp = "^([0-9]*)(s|m|h|d|w)$")
@@ -162,10 +179,14 @@ public class ConfigEntity implements Serializable {
 	public Scheduler scheduler;
 
 	public TerraformRequestEntity toTerraformRequestEntity() {
-		// return new TerraformRequestEntity(
-		// 		this.requests,
-		// 		this.mailing.email,
-		// 		this.scheduler.toInt());
-		return null;
+		this.requests.forEach((Request request) -> {
+			System.out.println(request.tag);
+			System.out.println(request.url);
+			System.out.println(request.data);
+		});
+		 return new TerraformRequestEntity(
+		 		this.requests,
+		 		this.mailing.email,
+		 		this.scheduler.toInt());
 	}
 }

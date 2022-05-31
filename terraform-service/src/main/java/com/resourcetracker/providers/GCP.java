@@ -18,13 +18,13 @@ public class GCP implements IProvider {
 	@Autowired
 	private TerraformAPIService terraformAPIService;
 
-	public void start() {
-		// terraformAPIService.setVar("context", Config.formatContext());
-
+	public void start(String context) {
 		terraformAPIService.setEnvVar("GOOGLE_CREDENTIALS", "");
 		terraformAPIService.setEnvVar("GOOGLE_PROJECT", "");
 		terraformAPIService.setEnvVar("GOOGLE_REGION", "");
 		terraformAPIService.setEnvVar("GOOGLE_ZONE", "");
+
+		terraformAPIService.setVar("RESOURCETRACKER_CONTEXT", context);
 
 		if (terraformAPIService.start()) {
 			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));

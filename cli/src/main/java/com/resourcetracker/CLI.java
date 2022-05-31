@@ -1,5 +1,6 @@
 package com.resourcetracker;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
@@ -7,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.resourcetracker.Constants;
 
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import picocli.CommandLine;
 import picocli.CommandLine.IFactory;
 
@@ -20,14 +23,16 @@ import java.util.concurrent.Callable;
 
 import com.resourcetracker.command.TopCommand;
 
-@SpringBootApplication
+@SpringBootApplication()
+@Import({ConfigService.class, StateService.class, TerraformService.class})
 public class CLI implements CommandLineRunner, ExitCodeGenerator{
-    private int exitCode;
+	int exitCode;
+	@Autowired
+	TopCommand topCommand;
 
     @Override
     public void run(String... args) {
-		CommandLine cmd = new CommandLine(new TopCommand());
-		cmd.setUnmatchedOptionsAllowedAsOptionParameters(true);
+		CommandLine cmd = new CommandLine(topCommand);
 		exitCode = cmd.execute(args);
     }
     @Override
