@@ -1,10 +1,7 @@
-package com.resourcetracker.request;
+package com.resourcetracker.service.request;
 
-import com.resourcetracker.context.Context;
-import com.resourcetracker.request.Request;
-import com.resourcetracker.tools.utils.AddressSort;
 // import org.javatuples.Pair;
-import java.util.ArrayList;
+
 
 /**
  * Sends requests using addresses specified in the context

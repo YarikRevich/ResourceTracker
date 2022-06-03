@@ -1,4 +1,4 @@
-package com.resourcetracker.request;
+package com.resourcetracker.service.request;
 
 // import org.springframework.web.client.RestTemplate;
 // import org.springframework.http.HttpStatus;

@@ -1,3 +1,3 @@
-package com.resourcetracker.utils.exception;
+package com.resourcetracker.exception;
 
 public class RequestException extends Exception {}

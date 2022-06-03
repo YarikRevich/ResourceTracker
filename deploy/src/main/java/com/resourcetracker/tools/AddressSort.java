@@ -1,4 +1,4 @@
-package com.resourcetracker.tools.utils;
+package com.resourcetracker.tools;
 
 import java.util.Comparator;
 import java.util.ArrayList;
