@@ -33,7 +33,7 @@ public class AWS implements IProvider {
 		terraformAPIService.setEnvVar("AWS_REGION", "");
 		terraformAPIService.setEnvVar("AWS_PROFILE", "");
 
-		terraformAPIService.setVar("RESOURCETRACKER_CONTEXT", context);
+		terraformAPIService.setVar(Constants.CONTEXT_ENV_VARIABLE_NAME, context);
 
 		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_AWS_PROVIDER_TERRAFORM_CONFIGURATION));
 		if (publicEndpoint != null) {

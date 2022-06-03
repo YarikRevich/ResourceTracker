@@ -1,4 +1,4 @@
-package com.resourcetracker.storage.domain;
+package com.resourcetracker.DAO.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -15,4 +15,6 @@ public class Constants {
 	public static final String PATH_TO_AWS_PROVIDER_TERRAFORM_CONFIGURATION = "aws";
 	public static final String PATH_TO_GCP_PROVIDER_TERRAFORM_CONFIGURATION = "gcp";
 	public static final String PATH_TO_AZ_PROVIDER_TERRAFORM_CONFIGURATION = "az";
+
+	public static final String CONTEXT_ENV_VARIABLE_NAME = "RESOURCETRACKER_CONTEXT";
 }

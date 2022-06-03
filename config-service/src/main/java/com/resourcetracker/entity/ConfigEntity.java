@@ -56,7 +56,7 @@ public class ConfigEntity implements Serializable {
 	public Project project;
 
 	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-	public static enum Method {
+	public enum Method {
 		POST("post"),
 		GET("get"),
 		PUT("put");
@@ -68,11 +68,25 @@ public class ConfigEntity implements Serializable {
 		}
 	}
 
+	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+	public enum DataType {
+		FILE("file"),
+		SCRIPT("script");
+
+		public String type;
+
+		private DataType(String type){
+			this.type = type;
+		}
+	}
+
 	// Represents request, which will be executed on a remote machine
 	public static class Request {
 		public String tag;
 		public String url;
 		public Method method;
+
+		public DataType dataType;
 		public String data;
 
 		public void setData(String data) throws ConfigException {
@@ -91,11 +105,13 @@ public class ConfigEntity implements Serializable {
 					}
 					try{
 						this.data = reader.readLine();
+						this.dataType = DataType.FILE;
 					} catch (IOException e){
 						e.printStackTrace();
 					}
 				case SCRIPT:
 					this.data = data;
+					this.dataType = DataType.SCRIPT;
 			}
 		}
 
@@ -179,11 +195,6 @@ public class ConfigEntity implements Serializable {
 	public Scheduler scheduler;
 
 	public TerraformRequestEntity toTerraformRequestEntity() {
-		this.requests.forEach((Request request) -> {
-			System.out.println(request.tag);
-			System.out.println(request.url);
-			System.out.println(request.data);
-		});
 		 return new TerraformRequestEntity(
 		 		this.requests,
 		 		this.mailing.email,

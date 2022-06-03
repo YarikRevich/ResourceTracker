@@ -28,7 +28,7 @@ public class GCP implements IProvider {
 		terraformAPIService.setEnvVar("GOOGLE_REGION", "");
 		terraformAPIService.setEnvVar("GOOGLE_ZONE", "");
 
-		terraformAPIService.setVar("RESOURCETRACKER_CONTEXT", context);
+		terraformAPIService.setVar(Constants.CONTEXT_ENV_VARIABLE_NAME, context);
 
 		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_GCP_PROVIDER_TERRAFORM_CONFIGURATION));
 		if (publicEndpoint != null) {

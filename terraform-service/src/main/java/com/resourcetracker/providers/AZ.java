@@ -24,7 +24,7 @@ public class AZ implements IProvider {
 		terraformAPIService.setEnvVar("ARM_SUBSCRIPTION_ID", "");
 		terraformAPIService.setEnvVar("ARM_TENANT_ID", "");
 
-		terraformAPIService.setVar("RESOURCETRACKER_CONTEXT", context);
+		terraformAPIService.setVar(Constants.CONTEXT_ENV_VARIABLE_NAME, context);
 
 		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_AZ_PROVIDER_TERRAFORM_CONFIGURATION));
 		if (publicEndpoint != null) {

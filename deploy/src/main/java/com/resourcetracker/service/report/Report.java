@@ -1,4 +1,4 @@
-package com.resourcetracker.report;
+package com.resourcetracker.service.report;
 
 // import com.resourcetracker.storage.entities.Record;
 import java.util.ArrayList;
