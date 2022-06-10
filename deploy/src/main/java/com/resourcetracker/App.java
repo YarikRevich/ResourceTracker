@@ -80,7 +80,7 @@ public class App implements CommandLineRunner {
 				new Thread(new ReportRunner(
 					this.request.getEmail(), Integer.parseInt(this.request.getFrequency()))).run();
 			}
-			kafkaTemplate.
+//			kafkaTemplate.
 			ScheduledExecutorService exec = Executors.newScheduledThreadPool(2);
 			exec.scheduleAtFixedRate(() -> {
 				procService.setCommandsWithEval(this.request.getData());

@@ -11,7 +11,6 @@ import picocli.CommandLine;
 
 @Component
 @Configuration
-@EnableKafka
 @Import({TopCommand.class, ConfigService.class, StateService.class, TerraformService.class})
 public class App implements CommandLineRunner, ExitCodeGenerator {
 	int exitCode;

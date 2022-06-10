@@ -5,9 +5,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.StringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resourcetracker.exception.ProcException;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
@@ -106,6 +111,17 @@ public class ProcService {
 
 	public String getStdout() {
 		return this.stdout;
+	}
+
+	public <T> T getStdoutAsJSON(){
+		T result = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			result = mapper.readValue(this.stdout, new TypeReference<T>() {});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	public String getStderr() {

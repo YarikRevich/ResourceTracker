@@ -19,18 +19,21 @@ import java.util.Optional;
 public class GCP implements IProvider {
 	final static Logger logger = LogManager.getLogger(GCP.class);
 
-	@Autowired
 	TerraformAPIService terraformAPIService;
 
-	public URL start(String context) {
+	public void setTerraformAPIService(TerraformAPIService terraformAPIService) {
+		this.terraformAPIService = terraformAPIService;
+	}
+
+	public URL start() {
 		terraformAPIService.setEnvVar("GOOGLE_CREDENTIALS", "");
 		terraformAPIService.setEnvVar("GOOGLE_PROJECT", "");
 		terraformAPIService.setEnvVar("GOOGLE_REGION", "");
 		terraformAPIService.setEnvVar("GOOGLE_ZONE", "");
 
-		terraformAPIService.setVar("context", context);
+		terraformAPIService.setVar("context", terraformAPIService.getContext());
 
-		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_GCP_PROVIDER_TERRAFORM_CONFIGURATION));
+		URL publicEndpoint = terraformAPIService.apply(Constants.PATH_TO_GCP_PROVIDER_TERRAFORM_CONFIGURATION);
 		if (publicEndpoint != null) {
 			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
 		} else {
@@ -40,6 +43,6 @@ public class GCP implements IProvider {
 	};
 
 	public void stop() {
-		terraformAPIService.stop();
+		terraformAPIService.destroy();
 	};
 }

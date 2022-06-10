@@ -3,7 +3,7 @@ output "resourcetracker_ecs_task_definition"{
 }
 
 output "resourcetracker_ecs_cluster" {
-	value = aws_ecs_task_definition.resourcetracker_ecs_instance_task_definitions.arn
+	value = aws_ecs_cluster.resourcetracker_ecs_cluster.id
 }
 
 output "resourcetracker_main_subnet" {

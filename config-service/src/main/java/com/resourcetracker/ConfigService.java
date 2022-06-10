@@ -60,7 +60,6 @@ public class ConfigService {
 		try {
 			parsedConfigFile = mapper.readValue(configFile, ConfigEntity[].class);
 		} catch (IOException e) {
-			System.out.println("here");
 			e.printStackTrace();
 		}
 		requestSortService.sort(parsedConfigFile);

@@ -27,7 +27,7 @@ public class KafkaConsumerWrapper {
 		this.consumer = new KafkaConsumer<>(config);
 	}
 
-	public String receive(String topic){
+	private String receive(String topic){
 		ConsumerRecords<?, ?> records = consumer.poll(Duration.ofSeconds(10));
 		records.forEach((ConsumerRecord<?,?> e) -> {
 			if (e.topic() == topic){
@@ -37,4 +37,8 @@ public class KafkaConsumerWrapper {
 		consumer.commitAsync();
 		return "";
 	};
+
+	public String receiveStatus(){
+		return this.receive("status");
+	}
 }

@@ -1,8 +1,13 @@
 package com.resourcetracker.providers.common;
 
+import com.resourcetracker.services.TerraformAPIService;
+
 import java.net.URL;
 
 public interface IProvider {
+
+	public void setTerraformAPIService(TerraformAPIService terraformAPIService);
+
 	/**
 	 * Starts remote execution on a chosen provider
 	 * @param context When user runs ResourceTracker, it reads
@@ -11,7 +16,7 @@ public interface IProvider {
 	 * @return URL endpoint to the remote resources where execution is
 	 * going
 	 */
-	public URL start(String context);
+	public URL start();
 
 	/**
 	 * Stops remote execution on a chosen provider
