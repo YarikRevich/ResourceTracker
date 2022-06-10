@@ -15,18 +15,21 @@ import java.util.Optional;
 public class AZ implements IProvider {
 	final static Logger logger = LogManager.getLogger(AZ.class);
 
-	@Autowired
-	TerraformAPIService terraformAPIService;
 
-	public URL start(String context) {
+	TerraformAPIService terraformAPIService;
+	public void setTerraformAPIService(TerraformAPIService terraformAPIService) {
+		this.terraformAPIService = terraformAPIService;
+	}
+
+	public URL start() {
 		terraformAPIService.setEnvVar("ARM_CLIENT_ID", "");
 		terraformAPIService.setEnvVar("ARM_CLIENT_SECRET", "");
 		terraformAPIService.setEnvVar("ARM_SUBSCRIPTION_ID", "");
 		terraformAPIService.setEnvVar("ARM_TENANT_ID", "");
 
-		terraformAPIService.setVar("context", context);
+		terraformAPIService.setVar("context", terraformAPIService.getContext());
 
-		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_AZ_PROVIDER_TERRAFORM_CONFIGURATION));
+		URL publicEndpoint = terraformAPIService.apply(Constants.PATH_TO_AZ_PROVIDER_TERRAFORM_CONFIGURATION);
 		if (publicEndpoint != null) {
 			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
 		} else {
@@ -36,6 +39,6 @@ public class AZ implements IProvider {
 	};
 
 	public void stop() {
-		terraformAPIService.stop();
+		terraformAPIService.destroy();
 	};
 }

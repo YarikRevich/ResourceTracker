@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 import com.resourcetracker.ProcService;
+import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.exception.ProcException;
 
 import org.springframework.stereotype.Service;
@@ -30,8 +31,18 @@ public class TerraformAPIService {
 	@Autowired
 	private ProcService procService;
 
+	private ConfigEntity configEntity;
+
+	public ConfigEntity getConfigEntity(){
+		return this.configEntity;
+	}
+
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 	private TreeMap<String, String> vars = new TreeMap<String, String>();
+
+	public TerraformAPIService(ConfigEntity configEntity){
+
+	}
 
 	public void setEnvVar(String key, String value) {
 		this.envVars.put(key, value);
@@ -42,11 +53,10 @@ public class TerraformAPIService {
 	}
 
 	/**
-	 *
-	 * @param pathToConfiguration Optional path to terraform configuration files conserning special provider
+	 * @param pathToConfiguration Path to terraform configuration files
 	 * @return URL endpoint to the remote resources where execution is
 	 */
-	public URL start(Optional<String> pathToConfiguration) {
+	public <T> T apply(String pathToConfiguration) {
 		procService.setCommands("terraform", "init");
 		try {
 			procService.start();
@@ -54,7 +64,7 @@ public class TerraformAPIService {
 			e.printStackTrace();
 		}
 
-		procService.setCommands("terraform", "plan");
+		procService.setCommands("terraform", "apply", "-auto-approve");
 
 		vars.forEach((k, v) -> {
 			StringBuilder command = new StringBuilder();
@@ -63,7 +73,7 @@ public class TerraformAPIService {
 		});
 
 		StringBuilder command = new StringBuilder();
-		command.append("-chdir").append("=").append(ClassLoader.getSystemResource("tf").getPath()).append(pathToConfiguration.isPresent() ? pathToConfiguration.get() : ".");
+		command.append("-chdir").append("=").append(ClassLoader.getSystemResource("tf").getPath()).append(pathToConfiguration);
 		procService.appendCommands(command.toString());
 
 		procService.setEnvVars(this.envVars);
@@ -73,16 +83,10 @@ public class TerraformAPIService {
 			logger.error(e.getMessage(), e);
 			return null;
 		}
-		URL publicEndpoint = null;
-		try {
-			publicEndpoint = new URL("");
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
-		return publicEndpoint;
+		return procService.<T>getStdoutAsJSON();
 	}
 
-	public boolean stop() {
+	public boolean destroy() {
 		procService.setCommands("terraform", "destroy");
 		try {
 			procService.start();
@@ -91,5 +95,9 @@ public class TerraformAPIService {
 			return false;
 		}
 		return true;
+	}
+
+	public String getContext(){
+		return "";
 	}
 }

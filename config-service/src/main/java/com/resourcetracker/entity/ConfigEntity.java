@@ -158,6 +158,18 @@ public class ConfigEntity implements Serializable {
 		public String profile;
 		public String region;
 
+		public String getCredentials() {
+			return credentials;
+		}
+
+		public String getProfile() {
+			return profile;
+		}
+
+		public String getRegion() {
+			return region;
+		}
+
 		public Provider getProvider(){
 			return this.provider;
 		}

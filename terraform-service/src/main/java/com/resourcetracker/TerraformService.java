@@ -7,6 +7,7 @@ import com.resourcetracker.providers.common.IProvider;
 import com.resourcetracker.providers.AWS;
 import com.resourcetracker.providers.AZ;
 import com.resourcetracker.providers.GCP;
+import com.resourcetracker.services.TerraformAPIService;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -29,16 +30,16 @@ public class TerraformService {
 			case AZ:
 				chosenProvider = new AZ();
 		}
+		chosenProvider.setTerraformAPIService(new TerraformAPIService(configEntity));
 	}
 
 	/**
 	 * Starts remote execution on a chosen provider
-	 * @param context Context created from parsed configuration file
 	 * @return URL endpoint to the remote resources where execution is
 	 * going
 	 */
 	public URL start() {
-		return chosenProvider.start(configEntity.toYAML());
+		return chosenProvider.start();
 	}
 
 	public void stop() {
