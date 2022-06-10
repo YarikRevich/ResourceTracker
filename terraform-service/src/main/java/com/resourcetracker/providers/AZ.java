@@ -16,7 +16,7 @@ public class AZ implements IProvider {
 	final static Logger logger = LogManager.getLogger(AZ.class);
 
 	@Autowired
-	private TerraformAPIService terraformAPIService;
+	TerraformAPIService terraformAPIService;
 
 	public URL start(String context) {
 		terraformAPIService.setEnvVar("ARM_CLIENT_ID", "");
@@ -24,7 +24,7 @@ public class AZ implements IProvider {
 		terraformAPIService.setEnvVar("ARM_SUBSCRIPTION_ID", "");
 		terraformAPIService.setEnvVar("ARM_TENANT_ID", "");
 
-		terraformAPIService.setVar(Constants.CONTEXT_ENV_VARIABLE_NAME, context);
+		terraformAPIService.setVar("context", context);
 
 		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_AZ_PROVIDER_TERRAFORM_CONFIGURATION));
 		if (publicEndpoint != null) {

@@ -2,19 +2,8 @@ package com.resourcetracker.service.formatter;
 
 import java.util.HashMap;
 
-public class OutputBuilder implements OutputBuilder {
-	private HashMap<String, String> data;
-
+public class OutputBuilder implements IOutputBuilder {
 	private String output;
-
-	public StatusBuilder(HashMap<String, String> data){
-		this.data = data;
-	}
-
-	@Override
-	public HashMap<String, String> getData(){
-		return this.data;
-	}
 
 	/**
 	 * @param outputType output type for external representation
@@ -22,8 +11,10 @@ public class OutputBuilder implements OutputBuilder {
 	@Override
 	public void setOutputType(OutputType outputType) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Output type: ");
+		stringBuilder.append("\n");
+		stringBuilder.append("#########");
 		stringBuilder.append(outputType.toString());
+		stringBuilder.append("#########");
 		stringBuilder.append("\n");
 		this.output += stringBuilder.toString();
 	}
@@ -31,7 +22,6 @@ public class OutputBuilder implements OutputBuilder {
 	@Override
 	public void setHeader(String msg) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Header: ");
 		stringBuilder.append(msg);
 		stringBuilder.append("\n");
 		this.output += stringBuilder.toString();
@@ -40,14 +30,13 @@ public class OutputBuilder implements OutputBuilder {
 	@Override
 	public void setBody(String msg) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Body: ");
 		stringBuilder.append(msg);
 		stringBuilder.append("\n");
 		this.output += stringBuilder.toString();
 	}
 
 	@Override
-	public String format(){
+	public String getResult(){
 		return this.output;
 	}
 }

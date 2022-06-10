@@ -1,7 +1,4 @@
-# variable "resourcetracker_container_image"{
-#     description = "Name of docker image for ResourceTracker"
-#     default = "resourcetracker"
-# }
-
 variable "context"{
+	default = ""
+	description = "Context gotten from CLI as a data to be processed in a remote resource"
 }

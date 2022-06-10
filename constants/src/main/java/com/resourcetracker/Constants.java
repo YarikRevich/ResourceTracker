@@ -17,4 +17,9 @@ public class Constants {
 	public static final String PATH_TO_AZ_PROVIDER_TERRAFORM_CONFIGURATION = "az";
 
 	public static final String CONTEXT_ENV_VARIABLE_NAME = "RESOURCETRACKER_CONTEXT";
+
+	/**
+	 * Configuration for Kafka
+	 */
+	public static final String KAFKA_STATUS_TOPIC = "status";
 }

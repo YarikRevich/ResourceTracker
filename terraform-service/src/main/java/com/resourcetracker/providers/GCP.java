@@ -20,7 +20,7 @@ public class GCP implements IProvider {
 	final static Logger logger = LogManager.getLogger(GCP.class);
 
 	@Autowired
-	private TerraformAPIService terraformAPIService;
+	TerraformAPIService terraformAPIService;
 
 	public URL start(String context) {
 		terraformAPIService.setEnvVar("GOOGLE_CREDENTIALS", "");
@@ -28,7 +28,7 @@ public class GCP implements IProvider {
 		terraformAPIService.setEnvVar("GOOGLE_REGION", "");
 		terraformAPIService.setEnvVar("GOOGLE_ZONE", "");
 
-		terraformAPIService.setVar(Constants.CONTEXT_ENV_VARIABLE_NAME, context);
+		terraformAPIService.setVar("context", context);
 
 		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_GCP_PROVIDER_TERRAFORM_CONFIGURATION));
 		if (publicEndpoint != null) {

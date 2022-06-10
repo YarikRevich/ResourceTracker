@@ -23,25 +23,24 @@ import java.util.concurrent.Callable;
 
 import com.resourcetracker.command.TopCommand;
 
-@SpringBootApplication()
-@Import({ConfigService.class, StateService.class, TerraformService.class})
-public class CLI implements CommandLineRunner, ExitCodeGenerator{
-	int exitCode;
-	@Autowired
-	TopCommand topCommand;
-
-    @Override
-    public void run(String... args) {
-		CommandLine cmd = new CommandLine(topCommand);
-		exitCode = cmd.execute(args);
-    }
-    @Override
-    public int getExitCode() {
-        return exitCode;
-    }
+@SpringBootApplication
+public class CLI{
+//	int exitCode;
+//	@Autowired
+//	TopCommand topCommand;
+//
+//    @Override
+//    public void run(String... args) {
+//		CommandLine cmd = new CommandLine(topCommand);
+//		exitCode = cmd.execute(args);
+//    }
+//    @Override
+//    public int getExitCode() {
+//        return exitCode;
+//    }
 
 	public static void main(String[] args) {
-		SpringApplication application = new SpringApplication(CLI.class);
+		SpringApplication application = new SpringApplication(App.class);
 		application.addListeners(new ApplicationPidFileWriter(Constants.PID_FILE_PATH));
 		System.exit(SpringApplication.exit(application.run(args)));
 	}

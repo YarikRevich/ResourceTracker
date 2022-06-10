@@ -11,6 +11,7 @@ resource "aws_ecs_cluster" "resourcetracker_ecs_cluster" {
 
   configuration {
     execute_command_configuration {
+      logging = "OVERRIDE"
       log_configuration {
         s3_bucket_name = module.s3.resourcetracker_ecs_log_bucket_id
       }
@@ -22,48 +23,69 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
   name = "resourcetracker_ecs_instance"
 
   cluster         = aws_ecs_cluster.resourcetracker_ecs_cluster.id
-  task_definition = aws_ecs_task_definition.resourcetracker_ecs_instance_task_definition.arn
-
+  task_definition = aws_ecs_task_definition.resourcetracker_ecs_instance_task_definitions.arn
   network_configuration {
     subnets = [
-      "${module.vpc.resourcetracker_vpc_id}"
+      module.vpc.resourcetracker_main_subnet_id
     ]
-    assign_public_ip = true
     security_groups = [
-      "${module.vpc.allow_resourcetracker_api_calls_id}",
+      module.vpc.resourcetracker_security_group
     ]
   }
 }
 
-resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition" {
-  family = "resourcetracker_ecs_instance_task_definition"
-  container_definitions = jsonencode([
-    {
-      "name" : "resourcetracker",
-      #   "environment" : [{ "RESOURCETRACKER_CONTEXT" : "${var.context}" }]
-      #   "image" : "resourcetrackerdeploy:latest",
-      "image" : "debian:latest",
-      "portMappings" : [
-        {
-          "containerPort" : 10075,
-          "hostPort" : 10075
-      }],
-      memory : 512,
-      cpu : 128,
-    }
-  ])
+resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definitions" {
+	family                   = "resourcetracker_ecs_instance_task_definition"
+	network_mode             = "awsvpc"
+	requires_compatibilities = ["FARGATE"]
+	memory                   = 512
+	cpu                      = 256
 
-  network_mode = "awsvpc"
-}
-
-
-resource "null_resource" "resourcetracker_ecs_instance_task_definition_run" {
-  provisioner "local-exec" {
-    command     = "${aws_ecs_task_definition.resourcetracker_ecs_instance_task_definition.arn} ${aws_ecs_cluster.resourcetracker_ecs_cluster.id}"
-    interpreter = ["/bin/bash", "./run-task.sh"]
-  }
-
-  depends_on = [
-    aws_ecs_task_definition.resourcetracker_ecs_instance_task_definition,
-  ]
+	container_definitions = jsonencode([
+		{
+			name : "resourcetracker_deploy",
+			environment : [
+				{
+					name : "RESOURCETRACKER_CONTEXT",
+					value : var.context,
+				}
+			],
+			image : "yariksvitlitskiy/resourcetracker_deploy:latest",
+		},
+		{
+			name : "resourcetracker_zookeeper",
+			environment : [
+				{
+					name : "ALLOW_ANONYMOUS_LOGIN",
+					value : "yes",
+				}
+			],
+			image : "bitnami/zookeeper:latest",
+			portMappings : [
+				{
+					"containerPort" : 2128,
+					"hostPort" : 2128
+				}
+			],
+		},
+		{
+			name : "resourcetracker_kafka",
+			environment : [
+				{
+					name : "ALLOW_PLAINTEXT_LISTENER",
+					value : "yes",
+				}, {
+					name : "KAFKA_CFG_ZOOKEEPER_CONNECT",
+					value : "resourcetracker_zookeeper:2181"
+				}
+			],
+			image : "bitnami/kafka:latest",
+			portMappings : [
+				{
+					"containerPort" : 9091,
+					"hostPort" : 9091
+				}
+			],
+		}
+	])
 }

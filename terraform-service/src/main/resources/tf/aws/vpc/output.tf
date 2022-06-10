@@ -1,7 +1,7 @@
-output "allow_resourcetracker_api_calls_id"{
-    value = "${aws_security_group.allow_resourcetracker_api_calls.id}"
+output "resourcetracker_security_group"{
+    value = aws_security_group.resourcetracker_security_group.id
 }
 
-output "resourcetracker_vpc_id"{
-    value = "${aws_vpc.resourcetracker_vpc.id}"
+output "resourcetracker_main_subnet_id"{
+    value = aws_subnet.resourcetracker_main_subnet.id
 }

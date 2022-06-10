@@ -7,39 +7,46 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.List;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.ProcService;
 import com.resourcetracker.exception.ProcException;
 import com.resourcetracker.exception.ConfigException;
 import com.resourcetracker.Constants;
-import com.resourcetracker.tools.parsing.Frequency;
+import com.resourcetracker.tools.frequency.Frequency;
 import com.resourcetracker.services.DataFieldMatchService;
 import com.resourcetracker.services.DataFieldMatchService.DataFieldType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * Model used for YAML configuration file parsing
  */
 public class ConfigEntity implements Serializable {
+	ProcService procService;
 
+	public ConfigEntity(){
+		this.procService = new ProcService();
+	}
+	public boolean example;
 	public void setExample(boolean example){
 		if (example){
-			 ProcService procService = new ProcService();
 			 System.out.println("Remove 'example' field from configuration file to run ResourceTracker");
-			 procService.setCommands("cat", Constants.PID_FILE_PATH);
+			this.procService.setCommands("cat", Constants.PID_FILE_PATH);
 			try {
-				procService.start();
+				this.procService.start();
 			} catch (ProcException e) {
 				e.printStackTrace();
 			}
-			 String pid = procService.getStdout();
-			 procService.setCommands("kill", "-9", pid);
+			 String pid = this.procService.getStdout();
+			this.procService.setCommands("kill", "-9", pid);
 			 try {
-			 	procService.start();
+				 this.procService.start();
 			 } catch (ProcException e) {
 			 	e.printStackTrace();
 			 }
@@ -47,47 +54,33 @@ public class ConfigEntity implements Serializable {
 		this.example = example;
 	}
 
-	public boolean example;
-
-	static class Project {
+	public static class Project {
 		public String name;
+
+		public String getName() {
+			return name;
+		}
 	}
 
 	public Project project;
 
-	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-	public enum Method {
-		POST("post"),
-		GET("get"),
-		PUT("put");
-
-		public String method;
-
-		private Method(String method) {
-			this.method = method;
-		}
-	}
-
-	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-	public enum DataType {
-		FILE("file"),
-		SCRIPT("script");
-
-		public String type;
-
-		private DataType(String type){
-			this.type = type;
-		}
+	public Project getProject() {
+		return project;
 	}
 
 	// Represents request, which will be executed on a remote machine
 	public static class Request {
 		public String tag;
-		public String url;
-		public Method method;
 
-		public DataType dataType;
+		public String getTag() {
+			return tag;
+		}
+
 		public String data;
+
+		public String getData() {
+			return data;
+		}
 
 		public void setData(String data) throws ConfigException {
 			DataFieldType match = DataFieldMatchService.matches(data);
@@ -105,18 +98,43 @@ public class ConfigEntity implements Serializable {
 					}
 					try{
 						this.data = reader.readLine();
-						this.dataType = DataType.FILE;
 					} catch (IOException e){
 						e.printStackTrace();
 					}
 				case SCRIPT:
 					this.data = data;
-					this.dataType = DataType.SCRIPT;
 			}
 		}
 
-		@Pattern(regexp = "^((^((([0-9]*)(s|m|h|d|w))))|(^once))$")
+		@Pattern(regexp = "^((^(((\\d+)(s|m|h|d|w))))|(^once))$")
 		public String frequency;
+
+		public String setFrequency(String frequency){
+			int number = Integer.parseInt(frequency.substring(0, frequency.length() - 1));
+			if (frequency.endsWith("s")) {
+				return String.format("%d", number * Frequency.secondInMilliseconds);
+			} else if (frequency.endsWith("m")) {
+				return String.format("%d", number * Frequency.minuteInMilliseconds);
+			} else if (frequency.endsWith("h")) {
+				return String.format("%d", number * Frequency.hourInMilliseconds);
+			} else if (frequency.endsWith("d")) {
+				return String.format("%d", number * Frequency.dayInMilliseconds);
+			} else if (frequency.endsWith("w")) {
+				return String.format("%d", number * Frequency.weekInMilliseconds);
+			}
+			return "";
+		}
+
+		public String getFrequency() {
+			return frequency;
+		}
+
+		@Email(message = "Report email should be valid")
+		public String email;
+
+		public String getEmail() {
+			return email;
+		}
 	}
 
 	public ArrayList<Request> requests;
@@ -151,53 +169,45 @@ public class ConfigEntity implements Serializable {
 		return this.cloud;
 	}
 
-	static class Mailing {
-		@Email(message = "Report email should be valid")
-		public String email;
-
-		public String getEmail(){
-			return this.email;
-		}
-	}
-
-	public Mailing mailing;
-
-	public Mailing getMailing(){
-		return this.mailing;
-	}
-
-	static class Scheduler {
-		@Pattern(regexp = "^([0-9]*)(s|m|h|d|w)$")
+	public static class Reporter{
+		@Pattern(regexp = "^((^(((\\d+)(s|m|h|d|w))))|(^once))$")
 		public String frequency;
 
-		/**
-		 * Parses raw string frequency and converts it to int
-		 *
-		 * @return int representation of frequency
-		 */
-		public int toInt() {
+		public String setFrequency(String frequency){
 			int number = Integer.parseInt(frequency.substring(0, frequency.length() - 1));
 			if (frequency.endsWith("s")) {
-				return number * Frequency.secondInMilliseconds;
+				return String.format("%d", number * Frequency.secondInMilliseconds);
 			} else if (frequency.endsWith("m")) {
-				return number * Frequency.minuteInMilliseconds;
+				return String.format("%d", number * Frequency.minuteInMilliseconds);
 			} else if (frequency.endsWith("h")) {
-				return number * Frequency.hourInMilliseconds;
+				return String.format("%d", number * Frequency.hourInMilliseconds);
 			} else if (frequency.endsWith("d")) {
-				return number * Frequency.dayInMilliseconds;
+				return String.format("%d", number * Frequency.dayInMilliseconds);
 			} else if (frequency.endsWith("w")) {
-				return number * Frequency.weekInMilliseconds;
+				return String.format("%d", number * Frequency.weekInMilliseconds);
 			}
-			return 0;
+			return "";
+		}
+
+		public String getFrequency() {
+			return frequency;
 		}
 	}
 
-	public Scheduler scheduler;
+	public Reporter reporter;
 
-	public TerraformRequestEntity toTerraformRequestEntity() {
-		 return new TerraformRequestEntity(
-		 		this.requests,
-		 		this.mailing.email,
-		 		this.scheduler.toInt());
+	public Reporter getReporter() {
+		return reporter;
+	}
+
+	public String toYAML() {
+		ObjectWriter ow = new ObjectMapper(new YAMLFactory()).writer().withDefaultPrettyPrinter();
+		String result = "";
+		try{
+			result = ow.writeValueAsString(this);
+		} catch (JsonProcessingException e){
+			e.printStackTrace();
+		}
+		return result;
 	}
 }
