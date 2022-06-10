@@ -1,18 +1,15 @@
 ---
 example: true # remove this line for usage
 project:
-        name: “example”
+        name: "example"
 requests:
-        tag: “first”,
-        host: “http://localhost:8080”
-        pathes: [“/ping”]
+        - tag: "first",
+          data: "ping google.com"
+          email: "test@gmail.com"
+          frequency: "5m"
 cloud:
         provider: "aws"
         credentials: "~/.aws/credentials"
         profile: "default"
         region: "default"
-mailing:
-        email: test@gmail.com
-scheduler:
-        frequency: 5m
 ---

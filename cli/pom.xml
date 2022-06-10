@@ -50,6 +50,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-indexer</artifactId>
+		</dependency>
+
+		<!-- Kafka -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>3.2.0</version>
+		</dependency>
+
 
 		<!-- Amazon SDK -->
 
@@ -134,10 +146,16 @@
 <!--			<artifactId>picocli-spring-boot-starter</artifactId>-->
 <!--			<version>0.2.0</version>-->
 <!--		</dependency>-->
+
+
+
+		<!-- Rx -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-indexer</artifactId>
+			<groupId>io.reactivex.rxjava3</groupId>
+			<artifactId>rxjava</artifactId>
+			<version>3.1.5</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

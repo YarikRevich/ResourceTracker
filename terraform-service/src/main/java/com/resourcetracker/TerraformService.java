@@ -15,8 +15,13 @@ import java.net.URL;
 public class TerraformService {
 	private IProvider chosenProvider;
 
-	public TerraformService setProvider(ConfigEntity.Provider provider){
-		switch (provider) {
+	private ConfigEntity configEntity;
+	public void setConfigEntity(ConfigEntity configEntity){
+		this.configEntity = configEntity;
+	}
+
+	public void selectProvider(){
+		switch (this.configEntity.getCloud().getProvider()) {
 			case AWS:
 				chosenProvider = new AWS();
 			case GCP:
@@ -24,8 +29,7 @@ public class TerraformService {
 			case AZ:
 				chosenProvider = new AZ();
 		}
-		return this;
-	};
+	}
 
 	/**
 	 * Starts remote execution on a chosen provider
@@ -33,8 +37,8 @@ public class TerraformService {
 	 * @return URL endpoint to the remote resources where execution is
 	 * going
 	 */
-	public URL start(String context) {
-		return chosenProvider.start(context);
+	public URL start() {
+		return chosenProvider.start(configEntity.toYAML());
 	}
 
 	public void stop() {

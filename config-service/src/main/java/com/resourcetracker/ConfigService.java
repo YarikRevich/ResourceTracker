@@ -14,9 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.resourcetracker.entity.ConfigEntity;
 
+import com.resourcetracker.services.RequestSortService;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,11 +28,15 @@ import org.springframework.stereotype.Service;
  * @author YarikRevich
  */
 @Service
+@Import({RequestSortService.class})
 public class ConfigService {
 	private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
+	@Autowired
+	RequestSortService requestSortService;
+
 	private InputStream configFile;
-	private ConfigEntity parsedConfigFile = null;
+	private ConfigEntity[] parsedConfigFile = null;
 
 	/**
 	 * Opens YAML configuration file
@@ -51,13 +58,15 @@ public class ConfigService {
 			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		try {
-			parsedConfigFile = mapper.readValue(configFile, ConfigEntity.class);
+			parsedConfigFile = mapper.readValue(configFile, ConfigEntity[].class);
 		} catch (IOException e) {
+			System.out.println("here");
 			e.printStackTrace();
 		}
+		requestSortService.sort(parsedConfigFile);
 	}
 
-	public ConfigEntity getParsedConfigFile() {
+	public ConfigEntity[] getParsedConfigFile() {
 		return this.parsedConfigFile;
 	}
 

@@ -8,9 +8,9 @@ spring:
     profiles:
         active: prod
 
-logging:
-    level:
-        root: OFF
+#logging:
+#    level:
+#        root: OFF
 
 endpoints:
     shutdown:

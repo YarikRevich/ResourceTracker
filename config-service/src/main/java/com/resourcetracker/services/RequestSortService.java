@@ -1,12 +1,10 @@
-package com.resourcetracker.tools.sort;
+package com.resourcetracker.services;
 
 import com.resourcetracker.entity.ConfigEntity;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Service;
 
-import java.io.ObjectInputFilter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.regex.Matcher;

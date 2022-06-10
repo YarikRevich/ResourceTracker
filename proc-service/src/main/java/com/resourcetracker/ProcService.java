@@ -18,10 +18,26 @@ public class ProcService {
 	private String stderr = "";
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 
+	/**
+	 * Sets commands for further executions
+	 * @param commands commands to set
+	 */
 	public void setCommands(String... commands) {
 		this.commands.clear();
 		for (String command : commands) {
 			this.commands.add(command);
+		}
+	}
+
+	/**
+	 * Sets external commands with unknown structure
+	 * @param commands commands to set
+	 */
+	public void setCommandsWithEval(String... commands){
+		this.commands.clear();
+		this.commands.add("eval");
+		for (String command : commands) {
+			this.commands.add(String.format("'%s'", command));
 		}
 	}
 

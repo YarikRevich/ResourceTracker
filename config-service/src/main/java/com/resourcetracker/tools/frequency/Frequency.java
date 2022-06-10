@@ -1,4 +1,4 @@
-package com.resourcetracker.tools.parsing;
+package com.resourcetracker.tools.frequency;
 
 /**
  * Contains aliases for frequency ticker

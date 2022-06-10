@@ -24,16 +24,14 @@ public class AWS implements IProvider {
 	final static Logger logger = LogManager.getLogger(AWS.class);
 
 	@Autowired
-	private TerraformAPIService terraformAPIService;
+	TerraformAPIService terraformAPIService;
 
 	public URL start(String context) {
-		// terraformAPIService.setVar("context", Config.formatContext());
-
 		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", "");
 		terraformAPIService.setEnvVar("AWS_REGION", "");
 		terraformAPIService.setEnvVar("AWS_PROFILE", "");
 
-		terraformAPIService.setVar(Constants.CONTEXT_ENV_VARIABLE_NAME, context);
+		terraformAPIService.setVar("context", context);
 
 		URL publicEndpoint = terraformAPIService.start(Optional.of(Constants.PATH_TO_AWS_PROVIDER_TERRAFORM_CONFIGURATION));
 		if (publicEndpoint != null) {

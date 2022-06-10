@@ -1,6 +1,6 @@
-package com.resourcetracker.service.report;
+package com.resourcetracker.service.reporter;
 
-import java.util.ArrayList;
+import org.springframework.stereotype.Service;
 
 /**
  * TODO: implement sending of email report
@@ -9,12 +9,9 @@ import java.util.ArrayList;
  *
  * @author YarikRevich
  */
-public class Report{
-	private String sendFrom;
-	public Report(String sendFrom){
-		this.sendFrom = sendFrom;
-	}
-	public void sendTo(String sendTo){
-
+@Service
+public class Reporter {
+	public void send(String sendFrom, String sendTo, String msg){
+		//TODO: send email address;
 	}
 }

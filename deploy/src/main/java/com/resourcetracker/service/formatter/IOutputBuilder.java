@@ -6,7 +6,5 @@ public interface IOutputBuilder {
 	void setOutputType(OutputType outputType);
 	void setHeader(String msg);
 	void setBody(String msg);
-	String format();
-
-	HashMap<String, String> getData();
+	String getResult();
 }

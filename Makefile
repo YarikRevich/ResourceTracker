@@ -34,36 +34,15 @@ define create_binary
 	@echo 'java -jar $(2)' >> /usr/local/bin/resourcetracker_$(1)
 endef
 
-check_os:
-# ifneq ($(filter $(shell uname -s), Darwin Linux)
-#     $(error Your OS is not supported)
-# endif
 
-build_deploy: check_os prepare_pre_build
-	@mvn -pl deploy clean compile jib:build
 
-build_cli: check_os prepare_pre_build
-	@mvn -pl cli clean compile assembly:single -T100 -DskipTests -q
+build: prepare_pre_build
+	@mvn clean install -T100
 
-build_web: check_os prepare_pre_build
-	@echo "it works"
-
-build_gui: check_os prepare_pre_build
-	@echo "it works"
-
-# build: build_gui build_web build_cli build_deploy
-build:
-	@mvn clean install -q -T100
-
-# Installs for such kinds of components of ResoureTracker as cli, web, gui
-
-install_cli:
+install:
 	$(call make_target_shared, $(CLI_TARGET_PATH))
+	#$(call make_target_shared, $(WEB_TARGET_PATH))
+
 	$(call create_binary, cli, $(CLI_SHARED_TARGET_PATH))
+	#$(call create_binary, web, $(WEB_SHARED_TARGET_PATH))
 
-
-install_web:
-	$(call make_target_shared, $(WEB_TARGET_PATH))
-	$(call create_binary, web, $(WEB_SHARED_TARGET_PATH))
-
-install: check_os install_cli install_web install_gui
