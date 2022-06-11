@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -29,7 +30,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  */
 public class ConfigEntity implements Serializable {
 	ProcService procService;
-
 	public ConfigEntity(){
 		this.procService = new ProcService();
 	}
@@ -137,7 +137,11 @@ public class ConfigEntity implements Serializable {
 		}
 	}
 
-	public ArrayList<Request> requests;
+	public List<Request> requests;
+
+	public List<Request> getRequests() {
+		return requests;
+	}
 
 	@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 	public static enum Provider {

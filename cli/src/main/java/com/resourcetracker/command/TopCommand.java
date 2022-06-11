@@ -13,6 +13,10 @@ import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+import java.io.ObjectInputFilter;
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @Command(name = "base", mixinStandardHelpOptions = true, description = "Cloud-based remote resource tracker", version = "1.0")
 public class TopCommand{
@@ -34,18 +38,22 @@ public class TopCommand{
 	void start(@Option(names = {"-p", "--project"}, description = "project name to start") String project) {
 		 if (stateService.isMode(StateEntity.Mode.STOPED)) {
 			 configService.parse();
-			 for (ConfigEntity configEntity : configService.getParsedConfigFile()){
-				 if (configEntity.getProject().getName() == project || project.isEmpty()){
+			 List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
+			 for (ConfigEntity configEntity : parsedConfigFile){
+				 if (configEntity.getProject().getName() == project || project == null){
 					 terraformService.setConfigEntity(configEntity);
 					 terraformService.selectProvider();
 					 terraformService.start();
 					 stateService.setMode(StateEntity.Mode.STARTED);
 					 stateService.actualizeConfigFileHash();
+					 logger.info(String.format("Project %s is successfully started!", project));
 					 break;
 				 }
 			 }
 		 } else {
-		 	logger.info("ResourceTracker is already started!");
+			 if (project == null){
+				 logger.info("Project is already started!");
+			 }
 		 }
 	}
 
@@ -59,8 +67,10 @@ public class TopCommand{
 	void status(@Option(names = { "-p", "--project" }, description = "project name to start") String project) {
 		if (!stateService.isConfigFileHashActual() && stateService.isMode(StateEntity.Mode.STARTED)){
 			System.out.println("It seems, that you have modified configuration file. Please, restart current remote execution");
-		}else{
+		}else if (stateService.isMode(StateEntity.Mode.STARTED)){
 			System.out.println(kafkaConsumerWrapper.receiveStatus());
+		} else {
+			System.out.println("No projects are run");
 		}
 	}
 

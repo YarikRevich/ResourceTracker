@@ -28,17 +28,19 @@ public class StateService {
 	private static final Logger logger = LogManager.getLogger(StateService.class);
 
 	private static StateEntity parsedStateFile = null;
-	private static ObjectMapper objectMapper = null;
+
+	private static File stateFile = null;
+	private static ObjectMapper stateFileObjectMapper = null;
 
 	public StateService() {
 		if (parsedStateFile == null) {
-			objectMapper = objectMapper = new ObjectMapper()
+			stateFileObjectMapper = new ObjectMapper()
 					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-			File stateFile = new File(Constants.STATE_FILE_PATH);
+			stateFile = new File(Constants.STATE_FILE_PATH);
 			try {
 				if (stateFile.createNewFile()) {
 					try {
-						objectMapper.writeValue(stateFile, this.getDefaultStateEntity());
+						stateFileObjectMapper.writeValue(stateFile, this.getDefaultStateEntity());
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -47,7 +49,7 @@ public class StateService {
 				e.printStackTrace();
 			}
 			try {
-				parsedStateFile = objectMapper.readValue(stateFile, StateEntity.class);
+				parsedStateFile = stateFileObjectMapper.readValue(stateFile, StateEntity.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -59,9 +61,9 @@ public class StateService {
 	 */
 	private StateEntity getDefaultStateEntity() {
 		StateEntity stateEntry = new StateEntity();
-		stateEntry.mode = StateEntity.Mode.STOPED;
+		stateEntry.setMode(StateEntity.Mode.STOPED);
 		File configFile = new File(Constants.CONFIG_FILE_PATH);
-		stateEntry.configFileHash = configFile.hashCode();
+		stateEntry.setConfigFileHash(configFile.hashCode());
 		return stateEntry;
 	}
 
@@ -87,13 +89,13 @@ public class StateService {
 	 */
 
 	public boolean isMode(StateEntity.Mode mode) {
-		return parsedStateFile.mode == mode;
+		return parsedStateFile.getMode() == mode;
 	}
 
 	public void setMode(StateEntity.Mode mode) {
-		parsedStateFile.mode = mode;
+		parsedStateFile.setMode(mode);
 		try {
-			objectMapper.writeValue(new File(Constants.STATE_FILE_PATH), parsedStateFile);
+			stateFileObjectMapper.writeValue(stateFile, parsedStateFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -101,21 +103,32 @@ public class StateService {
 
 	public boolean isConfigFileHashActual() {
 		File configFile = new File(Constants.CONFIG_FILE_PATH);
-		return parsedStateFile.configFileHash == configFile.hashCode();
+		return parsedStateFile.getConfigFileHash() == configFile.hashCode();
 	}
 
 	public void actualizeConfigFileHash() {
 		File configFile = new File(Constants.CONFIG_FILE_PATH);
-		parsedStateFile.configFileHash = configFile.hashCode();
+		parsedStateFile.setConfigFileHash(configFile.hashCode());
 		try {
-			objectMapper.writeValue(new File(Constants.STATE_FILE_PATH), parsedStateFile);
+			stateFileObjectMapper.writeValue(stateFile, parsedStateFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void setPublicEndpoint(URL publicEndpoint){}
-	public URL getPublicEndpoint(){
-		return null;
+	public void setKafkaBootstrapServer(String kafkaBootstrapServer){
+		parsedStateFile.setKafkaBootstrapServer(kafkaBootstrapServer);
+		try {
+			stateFileObjectMapper.writeValue(stateFile, parsedStateFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public String getKafkaBootstrapServer(){
+		return parsedStateFile.getKafkaBootstrapServer();
+	}
+
+	public boolean isKafkaBootstrapServer(){
+		return parsedStateFile.getKafkaBootstrapServer() != null;
 	}
 }

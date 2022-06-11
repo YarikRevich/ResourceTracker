@@ -1,6 +1,7 @@
 package com.resourcetracker;
 
 import com.resourcetracker.command.TopCommand;
+import com.resourcetracker.service.KafkaConsumerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
@@ -11,7 +12,12 @@ import picocli.CommandLine;
 
 @Component
 @Configuration
-@Import({TopCommand.class, ConfigService.class, StateService.class, TerraformService.class})
+@Import({
+	TopCommand.class,
+	ConfigService.class,
+	StateService.class,
+	TerraformService.class,
+	KafkaConsumerWrapper.class})
 public class App implements CommandLineRunner, ExitCodeGenerator {
 	int exitCode;
 	@Autowired

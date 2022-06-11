@@ -5,13 +5,21 @@ import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Iterator;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import com.resourcetracker.entity.ConfigEntity;
 
 import com.resourcetracker.services.RequestSortService;
@@ -21,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * Service for processing configuration file
@@ -36,7 +46,7 @@ public class ConfigService {
 	RequestSortService requestSortService;
 
 	private InputStream configFile;
-	private ConfigEntity[] parsedConfigFile = null;
+	private List<ConfigEntity> parsedConfigFile;
 
 	/**
 	 * Opens YAML configuration file
@@ -55,17 +65,19 @@ public class ConfigService {
 
 	public void parse(){
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+			.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>(){});
 		try {
-			parsedConfigFile = mapper.readValue(configFile, ConfigEntity[].class);
+			parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		requestSortService.sort(parsedConfigFile);
 	}
 
-	public ConfigEntity[] getParsedConfigFile() {
+	public List<ConfigEntity> getParsedConfigFile() {
 		return this.parsedConfigFile;
 	}
 

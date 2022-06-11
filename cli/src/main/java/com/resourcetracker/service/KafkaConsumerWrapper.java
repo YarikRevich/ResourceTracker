@@ -1,30 +1,44 @@
 package com.resourcetracker.service;
 
+import com.resourcetracker.StateService;
 import io.reactivex.rxjava3.core.Observable;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.Properties;
 
 @Service
 public class KafkaConsumerWrapper {
-	private KafkaConsumer consumer;
+	private Properties properties;
+	private KafkaConsumer<String, String> consumer;
+
+	StateService stateService = null;
 
 	public KafkaConsumerWrapper(){
-		Properties config = new Properties();
+		stateService = new StateService();
+
+		properties = new Properties();
 		try {
-			config.put(AdminClientConfig.CLIENT_ID_CONFIG, InetAddress.getLocalHost().getHostName());
+			properties.put(AdminClientConfig.CLIENT_ID_CONFIG, InetAddress.getLocalHost().getHostName());
 		} catch (UnknownHostException e){
 			e.printStackTrace();
 		}
-		config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "");
-		this.consumer = new KafkaConsumer<>(config);
+
+		properties.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+		properties.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+		if (stateService.isKafkaBootstrapServer()){
+			properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, stateService.getKafkaBootstrapServer());
+			this.consumer = new KafkaConsumer<>(properties);
+		}
 	}
 
 	private String receive(String topic){
