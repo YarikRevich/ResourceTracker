@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,9 +39,9 @@ public class RequestSortService {
 		 }
 	 };
 
-     public void sort(ConfigEntity[] src) {
-		 for (ConfigEntity configEntity : src){
-			 Collections.sort(configEntity.requests, new RequestSortComparator());
-		 }
+     public void sort(List<ConfigEntity> src) {
+		 src.forEach((ConfigEntity configEntity) -> {
+			 Collections.sort(configEntity.getRequests(), new RequestSortComparator());
+		 });
      }
 }
