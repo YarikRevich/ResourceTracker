@@ -41,18 +41,20 @@ public class KafkaConsumerWrapper {
 		}
 	}
 
-	private String receive(String topic){
+	private String receive(String topic, String project){
 		ConsumerRecords<?, ?> records = consumer.poll(Duration.ofSeconds(10));
 		records.forEach((ConsumerRecord<?,?> e) -> {
 			if (e.topic() == topic){
 				System.out.println(e.value().toString());
 			}
 		});
+
+
 		consumer.commitAsync();
 		return "";
 	};
 
-	public String receiveStatus(){
-		return this.receive("status");
+	public String receiveStatus(String project){
+		return this.receive("status", project);
 	}
 }

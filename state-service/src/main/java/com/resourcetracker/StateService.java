@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.resourcetracker.entity.StateEntity;
 
@@ -61,7 +63,7 @@ public class StateService {
 	 */
 	private StateEntity getDefaultStateEntity() {
 		StateEntity stateEntry = new StateEntity();
-		stateEntry.setMode(StateEntity.Mode.STOPED);
+		stateEntry.setStates(new ArrayList<StateEntity.State>());
 		File configFile = new File(Constants.CONFIG_FILE_PATH);
 		stateEntry.setConfigFileHash(configFile.hashCode());
 		return stateEntry;
@@ -88,12 +90,36 @@ public class StateService {
 	 * @return
 	 */
 
-	public boolean isMode(StateEntity.Mode mode) {
-		return parsedStateFile.getMode() == mode;
+	public boolean isMode(String project, StateEntity.Mode mode) {
+		List<StateEntity.State> states = parsedStateFile.getStates();
+		for (StateEntity.State state : states){
+			if (state.getProject() == project){
+				return state.getMode() == mode;
+			}
+		}
+		return mode == StateEntity.Mode.STOPED ? true : false;
 	}
 
-	public void setMode(StateEntity.Mode mode) {
-		parsedStateFile.setMode(mode);
+	public void setMode(String project, StateEntity.Mode mode) {
+		List<StateEntity.State> states = parsedStateFile.getStates();
+		boolean containsProject = false;
+		int projectIndex = 0;
+		for (StateEntity.State state : states){
+			if (state.getProject() == project){
+				containsProject = true;
+				projectIndex = states.indexOf(state);
+			}
+		}
+		if (containsProject){
+			states.get(projectIndex).setMode(mode);
+		}else{
+			StateEntity.State state = new StateEntity.State();
+			state.setProject(project);
+			state.setMode(mode);
+			states.add(state);
+		}
+		parsedStateFile.setStates(states);
+
 		try {
 			stateFileObjectMapper.writeValue(stateFile, parsedStateFile);
 		} catch (IOException e) {

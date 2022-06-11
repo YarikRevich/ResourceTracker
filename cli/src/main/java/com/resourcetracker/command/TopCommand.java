@@ -36,24 +36,39 @@ public class TopCommand{
 
 	@Command
 	void start(@Option(names = {"-p", "--project"}, description = "project name to start") String project) {
-		 if (stateService.isMode(StateEntity.Mode.STOPED)) {
-			 configService.parse();
-			 List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
-			 for (ConfigEntity configEntity : parsedConfigFile){
-				 if (configEntity.getProject().getName() == project || project == null){
-					 terraformService.setConfigEntity(configEntity);
-					 terraformService.selectProvider();
-					 terraformService.start();
-					 stateService.setMode(StateEntity.Mode.STARTED);
-					 stateService.actualizeConfigFileHash();
-					 logger.info(String.format("Project %s is successfully started!", project));
-					 break;
-				 }
-			 }
+		configService.parse();
+		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
+		if (project == null){
+			int numberOfStartedProjects = 0;
+			for (ConfigEntity configEntity : parsedConfigFile){
+				if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)){
+					terraformService.setConfigEntity(configEntity);
+					terraformService.selectProvider();
+					terraformService.start();
+					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
+					numberOfStartedProjects++;
+				}
+			}
+			stateService.actualizeConfigFileHash();
+			if (numberOfStartedProjects > 0) {
+				logger.info("All projects were successfully started!");
+			}
+		} else if (stateService.isMode(project, StateEntity.Mode.STOPED)){
+			for (ConfigEntity configEntity : parsedConfigFile){
+				if (configEntity.getProject().getName() == project || project == null){
+					terraformService.setConfigEntity(configEntity);
+					terraformService.selectProvider();
+					terraformService.start();
+					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
+					stateService.actualizeConfigFileHash();
+					logger.info(String.format("Project %s is successfully started!", project));
+					break;
+				}
+			}
 		 } else {
-			 if (project == null){
-				 logger.info("Project is already started!");
-			 }
+//			 if (stateService.isMode(project, StateEntity.Mode.STARTED)){
+				 logger.info(String.format("Project %s is already started!", project));
+//			 }
 		 }
 	}
 
@@ -65,18 +80,37 @@ public class TopCommand{
 
 	@Command
 	void status(@Option(names = { "-p", "--project" }, description = "project name to start") String project) {
-		if (!stateService.isConfigFileHashActual() && stateService.isMode(StateEntity.Mode.STARTED)){
-			System.out.println("It seems, that you have modified configuration file. Please, restart current remote execution");
-		}else if (stateService.isMode(StateEntity.Mode.STARTED)){
-			System.out.println(kafkaConsumerWrapper.receiveStatus());
-		} else {
-			System.out.println("No projects are run");
+		if (!stateService.isConfigFileHashActual()){
+			System.out.println("**It seems, that you have modified configuration file**");
+		}
+
+		configService.parse();
+		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
+		if (project != null){
+			if (stateService.isMode(project, StateEntity.Mode.STARTED)) {
+				System.out.println(kafkaConsumerWrapper.receiveStatus(project));
+			}else{
+				System.out.println(String.format("Project %s is not run!", project));
+			}
+		}else {
+				int numberOfRunProjects = 0;
+				for (ConfigEntity configEntity : parsedConfigFile) {
+					if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)) {
+						System.out.println(kafkaConsumerWrapper.receiveStatus(configEntity.getProject().getName()));
+						numberOfRunProjects++;
+					}
+				}
+				if (numberOfRunProjects > 0) {
+					System.out.println("No projects are run!");
+				}
 		}
 	}
 
 	@Command
 	void stop(@Option(names = {"-p", "--project"}, description = "project name to start") String project){
-		 if (stateService.isMode(StateEntity.Mode.STARTED)){
+
+
+		if (stateService.isMode(StateEntity.Mode.STARTED)){
 			 configService.parse();
 			 for (ConfigEntity configEntity : configService.getParsedConfigFile()){
 				 if (configEntity.getProject().getName() == project || project.isEmpty()){
