@@ -19,6 +19,12 @@ public class Constants {
 	public static final String CONTEXT_ENV_VARIABLE_NAME = "RESOURCETRACKER_CONTEXT";
 
 	/**
+	 * Terraform
+	 */
+
+	public static final String TERRAFORM_CONFIG_FILES_PATH = HOME_FOLDER_PATH.concat("tf");
+
+	/**
 	 * Configuration for Kafka
 	 */
 	public static final String KAFKA_STATUS_TOPIC = "status";

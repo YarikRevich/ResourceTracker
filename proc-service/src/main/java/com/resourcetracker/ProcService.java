@@ -1,6 +1,7 @@
 package com.resourcetracker;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.StringBuilder;
@@ -28,7 +29,6 @@ public class ProcService {
 	 * @param commands commands to set
 	 */
 	public void setCommands(String... commands) {
-		this.commands.clear();
 		for (String command : commands) {
 			this.commands.add(command);
 		}
@@ -39,7 +39,6 @@ public class ProcService {
 	 * @param commands commands to set
 	 */
 	public void setCommandsWithEval(String... commands){
-		this.commands.clear();
 		this.commands.add("eval");
 		for (String command : commands) {
 			this.commands.add(String.format("'%s'", command));
@@ -56,6 +55,18 @@ public class ProcService {
 		this.envVars = envVars;
 	}
 
+	private String directory = "";
+
+	public void setDirectory(String directory){
+		this.directory = directory;
+	}
+
+	public void clear(){
+		this.commands.clear();
+		this.envVars.clear();
+		this.directory = "";
+	}
+
 	public void start() throws ProcException {
 		if (this.commands.isEmpty()) {
 			throw new ProcException();
@@ -68,6 +79,10 @@ public class ProcService {
 
 		for (var envVar : this.envVars.entrySet()) {
 			env.put(envVar.getKey(), envVar.getValue());
+		}
+
+		if (!this.directory.isEmpty()) {
+			processBuilder.directory(new File(this.directory));
 		}
 
 		Process process = null;

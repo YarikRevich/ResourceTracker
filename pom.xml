@@ -28,7 +28,17 @@
 		<module>proc-service</module>
 		<module>config-service</module>
 		<module>terraform-service</module>
-		<module>deploy</module>
 		<module>cli</module>
 	</modules>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>cli/src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>terraform-service/src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
 </project>

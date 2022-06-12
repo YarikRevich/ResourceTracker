@@ -14,3 +14,8 @@
 #     description = "Profile for aws account"
 # }
 
+variable "resourcetracker_shared_credentials_file" {
+	default = "~/.aws/credentials"
+	description = "File with credentials for AWS provider"
+}
+
