@@ -4,7 +4,7 @@
 ![macOS](https://svgshare.com/i/ZjP.svg)
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
-## General
+## General Information
 
 A cloud-native distributed tracker for resources, which are set via configuration file
 
