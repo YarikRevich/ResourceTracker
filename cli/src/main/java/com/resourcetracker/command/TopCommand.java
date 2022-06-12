@@ -66,9 +66,7 @@ public class TopCommand{
 				}
 			}
 		 } else {
-//			 if (stateService.isMode(project, StateEntity.Mode.STARTED)){
 				 logger.info(String.format("Project %s is already started!", project));
-//			 }
 		 }
 	}
 
@@ -108,24 +106,37 @@ public class TopCommand{
 
 	@Command
 	void stop(@Option(names = {"-p", "--project"}, description = "project name to start") String project){
-
-
-		if (stateService.isMode(StateEntity.Mode.STARTED)){
-			 configService.parse();
-			 for (ConfigEntity configEntity : configService.getParsedConfigFile()){
-				 if (configEntity.getProject().getName() == project || project.isEmpty()){
-					 terraformService.setConfigEntity(configEntity);
-					 terraformService.selectProvider();
-					 terraformService.stop();
-					 stateService.setMode(StateEntity.Mode.STOPED);
-					 stateService.actualizeConfigFileHash();
-					 break;
-				 }
-			 }
-		 }else{
-			  	logger.info("ResourceTracker is already stoped!");
-		 }
-
-		System.out.println("stoped");
+		configService.parse();
+		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
+		if (project == null){
+			int numberOfStartedProjects = 0;
+			for (ConfigEntity configEntity : parsedConfigFile){
+				if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)){
+					terraformService.setConfigEntity(configEntity);
+					terraformService.selectProvider();
+					terraformService.start();
+					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
+					numberOfStartedProjects++;
+				}
+			}
+			stateService.actualizeConfigFileHash();
+			if (numberOfStartedProjects > 0) {
+				logger.info("All projects were successfully stoped!");
+			}
+		} else if (stateService.isMode(project, StateEntity.Mode.STARTED)){
+			for (ConfigEntity configEntity : parsedConfigFile){
+				if (configEntity.getProject().getName() == project){
+					terraformService.setConfigEntity(configEntity);
+					terraformService.selectProvider();
+					terraformService.start();
+					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
+					stateService.actualizeConfigFileHash();
+					logger.info(String.format("Project %s is successfully stoped!", project));
+					break;
+				}
+			}
+		} else {
+			logger.info(String.format("Project %s is already stoped!", project));
+		}
 	}
 }

@@ -47,21 +47,22 @@ public class AWS implements IProvider {
 		ConfigEntity.Cloud cloud = configEntity.getCloud();
 
 		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", cloud.getCredentials());
-		terraformAPIService.setEnvVar("AWS_REGION", cloud.getRegion());
 		terraformAPIService.setEnvVar("AWS_PROFILE", cloud.getProfile());
+		terraformAPIService.setEnvVar("AWS_REGION", cloud.getRegion());
 
 		terraformAPIService.setVar("context", terraformAPIService.getContext());
 
-		AWSOutput output = terraformAPIService.<AWSOutput>apply(Constants.PATH_TO_AWS_PROVIDER_TERRAFORM_CONFIGURATION);
+		terraformAPIService.setDirectory(terraformAPIService.getProvider());
+		AWSOutput output = terraformAPIService.<AWSOutput>apply();
 		ECSTaskRunner ecsTaskRunner = new ECSTaskRunner(output);
 		return ecsTaskRunner.run();
 	}
 
 	public void stop() {
 		if (terraformAPIService.destroy()){
-			logger.error(String.format("Provider(%s) is stoped", this.getClass().toString()));
+			logger.error(String.format("Provider %s is stoped", this.getClass().toString()));
 		}else{
-			logger.error(String.format("Provider(%s) is not stoped", this.getClass().toString()));
+			logger.error(String.format("Provider %s is not stoped", this.getClass().toString()));
 		}
 	}
 }

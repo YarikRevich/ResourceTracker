@@ -3,7 +3,7 @@ example: true # remove this line for usage
 project:
         name: "example"
 requests:
-        - tag: "first",
+        - tag: "first"
           data: "ping google.com"
           email: "test@gmail.com"
           frequency: "5m"

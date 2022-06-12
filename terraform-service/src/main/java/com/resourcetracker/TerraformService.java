@@ -25,11 +25,14 @@ public class TerraformService {
 		switch (this.configEntity.getCloud().getProvider()) {
 			case AWS:
 				chosenProvider = new AWS();
+				break;
 			case GCP:
 				chosenProvider = new GCP();
+				break;
 			case AZ:
 				chosenProvider = new AZ();
 		}
+
 		chosenProvider.setTerraformAPIService(new TerraformAPIService(configEntity));
 	}
 

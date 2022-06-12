@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 public class StateService {
 	private static final Logger logger = LogManager.getLogger(StateService.class);
 
-	private static StateEntity parsedStateFile = null;
+	private static StateEntity parsedStateFile;
 
 	private static File stateFile = null;
 	private static ObjectMapper stateFileObjectMapper = null;
@@ -39,16 +39,18 @@ public class StateService {
 			stateFileObjectMapper = new ObjectMapper()
 					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 			stateFile = new File(Constants.STATE_FILE_PATH);
+			boolean newFileCreated = false;
 			try {
-				if (stateFile.createNewFile()) {
-					try {
-						stateFileObjectMapper.writeValue(stateFile, this.getDefaultStateEntity());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				stateFile.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+			if (newFileCreated) {
+				try {
+					stateFileObjectMapper.writeValue(stateFile, this.getDefaultStateEntity());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			try {
 				parsedStateFile = stateFileObjectMapper.readValue(stateFile, StateEntity.class);
