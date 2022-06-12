@@ -1,24 +1,32 @@
-# ResourceTracker🇺🇦
+# ResourceTracker
 
 ![Linux](https://svgshare.com/i/Zhy.svg)
 ![macOS](https://svgshare.com/i/ZjP.svg)
+[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
+
+## General Information
 
 A cloud-native distributed tracker for resources, which are set via configuration file
 
-## Installation
+## Technologies
 
-### Java
+- Java 17+
+- Kafka
+- Terraform 1.1.9+
 
-Before of all you should install Java for [Linux](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-18-04-ru) or [MacOS](https://mkyong.com/java/how-to-install-java-on-mac-osx/)
+## Setup
 
-### Kafka
+### Java([Linux](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-18-04-ru) or [MacOS](https://mkyong.com/java/how-to-install-java-on-mac-osx/))
 
-Then, install Kafka for [Linux](https://hevodata.com/blog/how-to-install-kafka-on-ubuntu/) or for [MacOS](https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273)
+### Kafka([Linux](https://hevodata.com/blog/how-to-install-kafka-on-ubuntu/) or for [MacOS](https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273))
 
-### Terraform
+### Terraform([Any OS](https://learn.hashicorp.com/tutorials/terraform/install-cli))
 
-The main part of _*ResourceTracker*_ is terraform, you can install it via [this link](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+## Status
 
-## Conclusion
+ResourceTracker is still actively supported
 
-See more at [Wiki](../../wiki)
+## Inspiration
+
+Developers often want to execute some tasks with some frequency, but there aren't such tools, which will allow to do that remotely in a cloud environment.
+That's why I decided to implement such kind of application!
