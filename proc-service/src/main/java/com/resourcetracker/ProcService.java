@@ -20,56 +20,111 @@ import java.util.ArrayList;
 @Service
 public class ProcService {
 	private ArrayList<String> commands = new ArrayList<String>();
+
+	public ProcService setFlag(String key, String value){
+		this.commands.add(key);
+		this.commands.add("=");
+		this.commands.add(value);
+		return this;
+	}
+
+	public ProcService setMapOfFlag(String key, TreeMap<String, String> values){
+		values.forEach((k, v) -> {
+			this.setFlag(key, String.format("'%s=%s'", k, v));
+		});
+		return this;
+	}
+
+	public ProcService setPositionalVar(String value){
+		this.commands.add(value);
+		return this;
+	}
+
+	public ProcService setCommand(String command){
+		this.commands.add(command);
+		return this;
+	}
 	private String stdout = "";
+
+	public String getStdout() {
+		return this.stdout;
+	}
+
+	public <T> T getStdoutAsJSON(){
+		T result = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			result = mapper.readValue(this.stdout, new TypeReference<T>() {});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	private String stderr = "";
+
+	public String getStderr(){
+		return this.stderr;
+	}
+
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 
-	/**
-	 * Sets commands for further executions
-	 * @param commands commands to set
-	 */
-	public void setCommands(String... commands) {
-		for (String command : commands) {
-			this.commands.add(command);
-		}
+	public void setEnvVar(String key, String value) {
+		this.envVars.put(key, value);
 	}
 
-	/**
-	 * Sets external commands with unknown structure
-	 * @param commands commands to set
-	 */
-	public void setCommandsWithEval(String... commands){
-		this.commands.add("eval");
-		for (String command : commands) {
-			this.commands.add(String.format("'%s'", command));
+	public ProcService setEnvVars(TreeMap<String, String> envVars){
+		for (var envVar: envVars.entrySet()){
+			this.setEnvVar(envVar.getKey(), envVar.getValue());
 		}
+		return this;
 	}
 
-	public void appendCommands(String... commands) {
-		for (String command : commands) {
-			this.commands.add(command);
-		}
-	}
-
-	public void setEnvVars(TreeMap<String, String> envVars) {
-		this.envVars = envVars;
+	public TreeMap<String, String> getEnvVars(){
+		return this.envVars;
 	}
 
 	private String directory = "";
 
-	public void setDirectory(String directory){
+	public ProcService setDirectory(String directory){
 		this.directory = directory;
+		return this;
 	}
 
-	public void clear(){
+	public String getDirectory() {
+		return directory;
+	}
+
+	String wrapper = "";
+
+	/**
+	 * @param wrapper Wrapper function for the whole command
+	 * @return instance of ProcService
+	 */
+	public ProcService setWrapper(String wrapper){
+		this.wrapper = wrapper;
+		return this;
+	}
+
+	public ProcService build(){
 		this.commands.clear();
 		this.envVars.clear();
 		this.directory = "";
+
+		return this;
 	}
 
-	public void start() throws ProcException {
+	public void run() {
+		if (!this.wrapper.isEmpty()){
+			String copyCommandString = this.toString();
+			ArrayList<String> copyCommandArray = new ArrayList<String>(this.commands);
+			this.commands.clear();
+			this.commands.add(this.wrapper);
+			this.commands.add(String.format("'%s'", copyCommandString));
+		}
+
+
 		if (this.commands.isEmpty()) {
-			throw new ProcException();
+			throw new RuntimeException("command is empty");
 		}
 
 		ProcessBuilder processBuilder = new ProcessBuilder(this.commands);
@@ -124,30 +179,14 @@ public class ProcService {
 		}
 	}
 
-	public String getStdout() {
-		return this.stdout;
-	}
-
-	public <T> T getStdoutAsJSON(){
-		T result = null;
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			result = mapper.readValue(this.stdout, new TypeReference<T>() {});
-		} catch (IOException e) {
-			e.printStackTrace();
+	/**
+	 * @return command representation as a text
+	 */
+	public String toString(){
+		StringBuilder rawCommand = new StringBuilder();
+		for (String command: commands){
+			rawCommand.append(rawCommand);
 		}
-		return result;
-	}
-
-	public String getStderr() {
-		return this.stderr;
-	}
-
-	public boolean isStderr() {
-		return this.stderr.length() != 0;
-	}
-
-	public boolean isStdout() {
-		return this.stdout.length() != 0;
+		return rawCommand.toString();
 	}
 }
