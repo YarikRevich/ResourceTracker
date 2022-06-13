@@ -1,6 +1,6 @@
 package com.resourcetracker.entity;
 
-public class AWSOutput{
+public class AWSResult{
 	public String taskDefinitionARN;
 	public String clusterARN;
 	public String subnet;

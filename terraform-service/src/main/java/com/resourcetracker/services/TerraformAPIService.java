@@ -38,6 +38,12 @@ public class TerraformAPIService {
 		this.directory = rawDirectory.toString();
 	}
 
+	public String getDirectory() {
+		return directory;
+	}
+
+
+
 	/**
 	 * Path to terraform files source
 	 */
@@ -50,7 +56,22 @@ public class TerraformAPIService {
 	}
 
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
+
+	public void setEnvVar(String key, String value) {
+		this.envVars.put(key, value);
+	}
+	public TreeMap<String, String> getEnvVars() {
+		return envVars;
+	}
 	private TreeMap<String, String> vars = new TreeMap<String, String>();
+
+	public void setVar(String key, String value) {
+		this.vars.put(key, value);
+	}
+
+	public TreeMap<String, String> getVars() {
+		return vars;
+	}
 
 	public TerraformAPIService(ConfigEntity configEntity){
 		procService = new ProcService();
@@ -58,70 +79,49 @@ public class TerraformAPIService {
 		this.configEntity = configEntity;
 	}
 
-	public void setEnvVar(String key, String value) {
-		this.envVars.put(key, value);
-	}
-
-	public void setVar(String key, String value) {
-		this.vars.put(key, value);
-	}
-
-
 	/**
 	 * @param provider Path to terraform configuration files
 	 * @return URL endpoint to the remote resources where execution is
 	 */
 	public <T> T apply() {
-		procService.setCommands("terraform", "init");
-		procService.setDirectory(this.directory);
-		procService.setEnvVars(this.envVars);
-		try {
-			procService.start();
-		} catch (ProcException e) {
-			e.printStackTrace();
-		}
-		procService.clear();
+		procService
+			.build()
+			.setDirectory(this.getDirectory())
+			.setCommand("terraform")
+			.setEnvVars(this.getEnvVars())
+			.setCommand("init")
+			.run();
 
-		procService.setCommands("terraform", "apply", "-auto-approve");
-		procService.appendCommands("-chdir", this.directory);
-		procService.setEnvVars(this.envVars);
-		vars.forEach((k, v) -> {
-			StringBuilder command = new StringBuilder();
-			command.append("-var").append(" ").append(k).append("=").append(v);
-			procService.appendCommands(command.toString());
-		});
-		try {
-			procService.start();
-		} catch (ProcException e) {
-			logger.error(e.getMessage(), e);
-			return null;
-		}
-		procService.clear();
+		procService
+			.build()
+			.setCommand("terraform")
+			.setFlag("-chdir", this.getDirectory())
+			.setMapOfFlag("-var", this.getVars())
+			.setEnvVars(this.getEnvVars())
+			.setCommand("apply")
+			.setPositionalVar("-auto-approve")
+			.run();
 
-		procService.setCommands("terraform", "output", "-json");
-		procService.appendCommands("-chdir", this.directory);
-		procService.setEnvVars(this.envVars);
-		try {
-			procService.start();
-		} catch (ProcException e) {
-			logger.error(e.getMessage(), e);
-			return null;
-		}
-		procService.clear();
+		procService
+			.build()
+			.setCommand("terraform")
+			.setFlag("-chdir", this.getDirectory())
+			.setEnvVars(this.getEnvVars())
+			.setCommand("output")
+			.setPositionalVar("-json")
+			.run();
 
 		System.out.println(procService.getStdout());
-		return procService.<T>getStdoutAsJSON();
+//		return procService.<T>getStdoutAsJSON();
+		return null;
 	}
 
-	public boolean destroy() {
-		procService.setCommands("terraform", "destroy");
-		try {
-			procService.start();
-		} catch (ProcException e) {
-			logger.error(e.getMessage(), e);
-			return false;
-		}
-		return true;
+	public void destroy() {
+		procService
+			.build()
+			.setCommand("terraform")
+			.setCommand("destroy")
+			.run();
 	}
 
 	public String getContext(){
