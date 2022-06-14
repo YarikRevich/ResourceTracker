@@ -1,4 +1,4 @@
 package com.resourcetracker.entity;
 
-public class GCPOutput {
+public class GCPResult {
 }

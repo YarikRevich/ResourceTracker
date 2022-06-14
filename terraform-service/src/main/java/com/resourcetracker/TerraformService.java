@@ -8,12 +8,18 @@ import com.resourcetracker.providers.AWS;
 import com.resourcetracker.providers.AZ;
 import com.resourcetracker.providers.GCP;
 import com.resourcetracker.services.TerraformAPIService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
 
 @Service
+@Import({TerraformAPIService.class})
 public class TerraformService {
+
+	@Autowired TerraformAPIService terraformAPIService;
+
 	private IProvider chosenProvider;
 
 	private ConfigEntity configEntity;
@@ -33,7 +39,10 @@ public class TerraformService {
 				chosenProvider = new AZ();
 		}
 
-		chosenProvider.setTerraformAPIService(new TerraformAPIService(configEntity));
+		terraformAPIService.setConfigEntity(configEntity);
+		chosenProvider.setTerraformAPIService(terraformAPIService);
+//		chosenProvider.setTerraformAPIService(new TerraformAPIService(
+//			configEntity));
 	}
 
 	/**

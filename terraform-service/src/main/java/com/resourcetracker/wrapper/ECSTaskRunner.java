@@ -3,16 +3,16 @@ package com.resourcetracker.wrapper;
 import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
-import com.resourcetracker.entity.AWSOutput;
+import com.resourcetracker.entity.AWSResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class ECSTaskRunner {
-	private AWSOutput output;
+	private AWSResult output;
 
-	public ECSTaskRunner(AWSOutput output){
+	public ECSTaskRunner(AWSResult output){
 		this.output = output;
 	}
 
