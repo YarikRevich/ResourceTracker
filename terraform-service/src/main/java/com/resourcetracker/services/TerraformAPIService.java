@@ -6,12 +6,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.resourcetracker.Constants;
 import com.resourcetracker.ProcService;
 import com.resourcetracker.TerraformService;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.exception.ProcException;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import org.apache.logging.log4j.Logger;
@@ -24,17 +28,21 @@ import org.springframework.beans.factory.annotation.Autowired;
  * There are two core methods: start and stop.
  */
 @Service
+@Import({ShutdownManager.class})
 public class TerraformAPIService {
 	final static Logger logger = LogManager.getLogger(TerraformAPIService.class);
 
+	@Autowired
+	ShutdownManager shutdownManager;
+
 	private String directory = "";
 
-	public void setDirectory(String provider){
+	private void selectDirectory(){
 		StringBuilder rawDirectory = new StringBuilder();
 		rawDirectory
 			.append(Constants.TERRAFORM_CONFIG_FILES_PATH)
 			.append("/")
-			.append(provider);
+			.append(this.getProvider());
 		this.directory = rawDirectory.toString();
 	}
 
@@ -43,13 +51,16 @@ public class TerraformAPIService {
 	}
 
 
-
 	/**
 	 * Path to terraform files source
 	 */
 	private ProcService procService;
 
 	private ConfigEntity configEntity;
+
+	public void setConfigEntity(ConfigEntity configEntity){
+		this.configEntity = configEntity;
+	}
 
 	public ConfigEntity getConfigEntity(){
 		return this.configEntity;
@@ -73,34 +84,42 @@ public class TerraformAPIService {
 		return vars;
 	}
 
-	public TerraformAPIService(ConfigEntity configEntity){
+	public TerraformAPIService(){
 		procService = new ProcService();
-
-		this.configEntity = configEntity;
 	}
 
-	/**
-	 * @param provider Path to terraform configuration files
-	 * @return URL endpoint to the remote resources where execution is
-	 */
-	public <T> T apply() {
+	public void apply() {
+		this.selectDirectory();
+
 		procService
 			.build()
 			.setDirectory(this.getDirectory())
 			.setCommand("terraform")
 			.setEnvVars(this.getEnvVars())
 			.setCommand("init")
+			.setPositionalVar("-no-color")
 			.run();
+
+		if (this.procService.isStderr()) {
+			logger.fatal(this.procService.getStderr());
+			shutdownManager.initiateShutdown(1);
+		}
 
 		procService
 			.build()
 			.setCommand("terraform")
 			.setFlag("-chdir", this.getDirectory())
-			.setMapOfFlag("-var", this.getVars())
 			.setEnvVars(this.getEnvVars())
 			.setCommand("apply")
+			.setMapOfFlag("-var", this.getVars())
 			.setPositionalVar("-auto-approve")
+			.setPositionalVar("-no-color")
 			.run();
+
+		if (this.procService.isStderr()) {
+			logger.fatal(this.procService.getStderr());
+			shutdownManager.initiateShutdown(1);
+		}
 
 		procService
 			.build()
@@ -109,11 +128,15 @@ public class TerraformAPIService {
 			.setEnvVars(this.getEnvVars())
 			.setCommand("output")
 			.setPositionalVar("-json")
+			.setPositionalVar("-no-color")
 			.run();
 
-		System.out.println(procService.getStdout());
-//		return procService.<T>getStdoutAsJSON();
-		return null;
+		if (this.procService.isStderr()) {
+			logger.fatal(this.procService.getStderr());
+			shutdownManager.initiateShutdown(1);
+		}
+
+		logger.info(String.format("Project '%s' is run!", this.configEntity.getProject().getName()));
 	}
 
 	public void destroy() {
@@ -121,7 +144,20 @@ public class TerraformAPIService {
 			.build()
 			.setCommand("terraform")
 			.setCommand("destroy")
+			.setPositionalVar("-no-color")
 			.run();
+
+		if (this.procService.isStderr()) {
+			logger.fatal(this.procService.getStderr());
+			shutdownManager.initiateShutdown(1);
+		}
+
+		logger.info(String.format("Project '%s' is destroyed!", this.configEntity.getProject().getName()));
+	}
+
+	public <T> T getResult(){
+		return null;
+//		return procService.<T>getStdoutAsJSON();
 	}
 
 	public String getContext(){

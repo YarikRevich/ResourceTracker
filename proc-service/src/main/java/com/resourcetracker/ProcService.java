@@ -22,9 +22,7 @@ public class ProcService {
 	private ArrayList<String> commands = new ArrayList<String>();
 
 	public ProcService setFlag(String key, String value){
-		this.commands.add(key);
-		this.commands.add("=");
-		this.commands.add(value);
+		this.commands.add(String.format("%s=%s", key, value));
 		return this;
 	}
 
@@ -64,6 +62,10 @@ public class ProcService {
 
 	public String getStderr(){
 		return this.stderr;
+	}
+
+	public boolean isStderr(){
+		return !this.stderr.isEmpty();
 	}
 
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
@@ -108,6 +110,8 @@ public class ProcService {
 	public ProcService build(){
 		this.commands.clear();
 		this.envVars.clear();
+		this.stdout = "";
+		this.stderr = "";
 		this.directory = "";
 
 		return this;
@@ -128,7 +132,6 @@ public class ProcService {
 		}
 
 		ProcessBuilder processBuilder = new ProcessBuilder(this.commands);
-		processBuilder.redirectErrorStream(true);
 
 		var env = processBuilder.environment();
 
@@ -154,6 +157,11 @@ public class ProcService {
 				this.stdout += line + "\n";
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+		};
+		try {
+			in.close();
+		} catch (IOException e){
 			e.printStackTrace();
 		}
 		if (this.stdout.length() > 0) {
@@ -185,7 +193,7 @@ public class ProcService {
 	public String toString(){
 		StringBuilder rawCommand = new StringBuilder();
 		for (String command: commands){
-			rawCommand.append(rawCommand);
+			rawCommand.append(command).append(" ");
 		}
 		return rawCommand.toString();
 	}

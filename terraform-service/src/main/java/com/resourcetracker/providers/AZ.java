@@ -29,14 +29,14 @@ public class AZ implements IProvider {
 
 		terraformAPIService.setVar("context", terraformAPIService.getContext());
 
-		terraformAPIService.setDirectory(terraformAPIService.getProvider());
-		URL publicEndpoint = terraformAPIService.apply();
-		if (publicEndpoint != null) {
-			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
-		} else {
-			logger.error(String.format("Provider(%s) is not started", this.getClass().toString()));
-		}
-		return publicEndpoint;
+//		URL publicEndpoint = terraformAPIService.apply();
+//		if (publicEndpoint != null) {
+//			logger.error(String.format("Provider(%s) is started", this.getClass().toString()));
+//		} else {
+//			logger.error(String.format("Provider(%s) is not started", this.getClass().toString()));
+//		}
+//		return publicEndpoint;
+		return null;
 	};
 
 	public void stop() {
