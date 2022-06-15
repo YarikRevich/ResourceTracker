@@ -41,8 +41,6 @@ public class TerraformService {
 
 		terraformAPIService.setConfigEntity(configEntity);
 		chosenProvider.setTerraformAPIService(terraformAPIService);
-//		chosenProvider.setTerraformAPIService(new TerraformAPIService(
-//			configEntity));
 	}
 
 	/**

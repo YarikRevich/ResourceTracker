@@ -1,5 +1,6 @@
 package com.resourcetracker.providers;
 
+import com.resourcetracker.Constants;
 import com.resourcetracker.entity.AWSResult;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.providers.common.IProvider;
@@ -33,7 +34,9 @@ public class AWS implements IProvider {
 		terraformAPIService.setEnvVar("AWS_PROFILE", cloud.getProfile());
 		terraformAPIService.setEnvVar("AWS_REGION", cloud.getRegion());
 
-		terraformAPIService.setVar("context", terraformAPIService.getContext());
+		terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_ENV_VAR, terraformAPIService.getContext());
+		terraformAPIService.setVar(Constants.TERRAFORM_SHARED_CREDENTIALS_FILE_ENV_VAR, terraformAPIService.getCredentials());
+		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
 
 		terraformAPIService.apply();
 		AWSResult result = terraformAPIService.<AWSResult>getResult();

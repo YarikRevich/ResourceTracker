@@ -47,7 +47,7 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
 			environment : [
 				{
 					name : "RESOURCETRACKER_CONTEXT",
-					value : var.context,
+					value : var.resourcetracker_context,
 				}
 			],
 			image : "yariksvitlitskiy/resourcetracker_deploy:latest",

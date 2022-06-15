@@ -31,8 +31,8 @@ define create_binary
 endef
 
 prepare_pre_build:
-	@mkdir -p $(HOME_FOLDER_PATH)
-	@cp $(DEFAULT_CONFIG_FILE_PATH) $(HOME_FOLDER_PATH)
+	@#mkdir -p $(HOME_FOLDER_PATH)
+	@#cp $(DEFAULT_CONFIG_FILE_PATH) $(HOME_FOLDER_PATH)
 	@cp -r $(TERRAFORM_CONFIG_FILES_PATH) $(HOME_FOLDER_PATH)
 
 build: prepare_pre_build
