@@ -28,7 +28,7 @@ public class ProcService {
 
 	public ProcService setMapOfFlag(String key, TreeMap<String, String> values){
 		values.forEach((k, v) -> {
-			this.setFlag(key, String.format("'%s=%s'", k, v));
+			this.setFlag(key, String.format("%s=%s", k, v));
 		});
 		return this;
 	}

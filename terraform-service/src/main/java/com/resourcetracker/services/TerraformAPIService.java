@@ -84,6 +84,16 @@ public class TerraformAPIService {
 		return vars;
 	}
 
+	private TreeMap<String, String> backendConfig = new TreeMap<String, String>();
+
+	public void setBackendConfig(String key, String value) {
+		this.backendConfig.put(key, value);
+	}
+
+	public TreeMap<String, String> getBackendConfig() {
+		return backendConfig;
+	}
+
 	public TerraformAPIService(){
 		procService = new ProcService();
 	}
@@ -97,7 +107,9 @@ public class TerraformAPIService {
 			.setCommand("terraform")
 			.setEnvVars(this.getEnvVars())
 			.setCommand("init")
+			.setMapOfFlag("-backend-config", this.getBackendConfig())
 			.setPositionalVar("-no-color")
+			.setPositionalVar("-reconfigure")
 			.run();
 
 		if (this.procService.isStderr()) {
@@ -143,9 +155,13 @@ public class TerraformAPIService {
 		procService
 			.build()
 			.setCommand("terraform")
+			.setFlag("-chdir", this.getDirectory())
+			.setEnvVars(this.getEnvVars())
 			.setCommand("destroy")
 			.setPositionalVar("-no-color")
 			.run();
+
+		System.out.println("IT WORKS");
 
 		if (this.procService.isStderr()) {
 			logger.fatal(this.procService.getStderr());
@@ -156,6 +172,7 @@ public class TerraformAPIService {
 	}
 
 	public <T> T getResult(){
+		System.out.println(procService.getStdout());
 		return null;
 //		return procService.<T>getStdoutAsJSON();
 	}
@@ -166,5 +183,9 @@ public class TerraformAPIService {
 
 	public String getProvider(){
 		return this.configEntity.getCloud().getProvider().toString().toLowerCase();
+	}
+
+	public String getCredentials(){
+		return this.configEntity.getCloud().getCredentials();
 	}
 }

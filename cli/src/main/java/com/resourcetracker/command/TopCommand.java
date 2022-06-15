@@ -114,7 +114,7 @@ public class TopCommand{
 				if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)){
 					terraformService.setConfigEntity(configEntity);
 					terraformService.selectProvider();
-					terraformService.start();
+					terraformService.stop();
 					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
 					numberOfStartedProjects++;
 				}
@@ -128,7 +128,7 @@ public class TopCommand{
 				if (configEntity.getProject().getName() == project){
 					terraformService.setConfigEntity(configEntity);
 					terraformService.selectProvider();
-					terraformService.start();
+					terraformService.stop();
 					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
 					stateService.actualizeConfigFileHash();
 					logger.info(String.format("Project %s is successfully stoped!", project));
