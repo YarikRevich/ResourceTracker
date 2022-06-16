@@ -8,6 +8,7 @@ import com.resourcetracker.entity.AWSResult;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ECSTaskRunner {
 	private AWSResult output;
@@ -19,8 +20,8 @@ public class ECSTaskRunner {
 	public URL run() {
 		final AmazonECS ecs = AmazonECSClientBuilder.standard().build();
 		RunTaskRequest runTaskRequest = new RunTaskRequest();
-		runTaskRequest.setTaskDefinition(output.getTaskDefinitionARN());
-		runTaskRequest.setCluster(output.getClusterARN());
+//		runTaskRequest.setTaskDefinition(output.getEcsTaskDefinition().getValue());
+//		runTaskRequest.setCluster(output.getEcsCluster().getValue());
 		runTaskRequest.setNetworkConfiguration(this.getNetworkConfiguration());
 		RunTaskResult runTaskResult = ecs.runTask(runTaskRequest);
 		try {
@@ -55,13 +56,13 @@ public class ECSTaskRunner {
 
 	private ArrayList<String> getSecurityGroups(){
 		ArrayList<String> securityGroups = new ArrayList<String>();
-		securityGroups.add(output.getSecurityGroup());
+//		securityGroups.add(output.getSecurityGroup().getValue());
 		return securityGroups;
 	}
 
 	private ArrayList<String> getSubnets(){
 		ArrayList<String> subnets = new ArrayList<String>();
-		subnets.add(output.getSubnet());
+//		subnets.add(output.getMainSubnet().getValue());
 		return subnets;
 	}
 }

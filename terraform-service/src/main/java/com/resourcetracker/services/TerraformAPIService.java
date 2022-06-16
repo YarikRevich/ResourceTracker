@@ -1,15 +1,20 @@
 package com.resourcetracker.services;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resourcetracker.Constants;
 import com.resourcetracker.ProcService;
 import com.resourcetracker.TerraformService;
+import com.resourcetracker.entity.AWSResult;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.exception.ProcException;
 
@@ -109,6 +114,7 @@ public class TerraformAPIService {
 			.setCommand("init")
 			.setMapOfFlag("-backend-config", this.getBackendConfig())
 			.setPositionalVar("-no-color")
+			.setPositionalVar("-upgrade")
 			.setPositionalVar("-reconfigure")
 			.run();
 
@@ -161,8 +167,6 @@ public class TerraformAPIService {
 			.setPositionalVar("-no-color")
 			.run();
 
-		System.out.println("IT WORKS");
-
 		if (this.procService.isStderr()) {
 			logger.fatal(this.procService.getStderr());
 			shutdownManager.initiateShutdown(1);
@@ -171,10 +175,8 @@ public class TerraformAPIService {
 		logger.info(String.format("Project '%s' is destroyed!", this.configEntity.getProject().getName()));
 	}
 
-	public <T> T getResult(){
-		System.out.println(procService.getStdout());
-		return null;
-//		return procService.<T>getStdoutAsJSON();
+	public String getResult(){
+		return procService.getStdout();
 	}
 
 	public String getContext(){

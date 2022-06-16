@@ -34,23 +34,44 @@ public class TopCommand{
 	@Autowired
 	KafkaConsumerWrapper kafkaConsumerWrapper;
 
+	private int numberOfStartedProjects = 0;
+
+	/**
+	 * Manages starting of each project
+	 * described in a configuration file
+	 */
+	class StartRunner implements Runnable{
+		private ConfigEntity configEntity;
+		public StartRunner(ConfigEntity configEntity){
+			this.configEntity = configEntity;
+		}
+		/**
+		 *
+		 */
+		@Override
+		public void run() {
+			if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)){
+				terraformService.setConfigEntity(configEntity);
+				terraformService.selectProvider();
+				terraformService.start();
+				stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
+				numberOfStartedProjects++;
+			}
+		}
+	}
+
 	@Command
 	void start(@Option(names = {"-p", "--project"}, description = "project name to start") String project) {
 		configService.parse();
 		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
 		if (project == null){
-			int numberOfStartedProjects = 0;
-			for (ConfigEntity configEntity : parsedConfigFile){
-				if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)){
-					terraformService.setConfigEntity(configEntity);
-					terraformService.selectProvider();
-					terraformService.start();
-					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-					numberOfStartedProjects++;
+			synchronized (this) {
+				for (ConfigEntity configEntity : parsedConfigFile) {
+					new Thread(new StartRunner(configEntity)).run();
 				}
 			}
 			stateService.actualizeConfigFileHash();
-			if (numberOfStartedProjects > 0) {
+			if (this.numberOfStartedProjects > 0) {
 				logger.info("All projects were successfully started!");
 			}
 		} else if (stateService.isMode(project, StateEntity.Mode.STOPED)){

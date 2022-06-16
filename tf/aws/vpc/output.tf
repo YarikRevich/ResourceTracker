@@ -3,5 +3,5 @@ output "resourcetracker_security_group"{
 }
 
 output "resourcetracker_main_subnet_id"{
-    value = aws_subnet.resourcetracker_main_subnet.id
+    value = aws_subnet.resourcetracker_subnet.id
 }

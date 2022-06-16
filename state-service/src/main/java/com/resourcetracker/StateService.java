@@ -40,10 +40,12 @@ public class StateService {
 					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 			stateFile = new File(Constants.STATE_FILE_PATH);
 			boolean newFileCreated = false;
-			try {
-				stateFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (!stateFile.exists()) {
+				try {
+					newFileCreated = stateFile.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			if (newFileCreated) {
 				try {
@@ -95,7 +97,7 @@ public class StateService {
 	public boolean isMode(String project, StateEntity.Mode mode) {
 		List<StateEntity.State> states = parsedStateFile.getStates();
 		for (StateEntity.State state : states){
-			if (state.getProject() == project){
+			if (state.getProject().equals(project)){
 				return state.getMode() == mode;
 			}
 		}

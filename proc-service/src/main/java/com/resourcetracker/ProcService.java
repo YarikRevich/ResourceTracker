@@ -9,11 +9,13 @@ import java.lang.StringBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resourcetracker.exception.ProcException;
 import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
@@ -48,16 +50,6 @@ public class ProcService {
 		return this.stdout;
 	}
 
-	public <T> T getStdoutAsJSON(){
-		T result = null;
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			result = mapper.readValue(this.stdout, new TypeReference<T>() {});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
 	private String stderr = "";
 
 	public String getStderr(){
