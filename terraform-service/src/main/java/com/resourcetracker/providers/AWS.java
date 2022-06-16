@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * AWS implementation of Provider
@@ -39,9 +40,11 @@ public class AWS implements IProvider {
 		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
 
 		terraformAPIService.apply();
-		AWSResult result = terraformAPIService.<AWSResult>getResult();
-		ECSTaskRunner ecsTaskRunner = new ECSTaskRunner(result);
-		return ecsTaskRunner.run();
+		AWSResult result = AWSResult.fromJson(terraformAPIService.getResult());
+		System.out.println(result);
+//		ECSTaskRunner ecsTaskRunner = new ECSTaskRunner(result);
+//		return ecsTaskRunner.run();
+		return null;
 	}
 
 	public void stop() {

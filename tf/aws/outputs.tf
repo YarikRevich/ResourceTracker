@@ -1,15 +1,15 @@
-output "resourcetracker_ecs_task_definition"{
-	value = module.ecs.resourcetracker_ecs_task_definition
+output "ecs_task_definition"{
+	value = module.ecs.ecs_task_definition
 }
 
-output "resourcetracker_ecs_cluster" {
-	value = module.ecs.resourcetracker_ecs_cluster
+output "ecs_cluster" {
+	value = module.ecs.ecs_cluster
 }
 
-output "resourcetracker_main_subnet" {
-	value = module.ecs.resourcetracker_main_subnet
+output "main_subnet" {
+	value = module.ecs.main_subnet
 }
 
-output "resourcetracker_security_group" {
-	value = module.ecs.resourcetracker_security_group
+output "security_group" {
+	value = module.ecs.security_group
 }

@@ -1,4 +1,4 @@
-package com.resourcetracker.tools.exception;
+package com.resourcetracker.exception;
 
 /**
  * Handles exceptions thrown by the cloud components
