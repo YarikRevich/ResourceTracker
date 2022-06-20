@@ -1,36 +1,22 @@
 package com.resourcetracker;
 
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
-
 import com.resourcetracker.services.RequestSortService;
-import org.apache.logging.log4j.Logger;
+import com.resourcetracker.validator.ExampleFieldValidator;
 import org.apache.logging.log4j.LogManager;
-
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
+
+import java.io.*;
+import java.util.List;
 
 /**
  * Service for processing configuration file
@@ -38,12 +24,15 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  * @author YarikRevich
  */
 @Service
-@Import({RequestSortService.class})
+@Import({RequestSortService.class, ExampleFieldValidator.class})
 public class ConfigService {
 	private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
 	@Autowired
 	RequestSortService requestSortService;
+
+	@Autowired
+	ExampleFieldValidator exampleFieldValidator;
 
 	private InputStream configFile;
 	private List<ConfigEntity> parsedConfigFile;
@@ -74,6 +63,7 @@ public class ConfigService {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		exampleFieldValidator.validate(parsedConfigFile);
 		requestSortService.sort(parsedConfigFile);
 	}
 

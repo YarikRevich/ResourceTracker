@@ -125,19 +125,38 @@ public class TopCommand{
 		}
 	}
 
+	/**
+	 * Manages starting of each project
+	 * described in a configuration file
+	 */
+	class StopRunner implements Runnable{
+		private ConfigEntity configEntity;
+		public StopRunner(ConfigEntity configEntity){
+			this.configEntity = configEntity;
+		}
+		/**
+		 *
+		 */
+		@Override
+		public void run() {
+			if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)){
+				terraformService.setConfigEntity(configEntity);
+				terraformService.selectProvider();
+				terraformService.stop();
+				stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
+				numberOfStartedProjects++;
+			}
+		}
+	}
+
 	@Command
 	void stop(@Option(names = {"-p", "--project"}, description = "project name to start") String project){
 		configService.parse();
 		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
 		if (project == null){
-			int numberOfStartedProjects = 0;
-			for (ConfigEntity configEntity : parsedConfigFile){
-				if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)){
-					terraformService.setConfigEntity(configEntity);
-					terraformService.selectProvider();
-					terraformService.stop();
-					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
-					numberOfStartedProjects++;
+			synchronized (this) {
+				for (ConfigEntity configEntity : parsedConfigFile) {
+					new Thread(new StopRunner(configEntity)).run();
 				}
 			}
 			stateService.actualizeConfigFileHash();

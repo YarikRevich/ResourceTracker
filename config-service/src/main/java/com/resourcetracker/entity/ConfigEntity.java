@@ -11,6 +11,7 @@ import java.util.List;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,28 +31,15 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  */
 public class ConfigEntity implements Serializable {
 	ProcService procService;
+
 	public ConfigEntity(){
 		this.procService = new ProcService();
 	}
 	public boolean example;
-	public void setExample(boolean example){
-		if (example){
-			 System.out.println("Remove 'example' field from configuration file to run ResourceTracker");
-			this.procService.setCommands("cat", Constants.PID_FILE_PATH);
-			try {
-				this.procService.start();
-			} catch (ProcException e) {
-				e.printStackTrace();
-			}
-			 String pid = this.procService.getStdout();
-			this.procService.setCommands("kill", "-9", pid);
-			 try {
-				 this.procService.start();
-			 } catch (ProcException e) {
-			 	e.printStackTrace();
-			 }
-		}
-		this.example = example;
+
+	@JsonGetter
+	public boolean isExample() {
+		return example;
 	}
 
 	public static class Project {

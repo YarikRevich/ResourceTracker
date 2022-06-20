@@ -10,6 +10,7 @@
         <module name="config-service" />
         <module name="proc-service" />
         <module name="terraform-service" />
+        <module name="shutdown-service" />
         <module name="constants" />
         <module name="state-service" />
       </profile>
@@ -25,6 +26,7 @@
       <module name="constants" options="-parameters" />
       <module name="deploy" options="-parameters" />
       <module name="proc-service" options="-parameters" />
+      <module name="shutdown-service" options="-parameters" />
       <module name="state-service" options="-parameters" />
       <module name="terraform-service" options="-parameters" />
     </option>

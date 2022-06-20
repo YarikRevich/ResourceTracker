@@ -30,13 +30,14 @@ define create_binary
 	@echo 'java -jar $(2)' >> $(BINARY_FILES_PATH)_$(1)
 endef
 
-prepare_pre_build:
+
+build: prepare_for_build
+	@mvn clean install -T100
+
+prepare_for_build:
 	@#mkdir -p $(HOME_FOLDER_PATH)
 	@#cp $(DEFAULT_CONFIG_FILE_PATH) $(HOME_FOLDER_PATH)
 	@cp -r $(TERRAFORM_CONFIG_FILES_PATH) $(HOME_FOLDER_PATH)
-
-build: prepare_pre_build
-	@mvn clean install -T100
 
 install:
 	$(call make_target_shared, $(CLI_TARGET_PATH))

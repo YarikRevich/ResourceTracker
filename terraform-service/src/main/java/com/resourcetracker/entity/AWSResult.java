@@ -2,8 +2,10 @@ package com.resourcetracker.entity;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -19,59 +21,60 @@ public class AWSResult implements Serializable {
 	}
 
 	@JsonAlias({"ecs_task_definition"})
-	public Object ecsTaskDefinition;
+	public RawResult ecsTaskDefinition;
 
 	@JsonAlias({"ecs_cluster"})
-	public Object ecsCluster;
+	public RawResult ecsCluster;
 
 	@JsonAlias({"main_subnet"})
-	public Object mainSubnet;
+	public RawResult mainSubnet;
 
 	@JsonAlias({"security_group"})
-	public Object securityGroup;
+	public RawResult securityGroup;
 
 	@JsonSetter
-	public void setEcsTaskDefinition(Object ecsTaskDefinition) {
+	public void setEcsTaskDefinition(RawResult ecsTaskDefinition) {
 		this.ecsTaskDefinition = ecsTaskDefinition;
 	}
 
 	@JsonSetter
-	public void setEcsCluster(Object ecsCluster) {
+	public void setEcsCluster(RawResult ecsCluster) {
 		this.ecsCluster = ecsCluster;
 	}
 
 	@JsonSetter
-	public void setMainSubnet(Object mainSubnet) {
+	public void setMainSubnet(RawResult mainSubnet) {
 		this.mainSubnet = mainSubnet;
 	}
 
 	@JsonSetter
-	public void setSecurityGroup(Object securityGroup) {
+	public void setSecurityGroup(RawResult securityGroup) {
 		this.securityGroup = securityGroup;
 	}
 
 	@JsonGetter
-	public Object getEcsTaskDefinition() {
+	public RawResult getEcsTaskDefinition() {
 		return ecsTaskDefinition;
 	}
 
 	@JsonGetter
-	public Object getEcsCluster() {
+	public RawResult getEcsCluster() {
 		return ecsCluster;
 	}
 
 	@JsonGetter
-	public Object getMainSubnet() {
+	public RawResult getMainSubnet() {
 		return mainSubnet;
 	}
 
 	@JsonGetter
-	public Object getSecurityGroup() {
+	public RawResult getSecurityGroup() {
 		return securityGroup;
 	}
 
 	public static AWSResult fromJson(String src){
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper()
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		try {
 			return mapper.readValue(src, new TypeReference<>() {
 			});

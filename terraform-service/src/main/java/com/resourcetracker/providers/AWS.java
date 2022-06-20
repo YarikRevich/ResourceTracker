@@ -41,13 +41,22 @@ public class AWS implements IProvider {
 
 		terraformAPIService.apply();
 		AWSResult result = AWSResult.fromJson(terraformAPIService.getResult());
-		System.out.println(result);
-//		ECSTaskRunner ecsTaskRunner = new ECSTaskRunner(result);
-//		return ecsTaskRunner.run();
-		return null;
+		ECSTaskRunner ecsTaskRunner = new ECSTaskRunner(result);
+		return ecsTaskRunner.run();
 	}
 
 	public void stop() {
+		ConfigEntity configEntity = terraformAPIService.getConfigEntity();
+		ConfigEntity.Cloud cloud = configEntity.getCloud();
+
+		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", cloud.getCredentials());
+		terraformAPIService.setEnvVar("AWS_PROFILE", cloud.getProfile());
+		terraformAPIService.setEnvVar("AWS_REGION", cloud.getRegion());
+
+		terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_ENV_VAR, terraformAPIService.getContext());
+		terraformAPIService.setVar(Constants.TERRAFORM_SHARED_CREDENTIALS_FILE_ENV_VAR, terraformAPIService.getCredentials());
+		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
+
 		terraformAPIService.destroy();
 	}
 }

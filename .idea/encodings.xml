@@ -8,6 +8,7 @@
     <file url="file://$PROJECT_DIR$/deploy/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/deploy/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/proc-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shutdown-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/state-service/src/main/java" charset="UTF-8" />

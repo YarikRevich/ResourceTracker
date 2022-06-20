@@ -20,6 +20,11 @@ resource "aws_route_table" "resourcetracker_route_table" {
   }
 }
 
+resource "aws_route_table_association" "resourcetracker_route_table_association" {
+	subnet_id      = aws_subnet.resourcetracker_subnet.id
+	route_table_id = aws_route_table.resourcetracker_route_table.id
+}
+
 resource "aws_security_group" "resourcetracker_security_group" {
   name        = "allow_resourcetracker_api_calls"
   description = "Allow ResourceTracker external API calls"
