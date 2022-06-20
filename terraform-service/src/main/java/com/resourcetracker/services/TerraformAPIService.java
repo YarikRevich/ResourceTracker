@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resourcetracker.Constants;
 import com.resourcetracker.ProcService;
+import com.resourcetracker.ShutdownService;
 import com.resourcetracker.TerraformService;
 import com.resourcetracker.entity.AWSResult;
 import com.resourcetracker.entity.ConfigEntity;
@@ -33,12 +34,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * There are two core methods: start and stop.
  */
 @Service
-@Import({ShutdownManager.class})
+@Import({ShutdownService.class})
 public class TerraformAPIService {
 	final static Logger logger = LogManager.getLogger(TerraformAPIService.class);
 
 	@Autowired
-	ShutdownManager shutdownManager;
+	ShutdownService shutdownManager;
 
 	private String directory = "";
 
@@ -158,6 +159,8 @@ public class TerraformAPIService {
 	}
 
 	public void destroy() {
+		this.selectDirectory();
+
 		procService
 			.build()
 			.setCommand("terraform")

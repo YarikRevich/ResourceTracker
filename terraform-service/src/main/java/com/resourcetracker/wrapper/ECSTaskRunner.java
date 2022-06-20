@@ -19,10 +19,21 @@ public class ECSTaskRunner {
 
 	public URL run() {
 		final AmazonECS ecs = AmazonECSClientBuilder.standard().build();
+
+		RegisterContainerInstanceRequest registerContainerInstanceRequest = new RegisterContainerInstanceRequest();
+		registerContainerInstanceRequest.setCluster(output.getEcsCluster().getValue());
+		ecs.registerContainerInstance(registerContainerInstanceRequest);
+		try {
+			ecs.wait();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+
 		RunTaskRequest runTaskRequest = new RunTaskRequest();
-//		runTaskRequest.setTaskDefinition(output.getEcsTaskDefinition().getValue());
-//		runTaskRequest.setCluster(output.getEcsCluster().getValue());
+		runTaskRequest.setTaskDefinition(output.getEcsTaskDefinition().getValue());
+		runTaskRequest.setCluster(output.getEcsCluster().getValue());
 		runTaskRequest.setNetworkConfiguration(this.getNetworkConfiguration());
+
 		RunTaskResult runTaskResult = ecs.runTask(runTaskRequest);
 		try {
 			runTaskResult.wait();
@@ -56,13 +67,13 @@ public class ECSTaskRunner {
 
 	private ArrayList<String> getSecurityGroups(){
 		ArrayList<String> securityGroups = new ArrayList<String>();
-//		securityGroups.add(output.getSecurityGroup().getValue());
+		securityGroups.add(output.getSecurityGroup().getValue());
 		return securityGroups;
 	}
 
 	private ArrayList<String> getSubnets(){
 		ArrayList<String> subnets = new ArrayList<String>();
-//		subnets.add(output.getMainSubnet().getValue());
+		subnets.add(output.getMainSubnet().getValue());
 		return subnets;
 	}
 }

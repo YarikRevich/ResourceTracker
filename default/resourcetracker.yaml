@@ -12,4 +12,3 @@ cloud:
         credentials: "~/.aws/credentials"
         profile: "default"
         region: "default"
----

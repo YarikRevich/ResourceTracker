@@ -1,2 +1,2 @@
-provider "google"{
+provider "google" {
 }
