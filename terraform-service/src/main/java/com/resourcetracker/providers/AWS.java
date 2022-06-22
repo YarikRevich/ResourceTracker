@@ -27,35 +27,39 @@ public class AWS implements IProvider {
 		this.terraformAPIService = terraformAPIService;
 	}
 
-	public URL start() {
-		ConfigEntity configEntity = terraformAPIService.getConfigEntity();
-		ConfigEntity.Cloud cloud = configEntity.getCloud();
+	private void selectEnvVars(){
+		terraformAPIService.setEnvVar(Constants.AWS_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
+		terraformAPIService.setEnvVar(Constants.AWS_PROFILE, terraformAPIService.getProfile());
+		terraformAPIService.setEnvVar(Constants.AWS_REGION, terraformAPIService.getRegion());
+//		terraformAPIService.setEnvVar(Constants.AWS_SDK_LOAD_CONFIG, Constants.AWS_SDK_LOAD_CONFIG_VALUE);
+	}
 
-		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", cloud.getCredentials());
-		terraformAPIService.setEnvVar("AWS_PROFILE", cloud.getProfile());
-		terraformAPIService.setEnvVar("AWS_REGION", cloud.getRegion());
-
+	private void selectVars(){
 		terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_ENV_VAR, terraformAPIService.getContext());
 		terraformAPIService.setVar(Constants.TERRAFORM_SHARED_CREDENTIALS_FILE_ENV_VAR, terraformAPIService.getCredentials());
+	}
+
+	private void selectBackendConfig(){
 		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
+		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_PROFILE, terraformAPIService.getProfile());
+	}
+
+	public URL start() {
+		this.selectEnvVars();
+		this.selectVars();
+		this.selectBackendConfig();
 
 		terraformAPIService.apply();
+
 		AWSResult result = AWSResult.fromJson(terraformAPIService.getResult());
 		ECSTaskRunner ecsTaskRunner = new ECSTaskRunner(result);
 		return ecsTaskRunner.run();
 	}
 
 	public void stop() {
-		ConfigEntity configEntity = terraformAPIService.getConfigEntity();
-		ConfigEntity.Cloud cloud = configEntity.getCloud();
-
-		terraformAPIService.setEnvVar("AWS_SHARED_CREDENTIALS_FILE", cloud.getCredentials());
-		terraformAPIService.setEnvVar("AWS_PROFILE", cloud.getProfile());
-		terraformAPIService.setEnvVar("AWS_REGION", cloud.getRegion());
-
-		terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_ENV_VAR, terraformAPIService.getContext());
-		terraformAPIService.setVar(Constants.TERRAFORM_SHARED_CREDENTIALS_FILE_ENV_VAR, terraformAPIService.getCredentials());
-		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
+		this.selectEnvVars();
+		this.selectVars();
+		this.selectBackendConfig();
 
 		terraformAPIService.destroy();
 	}

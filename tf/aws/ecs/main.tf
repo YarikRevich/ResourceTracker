@@ -6,6 +6,10 @@ module "s3" {
   source = "./../s3"
 }
 
+module "iam" {
+  source = "./../iam"
+}
+
 resource "aws_ecr_repository" "resourcetracker_ecr_repository" {
   name = "resourcetracker_ecr_repository"
 }
@@ -30,6 +34,8 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
   launch_type          = "FARGATE"
   desired_count        = 1
   force_new_deployment = true
+
+  iam_role             = module.iam.resourcetracker_ecs_service_role_name
   lifecycle {
     create_before_destroy = true
   }
@@ -46,7 +52,7 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
 resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definitions" {
   family                   = "resourcetracker_ecs_instance_task_definition"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = ["FARGATE", "EC2"]
   memory                   = 512
   cpu                      = 256
 

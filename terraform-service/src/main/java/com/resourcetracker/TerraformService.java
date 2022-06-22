@@ -27,7 +27,7 @@ public class TerraformService {
 		this.configEntity = configEntity;
 	}
 
-	public void selectProvider(){
+	private void selectProvider(){
 		switch (this.configEntity.getCloud().getProvider()) {
 			case AWS:
 				chosenProvider = new AWS();
@@ -49,10 +49,12 @@ public class TerraformService {
 	 * going
 	 */
 	public URL start() {
+		this.selectProvider();
 		return chosenProvider.start();
 	}
 
 	public void stop() {
+		this.selectProvider();
 		chosenProvider.stop();
 	}
 }
