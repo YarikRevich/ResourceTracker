@@ -68,9 +68,9 @@ public class TerraformAPIService {
 		this.configEntity = configEntity;
 	}
 
-	public ConfigEntity getConfigEntity(){
-		return this.configEntity;
-	}
+//	public ConfigEntity getConfigEntity(){
+//		return this.configEntity;
+//	}
 
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 
@@ -119,6 +119,8 @@ public class TerraformAPIService {
 			.setPositionalVar("-reconfigure")
 			.run();
 
+		System.out.println(procService.getEnvVars());
+
 		if (this.procService.isStderr()) {
 			logger.fatal(this.procService.getStderr());
 			shutdownManager.initiateShutdown(1);
@@ -135,6 +137,8 @@ public class TerraformAPIService {
 			.setPositionalVar("-no-color")
 			.run();
 
+		System.out.println(procService.getEnvVars());
+
 		if (this.procService.isStderr()) {
 			logger.fatal(this.procService.getStderr());
 			shutdownManager.initiateShutdown(1);
@@ -149,6 +153,8 @@ public class TerraformAPIService {
 			.setPositionalVar("-json")
 			.setPositionalVar("-no-color")
 			.run();
+
+		System.out.println(procService.getEnvVars());
 
 		if (this.procService.isStderr()) {
 			logger.fatal(this.procService.getStderr());
@@ -182,6 +188,10 @@ public class TerraformAPIService {
 		return procService.getStdout();
 	}
 
+	/**
+	 * Wrappers for ConfigEntity
+	 */
+
 	public String getContext(){
 		return "";
 	}
@@ -193,4 +203,12 @@ public class TerraformAPIService {
 	public String getCredentials(){
 		return this.configEntity.getCloud().getCredentials();
 	}
+
+	public String getProfile() {
+		return this.configEntity.getCloud().getProfile();
+	};
+
+	public String getRegion() {
+		return this.configEntity.getCloud().getRegion();
+	};
 }

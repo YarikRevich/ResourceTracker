@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-import java.io.ObjectInputFilter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -52,8 +50,8 @@ public class TopCommand{
 		public void run() {
 			if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)){
 				terraformService.setConfigEntity(configEntity);
-				terraformService.selectProvider();
 				terraformService.start();
+
 				stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
 				numberOfStartedProjects++;
 			}
@@ -78,8 +76,8 @@ public class TopCommand{
 			for (ConfigEntity configEntity : parsedConfigFile){
 				if (configEntity.getProject().getName() == project || project == null){
 					terraformService.setConfigEntity(configEntity);
-					terraformService.selectProvider();
 					terraformService.start();
+
 					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
 					stateService.actualizeConfigFileHash();
 					logger.info(String.format("Project %s is successfully started!", project));
@@ -141,8 +139,8 @@ public class TopCommand{
 		public void run() {
 			if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)){
 				terraformService.setConfigEntity(configEntity);
-				terraformService.selectProvider();
 				terraformService.stop();
+
 				stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
 				numberOfStartedProjects++;
 			}
@@ -167,8 +165,8 @@ public class TopCommand{
 			for (ConfigEntity configEntity : parsedConfigFile){
 				if (configEntity.getProject().getName() == project){
 					terraformService.setConfigEntity(configEntity);
-					terraformService.selectProvider();
 					terraformService.stop();
+
 					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
 					stateService.actualizeConfigFileHash();
 					logger.info(String.format("Project %s is successfully stoped!", project));
