@@ -76,8 +76,9 @@ public class TopCommand{
 			for (ConfigEntity configEntity : parsedConfigFile){
 				if (configEntity.getProject().getName() == project || project == null){
 					terraformService.setConfigEntity(configEntity);
-					terraformService.start();
+					String kafkaBootstrapServer = terraformService.start();
 
+					stateService.setKafkaBootstrapServer(kafkaBootstrapServer);
 					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
 					stateService.actualizeConfigFileHash();
 					logger.info(String.format("Project %s is successfully started!", project));
@@ -141,6 +142,7 @@ public class TopCommand{
 				terraformService.setConfigEntity(configEntity);
 				terraformService.stop();
 
+				stateService.removeKafkaBootstrapServer();
 				stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
 				numberOfStartedProjects++;
 			}
