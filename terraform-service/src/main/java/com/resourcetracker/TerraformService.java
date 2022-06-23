@@ -48,7 +48,7 @@ public class TerraformService {
 	 * @return URL endpoint to the remote resources where execution is
 	 * going
 	 */
-	public URL start() {
+	public String start() {
 		this.selectProvider();
 		return chosenProvider.start();
 	}

@@ -1,22 +1,92 @@
-resource "aws_iam_role" "resourcetracker_ecs_service_role" {
-	name = "resourcetracker_ecs_service_role"
+data "aws_iam_policy_document" "resourcetracker_ecs_task_execution_role" {
+  version = "2012-10-17"
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
 
-	assume_role_policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ecs.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
     }
-  ]
+  }
 }
-EOF
+
+resource "aws_iam_role" "resourcetracker_ecs_task_execution_role" {
+  name               = "resourcetracker_ecs_task_execution_role"
+  assume_role_policy = data.aws_iam_policy_document.resourcetracker_ecs_task_execution_role.json
 }
+
+resource "aws_iam_role_policy_attachment" "resourcetracker_ecs_task_execution_role" {
+  role       = aws_iam_role.resourcetracker_ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+#resource "aws_iam_role" "resourcetracker_ecs_service_role" {
+#	name = "resourcetracker_ecs_service_role"
+#
+#	managed_policy_arns = ["arn:aws:iam::672733374731:role/ecsExternalInstanceRole"]
+##	assume_role_policy = <<EOF
+##{
+##  "Version": "2012-10-17",
+##  "Statement": [
+##    {
+##      "Sid": "",
+##      "Effect": "Allow",
+##      "Principal": {
+##        "Service": "ecs.amazonaws.com"
+##      },
+##      "Action": "sts:AssumeRole"
+##    }
+##  ]
+##}
+##EOF
+#}
+
+#resource "aws_iam_role_policy" "resourcetracker_ecs_service_role" {
+#	name = "resourcetracker_ecs_service_role"
+#	role = aws_iam_role.resourcetracker_ecs_service_role.name
+#
+#	policy = <<EOF
+#{
+#  "Version": "2012-10-17",
+#  "Statement": [
+#    {
+#      "Effect": "Allow",
+#      "Action": [
+#        "ec2:Describe*",
+#        "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+#        "elasticloadbalancing:DeregisterTargets",
+#        "elasticloadbalancing:Describe*",
+#        "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+#        "elasticloadbalancing:RegisterTargets"
+#      ],
+#      "Resource": "*"
+#    }
+#  ]
+#}
+#EOF
+#}
+#
+#resource "aws_iam_role" "resourcetracker_ecs_service_role" {
+#	name = "resourcetracker_ecs_service_role"
+#
+#	assume_role_policy = <<EOF
+#{
+#  "Version": "2008-10-17",
+#  "Statement": [
+#    {
+#      "Sid": "",
+#      "Effect": "Allow",
+#      "Principal": {
+#        "Service": "ecs.amazonaws.com"
+#      },
+#      "Action": "sts:AssumeRole"
+#    }
+#  ]
+#}
+#EOF
+#}
 
 #resource "aws_iam_user" "resourcetracker_user" {
 #  name = "ResourceTracker"

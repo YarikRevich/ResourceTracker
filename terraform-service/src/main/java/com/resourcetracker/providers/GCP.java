@@ -25,13 +25,25 @@ public class GCP implements IProvider {
 		this.terraformAPIService = terraformAPIService;
 	}
 
-	public URL start() {
+	private void selectEnvVars(){
 		terraformAPIService.setEnvVar("GOOGLE_CREDENTIALS", "");
 		terraformAPIService.setEnvVar("GOOGLE_PROJECT", "");
 		terraformAPIService.setEnvVar("GOOGLE_REGION", "");
 		terraformAPIService.setEnvVar("GOOGLE_ZONE", "");
+	}
 
+	private void selectVars(){
 		terraformAPIService.setVar("context", terraformAPIService.getContext());
+	}
+
+	private void selectBackendConfig(){
+
+	}
+
+	public String start() {
+		this.selectEnvVars();
+		this.selectVars();
+		this.selectBackendConfig();
 
 //		terraformAPIService.setDirectory(terraformAPIService.getProvider());
 //		URL publicEndpoint = terraformAPIService.apply();
@@ -45,6 +57,10 @@ public class GCP implements IProvider {
 	};
 
 	public void stop() {
+		this.selectEnvVars();
+		this.selectVars();
+		this.selectBackendConfig();
+
 		terraformAPIService.destroy();
 	};
 }

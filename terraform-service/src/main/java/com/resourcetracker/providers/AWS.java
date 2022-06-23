@@ -1,16 +1,20 @@
 package com.resourcetracker.providers;
 
-import com.resourcetracker.Constants;
-import com.resourcetracker.entity.AWSResult;
-import com.resourcetracker.entity.ConfigEntity;
-import com.resourcetracker.providers.common.IProvider;
-import com.resourcetracker.services.TerraformAPIService;
-import com.resourcetracker.wrapper.ECSTaskRunner;
+import java.net.URL;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URL;
-import java.util.List;
+import com.resourcetracker.Constants;
+import com.resourcetracker.providers.common.IProvider;
+import com.resourcetracker.providers.entity.AWSResult;
+import com.resourcetracker.services.TerraformAPIService;
+import com.resourcetracker.wrapper.ECSDescribeNetworkInterfaces;
+import com.resourcetracker.wrapper.ECSDescribeTask;
+import com.resourcetracker.wrapper.ECSListTasks;
+import com.resourcetracker.wrapper.entity.ECSDescribeNetworkInterfacesResult;
+import com.resourcetracker.wrapper.entity.ECSDescribeTaskResult;
+import com.resourcetracker.wrapper.entity.ECSListTasksResult;
 
 /**
  * AWS implementation of Provider
@@ -31,7 +35,6 @@ public class AWS implements IProvider {
 		terraformAPIService.setEnvVar(Constants.AWS_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
 		terraformAPIService.setEnvVar(Constants.AWS_PROFILE, terraformAPIService.getProfile());
 		terraformAPIService.setEnvVar(Constants.AWS_REGION, terraformAPIService.getRegion());
-//		terraformAPIService.setEnvVar(Constants.AWS_SDK_LOAD_CONFIG, Constants.AWS_SDK_LOAD_CONFIG_VALUE);
 	}
 
 	private void selectVars(){
@@ -44,7 +47,7 @@ public class AWS implements IProvider {
 		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_PROFILE, terraformAPIService.getProfile());
 	}
 
-	public URL start() {
+	public String start() {
 		this.selectEnvVars();
 		this.selectVars();
 		this.selectBackendConfig();
@@ -52,8 +55,17 @@ public class AWS implements IProvider {
 		terraformAPIService.apply();
 
 		AWSResult result = AWSResult.fromJson(terraformAPIService.getResult());
-		ECSTaskRunner ecsTaskRunner = new ECSTaskRunner(result);
-		return ecsTaskRunner.run();
+
+		ECSListTasks ecsListTasks = new ECSListTasks(result);
+		ECSListTasksResult ecsListTaskResult = ecsListTasks.run();
+
+		ECSDescribeTask ecsDescribeTask = new ECSDescribeTask(result, ecsListTaskResult);
+		ECSDescribeTaskResult ecsDescribeTaskResult = ecsDescribeTask.run();
+
+		ECSDescribeNetworkInterfaces ecsDescribeNetworkInterfaces = new ECSDescribeNetworkInterfaces(ecsDescribeTaskResult);
+		ECSDescribeNetworkInterfacesResult ecsDescribeNetworkInterfacesResult = ecsDescribeNetworkInterfaces.run();
+
+		return ecsDescribeNetworkInterfacesResult.getContainerPublicIP();
 	}
 
 	public void stop() {

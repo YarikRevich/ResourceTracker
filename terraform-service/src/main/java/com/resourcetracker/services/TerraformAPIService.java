@@ -1,27 +1,13 @@
 package com.resourcetracker.services;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resourcetracker.Constants;
 import com.resourcetracker.ProcService;
 import com.resourcetracker.ShutdownService;
-import com.resourcetracker.TerraformService;
-import com.resourcetracker.entity.AWSResult;
 import com.resourcetracker.entity.ConfigEntity;
-import com.resourcetracker.exception.ProcException;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import org.apache.logging.log4j.Logger;

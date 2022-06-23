@@ -1,8 +1,7 @@
-package com.resourcetracker.entity;
+package com.resourcetracker.providers.entity;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -26,11 +25,11 @@ public class AWSResult implements Serializable {
 	@JsonAlias({"ecs_cluster"})
 	public RawResult ecsCluster;
 
-	@JsonAlias({"main_subnet"})
-	public RawResult mainSubnet;
-
-	@JsonAlias({"security_group"})
-	public RawResult securityGroup;
+//	@JsonAlias({"main_subnet"})
+//	public RawResult mainSubnet;
+//
+//	@JsonAlias({"security_group"})
+//	public RawResult securityGroup;
 
 	@JsonSetter
 	public void setEcsTaskDefinition(RawResult ecsTaskDefinition) {
@@ -42,15 +41,15 @@ public class AWSResult implements Serializable {
 		this.ecsCluster = ecsCluster;
 	}
 
-	@JsonSetter
-	public void setMainSubnet(RawResult mainSubnet) {
-		this.mainSubnet = mainSubnet;
-	}
-
-	@JsonSetter
-	public void setSecurityGroup(RawResult securityGroup) {
-		this.securityGroup = securityGroup;
-	}
+//	@JsonSetter
+//	public void setMainSubnet(RawResult mainSubnet) {
+//		this.mainSubnet = mainSubnet;
+//	}
+//
+//	@JsonSetter
+//	public void setSecurityGroup(RawResult securityGroup) {
+//		this.securityGroup = securityGroup;
+//	}
 
 	@JsonGetter
 	public RawResult getEcsTaskDefinition() {
@@ -62,15 +61,15 @@ public class AWSResult implements Serializable {
 		return ecsCluster;
 	}
 
-	@JsonGetter
-	public RawResult getMainSubnet() {
-		return mainSubnet;
-	}
-
-	@JsonGetter
-	public RawResult getSecurityGroup() {
-		return securityGroup;
-	}
+//	@JsonGetter
+//	public RawResult getMainSubnet() {
+//		return mainSubnet;
+//	}
+//
+//	@JsonGetter
+//	public RawResult getSecurityGroup() {
+//		return securityGroup;
+//	}
 
 	public static AWSResult fromJson(String src){
 		ObjectMapper mapper = new ObjectMapper()
