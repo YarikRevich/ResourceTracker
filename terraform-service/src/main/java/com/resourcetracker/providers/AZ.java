@@ -21,7 +21,7 @@ public class AZ implements IProvider {
 		this.terraformAPIService = terraformAPIService;
 	}
 
-	public URL start() {
+	public String start() {
 		terraformAPIService.setEnvVar("ARM_CLIENT_ID", "");
 		terraformAPIService.setEnvVar("ARM_CLIENT_SECRET", "");
 		terraformAPIService.setEnvVar("ARM_SUBSCRIPTION_ID", "");

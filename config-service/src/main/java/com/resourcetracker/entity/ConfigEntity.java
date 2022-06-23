@@ -1,30 +1,28 @@
 package com.resourcetracker.entity;
 
-import java.io.Serializable;
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
-import javax.validation.constraints.*;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.resourcetracker.ProcService;
-import com.resourcetracker.exception.ProcException;
-import com.resourcetracker.exception.ConfigException;
-import com.resourcetracker.Constants;
-import com.resourcetracker.tools.frequency.Frequency;
-import com.resourcetracker.services.DataFieldMatchService;
-import com.resourcetracker.services.DataFieldMatchService.DataFieldType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import com.resourcetracker.ProcService;
+import com.resourcetracker.exception.ConfigException;
+import com.resourcetracker.services.DataFieldMatchService;
+import com.resourcetracker.services.DataFieldMatchService.DataFieldType;
+import com.resourcetracker.tools.frequency.Frequency;
 
 /**
  * Model used for YAML configuration file parsing

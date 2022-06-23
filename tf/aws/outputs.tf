@@ -6,10 +6,10 @@ output "ecs_cluster" {
 	value = module.ecs.ecs_cluster
 }
 
-output "main_subnet" {
-	value = module.ecs.main_subnet
-}
+# output "main_subnet" {
+# 	value = module.ecs.main_subnet
+# }
 
-output "security_group" {
-	value = module.ecs.security_group
-}
+# output "security_group" {
+# 	value = module.ecs.security_group
+# }

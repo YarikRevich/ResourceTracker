@@ -35,7 +35,6 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
   desired_count        = 1
   force_new_deployment = true
 
-  iam_role             = module.iam.resourcetracker_ecs_service_role_name
   lifecycle {
     create_before_destroy = true
   }
@@ -46,13 +45,17 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
     security_groups = [
       module.vpc.resourcetracker_security_group
     ]
+    assign_public_ip = true
   }
+
+  depends_on = [module.iam]
 }
 
 resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definitions" {
   family                   = "resourcetracker_ecs_instance_task_definition"
   network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE", "EC2"]
+  execution_role_arn       = module.iam.resourcetracker_ecs_task_execution_role_arn
+  requires_compatibilities = ["FARGATE"]
   memory                   = 512
   cpu                      = 256
 
