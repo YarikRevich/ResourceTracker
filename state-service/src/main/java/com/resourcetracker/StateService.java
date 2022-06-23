@@ -70,6 +70,7 @@ public class StateService {
 		stateEntry.setStates(new ArrayList<StateEntity.State>());
 		File configFile = new File(Constants.CONFIG_FILE_PATH);
 		stateEntry.setConfigFileHash(configFile.hashCode());
+		stateEntry.setKafkaBootstrapServer("");
 		return stateEntry;
 	}
 
@@ -154,6 +155,11 @@ public class StateService {
 			e.printStackTrace();
 		}
 	}
+
+	public void removeKafkaBootstrapServer(){
+		this.setKafkaBootstrapServer("");
+	}
+
 	public String getKafkaBootstrapServer(){
 		return parsedStateFile.getKafkaBootstrapServer();
 	}
