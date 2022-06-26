@@ -8,6 +8,8 @@
 
 A cloud-native distributed tracker for resources, which are set via configuration file
 
+ResourceTracker on a back-end uses a component named ResourceTracker agent, which you can find by [this](https://github.com/YarikRevich/ResourceTrackerAgent.git) link
+
 ## Technologies
 
 - Java 17+
