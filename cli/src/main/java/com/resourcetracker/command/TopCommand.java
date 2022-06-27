@@ -1,19 +1,21 @@
 package com.resourcetracker.command;
 
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.resourcetracker.ConfigService;
 import com.resourcetracker.StateService;
 import com.resourcetracker.TerraformService;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.entity.StateEntity;
 import com.resourcetracker.service.KafkaConsumerWrapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.util.List;
 
 @Component
 @Command(name = "base", mixinStandardHelpOptions = true, description = "Cloud-based remote resource tracker", version = "1.0")

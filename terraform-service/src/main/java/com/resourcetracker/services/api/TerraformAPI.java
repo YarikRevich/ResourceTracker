@@ -1,4 +1,4 @@
-package com.resourcetracker.services;
+package com.resourcetracker.services.api;
 
 import java.util.TreeMap;
 
@@ -8,7 +8,7 @@ import com.resourcetracker.ShutdownService;
 import com.resourcetracker.entity.ConfigEntity;
 
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -19,10 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Application API for executing external terraform
  * There are two core methods: start and stop.
  */
-@Service
+@Component
 @Import({ShutdownService.class})
-public class TerraformAPIService {
-	final static Logger logger = LogManager.getLogger(TerraformAPIService.class);
+public class TerraformAPI {
+	final static Logger logger = LogManager.getLogger(TerraformAPI.class);
 
 	@Autowired
 	ShutdownService shutdownManager;
@@ -86,7 +86,7 @@ public class TerraformAPIService {
 		return backendConfig;
 	}
 
-	public TerraformAPIService(){
+	public TerraformAPI(){
 		procService = new ProcService();
 	}
 

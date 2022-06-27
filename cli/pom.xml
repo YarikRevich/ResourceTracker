@@ -54,6 +54,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-indexer</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
 
 		<!-- Kafka -->
 		<dependency>
@@ -140,12 +144,11 @@
 			<version>4.6.3</version>
 		</dependency>
 
-<!--		<dependency>-->
-<!--			<groupId>com.kakawait</groupId>-->
-<!--			<artifactId>picocli-spring-boot-starter</artifactId>-->
-<!--			<version>0.2.0</version>-->
-<!--		</dependency>-->
-
+		<!--		<dependency>-->
+		<!--			<groupId>com.kakawait</groupId>-->
+		<!--			<artifactId>picocli-spring-boot-starter</artifactId>-->
+		<!--			<version>0.2.0</version>-->
+		<!--		</dependency>-->
 
 
 		<!-- Rx -->
@@ -158,105 +161,13 @@
 	</dependencies>
 
 	<build>
-		<plugins>
-			<!-- <plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.0.0</version>
-				<extensions>true</extensions>
-				<configuration>
-					<mainClass>com.resourcetracker.CLI</mainClass>
-					<toolchain>paths</toolchain>
-				</configuration>
-			</plugin> -->
-			<!-- <plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.1.5.RELEASE</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> -->
-<!--			<plugin>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--			</plugin>-->
-
-<!--			<plugin>-->
-<!--				<groupId>org.graalvm.nativeimage</groupId>-->
-<!--				<artifactId>native-image-maven-plugin</artifactId>-->
-<!--				<version>20.0.0</version>-->
-<!--				<configuration>-->
-<!--&lt;!&ndash;					<buildArgs>&ndash;&gt;-->
-<!--&lt;!&ndash;						-Dspring.graal.mode=initialization-only -Dspring.graal.dump-config=/tmp/computed-reflect-config.json -Dspring.graal.verbose=true -Dspring.graal.skip-logback=true &#45;&#45;initialize-at-run-time=org.springframework.data.r2dbc.connectionfactory.ConnectionFactoryUtils &#45;&#45;initialize-at-build-time=io.r2dbc.spi.IsolationLevel,io.r2dbc.spi &#45;&#45;initialize-at-build-time=io.r2dbc.spi.ConstantPool,io.r2dbc.spi.Assert,io.r2dbc.spi.ValidationDepth &#45;&#45;initialize-at-build-time=org.springframework.data.r2dbc.connectionfactory -H:+TraceClassInitialization &#45;&#45;no-fallback &#45;&#45;allow-incomplete-classpath &#45;&#45;report-unsupported-elements-at-runtime -H:+ReportExceptionStackTraces &#45;&#45;no-server &#45;&#45;initialize-at-build-time=org.reactivestreams.Publisher &#45;&#45;initialize-at-build-time=com.example.reactive.ReservationRepository &#45;&#45;initialize-at-run-time=io.netty.channel.unix.Socket &#45;&#45;initialize-at-run-time=io.netty.channel.unix.IovArray &#45;&#45;initialize-at-run-time=io.netty.channel.epoll.EpollEventLoop &#45;&#45;initialize-at-run-time=io.netty.channel.unix.Errors&ndash;&gt;-->
-<!--&lt;!&ndash;					</buildArgs>&ndash;&gt;-->
-<!--				</configuration>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<goals>-->
-<!--							<goal>native-image</goal>-->
-<!--						</goals>-->
-<!--						<phase>package</phase>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-
-
-			<!-- <plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.resourcetracker.CLI</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<outputDirectory>${project.build.directory}/lib</outputDirectory>
-					<overWriteReleases>false</overWriteReleases>
-					<overWriteSnapshots>false</overWriteSnapshots>
-					<overWriteIfNewer>true</overWriteIfNewer>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> -->
-			<!-- <plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<release>11</release>
-				</configuration>
-			</plugin> -->
-
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.12</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> -->
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>

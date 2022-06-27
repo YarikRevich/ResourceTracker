@@ -1,4 +1,4 @@
-package com.resourcetracker.providers.entity;
+package com.resourcetracker.services.provider.entity;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonGetter;

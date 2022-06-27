@@ -1,5 +1,7 @@
 package com.resourcetracker;
 
+
+
 public class Constants {
 	public static final String HOME_FOLDER_PATH = "/usr/local/etc/resourcetracker/";
 	public static final String CONFIG_FILE_PATH = HOME_FOLDER_PATH.concat("resourcetracker.yaml");
@@ -38,4 +40,10 @@ public class Constants {
 	 */
 	public static final String KAFKA_CONTAINER_NAME = "resourcetracker-kafka";
 	public static final String KAFKA_STATUS_TOPIC = "status";
+
+	/**
+	 * Cloud providers usage
+	 */
+	public static final String[] availableProviders = new String[] {"aws"};
+	public static final String[] providersInDevelopment = new String[] {"gcp", "az"};
 }

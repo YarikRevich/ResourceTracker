@@ -1,11 +1,11 @@
-package com.resourcetracker.wrapper;
+package com.resourcetracker.services.wrapper;
 
 import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.ListTasksRequest;
 import com.amazonaws.services.ecs.model.ListTasksResult;
-import com.resourcetracker.providers.entity.AWSResult;
-import com.resourcetracker.wrapper.entity.ECSListTasksResult;
+import com.resourcetracker.services.provider.entity.AWSResult;
+import com.resourcetracker.services.wrapper.entity.ECSListTasksResult;
 
 public class ECSListTasks {
 	private AWSResult awsResult;

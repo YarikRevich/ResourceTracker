@@ -1,4 +1,4 @@
-package com.resourcetracker.wrapper.entity;
+package com.resourcetracker.services.wrapper.entity;
 
 public class ECSDescribeNetworkInterfacesResult {
 	private String containerPublicIP;

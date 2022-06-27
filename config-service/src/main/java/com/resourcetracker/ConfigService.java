@@ -1,5 +1,18 @@
 package com.resourcetracker;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -9,14 +22,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.services.RequestSortService;
 import com.resourcetracker.validator.ExampleFieldValidator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Service;
-
-import java.io.*;
-import java.util.List;
+import com.resourcetracker.validator.ProviderFieldValidator;
+import com.resourcetracker.validator.common.FieldValidator;
+import com.resourcetracker.validator.common.Validator;
 
 /**
  * Service for processing configuration file
@@ -33,6 +41,9 @@ public class ConfigService {
 
 	@Autowired
 	ExampleFieldValidator exampleFieldValidator;
+
+	@Autowired
+	ProviderFieldValidator providerFieldValidator;
 
 	private InputStream configFile;
 	private List<ConfigEntity> parsedConfigFile;
@@ -63,7 +74,9 @@ public class ConfigService {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		exampleFieldValidator.validate(parsedConfigFile);
+
+		Validator.validateAll(parsedConfigFile, exampleFieldValidator, providerFieldValidator);
+
 		requestSortService.sort(parsedConfigFile);
 	}
 

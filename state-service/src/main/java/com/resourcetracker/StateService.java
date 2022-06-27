@@ -1,26 +1,17 @@
 package com.resourcetracker;
 
 import java.io.File;
-
-import com.resourcetracker.Constants;
-
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.resourcetracker.entity.StateEntity;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-
-import org.springframework.stereotype.Service;
+import com.resourcetracker.entity.StateEntity;
 
 /**
  * State of terraform service
@@ -165,6 +156,6 @@ public class StateService {
 	}
 
 	public boolean isKafkaBootstrapServer(){
-		return parsedStateFile.getKafkaBootstrapServer() != null;
+		return !parsedStateFile.getKafkaBootstrapServer().isEmpty();
 	}
 }
