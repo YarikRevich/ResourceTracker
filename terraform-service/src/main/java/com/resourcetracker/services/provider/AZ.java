@@ -1,8 +1,8 @@
-package com.resourcetracker.providers;
+package com.resourcetracker.services.provider;
 
 import com.resourcetracker.Constants;
-import com.resourcetracker.providers.common.IProvider;
-import com.resourcetracker.services.TerraformAPIService;
+import com.resourcetracker.services.api.TerraformAPI;
+import com.resourcetracker.services.provider.common.IProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,8 +16,8 @@ public class AZ implements IProvider {
 	final static Logger logger = LogManager.getLogger(AZ.class);
 
 
-	TerraformAPIService terraformAPIService;
-	public void setTerraformAPIService(TerraformAPIService terraformAPIService) {
+	TerraformAPI terraformAPIService;
+	public void setTerraformAPIService(TerraformAPI terraformAPIService) {
 		this.terraformAPIService = terraformAPIService;
 	}
 

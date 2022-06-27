@@ -1,19 +1,17 @@
 package com.resourcetracker.service;
 
-import com.resourcetracker.StateService;
-import io.reactivex.rxjava3.core.Observable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.Duration;
+import java.util.Properties;
+
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.time.Duration;
-import java.util.Properties;
+import com.resourcetracker.StateService;
 
 @Service
 public class KafkaConsumerWrapper {

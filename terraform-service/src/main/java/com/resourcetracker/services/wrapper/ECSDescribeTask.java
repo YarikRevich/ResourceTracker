@@ -1,4 +1,4 @@
-package com.resourcetracker.wrapper;
+package com.resourcetracker.services.wrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +13,9 @@ import com.amazonaws.services.ecs.model.Attachment;
 import com.amazonaws.services.ecs.model.Container;
 import com.amazonaws.services.ecs.model.KeyValuePair;
 import com.resourcetracker.Constants;
-import com.resourcetracker.providers.entity.AWSResult;
-import com.resourcetracker.wrapper.entity.ECSDescribeTaskResult;
-import com.resourcetracker.wrapper.entity.ECSListTasksResult;
+import com.resourcetracker.services.provider.entity.AWSResult;
+import com.resourcetracker.services.wrapper.entity.ECSDescribeTaskResult;
+import com.resourcetracker.services.wrapper.entity.ECSListTasksResult;
 
 public class ECSDescribeTask {
 	private AWSResult awsResult;

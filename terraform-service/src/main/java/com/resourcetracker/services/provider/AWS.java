@@ -1,4 +1,4 @@
-package com.resourcetracker.providers;
+package com.resourcetracker.services.provider;
 
 import java.net.URL;
 
@@ -6,15 +6,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.resourcetracker.Constants;
-import com.resourcetracker.providers.common.IProvider;
-import com.resourcetracker.providers.entity.AWSResult;
-import com.resourcetracker.services.TerraformAPIService;
-import com.resourcetracker.wrapper.ECSDescribeNetworkInterfaces;
-import com.resourcetracker.wrapper.ECSDescribeTask;
-import com.resourcetracker.wrapper.ECSListTasks;
-import com.resourcetracker.wrapper.entity.ECSDescribeNetworkInterfacesResult;
-import com.resourcetracker.wrapper.entity.ECSDescribeTaskResult;
-import com.resourcetracker.wrapper.entity.ECSListTasksResult;
+import com.resourcetracker.services.api.TerraformAPI;
+import com.resourcetracker.services.provider.common.IProvider;
+import com.resourcetracker.services.provider.entity.AWSResult;
+import com.resourcetracker.services.wrapper.ECSDescribeNetworkInterfaces;
+import com.resourcetracker.services.wrapper.ECSDescribeTask;
+import com.resourcetracker.services.wrapper.ECSListTasks;
+import com.resourcetracker.services.wrapper.entity.ECSDescribeNetworkInterfacesResult;
+import com.resourcetracker.services.wrapper.entity.ECSDescribeTaskResult;
+import com.resourcetracker.services.wrapper.entity.ECSListTasksResult;
 
 /**
  * AWS implementation of Provider
@@ -25,9 +25,9 @@ import com.resourcetracker.wrapper.entity.ECSListTasksResult;
 public class AWS implements IProvider {
 	final static Logger logger = LogManager.getLogger(AWS.class);
 
-	TerraformAPIService terraformAPIService;
+	TerraformAPI terraformAPIService;
 
-	public void setTerraformAPIService(TerraformAPIService terraformAPIService) {
+	public void setTerraformAPIService(TerraformAPI terraformAPIService) {
 		this.terraformAPIService = terraformAPIService;
 	}
 

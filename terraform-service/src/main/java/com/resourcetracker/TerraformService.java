@@ -1,33 +1,35 @@
 package com.resourcetracker;
 
-import com.resourcetracker.ConfigService;
-import com.resourcetracker.entity.ConfigEntity;
-
-import com.resourcetracker.providers.common.IProvider;
-import com.resourcetracker.providers.AWS;
-import com.resourcetracker.providers.AZ;
-import com.resourcetracker.providers.GCP;
-import com.resourcetracker.services.TerraformAPIService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 
-import java.net.URL;
+import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.services.api.TerraformAPI;
+import com.resourcetracker.services.provider.AWS;
+import com.resourcetracker.services.provider.AZ;
+import com.resourcetracker.services.provider.GCP;
+import com.resourcetracker.services.provider.common.IProvider;
 
 @Service
-@Import({TerraformAPIService.class})
+@Import({ TerraformAPI.class })
 public class TerraformService {
+	private static final Logger logger = LogManager.getLogger(TerraformService.class);
 
-	@Autowired TerraformAPIService terraformAPIService;
+	@Autowired
+	TerraformAPI terraformAPIService;
 
 	private IProvider chosenProvider;
 
 	private ConfigEntity configEntity;
-	public void setConfigEntity(ConfigEntity configEntity){
+
+	public void setConfigEntity(ConfigEntity configEntity) {
 		this.configEntity = configEntity;
 	}
 
-	private void selectProvider(){
+	private void selectProvider() {
 		switch (this.configEntity.getCloud().getProvider()) {
 			case AWS:
 				chosenProvider = new AWS();
@@ -37,6 +39,10 @@ public class TerraformService {
 				break;
 			case AZ:
 				chosenProvider = new AZ();
+
+			// default:
+			// 	logger.fatal("");
+			// 	shutdownManager.initiateShutdown(1);
 		}
 
 		terraformAPIService.setConfigEntity(configEntity);
@@ -45,8 +51,9 @@ public class TerraformService {
 
 	/**
 	 * Starts remote execution on a chosen provider
+	 *
 	 * @return URL endpoint to the remote resources where execution is
-	 * going
+	 *         going
 	 */
 	public String start() {
 		this.selectProvider();

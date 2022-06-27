@@ -1,13 +1,15 @@
 package com.resourcetracker;
 
-import com.resourcetracker.command.TopCommand;
-import com.resourcetracker.service.KafkaConsumerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
+
+import com.resourcetracker.command.TopCommand;
+import com.resourcetracker.service.KafkaConsumerWrapper;
+
 import picocli.CommandLine;
 
 @Component
