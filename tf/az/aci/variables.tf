@@ -1,11 +1,11 @@
 variable "resourcetracker_aci_container_location" {
   default    = ""
-  desciption = "Location of resourcetracker-aci-container"
+  description = "Location of resourcetracker-aci-container"
 }
 
 variable "resourcetracker_aci_container_dns_name" {
   default    = ""
-  desciption = "DNS name of resourcetracker-aci-container"
+  description = "DNS name of resourcetracker-aci-container"
 }
 
 variable "resourcetracker_context" {

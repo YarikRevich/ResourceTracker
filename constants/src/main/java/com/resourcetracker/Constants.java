@@ -11,10 +11,12 @@ public class Constants {
 	 * Terraform
 	 */
 	public static final String TERRAFORM_CONFIG_FILES_PATH = HOME_FOLDER_PATH.concat("tf");
-	public static final String TERRAFORM_CONTEXT_ENV_VAR = "resourcetracker_context";
-	public static final String TERRAFORM_SHARED_CREDENTIALS_FILE_ENV_VAR = "resourcetracker_shared_credentials_file";
+	public static final String TERRAFORM_CONTEXT_VAR = "resourcetracker_context";
 	public static final String TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE = "shared_credentials_file";
 	public static final String TERRAFORM_BACKEND_PROFILE = "profile";
+	public static final String TERRAFORM_BACKEND_STORAGE_ACCOUNT  = "storage_account";
+	public static final String TERRAFORM_BACKEND_SUBSCRIPTION_ID  = "subscription_id";
+	public static final String TERRAFORM_BACKEND_TENANT_ID  = "tenant_id";
 
 	/**
 	 * Environment variables for AWS provider
@@ -34,12 +36,21 @@ public class Constants {
 	/**
 	 * Environment variables for AZ provider
 	 */
+	public static final String ARM_CLIENT_ID = "ARM_CLIENT_ID";
+	public static final String ARM_CLIENT_SECRET = "ARM_CLIENT_SECRET";
+	public static final String ARM_SUBSCRIPTION_ID = "ARM_SUBSCRIPTION_ID";
+	public static final String ARM_TENANT_ID = "ARM_TENANT_ID";
+
+	/**
+	 * Environment variables for AZ provider
+	 */
 
 	/**
 	 * Configuration for Kafka
 	 */
 	public static final String KAFKA_CONTAINER_NAME = "resourcetracker-kafka";
 	public static final String KAFKA_STATUS_TOPIC = "status";
+	public static final String KAFKA_LOGS_TOPIC = "logs";
 
 	/**
 	 * Cloud providers usage

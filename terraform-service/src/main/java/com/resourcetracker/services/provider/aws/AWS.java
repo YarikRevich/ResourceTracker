@@ -1,4 +1,4 @@
-package com.resourcetracker.services.provider;
+package com.resourcetracker.services.provider.aws;
 
 import java.net.URL;
 
@@ -7,14 +7,14 @@ import org.apache.logging.log4j.Logger;
 
 import com.resourcetracker.Constants;
 import com.resourcetracker.services.api.TerraformAPI;
+import com.resourcetracker.services.provider.aws.entity.AWSResult;
+import com.resourcetracker.services.provider.aws.wrapper.ECSDescribeNetworkInterfaces;
+import com.resourcetracker.services.provider.aws.wrapper.ECSDescribeTask;
+import com.resourcetracker.services.provider.aws.wrapper.ECSListTasks;
+import com.resourcetracker.services.provider.aws.wrapper.entity.ECSDescribeNetworkInterfacesResult;
+import com.resourcetracker.services.provider.aws.wrapper.entity.ECSDescribeTaskResult;
+import com.resourcetracker.services.provider.aws.wrapper.entity.ECSListTasksResult;
 import com.resourcetracker.services.provider.common.IProvider;
-import com.resourcetracker.services.provider.entity.AWSResult;
-import com.resourcetracker.services.wrapper.ECSDescribeNetworkInterfaces;
-import com.resourcetracker.services.wrapper.ECSDescribeTask;
-import com.resourcetracker.services.wrapper.ECSListTasks;
-import com.resourcetracker.services.wrapper.entity.ECSDescribeNetworkInterfacesResult;
-import com.resourcetracker.services.wrapper.entity.ECSDescribeTaskResult;
-import com.resourcetracker.services.wrapper.entity.ECSListTasksResult;
 
 /**
  * AWS implementation of Provider
@@ -32,19 +32,24 @@ public class AWS implements IProvider {
 	}
 
 	private void selectEnvVars(){
-		terraformAPIService.setEnvVar(Constants.AWS_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
-		terraformAPIService.setEnvVar(Constants.AWS_PROFILE, terraformAPIService.getProfile());
-		terraformAPIService.setEnvVar(Constants.AWS_REGION, terraformAPIService.getRegion());
+		var configEntity = this.terraformAPIService.getConfigEntity();
+
+		terraformAPIService.setEnvVar(Constants.AWS_SHARED_CREDENTIALS_FILE, configEntity.getCloud().getCredentials());
+		terraformAPIService.setEnvVar(Constants.AWS_PROFILE, configEntity.getCloud().getProfile());
+		terraformAPIService.setEnvVar(Constants.AWS_REGION, configEntity.getCloud().getRegion());
 	}
 
 	private void selectVars(){
-		terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_ENV_VAR, terraformAPIService.getContext());
-		terraformAPIService.setVar(Constants.TERRAFORM_SHARED_CREDENTIALS_FILE_ENV_VAR, terraformAPIService.getCredentials());
+		var configEntity = this.terraformAPIService.getConfigEntity();
+
+		terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_VAR, configEntity.toJSONAsContext());
 	}
 
 	private void selectBackendConfig(){
-		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, terraformAPIService.getCredentials());
-		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_PROFILE, terraformAPIService.getProfile());
+		var configEntity = this.terraformAPIService.getConfigEntity();
+
+		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, configEntity.getCloud().getCredentials());
+		terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_PROFILE, configEntity.getCloud().getProfile());
 	}
 
 	public String start() {

@@ -1,4 +1,4 @@
-package com.resourcetracker.services.provider.entity;
+package com.resourcetracker.services.provider.az.entity;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
