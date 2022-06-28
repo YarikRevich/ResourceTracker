@@ -1,4 +1,4 @@
-package com.resourcetracker.services.provider.entity;
+package com.resourcetracker.services.provider.aws.entity;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -25,12 +25,6 @@ public class AWSResult implements Serializable {
 	@JsonAlias({"ecs_cluster"})
 	public RawResult ecsCluster;
 
-//	@JsonAlias({"main_subnet"})
-//	public RawResult mainSubnet;
-//
-//	@JsonAlias({"security_group"})
-//	public RawResult securityGroup;
-
 	@JsonSetter
 	public void setEcsTaskDefinition(RawResult ecsTaskDefinition) {
 		this.ecsTaskDefinition = ecsTaskDefinition;
@@ -41,16 +35,6 @@ public class AWSResult implements Serializable {
 		this.ecsCluster = ecsCluster;
 	}
 
-//	@JsonSetter
-//	public void setMainSubnet(RawResult mainSubnet) {
-//		this.mainSubnet = mainSubnet;
-//	}
-//
-//	@JsonSetter
-//	public void setSecurityGroup(RawResult securityGroup) {
-//		this.securityGroup = securityGroup;
-//	}
-
 	@JsonGetter
 	public RawResult getEcsTaskDefinition() {
 		return ecsTaskDefinition;
@@ -60,16 +44,6 @@ public class AWSResult implements Serializable {
 	public RawResult getEcsCluster() {
 		return ecsCluster;
 	}
-
-//	@JsonGetter
-//	public RawResult getMainSubnet() {
-//		return mainSubnet;
-//	}
-//
-//	@JsonGetter
-//	public RawResult getSecurityGroup() {
-//		return securityGroup;
-//	}
 
 	public static AWSResult fromJson(String src){
 		ObjectMapper mapper = new ObjectMapper()

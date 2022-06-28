@@ -99,6 +99,16 @@ public class TopCommand{
 	}
 
 	@Command
+	void logs(){
+		//TODO: read logs writen to remote Kafka instance
+	}
+
+	@Command
+	void describe(@Option(names = {"-p", "--project"}, description = "project name to describe", required = true) String project){
+		//TODO: read configuration for stated project
+	}
+
+	@Command
 	void status(@Option(names = { "-p", "--project" }, description = "project name to start") String project) {
 		if (!stateService.isConfigFileHashActual()){
 			System.out.println("**It seems, that you have modified configuration file**");

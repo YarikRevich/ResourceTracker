@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.services.api.TerraformAPI;
-import com.resourcetracker.services.provider.AWS;
-import com.resourcetracker.services.provider.AZ;
-import com.resourcetracker.services.provider.GCP;
+import com.resourcetracker.services.provider.aws.AWS;
+import com.resourcetracker.services.provider.az.AZ;
 import com.resourcetracker.services.provider.common.IProvider;
+import com.resourcetracker.services.provider.gcp.GCP;
 
 @Service
 @Import({ TerraformAPI.class })

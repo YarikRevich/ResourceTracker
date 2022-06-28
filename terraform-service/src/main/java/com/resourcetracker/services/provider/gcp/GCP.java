@@ -1,4 +1,4 @@
-package com.resourcetracker.services.provider;
+package com.resourcetracker.services.provider.gcp;
 
 import com.resourcetracker.Constants;
 import com.resourcetracker.services.api.TerraformAPI;
@@ -33,7 +33,7 @@ public class GCP implements IProvider {
 	}
 
 	private void selectVars(){
-		terraformAPIService.setVar("context", terraformAPIService.getContext());
+		// terraformAPIService.setVar("context", terraformAPIService.getContext());
 	}
 
 	private void selectBackendConfig(){

@@ -147,6 +147,35 @@ public class ConfigEntity implements Serializable {
 		public String profile;
 		public String region;
 
+		public String clientId;
+		public String clientSecret;
+		public String subscriptionId;
+		public String tenantId;
+
+		public String storageAccount;
+
+
+
+		public String getClientId() {
+			return this.clientId;
+		}
+
+		public String getClientSecret() {
+			return this.clientSecret;
+		}
+
+		public String getSubscriptionId() {
+			return this.subscriptionId;
+		}
+
+		public String getTenantId() {
+			return this.tenantId;
+		}
+
+		public String getStorageAccount(){
+			return this.storageAccount;
+		}
+
 		public String getCredentials() {
 			return credentials;
 		}
@@ -161,6 +190,10 @@ public class ConfigEntity implements Serializable {
 
 		public Provider getProvider(){
 			return this.provider;
+		}
+
+		public String getProviderAsLowerString(){
+			return this.provider.toString().toLowerCase();
 		}
 	};
 
@@ -201,11 +234,15 @@ public class ConfigEntity implements Serializable {
 		return reporter;
 	}
 
-	public String toYAML() {
-		ObjectWriter ow = new ObjectMapper(new YAMLFactory()).writer().withDefaultPrettyPrinter();
+	/**
+	 * Formats raw data to context passed to
+	 * TerraformAPI and then formats it to JSON string
+	 */
+	public String toJSONAsContext(){
+		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String result = "";
 		try{
-			result = ow.writeValueAsString(this);
+			result = ow.writeValueAsString((ContextEntity)this);
 		} catch (JsonProcessingException e){
 			e.printStackTrace();
 		}

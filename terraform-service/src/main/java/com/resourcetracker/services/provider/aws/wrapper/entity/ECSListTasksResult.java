@@ -1,4 +1,4 @@
-package com.resourcetracker.services.wrapper.entity;
+package com.resourcetracker.services.provider.aws.wrapper.entity;
 
 public class ECSListTasksResult{
 	private String taskArn;

@@ -34,7 +34,7 @@ public class TerraformAPI {
 		rawDirectory
 			.append(Constants.TERRAFORM_CONFIG_FILES_PATH)
 			.append("/")
-			.append(this.getProvider());
+			.append(this.getConfigEntity().getCloud().getProviderAsLowerString());
 		this.directory = rawDirectory.toString();
 	}
 
@@ -54,9 +54,9 @@ public class TerraformAPI {
 		this.configEntity = configEntity;
 	}
 
-//	public ConfigEntity getConfigEntity(){
-//		return this.configEntity;
-//	}
+	public ConfigEntity getConfigEntity(){
+		return this.configEntity;
+	}
 
 	private TreeMap<String, String> envVars = new TreeMap<String, String>();
 
@@ -178,23 +178,27 @@ public class TerraformAPI {
 	 * Wrappers for ConfigEntity
 	 */
 
-	public String getContext(){
-		return "";
-	}
+	// public String getContext(){
+	// 	return "";
+	// }
 
-	public String getProvider(){
-		return this.configEntity.getCloud().getProvider().toString().toLowerCase();
-	}
+	// public  getCloud(){
 
-	public String getCredentials(){
-		return this.configEntity.getCloud().getCredentials();
-	}
+	// }
 
-	public String getProfile() {
-		return this.configEntity.getCloud().getProfile();
-	};
+	// public String getProvider(){
+	// 	return this.configEntity.getCloud().getProvider().toString().toLowerCase();
+	// }
 
-	public String getRegion() {
-		return this.configEntity.getCloud().getRegion();
-	};
+	// public String getCredentials(){
+	// 	return this.configEntity.getCloud().getCredentials();
+	// }
+
+	// public String getProfile() {
+	// 	return this.configEntity.getCloud().getProfile();
+	// };
+
+	// public String getRegion() {
+	// 	return this.configEntity.getCloud().getRegion();
+	// };
 }

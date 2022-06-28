@@ -1,12 +1,12 @@
-package com.resourcetracker.services.wrapper;
+package com.resourcetracker.services.provider.aws.wrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.amazonaws.services.ec2.model.NetworkInterface;
 import com.amazonaws.services.ec2.model.NetworkInterfaceAssociation;
-import com.resourcetracker.services.wrapper.entity.ECSDescribeNetworkInterfacesResult;
-import com.resourcetracker.services.wrapper.entity.ECSDescribeTaskResult;
+import com.resourcetracker.services.provider.aws.wrapper.entity.ECSDescribeNetworkInterfacesResult;
+import com.resourcetracker.services.provider.aws.wrapper.entity.ECSDescribeTaskResult;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesRequest;
