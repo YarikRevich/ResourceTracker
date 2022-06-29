@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.ProcService;
 import com.resourcetracker.exception.ConfigException;
 import com.resourcetracker.services.DataFieldMatchService;
@@ -232,6 +231,10 @@ public class ConfigEntity implements Serializable {
 
 	public Reporter getReporter() {
 		return reporter;
+	}
+
+	public void setReporter(Reporter reporter) {
+		this.reporter = reporter;
 	}
 
 	/**

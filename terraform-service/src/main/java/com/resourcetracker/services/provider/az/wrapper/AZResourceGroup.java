@@ -3,6 +3,7 @@ package com.resourcetracker.services.provider.az.wrapper;
 import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.resources.models.ResourceGroup;
 import com.resourcetracker.services.provider.az.wrapper.entity.AZResourceManagerResult;
+import com.resourcetracker.Constants;
 import com.resourcetracker.services.provider.az.wrapper.entity.AZResourceGroupResult;
 
 public class AZResourceGroup {
@@ -13,17 +14,21 @@ public class AZResourceGroup {
 	}
 
 	public AZResourceGroupResult run() {
-		AZResourceGroupResult azResourceManagerResult = new AZResourceGroupResult();
+		AZResourceGroupResult azResourceGroupResult = new AZResourceGroupResult();
 
 		AzureResourceManager azResourceManager = azResourceManagerResult.getResourceManager();
 		ResourceGroup resourceGroup = azResourceManager.resourceGroups()
-				.define("resourcetracker")
+				.define(Constants.AZ_RESOURCE_GROUP_NAME)
 				.withRegion("")
 				.create();
-		resourceGroup.wait();
+		try {
+			resourceGroup.wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
-		azResourceManagerResult.setResourceGroupName(resourceGroup.name());
+		azResourceGroupResult.setResourceGroupName(resourceGroup.name());
 
-		return azResourceManagerResult;
+		return azResourceGroupResult;
 	}
 }

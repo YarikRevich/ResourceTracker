@@ -41,6 +41,11 @@ public class Constants {
 	public static final String ARM_SUBSCRIPTION_ID = "ARM_SUBSCRIPTION_ID";
 	public static final String ARM_TENANT_ID = "ARM_TENANT_ID";
 
+	public static final String AZ_RESOURCE_GROUP_NAME = "resourcetracker-rg";
+	public static final String AZ_STORAGE_ACCOUNT_NAME = "resourcetracker-sa";
+	public static final String AZ_CONTAINER_SERVICE_NAME = "resourcetracker-bd";
+	public static final String AZ_CONTAINER_NAME = "tfstate";
+
 	/**
 	 * Environment variables for AZ provider
 	 */
