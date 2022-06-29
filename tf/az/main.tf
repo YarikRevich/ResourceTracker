@@ -6,9 +6,13 @@ terraform {
     }
   }
   backend "azurerm" {
+	resource_group_name = "cloud-shell-storage-westeurope"
+	storage_account_name = "resourcetrackerbackend"
     container_name   = "tfstate"
     key              = "terraform.tfstate"
-    use_azuread_auth = true
+    # use_azuread_auth = true
+	# subscription_id = "b9f26c95-8d53-4134-814d-6b63218ad9e4"
+	# tenant_id       = "4de4f7be-5ea2-4fa0-ab6a-28716a1a0b5f"
   }
 }
 
