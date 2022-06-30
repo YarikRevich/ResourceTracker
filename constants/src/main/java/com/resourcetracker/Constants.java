@@ -15,6 +15,7 @@ public class Constants {
 	public static final String TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE = "shared_credentials_file";
 	public static final String TERRAFORM_BACKEND_PROFILE = "profile";
 	public static final String TERRAFORM_BACKEND_STORAGE_ACCOUNT  = "storage_account";
+	public static final String TERRAFORM_BACKEND_CONTAINER_NAME  = "container_name";
 	public static final String TERRAFORM_BACKEND_SUBSCRIPTION_ID  = "subscription_id";
 	public static final String TERRAFORM_BACKEND_TENANT_ID  = "tenant_id";
 
@@ -50,11 +51,14 @@ public class Constants {
 	 * Environment variables for AZ provider
 	 */
 
+
 	/**
 	 * Configuration for Kafka
 	 */
 	public static final String KAFKA_CONTAINER_NAME = "resourcetracker-kafka";
 	public static final String KAFKA_STATUS_TOPIC = "status";
+	public static final String KAFKA_STATUS_FAILURE_TOPIC = "status_failure";
+	public static final String KAFKA_STATUS_SUCCESS_TOPIC = "status_success";
 	public static final String KAFKA_LOGS_TOPIC = "logs";
 
 	/**
