@@ -4,11 +4,7 @@ import com.resourcetracker.service.consumer.common.ConsumerBuilder;
 import com.resourcetracker.service.consumer.entity.StatusSuccessConsumerResult;
 
 public class StatusSuccessConsumer {
-	public static ConsumerBuilder builder(){
-		return new ConsumerBuilder();
+	public static ConsumerBuilder<StatusSuccessConsumerResult> builder(){
+		return new ConsumerBuilder<StatusSuccessConsumerResult>();
 	}
-
-	public StatusSuccessConsumerResult consume() {
-		return null;
-	};
 }

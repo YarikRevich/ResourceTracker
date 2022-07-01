@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.resourcetracker.Constants;
 import com.resourcetracker.services.api.TerraformAPI;
+import com.resourcetracker.services.provider.az.wrapper.AZResourceManager;
+import com.resourcetracker.services.provider.az.wrapper.entity.AZResourceManagerResult;
 import com.resourcetracker.services.provider.common.IProvider;
 
 public class AZ implements IProvider {
@@ -33,7 +35,9 @@ public class AZ implements IProvider {
 	public void selectBackendConfig(){
 		var configEntity = this.terraformAPIService.getConfigEntity();
 
-		terraformAPIService.setVar(Constants.TERRAFORM_BACKEND_STORAGE_ACCOUNT, configEntity.getCloud().getStorageAccount());
+		AZResourceManagerResult azResourceManagerResult = new AZResourceManager();
+
+		terraformAPIService.setVar(Constants.TERRAFORM_BACKEND_STORAGE_ACCOUNT, );
 		terraformAPIService.setVar(Constants.TERRAFORM_BACKEND_SUBSCRIPTION_ID, configEntity.getCloud().getSubscriptionId());
 		terraformAPIService.setVar(Constants.TERRAFORM_BACKEND_TENANT_ID, configEntity.getCloud().getTenantId());
 	}
