@@ -151,10 +151,6 @@ public class ConfigEntity implements Serializable {
 		public String subscriptionId;
 		public String tenantId;
 
-		public String storageAccount;
-
-
-
 		public String getClientId() {
 			return this.clientId;
 		}
@@ -169,10 +165,6 @@ public class ConfigEntity implements Serializable {
 
 		public String getTenantId() {
 			return this.tenantId;
-		}
-
-		public String getStorageAccount(){
-			return this.storageAccount;
 		}
 
 		public String getCredentials() {
