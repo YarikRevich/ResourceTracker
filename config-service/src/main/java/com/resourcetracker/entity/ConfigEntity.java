@@ -28,9 +28,10 @@ import com.resourcetracker.tools.frequency.Frequency;
 public class ConfigEntity implements Serializable {
 	ProcService procService;
 
-	public ConfigEntity(){
+	public ConfigEntity() {
 		this.procService = new ProcService();
 	}
+
 	public boolean example;
 
 	@JsonGetter
@@ -68,21 +69,21 @@ public class ConfigEntity implements Serializable {
 
 		public void setData(String data) throws ConfigException {
 			DataFieldType match = DataFieldMatchService.matches(data);
-			switch (match){
+			switch (match) {
 				case FILE:
 					File file = new File(data);
-					if (!file.exists()){
+					if (!file.exists()) {
 						throw new ConfigException();
 					}
 					BufferedReader reader = null;
-					try{
+					try {
 						reader = new BufferedReader(new FileReader(file));
-					} catch (IOException e){
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					try{
+					try {
 						this.data = reader.readLine();
-					} catch (IOException e){
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				case SCRIPT:
@@ -93,7 +94,7 @@ public class ConfigEntity implements Serializable {
 		@Pattern(regexp = "^((^(((\\d+)(s|m|h|d|w))))|(^once))$")
 		public String frequency;
 
-		public String setFrequency(String frequency){
+		public String setFrequency(String frequency) {
 			int number = Integer.parseInt(frequency.substring(0, frequency.length() - 1));
 			if (frequency.endsWith("s")) {
 				return String.format("%d", number * Frequency.secondInMilliseconds);
@@ -179,26 +180,30 @@ public class ConfigEntity implements Serializable {
 			return region;
 		}
 
-		public Provider getProvider(){
+		public Provider getProvider() {
 			return this.provider;
 		}
 
-		public String getProviderAsLowerString(){
+		public String getProviderAsLowerString() {
 			return this.provider.toString().toLowerCase();
 		}
 	};
 
 	public Cloud cloud;
 
-	public Cloud getCloud(){
+	public Cloud getCloud() {
 		return this.cloud;
 	}
 
-	public static class Reporter{
+	public static class Reporter {
 		@Pattern(regexp = "^((^(((\\d+)(s|m|h|d|w))))|(^once))$")
 		public String frequency;
 
-		public String setFrequency(String frequency){
+		public String setFrequency(String frequency) {
+			if (frequency == "once") {
+				return frequency;
+			}
+
 			int number = Integer.parseInt(frequency.substring(0, frequency.length() - 1));
 			if (frequency.endsWith("s")) {
 				return String.format("%d", number * Frequency.secondInMilliseconds);
@@ -233,12 +238,12 @@ public class ConfigEntity implements Serializable {
 	 * Formats raw data to context passed to
 	 * TerraformAPI and then formats it to JSON string
 	 */
-	public String toJSONAsContext(){
+	public String toJSON() {
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String result = "";
-		try{
-			result = ow.writeValueAsString((ContextEntity)this);
-		} catch (JsonProcessingException e){
+		try {
+			result = ow.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return result;

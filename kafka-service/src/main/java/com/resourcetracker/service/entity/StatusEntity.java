@@ -1,4 +1,4 @@
-package com.resourcetracker.service.producer.entity;
+package com.resourcetracker.service.entity;
 
 public class StatusEntity {
 	public enum StatusType {

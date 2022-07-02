@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,14 @@ public class ConfigService {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Converts json source to InputStream
+	 * @param jsonSrc
+	 */
+	public ConfigService(String jsonSrc){
+		configFile = IOUtils.toInputStream(jsonSrc, "UTF-8");
 	}
 
 	/**

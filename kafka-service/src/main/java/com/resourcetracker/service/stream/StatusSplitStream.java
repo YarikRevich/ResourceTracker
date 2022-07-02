@@ -5,12 +5,14 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
+import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import com.resourcetracker.Constants;
-import com.resourcetracker.service.producer.entity.StatusEntity;
-import com.resourcetracker.service.producer.entity.StatusEntity.StatusType;
+import com.resourcetracker.service.configuration.KafkaConfiguration;
+import com.resourcetracker.service.entity.StatusEntity;
+import com.resourcetracker.service.entity.StatusEntity.StatusType;
 import com.resourcetracker.service.stream.common.Stream;
 
 /**
@@ -28,7 +30,7 @@ public class StatusSplitStream implements Stream{
 		status
 				.filter((k, v) -> v.getStatusType() == StatusType.SUCCESS)
 				.to(Constants.KAFKA_STATUS_SUCCESS_TOPIC);
-		final KafkaStreams streams = new KafkaStreams(builder.build(), StreamConfiguration.getConfiguration());
+		final KafkaStreams streams = new KafkaStreams(builder.build(), KafkaConfiguration.getConfiguration());
 
 		streams.cleanUp();
 		streams.start();
