@@ -3,20 +3,19 @@ package it.com.resourcetracker.service.stream;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.resourcetracker.Constants;
 import com.resourcetracker.service.consumer.StatusFailureConsumer;
 import com.resourcetracker.service.consumer.entity.StatusFailureConsumerResult;
-import com.resourcetracker.service.consumer.entity.StatusSuccessConsumerResult;
+import com.resourcetracker.service.entity.StatusEntity;
+import com.resourcetracker.service.entity.StatusEntity.StatusType;
+import com.resourcetracker.service.producer.StatusProducer;
 import com.resourcetracker.service.stream.StatusSplitStream;
 
 /**
@@ -28,36 +27,44 @@ import com.resourcetracker.service.stream.StatusSplitStream;
 public class StatusStreamTest {
 
 	@Autowired
-	private EmbeddedKafkaBroker kafkaEmbedded;
+	private StatusProducer statusProducer;
 
-	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
+	@Nested
+	class StatusFailureStreamTest {
+		@Before
+		public void setUp() {
+			StatusEntity data = new StatusEntity();
+			data.setStatusType(StatusType.FAILURE);
+			statusProducer.send(data);
+		}
 
-	@MethodSource("testStatusFailureConsumer")
-	public void setStatusFailureUp() {
-		kafkaTemplate.send(Constants.KAFKA_STATUS_TOPIC, "");
+		@Test
+		public void testStatusFailureConsumer() {
+			assertTrue(true);
+			// StatusFailureConsumerResult statusFailureConsumerResult = StatusFailureConsumer.builder()
+			// 		.withStreams(new StatusSplitStream())
+			// 		.consume();
+			// statusFailureConsumerResult;
+		}
 	}
 
-	@Test
-	public void testStatusFailureConsumer() {
-		assertTrue(true);
-		StatusFailureConsumerResult statusFailureConsumerResult = StatusFailureConsumer.builder()
-				.withStreams(new StatusSplitStream())
-				.consume();
-		// statusFailureConsumerResult;
-	}
+	@Nested
+	class StatusSuccessStreamTest {
+		@Before
+		public void setUp() {
+			StatusEntity data = new StatusEntity();
+			data.setStatusType(StatusType.SUCCESS);
+			statusProducer.send(data);
+		}
 
-	@MethodSource("testStatusSuccessConsumer")
-	public void setStatusSuccessUp() {
-		kafkaTemplate.send(Constants.KAFKA_STATUS_TOPIC, "");
-	}
+		@Test
+		public void testStatusSuccessConsumer() {
+			assertTrue(true);
 
-	@Test
-	public void testStatusSuccessConsumer() {
-		assertTrue(true);
-
-		StatusFailureConsumerResult statusFailureConsumerResult = StatusFailureConsumer.builder()
-				.withStreams(new StatusSplitStream())
-				.consume();
+			// StatusFailureConsumerResult statusFailureConsumerResult =
+			// StatusFailureConsumer.builder()
+			// .withStreams(new StatusSplitStream())
+			// .consume();
+		}
 	}
 }
