@@ -19,7 +19,7 @@ import picocli.CommandLine.Option;
 
 @Component
 @Command(name = "base", mixinStandardHelpOptions = true, description = "Cloud-based remote resource tracker", version = "1.0")
-public class TopCommand{
+public class TopCommand {
 	private static final Logger logger = LogManager.getLogger(TopCommand.class);
 
 	@Autowired
@@ -31,158 +31,110 @@ public class TopCommand{
 	@Autowired
 	TerraformService terraformService;
 
-	@Autowired
-	KafkaConsumerWrapper kafkaConsumerWrapper;
+	// @Autowired
+	// KafkaConsumerWrapper kafkaConsumerWrapper;
 
 	private int numberOfStartedProjects = 0;
 
-	/**
-	 * Manages starting of each project
-	 * described in a configuration file
-	 */
-	class StartRunner implements Runnable{
-		private ConfigEntity configEntity;
-		public StartRunner(ConfigEntity configEntity){
-			this.configEntity = configEntity;
-		}
-		/**
-		 *
-		 */
-		@Override
-		public void run() {
-			if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)){
-				terraformService.setConfigEntity(configEntity);
-				terraformService.start();
-
-				stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-				numberOfStartedProjects++;
-			}
-		}
-	}
-
 	@Command
-	void start(@Option(names = {"-p", "--project"}, description = "project name to start") String project) {
+	void start(@Option(names = { "-p", "--project" }, description = "project name to start") String project) {
 		configService.parse();
+
 		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
-		if (project == null){
+		if (project == null) {
 			synchronized (this) {
 				for (ConfigEntity configEntity : parsedConfigFile) {
 					new Thread(new StartRunner(configEntity)).run();
 				}
 			}
-			stateService.actualizeConfigFileHash();
+
 			if (this.numberOfStartedProjects > 0) {
 				logger.info("All projects were successfully started!");
 			}
-		} else if (stateService.isMode(project, StateEntity.Mode.STOPED)){
-			for (ConfigEntity configEntity : parsedConfigFile){
-				if (configEntity.getProject().getName() == project || project == null){
+		} else if (stateService.isMode(project, StateEntity.Mode.STOPED)) {
+			for (ConfigEntity configEntity : parsedConfigFile) {
+				if (configEntity.getProject().getName() == project || project == null) {
 					terraformService.setConfigEntity(configEntity);
 					String kafkaBootstrapServer = terraformService.start();
 
 					stateService.setKafkaBootstrapServer(kafkaBootstrapServer);
 					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-					stateService.actualizeConfigFileHash();
 					logger.info(String.format("Project %s is successfully started!", project));
 					break;
 				}
 			}
-		 } else {
-				 logger.info(String.format("Project %s is already started!", project));
-		 }
+		} else {
+			logger.info(String.format("Project %s is already started!", project));
+		}
+		stateService.actualizeConfigFileHash();
 	}
 
 	@Command
-	void validate(){
+	void validate() {
 		configService.parse();
 		System.out.println("Configuration file is valid!");
 	}
 
 	@Command
-	void logs(){
-		//TODO: read logs writen to remote Kafka instance
+	void logs() {
+		// TODO: read logs writen to remote Kafka instance
 	}
 
 	@Command
-	void describe(@Option(names = {"-p", "--project"}, description = "project name to describe", required = true) String project){
-		//TODO: read configuration for stated project
+	void describe(@Option(names = { "-p",
+			"--project" }, description = "project name to describe", required = true) String project) {
+		// TODO: read configuration for stated project
 	}
 
 	@Command
 	void status(@Option(names = { "-p", "--project" }, description = "project name to start") String project) {
-		if (!stateService.isConfigFileHashActual()){
+		if (!stateService.isConfigFileHashActual()) {
 			System.out.println("**It seems, that you have modified configuration file**");
 		}
 
 		configService.parse();
 		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
-		if (project != null){
+		if (project != null) {
 			if (stateService.isMode(project, StateEntity.Mode.STARTED)) {
 				System.out.println(kafkaConsumerWrapper.receiveStatus(project));
-			}else{
+			} else {
 				System.out.println(String.format("Project %s is not run!", project));
 			}
-		}else {
-				int numberOfRunProjects = 0;
-				for (ConfigEntity configEntity : parsedConfigFile) {
-					if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)) {
-						System.out.println(kafkaConsumerWrapper.receiveStatus(configEntity.getProject().getName()));
-						numberOfRunProjects++;
-					}
+		} else {
+			int numberOfRunProjects = 0;
+			for (ConfigEntity configEntity : parsedConfigFile) {
+				if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)) {
+					System.out.println(kafkaConsumerWrapper.receiveStatus(configEntity.getProject().getName()));
+					numberOfRunProjects++;
 				}
-				if (numberOfRunProjects > 0) {
-					System.out.println("No projects are run!");
-				}
-		}
-	}
-
-	/**
-	 * Manages starting of each project
-	 * described in a configuration file
-	 */
-	class StopRunner implements Runnable{
-		private ConfigEntity configEntity;
-		public StopRunner(ConfigEntity configEntity){
-			this.configEntity = configEntity;
-		}
-		/**
-		 *
-		 */
-		@Override
-		public void run() {
-			if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)){
-				terraformService.setConfigEntity(configEntity);
-				terraformService.stop();
-
-				stateService.removeKafkaBootstrapServer();
-				stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
-				numberOfStartedProjects++;
+			}
+			if (numberOfRunProjects > 0) {
+				System.out.println("No projects are run!");
 			}
 		}
 	}
 
 	@Command
-	void stop(@Option(names = {"-p", "--project"}, description = "project name to start") String project){
+	void stop(@Option(names = { "-p", "--project" }, description = "project name to start") String project) {
 		configService.parse();
 		List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
-		if (project == null){
+		if (project == null) {
 			synchronized (this) {
 				for (ConfigEntity configEntity : parsedConfigFile) {
 					new Thread(new StopRunner(configEntity)).run();
 				}
 			}
-			stateService.actualizeConfigFileHash();
 			if (numberOfStartedProjects > 0) {
 				logger.info("All projects were successfully stoped!");
 			}
-		} else if (stateService.isMode(project, StateEntity.Mode.STARTED)){
-			for (ConfigEntity configEntity : parsedConfigFile){
-				if (configEntity.getProject().getName() == project){
+		} else if (stateService.isMode(project, StateEntity.Mode.STARTED)) {
+			for (ConfigEntity configEntity : parsedConfigFile) {
+				if (configEntity.getProject().getName() == project) {
 					terraformService.setConfigEntity(configEntity);
 					terraformService.stop();
 
 					stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
-					stateService.actualizeConfigFileHash();
+
 					logger.info(String.format("Project %s is successfully stoped!", project));
 					break;
 				}
@@ -190,5 +142,6 @@ public class TopCommand{
 		} else {
 			logger.info(String.format("Project %s is already stoped!", project));
 		}
+		stateService.actualizeConfigFileHash();
 	}
 }

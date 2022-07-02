@@ -22,6 +22,7 @@ import picocli.CommandLine;
 	KafkaConsumerWrapper.class})
 public class App implements CommandLineRunner, ExitCodeGenerator {
 	int exitCode;
+
 	@Autowired
 	TopCommand topCommand;
 

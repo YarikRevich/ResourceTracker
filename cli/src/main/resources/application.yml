@@ -7,12 +7,6 @@ spring:
         web-application-type: NONE
     profiles:
         active: prod
-
 #logging:
 #    level:
 #        root: OFF
-
-endpoints:
-    shutdown:
-        sensetive: false
-        enabled: true
