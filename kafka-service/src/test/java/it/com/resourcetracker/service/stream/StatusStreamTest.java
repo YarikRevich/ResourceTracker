@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.resourcetracker.service.configuration.KafkaConfiguration;
 import com.resourcetracker.service.consumer.StatusFailureConsumer;
 import com.resourcetracker.service.consumer.entity.StatusFailureConsumerResult;
 import com.resourcetracker.service.entity.StatusEntity;
@@ -28,6 +30,12 @@ public class StatusStreamTest {
 
 	@Autowired
 	private StatusProducer statusProducer;
+
+	@Before
+	public void setUp(){
+		KafkaConfiguration.setBoostrapServer("localhost:9092");
+		statusProducer.init(KafkaConfiguration.getConfiguration());
+	}
 
 	@Nested
 	class StatusFailureStreamTest {
