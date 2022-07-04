@@ -13,6 +13,7 @@ public class ProducerBase<T> {
 	public KafkaTemplate<String, T> kafkaTemplate = null;
 
 	public void init(Properties props){
+		System.out.println(KafkaConfiguration.convertPropsToMap(props));
 		kafkaTemplate = new KafkaTemplate<>(new DefaultKafkaProducerFactory<String, T>(KafkaConfiguration.convertPropsToMap(props)));
 	}
 }
