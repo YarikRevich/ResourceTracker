@@ -8,8 +8,8 @@ import com.resourcetracker.service.producer.common.ProducerBase;
 
 @Component
 public class LogsProducer extends ProducerBase<LogsEntity>{
-	public void send(LogsEntity data){
-		this.kafkaTemplate.send(Constants.KAFKA_LOGS_TOPIC, data);
+	public LogsProducer() {
+		super(Constants.KAFKA_LOGS_TOPIC);
 	}
 }
 
