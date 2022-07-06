@@ -7,12 +7,14 @@ import java.util.Properties;
 
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.resourcetracker.service.configuration.KafkaConfiguration;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class KafkaConfigurationTest {
 	final String bootstrapServer = "localhost:9092";
 	final String clientId = "testclient";
