@@ -20,6 +20,7 @@ import com.resourcetracker.service.consumer.entity.StatusFailureConsumerResult;
 import com.resourcetracker.service.entity.StatusEntity;
 import com.resourcetracker.service.entity.StatusEntity.StatusType;
 import com.resourcetracker.service.producer.StatusProducer;
+import com.resourcetracker.service.producer.common.ProducerBuilder;
 import com.resourcetracker.service.stream.StatusSplitStream;
 
 /**
@@ -55,13 +56,14 @@ public class StatusSplitStreamIT {
 				.withGroupId("testgroup")
 				.build();
 
-		StatusSplitStream statusSplitStream = new StatusSplitStream().builder()
-			.withProps(kafkaConfiguration)
-			.build();
+		StatusSplitStream statusSplitStream = StatusSplitStream.builder()
+				.withProps(kafkaConfiguration)
+				.build();
 		statusSplitStream.run();
 
 		StatusProducer statusProducer = StatusProducer.builder()
-			.withProps(kafkaConfiguration);
+				.withProps(kafkaConfiguration)
+				.build();
 
 		StatusEntity data = new StatusEntity();
 
@@ -74,15 +76,17 @@ public class StatusSplitStreamIT {
 
 	@Test
 	public void testStatusFailureConsumer() {
-		StatusFailureConsumerResult statusFailureConsumerResult = StatusFailureConsumer.builder()
+		StatusFailureConsumer statusFailureConsumer = StatusFailureConsumer.builder()
 				.withProps(kafkaConfiguration)
-				.consume();
+				.build();
+		StatusFailureConsumerResult statusFailureConsumerResult = statusFailureConsumer.consume();
 	}
 
 	@Test
 	public void testStatusSuccessConsumer() {
-		StatusSuccessConsumerResult statusSuccessConsumerResult = StatusSuccessConsumer.builder()
-				.withProps(kafkaConfiguration)
-				.consume();
+		// StatusSuccessConsumerResult statusSuccessConsumerResult =
+		// StatusSuccessConsumer.builder()
+		// .withProps(kafkaConfiguration)
+		// .consume();
 	}
 }

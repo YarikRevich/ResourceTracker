@@ -10,41 +10,26 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import com.resourcetracker.service.configuration.KafkaConfiguration;
 
-public class ProducerBuilder<T> {
+public class ProducerBuilder<T extends ProducerBuilderSource> {
+	private Properties props;
 	private ProducerBuilderOptions opts;
-	private KafkaTemplate<String, T> kafkaTemplate;
+	private T source;
 
-
-	public ProducerBuilder(ProducerBuilderOptions opts){
+	public ProducerBuilder(T source, ProducerBuilderOptions opts){
+		this.source = source;
 		this.opts = opts;
 	}
 
 	public ProducerBuilder<T> withProps(Properties props){
-		kafkaTemplate = new KafkaTemplate<>(
-				new DefaultKafkaProducerFactory<String, T>(KafkaConfiguration.convertPropsToMap(props)));
+		this.props = props;
 		return this;
 	}
 
-	public void send(T data, Runnable onSuccess, Runnable onFailure) {
-		ListenableFuture<SendResult<String, T>> future = this.kafkaTemplate.send(this.opts.getTopic(), data);
-		future.addCallback(new ListenableFutureCallback<Object>() {
-			@Override
-			public void onFailure(Throwable ex) {
-				if (onFailure != null) {
-					onFailure.run();
-				}
-			}
-
-			@Override
-			public void onSuccess(Object result) {
-				if (onSuccess != null) {
-					onSuccess.run();
-				}
-			}
-		});
-	}
-
-	public void send(T data){
-		this.send(data, null, null);
+	public T build(){
+		ProducerBuilderResult producerBuilderResult = new ProducerBuilderResult();
+		producerBuilderResult.setProps(this.props);
+		producerBuilderResult.setOpts(this.opts);
+		source.setProducerBuilderResult(producerBuilderResult);
+		return source;
 	}
 }
