@@ -1,16 +1,14 @@
 package unit.com.resourcetracker.service.configuration;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Properties;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.streams.StreamsConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.resourcetracker.service.configuration.KafkaConfiguration;
 
@@ -33,6 +31,6 @@ public class KafkaConfigurationTest {
 		assertTrue(kafkaConfiguration.get(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG).equals(bootstrapServer));
 		assertTrue(kafkaConfiguration.get(StreamsConfig.CLIENT_ID_CONFIG).equals(clientId));
 		assertTrue(kafkaConfiguration.get(StreamsConfig.APPLICATION_ID_CONFIG).equals(applicationId));
-		assertTrue(kafkaConfiguration.get("group.id").equals(groupId));
+		assertTrue(kafkaConfiguration.get(ConsumerConfig.GROUP_ID_CONFIG).equals(groupId));
 	}
 }

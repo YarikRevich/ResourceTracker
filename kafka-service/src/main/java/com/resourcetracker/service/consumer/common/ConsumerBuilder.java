@@ -9,25 +9,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-import com.resourcetracker.service.stream.common.Stream;
-
 public class ConsumerBuilder<T, V> {
-	public ConsumerBuilder<T, V> withStreams(Stream... streams) {
-		for (Stream stream : streams) {
-			stream.init(this.props);
-			stream.run();
-		}
-		return this;
-	}
-
 	private ConsumerBuilderOptions opts;
-
-	public ConsumerBuilder<T, V> withOpts(ConsumerBuilderOptions opts) {
-		this.opts = opts;
-		return this;
-	}
-
 	private Properties props;
+
+	public ConsumerBuilder(ConsumerBuilderOptions opts){
+		this.opts = opts;
+	}
 
 	public ConsumerBuilder<T, V> withProps(Properties props){
 		this.props = props;
