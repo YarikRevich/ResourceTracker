@@ -2,14 +2,13 @@ package com.resourcetracker.service.producer;
 
 import org.springframework.stereotype.Component;
 
-import com.resourcetracker.Constants;
 import com.resourcetracker.service.entity.LogsEntity;
-import com.resourcetracker.service.producer.common.ProducerBase;
+import com.resourcetracker.service.producer.common.ProducerBuilder;
+import com.resourcetracker.service.producer.common.ProducerBuilderBase;
 
-@Component
-public class LogsProducer extends ProducerBase<LogsEntity>{
-	public LogsProducer() {
-		super(Constants.KAFKA_LOGS_TOPIC);
+public class LogsProducer {
+	public static ProducerBuilder<LogsEntity> builder() {
+		return new ProducerBuilderBase<LogsEntity>()
+				.withOpts(new LogsProducerOptions().getOpts());
 	}
 }
-

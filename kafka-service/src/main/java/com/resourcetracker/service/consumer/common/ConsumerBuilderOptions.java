@@ -3,7 +3,7 @@ package com.resourcetracker.service.consumer.common;
 public class ConsumerBuilderOptions {
 	private int limit;
 	private String topic;
-	private Object recordValueType;
+	// private Object recordValueType;
 
 	public int getLimit() {
 		return this.limit;
@@ -21,11 +21,11 @@ public class ConsumerBuilderOptions {
 		this.topic = topic;
 	}
 
-	public void setRecordValueType(Object recordValueType) {
-		this.recordValueType = recordValueType;
-	}
+	// public void setRecordValueType(Object recordValueType) {
+	// 	this.recordValueType = recordValueType;
+	// }
 
-	public Object getRecordValueType() {
-		return this.recordValueType;
-	}
+	// public Object getRecordValueType() {
+	// 	return this.recordValueType;
+	// }
 }

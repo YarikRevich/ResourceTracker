@@ -15,16 +15,22 @@ import com.resourcetracker.Constants;
 import com.resourcetracker.service.configuration.KafkaConfiguration;
 import com.resourcetracker.service.entity.StatusEntity;
 import com.resourcetracker.service.entity.StatusEntity.StatusType;
-import com.resourcetracker.service.stream.common.Stream;
+import com.resourcetracker.service.stream.common.StreamBuilder;
+import com.resourcetracker.service.stream.common.StreamBuilderResult;
+import com.resourcetracker.service.stream.common.StreamBuilderSource;
 
 /**
  * Stream, which processes 'status' topic
  */
-public class StatusSplitStream implements Stream{
-	private Properties props;
+public class StatusSplitStream implements StreamBuilderSource{
+	StreamBuilderResult streamBuilderResult;
 
-	public void init(Properties props){
-		this.props = props;
+	public void setStreamBuilderResult(StreamBuilderResult streamBuilderResult) {
+		this.streamBuilderResult = streamBuilderResult;
+	}
+
+	public static StreamBuilder<StatusSplitStream> builder(){
+		return new StreamBuilder<StatusSplitStream>(new StatusSplitStream());
 	}
 
 	public void run() {
@@ -32,13 +38,13 @@ public class StatusSplitStream implements Stream{
 		final KStream<String, StatusEntity> status = builder.stream(Constants.KAFKA_STATUS_TOPIC, Consumed.with(
 				Serdes.String(),
 				Serdes.serdeFrom(new JsonSerializer<>(), new JsonDeserializer<>(StatusEntity.class))));
-		// status
-		// 		.filter((k, v) -> v.getStatusType() == StatusType.FAILURE)
-		// 		.to(Constants.KAFKA_STATUS_FAILURE_TOPIC);
-		// status
-		// 		.filter((k, v) -> v.getStatusType() == StatusType.SUCCESS)
-		// 		.to(Constants.KAFKA_STATUS_SUCCESS_TOPIC);
-		final KafkaStreams streams = new KafkaStreams(builder.build(), this.props);
+		status
+				.filter((k, v) -> v.getStatusType() == StatusType.FAILURE)
+				.to(Constants.KAFKA_STATUS_FAILURE_TOPIC);
+		status
+				.filter((k, v) -> v.getStatusType() == StatusType.SUCCESS)
+				.to(Constants.KAFKA_STATUS_SUCCESS_TOPIC);
+		final KafkaStreams streams = new KafkaStreams(builder.build(), this.streamBuilderResult.getProps());
 
 		streams.cleanUp();
 		streams.start();

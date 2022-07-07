@@ -2,13 +2,13 @@ package com.resourcetracker.service.producer;
 
 import org.springframework.stereotype.Component;
 
-import com.resourcetracker.Constants;
 import com.resourcetracker.service.entity.StatusEntity;
-import com.resourcetracker.service.producer.common.ProducerBase;
+import com.resourcetracker.service.producer.common.ProducerBuilder;
+import com.resourcetracker.service.producer.common.ProducerBuilderBase;
 
-@Component
-public class StatusProducer extends ProducerBase<StatusEntity> {
-	public StatusProducer() {
-		super(Constants.KAFKA_STATUS_TOPIC);
+public class StatusProducer {
+	public static ProducerBuilder<StatusEntity> builder() {
+		return new ProducerBuilderBase<StatusEntity>()
+				.withOpts(new StatusProducerOptions().getOpts());
 	}
 }
