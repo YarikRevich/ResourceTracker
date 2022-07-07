@@ -12,5 +12,4 @@ public class StreamBuilderResult {
 	public void setProps(Properties props) {
 		this.props = props;
 	}
-
 }
