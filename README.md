@@ -3,7 +3,7 @@
 ![Linux](https://svgshare.com/i/Zhy.svg)
 ![macOS](https://svgshare.com/i/ZjP.svg)
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
-[![codecov.io](https://codecov.io/github/YarikRevich/ResourceTracker/branch/master/graph/badge.svg)](https://codecov.io/github/YarikRevich/ResourceTracker)
+![](https://img.shields.io/codecov/c/github/YarikRevich/ResourceTracker?token=1fa6344d-d044-46c4-a421-c570bf6660a3)
 
 ## General Information
 
