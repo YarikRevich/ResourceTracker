@@ -29,7 +29,7 @@ public class ProducerBuilder<T extends ProducerBuilderSource> {
 		ProducerBuilderResult producerBuilderResult = new ProducerBuilderResult();
 		producerBuilderResult.setProps(this.props);
 		producerBuilderResult.setOpts(this.opts);
-		source.setProducerBuilderResult(producerBuilderResult);
+		this.source.setProducerBuilderResult(producerBuilderResult);
 		return source;
 	}
 }
