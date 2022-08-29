@@ -9,38 +9,26 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-public class ConsumerBuilder<T, V> {
+public class ConsumerBuilder<T extends ConsumerBuilderSource> {
 	private ConsumerBuilderOptions opts;
 	private Properties props;
+	private T source;
 
-	public ConsumerBuilder(ConsumerBuilderOptions opts){
+	public ConsumerBuilder(T source, ConsumerBuilderOptions opts){
+		this.source = source;
 		this.opts = opts;
 	}
 
-	public ConsumerBuilder<T, V> withProps(Properties props){
+	public ConsumerBuilder<T> withProps(Properties props){
 		this.props = props;
 		return this;
 	}
 
-	public T consume() {
-		final KafkaConsumer<String, V> consumer = new KafkaConsumer<>(props);
-		consumer.subscribe(Collections.singletonList(this.opts.getTopic()));
-		ConsumerRecords<String, V> records = consumer.poll(Duration.ofSeconds(5));
-
-		ListIterator<ConsumerRecord<String, V>> iter = (ListIterator<ConsumerRecord<String, V>>) records.iterator();
-
-		while (iter.hasNext()) {
-			if (this.opts != null) {
-				if (iter.nextIndex() == opts.getLimit())
-					break;
-			}
-			ConsumerRecord<String, V> record = iter.next();
-			System.out.println(
-					"Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
-		}
-
-		consumer.commitAsync();
-		consumer.close();
-		return null;
-	};
+	public T build(){
+		ConsumerBuilderResult consumerBuilderResult = new ConsumerBuilderResult();
+		consumerBuilderResult.setProps(this.props);
+		consumerBuilderResult.setOpts(this.opts);
+		this.source.setConsumerBuilderResult(consumerBuilderResult);
+		return this.source;
+	}
 }

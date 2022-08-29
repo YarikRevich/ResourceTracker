@@ -20,19 +20,11 @@ import com.resourcetracker.service.consumer.entity.StatusFailureConsumerResult;
 import com.resourcetracker.service.entity.StatusEntity;
 import com.resourcetracker.service.entity.StatusEntity.StatusType;
 import com.resourcetracker.service.producer.StatusProducer;
-import com.resourcetracker.service.producer.common.ProducerBuilder;
 import com.resourcetracker.service.stream.StatusSplitStream;
 
 /**
- * Unit test for simple App.
+ * Integrational tests for StatusSplitStream
  */
-// @RunWith(SpringRunner.class)
-// @EnableKafka
-// @ExtendWith({ SpringExtension.class })
-// @EmbeddedKafka(partitions = 1, brokerProperties = {
-// "listeners=PLAINTEXT://localhost:9092",
-// "port=9092" }, topics = { Constants.KAFKA_STATUS_TOPIC })
-
 @Testcontainers
 @DirtiesContext
 @Import({ StatusProducer.class })
@@ -80,6 +72,7 @@ public class StatusSplitStreamIT {
 				.withProps(kafkaConfiguration)
 				.build();
 		StatusFailureConsumerResult statusFailureConsumerResult = statusFailureConsumer.consume();
+
 	}
 
 	@Test
