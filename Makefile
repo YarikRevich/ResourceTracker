@@ -1,45 +1,24 @@
-.PHONY: check_os, build_deploy, build_cli, build_web, build_gui, install
+.PHONY: help, clean, prepare, test, build
 .ONESHELL:
 
-# Constants
+.PHONY: help
+.DEFAULT_GOAL := help
+help:
+	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-CLI_TARGET_PATH := cli/target/lib/cli*
-CLI_SHARED_TARGET_PATH := /usr/share/java/cli*
+.PHONY: clean
+clean: ## Clean project area
+	@mvn clean
 
-WEB_TARGET_PATH := web/target/lib/web*
-WEB_SHARED_TARGET_PATH := /usr/share/java/web*
+.PHONY: prepare
+prepare: ## Install prerequisites
+	@mvn dependencies:resolve
 
-HOME_FOLDER_PATH := /usr/local/etc/resourcetracker
-BINARY_FILES_PATH := /usr/local/bin/resourcetracker
+.PHONY: test
+test: clean ## Run both unit and integration tests
+	@mvn test
+	@mvn verify
 
-DEFAULT_CONFIG_FILE_PATH := default/resourcetracker.yaml
-TERRAFORM_CONFIG_FILES_PATH = tf
-
-# $(1) path to target to make shared
-define make_target_shared
-	@cp --parent $(1) /usr/share/java
-endef
-
-# $(1): specification of binary: cli, gui, web
-# $(2): path to target to attach to binary
-define create_binary
-	@mkdir $(BINARY_FILES_PATH)
-	@touch $(BINARY_FILES_PATH)_$(1)
-	@chmod +x $(BINARY_FILES_PATH)_$(1)
-	@echo '#!/bin/bash' >> $(BINARY_FILES_PATH)_$(1)
-	@echo 'java -jar $(2)' >> $(BINARY_FILES_PATH)_$(1)
-endef
-
-
-build: prepare_for_build
-	@mvn clean install -T100
-
-prepare_for_build:
-	@#mkdir -p $(HOME_FOLDER_PATH)
-	@#cp $(DEFAULT_CONFIG_FILE_PATH) $(HOME_FOLDER_PATH)
-	@cp -r $(TERRAFORM_CONFIG_FILES_PATH) $(HOME_FOLDER_PATH)
-
-install:
-	$(call make_target_shared, $(CLI_TARGET_PATH))
-	$(call create_binary, cli, $(CLI_SHARED_TARGET_PATH))
-
+.PHONY: build
+build: clean ## Build the project
+	@mvn install
