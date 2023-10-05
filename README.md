@@ -4,25 +4,104 @@
 
 ## General Information
 
-A cloud-native distributed tracker for resources, which are set via configuration file
+A cloud-native tool, which allows to remote execution for specific cloud resources.
 
-## Technologies
+```plantuml
+title
 
-- Java 17+
-- Kafka
-- Terraform 1.1.9+
+  High-level design of "ResourceTracker"
+
+end title
+
+participant "Client" as client
+participant "Daemon" as daemon
+participant "Agent" as agent
+entity "Cloud provider" as cloudprovider
+
+client -> daemon: Request
+client <- daemon: Response
+
+note bottom: Client is able to send requests\nrelated to specific command execution\nand resonsible for both Daemon and Agent\nstart-up process
+
+daemon <-- agent: Response
+note right: Agent is able to send to daemon a state of a certain resource
+agent -> cloudprovider: Retrieve resource state 
+```
+
+```plantuml
+title
+
+  Detailed design of "ResourceTracker"
+
+end title
+
+participant "CLI" as cli
+participant "State Storage" as statestorage
+participant "Daemon" as daemon
+
+box "Cloud environment"
+queue "Kafka" as kafka
+participant "Agent" as agent
+entity "Cloud provider" as cloudprovider
+end box
+
+note over kafka: Kafka is considered to be used in persisted mode
+note over daemon: Replicates retrieved data into local persistence layer
+
+opt "agent commands"
+note over agent, kafka: Uses properties specified in a agent configuration file located in a common directory
+
+opt "start"
+
+end
+
+opt "stop"
+end
+
+end
+
+opt "daemon commands"
+note over daemon: Uses properties specified in a daemon configuration file located in a common directory
+
+opt "start"
+daemon -> kafka: establish connection
+
+alt "Local state is present"
+daemon -> statestorage: retrieve local state
+statestorage -> daemon: local state
+kafka <-> daemon: synchronize local state
+end
+
+end
+
+opt "stop"
+daemon -> kafka: close connection
+daemon --> statestorage: clean local state
+end
+
+opt "halt"
+daemon -> kafka: close connection
+end
+
+end
+
+opt "cli commands"
+note over cli, statestorage: Uses properties specified in a cli\nconfiguration file located in a common directory
+
+opt "logs"
+cli -> statestorage: retrieve local state
+statestorage -> cli: local state
+end
+
+end
+agent --> kafka: push latest resource state
+daemon -> kafka: pull latest resource state
+```
 
 ## Setup
 
-### Java([Linux](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-18-04-ru) or [MacOS](https://mkyong.com/java/how-to-install-java-on-mac-osx/))
+All setup related operations are processed via **Makefile** placed in the root directory. 
 
-### Kafka([Linux](https://hevodata.com/blog/how-to-install-kafka-on-ubuntu/) or for [MacOS](https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273))
-
-### Terraform([Any OS](https://learn.hashicorp.com/tutorials/terraform/install-cli))
-
-## Status
-
-ResourceTracker is still actively supported
 
 ## Inspiration
 
