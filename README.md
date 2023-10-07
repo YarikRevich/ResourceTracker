@@ -6,11 +6,17 @@
 
 A cloud-native distributed tracker for resources, which are set via configuration file
 
+<<<<<<< Updated upstream
 ## Technologies
 
 - Java 17+
 - Kafka
 - Terraform 1.1.9+
+=======
+![](./docs/high-level-design.png)
+
+![](./docs/detailed-design.png)
+>>>>>>> Stashed changes
 
 ## Setup
 
