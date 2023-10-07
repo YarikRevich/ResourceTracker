@@ -1,30 +1,93 @@
 # ResourceTracker
 
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ## General Information
 
-A cloud-native distributed tracker for resources, which are set via configuration file
+A cloud-native tool resource state tracking.
 
-## Technologies
+```plantuml
 
-- Java 17+
-- Kafka
-- Terraform 1.1.9+
+title
+
+  High-level design of "ResourceTracker"
+
+end title
+
+cloud "Cloud environment" {
+    node "Kafka"
+    node "Agent"
+    hexagon "Cloud provider"
+    
+    [Agent] <--> [Cloud provider]: "Execute remote operation\nand save the result"
+    [Agent] --> [Kafka]: "Push latest resource state"
+}
+
+node "CLI"
+
+[CLI] -> [Kafka]: Retrieve persisted\nresource state
+
+```
+
+```plantuml
+title
+
+  Detailed design of "ResourceTracker"
+
+end title
+
+participant "CLI" as cli
+
+box "Cloud environment"
+queue "Kafka" as kafka
+participant "Agent" as agent
+entity "Cloud provider" as cloudprovider
+end box
+
+note over kafka: Kafka is considered to be used in persisted mode
+
+opt "agent commands"
+note over agent: Uses properties specified in a agent\nconfiguration file located in a common directory
+
+opt "start"
+agent -> cloudprovider: deploy resource\ntracking infrostructure
+agent -> kafka: deploy kafka cluster
+agent -> kafka: configure kafka cluster\nin persisted mode
+end
+
+opt "stop"
+agent -> cloudprovider: clean up deployed\nresource tracking\ninfrostructure
+agent -> kafka: clean up deployed kafka cluster
+end
+
+end
+
+opt "cli commands"
+opt "logs"
+note over cli: Uses properties specified in a cli\nconfiguration file located in\n a common directory
+
+cli -> kafka: retrieve resource state
+kafka -> cli: transform data stream\naccording to the specified\nfilters
+
+end
+
+end
+
+opt "agent is running"
+agent --> kafka: push latest resource state
+agent <-> cloudprovider: execute remote operations
+end
+```
 
 ## Setup
 
-### Java([Linux](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-18-04-ru) or [MacOS](https://mkyong.com/java/how-to-install-java-on-mac-osx/))
+All setup related operations are processed via **Makefile** placed in the root directory.
 
-### Kafka([Linux](https://hevodata.com/blog/how-to-install-kafka-on-ubuntu/) or for [MacOS](https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273))
+In order to build the project it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
+```shell
+make build
+```
 
-### Terraform([Any OS](https://learn.hashicorp.com/tutorials/terraform/install-cli))
-
-## Status
-
-ResourceTracker is still actively supported
-
-## Inspiration
-
-Developers often want to execute some tasks with some frequency, but there aren't such tools, which will allow to do that remotely in a cloud environment.
-That's why I decided to implement such kind of application!
+After the execution of command given above all the executables will be generated and placed into **bin** folder in the root directory of the project
