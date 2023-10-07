@@ -1,36 +1,24 @@
 # ResourceTracker
 
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ## General Information
 
-A cloud-native distributed tracker for resources, which are set via configuration file
+A cloud-native tool resource state tracking.
 
-<<<<<<< Updated upstream
-## Technologies
-
-- Java 17+
-- Kafka
-- Terraform 1.1.9+
-=======
 ![](./docs/high-level-design.png)
 
 ![](./docs/detailed-design.png)
->>>>>>> Stashed changes
 
 ## Setup
 
-### Java([Linux](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-18-04-ru) or [MacOS](https://mkyong.com/java/how-to-install-java-on-mac-osx/))
+All setup related operations are processed via **Makefile** placed in the root directory.
 
-### Kafka([Linux](https://hevodata.com/blog/how-to-install-kafka-on-ubuntu/) or for [MacOS](https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273))
+In order to build the project it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
+```shell
+make build
+```
 
-### Terraform([Any OS](https://learn.hashicorp.com/tutorials/terraform/install-cli))
-
-## Status
-
-ResourceTracker is still actively supported
-
-## Inspiration
-
-Developers often want to execute some tasks with some frequency, but there aren't such tools, which will allow to do that remotely in a cloud environment.
-That's why I decided to implement such kind of application!
+After the execution of command given above all the executables will be generated and placed into **bin** folder in the root directory of the project
