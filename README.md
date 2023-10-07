@@ -1,31 +1,34 @@
 # ResourceTracker
 
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ## General Information
 
-A cloud-native tool, which allows to remote execution for specific cloud resources.
+A cloud-native tool resource state tracking.
 
 ```plantuml
+
 title
 
   High-level design of "ResourceTracker"
 
 end title
 
-participant "Client" as client
-participant "Daemon" as daemon
-participant "Agent" as agent
-entity "Cloud provider" as cloudprovider
+cloud "Cloud environment" {
+    node "Kafka"
+    node "Agent"
+    hexagon "Cloud provider"
+    
+    [Agent] <--> [Cloud provider]: "Execute remote operation\nand save the result"
+    [Agent] --> [Kafka]: "Push latest resource state"
+}
 
-client -> daemon: Request
-client <- daemon: Response
+node "CLI"
 
-note bottom: Client is able to send requests\nrelated to specific command execution\nand resonsible for both Daemon and Agent\nstart-up process
+[CLI] -> [Kafka]: Retrieve persisted\nresource state
 
-daemon <-- agent: Response
-note right: Agent is able to send to daemon a state of a certain resource
-agent -> cloudprovider: Retrieve resource state 
 ```
 
 ```plantuml
@@ -36,8 +39,6 @@ title
 end title
 
 participant "CLI" as cli
-participant "State Storage" as statestorage
-participant "Daemon" as daemon
 
 box "Cloud environment"
 queue "Kafka" as kafka
@@ -46,64 +47,47 @@ entity "Cloud provider" as cloudprovider
 end box
 
 note over kafka: Kafka is considered to be used in persisted mode
-note over daemon: Replicates retrieved data into local persistence layer
 
 opt "agent commands"
-note over agent, kafka: Uses properties specified in a agent configuration file located in a common directory
+note over agent: Uses properties specified in a agent\nconfiguration file located in a common directory
 
 opt "start"
-
+agent -> cloudprovider: deploy resource\ntracking infrostructure
+agent -> kafka: deploy kafka cluster
+agent -> kafka: configure kafka cluster\nin persisted mode
 end
 
 opt "stop"
-end
-
-end
-
-opt "daemon commands"
-note over daemon: Uses properties specified in a daemon configuration file located in a common directory
-
-opt "start"
-daemon -> kafka: establish connection
-
-alt "Local state is present"
-daemon -> statestorage: retrieve local state
-statestorage -> daemon: local state
-kafka <-> daemon: synchronize local state
-end
-
-end
-
-opt "stop"
-daemon -> kafka: close connection
-daemon --> statestorage: clean local state
-end
-
-opt "halt"
-daemon -> kafka: close connection
+agent -> cloudprovider: clean up deployed\nresource tracking\ninfrostructure
+agent -> kafka: clean up deployed kafka cluster
 end
 
 end
 
 opt "cli commands"
-note over cli, statestorage: Uses properties specified in a cli\nconfiguration file located in a common directory
-
 opt "logs"
-cli -> statestorage: retrieve local state
-statestorage -> cli: local state
+note over cli: Uses properties specified in a cli\nconfiguration file located in\n a common directory
+
+cli -> kafka: retrieve resource state
+kafka -> cli: transform data stream\naccording to the specified\nfilters
+
 end
 
 end
+
+opt "agent is running"
 agent --> kafka: push latest resource state
-daemon -> kafka: pull latest resource state
+agent <-> cloudprovider: execute remote operations
+end
 ```
 
 ## Setup
 
-All setup related operations are processed via **Makefile** placed in the root directory. 
+All setup related operations are processed via **Makefile** placed in the root directory.
 
+In order to build the project it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
+```shell
+make build
+```
 
-## Inspiration
-
-Developers often want to execute some tasks with some frequency, but there aren't such tools, which will allow to do that remotely in a cloud environment.
-That's why I decided to implement such kind of application!
+After the execution of command given above all the executables will be generated and placed into **bin** folder in the root directory of the project
