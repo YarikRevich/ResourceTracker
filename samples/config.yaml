@@ -1,0 +1,11 @@
+project:
+        name: "example"
+requests:
+        - name: "first"
+          request: "ping google.com"
+          frequency: "5m"
+cloud:
+        provider: "aws"
+        credentials: "~/.aws/credentials"
+        profile: "default"
+        region: "default"

@@ -5,11 +5,15 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/agent/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/constants/pom.xml" />
         <option value="$PROJECT_DIR$/deploy/pom.xml" />
+        <option value="$PROJECT_DIR$/proc-service/pom.xml" />
+        <option value="$PROJECT_DIR$/shutdown-service/pom.xml" />
       </set>
     </option>
   </component>

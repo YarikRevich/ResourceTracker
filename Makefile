@@ -1,6 +1,11 @@
 .PHONY: help, clean, prepare, test, build
 .ONESHELL:
 
+ifneq (,$(wildcard .env))
+	include .env
+	export
+endif
+
 .PHONY: help
 .DEFAULT_GOAL := help
 help:
@@ -21,4 +26,4 @@ test: clean ## Run both unit and integration tests
 
 .PHONY: build
 build: clean ## Build the project
-	@mvn install
+	@mvn install -T10

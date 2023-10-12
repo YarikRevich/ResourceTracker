@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/kafka-service/kafka-service.iml" filepath="$PROJECT_DIR$/kafka-service/kafka-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/state-service/state-service.iml" filepath="$PROJECT_DIR$/state-service/state-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/terraform-service/terraform-service.iml" filepath="$PROJECT_DIR$/terraform-service/terraform-service.iml" />
+    </modules>
+  </component>
+</project>

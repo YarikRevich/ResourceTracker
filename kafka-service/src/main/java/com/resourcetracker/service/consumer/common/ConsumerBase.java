@@ -23,16 +23,12 @@ public class ConsumerBase<T, V> implements ConsumerBuilderSource {
 		ListIterator<ConsumerRecord<String, V>> iter = (ListIterator<ConsumerRecord<String, V>>) records.iterator();
 
 		while (iter.hasNext()) {
-
 			if (iter.nextIndex() == this.consumerBuilderResult.getOpts().getLimit())
 				break;
 
 			ConsumerRecord<String, V> record = iter.next();
-			System.out.println(
-					"Received message: (" + record.key() + ", " + record.value() + ") at offset " + record.offset());
 		}
 
-		consumer.commitAsync();
 		consumer.close();
 		return null;
 	};

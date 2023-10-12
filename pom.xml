@@ -2,151 +2,118 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.resourcetracker</groupId>
-
   <artifactId>base</artifactId>
-
   <version>1.0-SNAPSHOT</version>
-
   <packaging>pom</packaging>
-
   <name>base</name>
-
   <description>Cloud-native resource tracking tool</description>
 
   <properties>
-
     <java.release>17</java.release>
-
     <maven.compiler.source>17</maven.compiler.source>
-
     <maven.compiler.target>17</maven.compiler.target>
-
+      <dockerhub.username>${env.DOCKERHUB_USERNAME}</dockerhub.username>
+      <dockerhub.password>${env.DOCKERHUB_PASSWORD}</dockerhub.password>
   </properties>
+    <repositories>
+        <repository>
+            <id>in-project</id>
+            <name>In Project Lib Repo</name>
+            <url>file://${project.basedir}/lib</url>
+        </repository>
+    </repositories>
 
   <parent>
-
     <groupId>org.springframework.boot</groupId>
-
     <artifactId>spring-boot-starter-parent</artifactId>
-
     <version>2.6.4</version>
-
-   <!-- <relativePath/> -->
-
   </parent>
 
   <modules>
-
-    <module>constants</module>
-
-    <module>shutdown-service</module>
-
-    <module>state-service</module>
-
-    <module>proc-service</module>
-
-    <module>config-service</module>
-
-    <module>terraform-service</module>
-
+    <module>agent</module>
     <module>cli</module>
-
-    <module>kafka-service</module>
-
   </modules>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.17.1</version>
+		</dependency>
+	</dependencies>
+
   <build>
-
-    <pluginManagement>
-
-      <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-
       <plugins>
-
-        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
-
         <plugin>
-
           <artifactId>maven-clean-plugin</artifactId>
-
           <version>3.1.0</version>
-
         </plugin>
-
-        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-
         <plugin>
-
           <artifactId>maven-resources-plugin</artifactId>
-
           <version>3.0.2</version>
-
         </plugin>
-
         <plugin>
-
           <artifactId>maven-compiler-plugin</artifactId>
-
           <version>3.8.0</version>
-
         </plugin>
-
         <plugin>
-
           <artifactId>maven-surefire-plugin</artifactId>
-
           <version>2.22.1</version>
-
         </plugin>
-
         <plugin>
-
           <artifactId>maven-jar-plugin</artifactId>
-
           <version>3.0.2</version>
-
         </plugin>
-
         <plugin>
-
           <artifactId>maven-install-plugin</artifactId>
-
           <version>2.5.2</version>
-
         </plugin>
-
         <plugin>
-
           <artifactId>maven-deploy-plugin</artifactId>
-
           <version>2.8.2</version>
-
         </plugin>
-
-        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-
         <plugin>
-
           <artifactId>maven-site-plugin</artifactId>
-
           <version>3.7.1</version>
-
         </plugin>
-
         <plugin>
-
           <artifactId>maven-project-info-reports-plugin</artifactId>
-
           <version>3.0.0</version>
-
         </plugin>
-
+		  <plugin>
+			  <groupId>com.diffplug.spotless</groupId>
+			  <artifactId>spotless-maven-plugin</artifactId>
+			  <version>2.9.0</version>
+			  <configuration>
+				  <java>
+					  <includes>
+						  <include>src/main/java/**/*.java</include> <!-- Check application code -->
+						  <include>src/test/java/**/*.java</include> <!-- Check application tests code -->
+					  </includes>
+					  <googleJavaFormat>
+						  <version>1.15.0</version>
+						  <style>GOOGLE</style>
+					  </googleJavaFormat>
+				  </java>
+			  </configuration>
+		  </plugin>
+          <plugin>
+              <artifactId>exec-maven-plugin</artifactId>
+              <groupId>org.codehaus.mojo</groupId>
+              <executions>
+                  <execution><!-- Run our version calculation script -->
+                      <id>Version Calculation</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                          <goal>exec</goal>
+                      </goals>
+                      <configuration>
+                          <executable>terraform ${basedir}/scripts/calculate-version.sh</executable>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
       </plugins>
-
-    </pluginManagement>
-
   </build>
-
 </project>

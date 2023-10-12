@@ -17,13 +17,11 @@ import com.resourcetracker.service.KafkaConsumerWrapper;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+@Log4j
 @Component
 @Command(name = "base", mixinStandardHelpOptions = true, description = "Cloud-based remote resource tracker", version = "1.0")
 public class TopCommand {
 	private static final Logger logger = LogManager.getLogger(TopCommand.class);
-
-	@Autowired
-	ConfigService configService;
 
 	@Autowired
 	StateService stateService;

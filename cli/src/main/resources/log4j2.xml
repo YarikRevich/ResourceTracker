@@ -44,14 +44,6 @@
                 <pattern>%d %p %c{1.} [%t] %m%n</pattern>
             </PatternLayout>
         </File>
-		<File name="test_logs_file" fileName="logs/test.log">
-            <Filters>
-                <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
-            </Filters>
-            <PatternLayout>
-                <pattern>%d %p %c{1.} [%t] %m%n</pattern>
-            </PatternLayout>
-        </File>
     </Appenders>
     <Loggers>
         <Root level="debug">
@@ -61,7 +53,6 @@
             <AppenderRef ref="warn_logs_file" />
             <AppenderRef ref="info_logs_file" />
             <AppenderRef ref="debug_logs_file" />
-			<AppenderRef ref="test_logs_file" />
         </Root>
     </Loggers>
 </Configuration>
