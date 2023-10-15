@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Appenders>
+        <FatalAppender name="FatalAppender" />
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
@@ -53,6 +54,7 @@
             <AppenderRef ref="warn_logs_file" />
             <AppenderRef ref="info_logs_file" />
             <AppenderRef ref="debug_logs_file" />
+            <AppenderRef ref="FatalAppender" />
         </Root>
     </Loggers>
 </Configuration>

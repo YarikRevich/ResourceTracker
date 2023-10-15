@@ -22,26 +22,21 @@ import com.resourcetracker.service.reporter.Reporter;
 
 @Component
 public class App implements CommandLineRunner {
-	@Autowired
-	ProcService procService;
-
-	@Autowired
-	Reporter reporter;
-	
-	@Autowired
-	StatusProducer statusProducer; 
-
-	@Autowired
-	LogsProducer logsProducer; 
+//	@Autowired
+//	StatusProducer statusProducer;
+//
+//	@Autowired
+//	LogsProducer logsProducer;
+//
+//	@Autowired
+//	CommandService commandService;
 
 	@Override
-	public synchronized void run(String... args) {
-		// run
-
-		var parsedContext = contextService.getParsedContext();
-
-		parsedContext.requests.forEach((final ConfigEntity.Request request) -> {
-			new Thread(new RequestRunner(request)).run();
-		});
+	public void run(String... args) {
+//		var parsedContext = contextService.getParsedContext();
+//
+//		parsedContext.requests.forEach((final ConfigEntity.Request request) -> {
+//			new Thread(new RequestRunner(request)).run();
+//		});
 	}
 }

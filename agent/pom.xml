@@ -15,7 +15,7 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<maven.compiler.release>17</maven.compiler.release>
 		<start-class>
-			com.resourcetracker.Deploy
+			com.resourcetracker.App
 		</start-class>
 	</properties>
 
@@ -101,11 +101,16 @@
 			<version>2.11.0</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.10.10</version>
+			<scope>compile</scope>
+		</dependency>
 
 	</dependencies>
 
 	<build>
-			<!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
 			<plugins>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>

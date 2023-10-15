@@ -1,8 +1,8 @@
-#terraform {
-#	required_providers {
-#		aws = {
-#			source = "aws"
-#			version = "~> 3.0"
-#		}
-#	}
-#}
+terraform {
+	required_providers {
+		aws = {
+			source = "aws"
+			version = "3.0"
+		}
+	}
+}

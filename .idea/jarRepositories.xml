@@ -2,6 +2,11 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="local" />
+      <option name="name" value="local" />
+      <option name="url" value="file://$PROJECT_DIR$/lib" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
@@ -12,14 +17,54 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="jboss.community" />
-      <option name="name" value="JBoss Community repository" />
-      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+      <option name="id" value="local" />
+      <option name="name" value="In Project Lib Repo" />
+      <option name="url" value="file://$PROJECT_DIR$/lib" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="in-project" />
+      <option name="name" value="In Project Lib Repo" />
+      <option name="url" value="file://$PROJECT_DIR$/lib" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="local" />
+      <option name="name" value="local" />
+      <option name="url" value="file://$PROJECT_DIR$/agent/lib" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="confluent" />
       <option name="name" value="confluent" />
       <option name="url" value="https://packages.confluent.io/maven/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="local" />
+      <option name="name" value="In Project Lib Repo" />
+      <option name="url" value="file://$PROJECT_DIR$/cli/lib" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="central" />
+      <option name="url" value="https://repo1.maven.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="local" />
+      <option name="name" value="local" />
+      <option name="url" value="file://$PROJECT_DIR$/cli/lib" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="in-project" />
+      <option name="name" value="In Project Lib Repo" />
+      <option name="url" value="file://$PROJECT_DIR$/cli/lib" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="local" />
+      <option name="name" value="In Project Lib Repo" />
+      <option name="url" value="file://$PROJECT_DIR$/agent/lib" />
     </remote-repository>
   </component>
 </project>

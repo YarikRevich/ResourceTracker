@@ -14,7 +14,7 @@ hexagon "Cloud provider"
     [Agent] --> [Kafka]: "Push latest resource state"
 }
 
-node "CLI"
+node "Client"
 
-[CLI] -> [Kafka]: Retrieve persisted\nresource state
+[Client] -> [Kafka]: Retrieve persisted\nresource state
 ```
