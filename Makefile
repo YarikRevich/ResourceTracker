@@ -1,4 +1,4 @@
-.PHONY: help, clean, prepare, test, build
+.PHONY: help, clean, prepare, test, build-dev, build
 .ONESHELL:
 
 ifneq (,$(wildcard .env))
@@ -23,6 +23,10 @@ prepare: ## Install prerequisites
 test: clean ## Run both unit and integration tests
 	@mvn test
 	@mvn verify
+
+.PHONY: build-dev
+build-dev: clean ## Build the development project(includes agent Docker image build)
+    @mvn install -T10
 
 .PHONY: build
 build: clean ## Build the project
