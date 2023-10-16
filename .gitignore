@@ -4,8 +4,7 @@
 
 # Terraform
 
-**/.tf
-**/.terraform
+**/.terraform.lock.hcl
 
 # APT
 
@@ -40,3 +39,7 @@ Vagrantfile
 # Eclipse
 
 .settings
+
+# Environment variables
+
+.env

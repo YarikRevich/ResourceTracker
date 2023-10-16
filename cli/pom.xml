@@ -1,6 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.resourcetracker</groupId>
 	<artifactId>cli</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -19,26 +18,18 @@
 		</start-class>
 	</properties>
 
-
 	<dependencies>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.21</version>
+		</dependency>
 
-		<!-- High order dependency -->
-
-		<dependency>
-			<groupId>com.resourcetracker</groupId>
-			<artifactId>config-service</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.resourcetracker</groupId>
-			<artifactId>state-service</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.resourcetracker</groupId>
-			<artifactId>terraform-service</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.resourcetracker</groupId>-->
+<!--			<artifactId>config-service</artifactId>-->
+<!--			<version>1.0-SNAPSHOT</version>-->
+<!--		</dependency>-->
 
 		<!-- Spring Boot -->
 
@@ -75,7 +66,6 @@
 			<artifactId>kafka-clients</artifactId>
 			<version>3.2.0</version>
 		</dependency>
-
 
 		<!-- Amazon SDK -->
 
@@ -142,7 +132,6 @@
 			<artifactId>appender-log4j2</artifactId>
 			<version>4.0.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>info.picocli</groupId>
 			<artifactId>picocli</artifactId>
@@ -154,20 +143,23 @@
 			<version>4.6.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
 		<!--		<dependency>-->
 		<!--			<groupId>com.kakawait</groupId>-->
 		<!--			<artifactId>picocli-spring-boot-starter</artifactId>-->
 		<!--			<version>0.2.0</version>-->
 		<!--		</dependency>-->
 
-
-		<!-- Rx -->
 		<dependency>
 			<groupId>io.reactivex.rxjava3</groupId>
 			<artifactId>rxjava</artifactId>
 			<version>3.1.5</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -179,5 +171,16 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>19</source>
+					<target>19</target>
+					<compilerArgs>--enable-preview</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

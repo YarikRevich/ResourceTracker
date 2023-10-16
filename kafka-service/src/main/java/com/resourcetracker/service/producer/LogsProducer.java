@@ -1,8 +1,5 @@
 package com.resourcetracker.service.producer;
 
-import org.springframework.stereotype.Component;
-
-import com.resourcetracker.service.entity.LogsEntity;
 import com.resourcetracker.service.producer.common.ProducerBase;
 import com.resourcetracker.service.producer.common.ProducerBuilder;
 

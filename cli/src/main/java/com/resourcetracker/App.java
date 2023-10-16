@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import com.resourcetracker.command.TopCommand;
+import com.resourcetracker.service.command.CommandService;
 import com.resourcetracker.service.KafkaConsumerWrapper;
 
 import picocli.CommandLine;
@@ -15,22 +15,20 @@ import picocli.CommandLine;
 @Component
 @Configuration
 @Import({
-	TopCommand.class,
-	ConfigService.class,
-	StateService.class,
-	TerraformService.class,
-	KafkaConsumerWrapper.class})
+	CommandService.class,
+	ConfigService.class})
 public class App implements CommandLineRunner, ExitCodeGenerator {
 	int exitCode;
 
 	@Autowired
-	TopCommand topCommand;
+	CommandService commandService;
 
 	@Override
 	public void run(String... args) {
-		CommandLine cmd = new CommandLine(topCommand);
+		CommandLine cmd = new CommandLine(commandService);
 		exitCode = cmd.execute(args);
 	}
+
 	@Override
 	public int getExitCode() {
 		return exitCode;
