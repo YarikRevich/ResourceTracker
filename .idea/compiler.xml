@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="api-server" />
         <module name="cli" />
         <module name="agent" />
       </profile>
@@ -24,7 +25,8 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="agent" options="-parameters" />
-      <module name="base" options="-parameters" />
+      <module name="api-server" options="-parameters" />
+      <module name="base" options="" />
       <module name="cli" options="-parameters" />
       <module name="config-service" options="" />
       <module name="constants" options="" />

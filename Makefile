@@ -26,7 +26,7 @@ test: clean ## Run both unit and integration tests
 
 .PHONY: build-dev
 build-dev: clean ## Build the development project(includes agent Docker image build)
-    @mvn install -T10
+	@mvn jib:build -T10
 
 .PHONY: build
 build: clean ## Build the project

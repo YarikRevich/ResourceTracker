@@ -15,11 +15,6 @@
 
 .vscode
 
-# Vagrant
-
-Vagrantfile
-.vagrant
-
 # Maven
 
 **/target
@@ -27,18 +22,6 @@ Vagrantfile
 # Logs
 
 **/logs
-
-# Web front-end
-
-**/node_modules
-
-# Gradle
-
-.gradle
-
-# Eclipse
-
-.settings
 
 # Environment variables
 

@@ -6,17 +6,17 @@ package com.resourcetracker.service.command;
  */
 public class StartCommandRunner implements Runnable {
 
-	/**
-	 *
-	 */
-	@Override
-	public void run() {
-		if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)) {
-			terraformService.setConfigEntity(configEntity);
-			terraformService.start();
+  /**
+   *
+   */
+  @Override
+  public void run() {
+    if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)) {
+      terraformService.setConfigEntity(configEntity);
+      terraformService.start();
 
-			stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-			numberOfStartedProjects++;
-		}
-	}
+      stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
+      numberOfStartedProjects++;
+    }
+  }
 }

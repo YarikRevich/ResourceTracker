@@ -1,21 +1,35 @@
 ```plantuml
-title
+!pragma teoz true
 
-  Detailed design of "ResourceTracker"
-
+title 
+    Detailed design of "ResourceTracker" 
 end title
 
-participant "Client" as client
+actor "Client" as client
 
-box "Cloud environment"
+box "Control plain" #MOTIVATION
+participant "API Server" as apiserver
+
+box "Cloud environment" #Lavender
 queue "Kafka" as kafka
 participant "Agent" as agent
 entity "Cloud provider" as cloudprovider
 end box
 
+end box
+
 note over kafka: Kafka is considered to be used in persisted mode
 
-opt "commands"
+opt "endpoints"
+opt "/v1/deploy [POST]"
+end
+opt "/v1/shutdown [POST]"
+end
+opt "/v1/state [GET]"
+end
+end
+
+opt "requests"
 note over client: Uses properties specified in a client\nconfiguration file located in\n a common directory
 
 opt "start"

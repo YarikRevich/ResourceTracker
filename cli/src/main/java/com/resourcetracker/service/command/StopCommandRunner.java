@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StopCommandRunner {
-	@Autowired
-	private ConfigService configService;
+  @Autowired
+  private ConfigService configService;
 //
 //	@Override
 //	public void run() {
