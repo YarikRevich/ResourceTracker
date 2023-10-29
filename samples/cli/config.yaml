@@ -1,0 +1,13 @@
+requests:
+    - name: "first"
+      frequency: "10 * * * *"
+      file: "script.sh"
+      run: |
+        ping google.com
+cloud:
+    provider: "aws"
+    credentials: "~/.aws/credentials"
+    profile: "default"
+    region: "default"
+api-server:
+    host: "localhost:9089"

@@ -13,6 +13,7 @@ jobs:
       with:
         java-version: '21'
         cache: maven
+        distribution: 'temurin'
     - name: "Build the project"
       run: |
         make build

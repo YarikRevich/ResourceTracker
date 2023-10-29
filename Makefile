@@ -17,7 +17,7 @@ clean: ## Clean project area
 
 .PHONY: prepare
 prepare: ## Install prerequisites
-	@mvn dependencies:resolve
+	@ mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.0:tree -Dverbose=true
 
 .PHONY: test
 test: clean ## Run both unit and integration tests
@@ -26,7 +26,7 @@ test: clean ## Run both unit and integration tests
 
 .PHONY: build-dev
 build-dev: clean ## Build the development project(includes agent Docker image build)
-    @mvn install -T10
+	@mvn jib:build -T10
 
 .PHONY: build
 build: clean ## Build the project
