@@ -1,4 +1,4 @@
-.PHONY: help, clean, prepare, test, build-dev, build
+.PHONY: help, clean, prepare, test, clone, build-dev, build
 .ONESHELL:
 
 ifneq (,$(wildcard .env))
@@ -24,10 +24,15 @@ test: clean ## Run both unit and integration tests
 	@mvn test
 	@mvn verify
 
+.PHONY: clone
+clone: ## Clone Terraform configuration files to local directory
+	@mkdir $(HOME)/.resourcetracker 2> /dev/null
+	@cp -r ./config/tf $(HOME)/.resourcetracker
+
 .PHONY: build-dev
 build-dev: clean ## Build the development project(includes agent Docker image build)
 	@mvn jib:build -T10
 
 .PHONY: build
-build: clean ## Build the project
+build: clean clone ## Build the project
 	@mvn install -T10
