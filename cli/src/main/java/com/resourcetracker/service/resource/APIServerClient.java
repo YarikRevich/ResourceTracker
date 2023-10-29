@@ -12,6 +12,4 @@ public class APIServerClient {
         webClient = WebClient.builder()
                 .build();
     }
-
-    public void getStatus()
 }
