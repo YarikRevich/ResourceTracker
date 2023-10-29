@@ -9,6 +9,7 @@ package com.resourcetracker.service.config;
         import org.apache.commons.io.IOUtils;
         import org.apache.logging.log4j.LogManager;
         import org.apache.logging.log4j.Logger;
+        import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.boot.context.event.ApplicationReadyEvent;
         import org.springframework.context.event.EventListener;
         import org.springframework.stereotype.Component;
@@ -20,19 +21,20 @@ package com.resourcetracker.service.config;
         import com.fasterxml.jackson.databind.ObjectReader;
         import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
         import com.resourcetracker.entity.ConfigEntity;
+        import org.springframework.stereotype.Service;
 
 /**
  * Service for processing configuration file
  *
  * @author YarikRevich
  */
-@Component
+@Service
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
     public static final String DEFAULT_CONFIG_FILE_PATH = Paths.get(System.getProperty("user.home"), "resourcetracker.yaml").toString();
 
-    private final InputStream configFile;
+    private InputStream configFile;
 
     private ConfigEntity parsedConfigFile;
 

@@ -17,7 +17,7 @@ clean: ## Clean project area
 
 .PHONY: prepare
 prepare: ## Install prerequisites
-	@mvn dependencies:resolve
+	@ mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.0:tree -Dverbose=true
 
 .PHONY: test
 test: clean ## Run both unit and integration tests

@@ -1,10 +1,10 @@
 package com.resourcetracker.service.terraform;
 
 import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.terraform.command.OutputCommand;
 import com.resourcetracker.service.terraform.command.ApplyCommand;
 import com.resourcetracker.service.terraform.command.DestroyCommand;
 import com.resourcetracker.service.terraform.command.InitCommand;
-import com.resourcetracker.service.terraform.command.OutputCommand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

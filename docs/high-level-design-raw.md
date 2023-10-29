@@ -19,8 +19,8 @@ hexagon "Cloud provider"
     [Agent] --> [Kafka]: "Push latest resource state"
 }
 
-[API Server] --> [Kafka]: "Retrieve latest resource state\t\t"
+[API Server] --> [Kafka]: "Perform deployment and event filtering\t\t"
 }
 
-[Client] --> [API Server]: " Retrieve resource state"
+[Client] --> [API Server]: " Perform resource related operations"
 ```

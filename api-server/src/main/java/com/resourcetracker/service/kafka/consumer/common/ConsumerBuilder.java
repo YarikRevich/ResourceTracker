@@ -1,8 +1,5 @@
 package com.resourcetracker.service.kafka.consumer.common;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.ListIterator;
 import java.util.Properties;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;

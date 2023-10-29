@@ -1,0 +1,54 @@
+openapi: 3.0.1
+info:
+  title: Static OpenAPI document of ResourceTracker API Server
+  description: ResourceTracker API Server Open API documentation
+  version: "1.0"
+
+paths:
+  /v1/state:
+    get:
+      responses:
+        200:
+          description: Retrieves the current resource state
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/State"
+  /v1/terraform/apply:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+      responses:
+        201:
+          description: Deploys new terraform infrastructure
+          content:
+            application/json: {}
+  /v1/terraform/destroy:
+    post:
+      requestBody:
+        description: Destroys new terraform infrastructure
+        content:
+          application/json: {}
+#            schema:
+#              $ref: '#/components/schemas/Fruit'
+      responses:
+        201:
+          description:
+          content:
+            application/json: { }
+components:
+  schemas:
+    State:
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+    Application:
+      properties:
+        description:
+          type:

@@ -9,3 +9,5 @@ cloud:
     credentials: "~/.aws/credentials"
     profile: "default"
     region: "default"
+api-server:
+    host: "localhost:9089"

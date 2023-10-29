@@ -16,9 +16,9 @@
     </parent>
 
     <modules>
-        <module>agent</module>
+<!--        <module>agent</module>-->
         <module>cli</module>
-        <module>api-server</module>
+<!--        <module>api-server</module>-->
     </modules>
 
   <properties>
@@ -27,18 +27,8 @@
     <maven.compiler.target>21</maven.compiler.target>
     <dockerhub.username>${env.DOCKERHUB_USERNAME}</dockerhub.username>
     <dockerhub.password>${env.DOCKERHUB_PASSWORD}</dockerhub.password>
+      <main.basedir>${project.basedir}</main.basedir>
   </properties>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>local</id>
-            <url>file://${project.basedir}/lib</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -47,6 +37,8 @@
                 <groupId>Shell-Command-Executor-Lib</groupId>
                 <artifactId>Shell-Command-Executor-Lib</artifactId>
                 <version>0.5.0-SNAPSHOST</version>
+                <scope>system</scope>
+                <systemPath>${main.basedir}/lib/Shell-Command-Executor-Lib-0.5.0-SNAPSHOT.jar</systemPath>
             </dependency>
 
             <!-- THIRD PARTY -->
@@ -74,11 +66,53 @@
                 <version>2.17.1</version>
             </dependency>
 
-            <!-- CORE -->
+            <!-- SPRING -->
             <dependency>
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka</artifactId>
                 <version>2.8.7</version>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework</groupId>-->
+<!--                <artifactId>spring-web</artifactId>-->
+<!--                <version>6.0.13</version>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+                <version>3.1.5</version>
+            </dependency>
+
+            <!-- QUARKUS -->
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-rest-client</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-rest-client-jackson</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+                <version>3.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-arc</artifactId>
+                <version>3.4.3</version>
+            </dependency>
+
+            <!-- KAFKA -->
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-streams</artifactId>
+                <version>2.7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>3.2.0</version>
             </dependency>
 
             <!-- TEST -->
@@ -98,6 +132,12 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-junit5</artifactId>
+                <version>3.4.3</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -195,6 +235,100 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>io.quarkus.platform</groupId>
+                    <artifactId>quarkus-maven-plugin</artifactId>
+                    <version>3.4.3</version>
+                    <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>build</goal>
+                                <goal>generate-code</goal>
+                                <goal>generate-code-tests</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            <maven.home>${basedir}/api-server</maven.home>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <systemPropertyVariables>
+                                    <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+                                    <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                    <maven.home>${basedir}</maven.home>
+                                </systemPropertyVariables>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>7.0.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <inputSpec>${project.basedir}/api-server/src/main/resources/openapi.yml</inputSpec>
+                                <generatorName>java</generatorName>
+                                <apiPackage>com.yaroslav.api</apiPackage>
+                                <modelPackage>com.yaroslav.model</modelPackage>
+                                <generateModelTests>false</generateModelTests>
+                                <generateModelDocumentation>false</generateModelDocumentation>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <generateApiTests>false</generateApiTests>
+                                <generateApiDocumentation>true</generateApiDocumentation>
+                                <auth>false</auth>
+                                <configOptions>
+                                    <dateLibrary>java8</dateLibrary>
+                                    <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                                </configOptions>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-install-plugin</artifactId>-->
+<!--                    <version>3.0.0-M1</version>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <id>install-local-jar</id>-->
+<!--                            <goals>-->
+<!--                                <goal>install-file</goal>-->
+<!--                            </goals>-->
+<!--                            <configuration>-->
+<!--                                <file>${basedir}/lib.jar</file>-->
+<!--                                <groupId>com.example</groupId>-->
+<!--                                <artifactId>local-jar</artifactId>-->
+<!--                                <version>1.0</version>-->
+<!--                                <packaging>jar</packaging>-->
+<!--                            </configuration>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

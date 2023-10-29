@@ -1,7 +1,5 @@
 package com.resourcetracker.service.terraform.provider.aws;
 
-import java.net.URL;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
