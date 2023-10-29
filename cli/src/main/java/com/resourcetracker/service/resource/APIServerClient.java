@@ -12,4 +12,16 @@ public class APIServerClient {
         webClient = WebClient.builder()
                 .build();
     }
+
+    public void postTerraformDeploy() {
+
+    }
+
+    public void postTerraformDestroy() {
+
+    }
+
+    public void getState() {
+
+    }
 }
