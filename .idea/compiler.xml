@@ -6,9 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="api-server" />
         <module name="cli" />
         <module name="agent" />
+        <module name="gui" />
+        <module name="api-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -31,6 +32,7 @@
       <module name="config-service" options="" />
       <module name="constants" options="" />
       <module name="deploy" options="-parameters" />
+      <module name="gui" options="-parameters" />
       <module name="kafka-service" options="-parameters" />
       <module name="proc-service" options="-parameters" />
       <module name="shutdown-service" options="-parameters" />
