@@ -4,6 +4,7 @@ import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.resource.APIServerClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

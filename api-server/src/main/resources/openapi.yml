@@ -32,9 +32,9 @@ paths:
       requestBody:
         description: Destroys new terraform infrastructure
         content:
-          application/json: {}
-#            schema:
-#              $ref: '#/components/schemas/Fruit'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
       responses:
         201:
           description:
