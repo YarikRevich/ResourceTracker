@@ -14,6 +14,12 @@ jobs:
         java-version: '21'
         cache: maven
         distribution: 'temurin'
-    - name: "Build the project"
+    - name: "Build API Server"
       run: |
-        make build
+        make build-api-server
+    - name: "Build CLI"
+      run: |
+        make build-cli
+    - name: "Build GUI"
+      run: |
+        make build-gui
