@@ -26,8 +26,9 @@
     <java.release>21</java.release>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <dockerhub.username>${env.DOCKERHUB_USERNAME}</dockerhub.username>
-    <dockerhub.password>${env.DOCKERHUB_PASSWORD}</dockerhub.password>
+    <dockerhub.username>${env.DOCKER_HUB_USERNAME}</dockerhub.username>
+    <dockerhub.password>${env.DOCKER_HUB_PASSWORD}</dockerhub.password>
+    <dockerimage.tag>${env.DOCKER_IMAGE_TAG}</dockerimage.tag>
     <main.basedir>${project.basedir}</main.basedir>
   </properties>
 
@@ -336,6 +337,9 @@
           <configuration>
             <to>
               <image>registry.hub.docker.com/${dockerhub.username}/resourcetracker-agent</image>
+              <tags>
+                <tag>${dockerimage.tag}</tag>
+              </tags>
               <auth>
                 <username>${dockerhub.username}</username>
                 <password>${dockerhub.password}</password>

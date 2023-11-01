@@ -1,0 +1,30 @@
+name: Publish Agent
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          cache: maven
+          distribution: 'temurin'
+
+      - name: "Modify .env using .env.development template"
+        run: |
+          sed -i "s,DOCKER_HUB_USERNAME=,DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }},g" ".env.template"
+          sed -i "s,DOCKER_HUB_PASSWORD=,DOCKER_HUB_PASSWORD=${{ secrets.DOCKER_HUB_PASSWORD }},g" ".env.template"
+          sed -i "s,DOCKER_IMAGE_TAG=,DOCKER_IMAGE_TAG=${{ github.sha }},g" ".env.template"
+          
+          cp .env.template .env
+
+      - name: "Build Agent Docker image"
+        run: |
+          make build-agent
+      

@@ -31,7 +31,7 @@ clone: ## Clone Terraform configuration files to local directory
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
-	@mvn jib:build -T10
+	@mvn -T10 -D jib:build
 
 .PHONY: build-api-server
 build-api-server: clean ## Build API Server application
