@@ -335,6 +335,14 @@
             <from>
               <image>openjdk:21-jdk</image>
             </from>
+            <to>
+              <image>${jib.to.image}</image>
+              <tags>${jib.to.tags}</tags>
+              <auth>
+                <username>${jib.auth.username}</username>
+                <password>${jib.auth.password}</password>
+              </auth>
+            </to>
             <container>
               <labels>
                 <org.opencontainers.image.source>https://github.com/YarikRevich/ResourceTracker</org.opencontainers.image.source>

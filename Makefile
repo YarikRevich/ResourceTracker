@@ -30,17 +30,11 @@ clone: ## Clone Terraform configuration files to local directory
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
-	echo ${DOCKER_IMAGE_NAME}
-	echo ${DOCKER_IMAGE_TAG}
-	echo ${DOCKER_REGISTRY_USERNAME}
-	echo ${DOCKER_REGISTRY_PASSWORD}
-	cat .env
-
 	@mvn -pl agent -T10 compile jib:build \
-        -Dimage=${DOCKER_IMAGE_NAME} \
-        -Dtags=${DOCKER_IMAGE_TAG} \
-        -Dusername=${DOCKER_REGISTRY_USERNAME} \
-        -Dpassword=${DOCKER_REGISTRY_PASSWORD}
+        -Djib.to.image=${DOCKER_IMAGE_NAME} \
+        -Djib.to.tags=${DOCKER_IMAGE_TAG} \
+        -Djib.auth.username=${DOCKER_REGISTRY_USERNAME} \
+        -Djib.auth.password=${DOCKER_REGISTRY_PASSWORD}
 
 .PHONY: build-api-server
 build-api-server: clean ## Build API Server application
