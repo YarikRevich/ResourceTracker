@@ -1,5 +1,4 @@
 .PHONY: help, clean, prepare, test, clone, build-agent, build-cli, build-gui
-.ONESHELL:
 
 ifneq (,$(wildcard .env))
 include .env
