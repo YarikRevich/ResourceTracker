@@ -1,8 +1,8 @@
 .PHONY: help, clean, prepare, test, clone, build-agent, build-cli, build-gui
 
 ifneq (,$(wildcard .env))
-include .env
-export
+	include .env
+	export
 endif
 
 .PHONY: help
@@ -30,14 +30,11 @@ clone: ## Clone Terraform configuration files to local directory
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
-	cat .env
-	echo ${DOCKER_IMAGE_NAME}
-#
-#	@mvn -pl agent -T10 compile jib:build \
-#        -Dimage=${DOCKER_IMAGE_NAME} \
-#        -Dtags=${DOCKER_IMAGE_TAG} \
-#        -Dusername=${DOCKER_REGISTRY_USERNAME} \
-#        -Dpassword=${DOCKER_REGISTRY_PASSWORD}
+	@mvn -pl agent -T10 compile jib:build \
+        -Dimage=${DOCKER_IMAGE_NAME} \
+        -Dtags=${DOCKER_IMAGE_TAG} \
+        -Dusername=${DOCKER_REGISTRY_USERNAME} \
+        -Dpassword=${DOCKER_REGISTRY_PASSWORD}
 
 .PHONY: build-api-server
 build-api-server: clean ## Build API Server application
