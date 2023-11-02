@@ -1,8 +1,8 @@
 .PHONY: help, clean, prepare, test, clone, build-agent, build-cli, build-gui
 
 ifneq (,$(wildcard .env))
-	include .env
-	export
+include .env
+export
 endif
 
 .PHONY: help
