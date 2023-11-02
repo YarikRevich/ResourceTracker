@@ -335,6 +335,12 @@
             <from>
               <image>openjdk:21-jdk</image>
             </from>
+            <container>
+              <labels>
+                <org.opencontainers.image.source>https://github.com/YarikRevich/ResourceTracker</org.opencontainers.image.source>
+                <org.opencontainers.image.licenses>MIT</org.opencontainers.image.licenses>
+              </labels>
+            </container>
           </configuration>
           <executions>
             <execution>
