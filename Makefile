@@ -2,8 +2,8 @@
 .ONESHELL:
 
 ifneq (,$(wildcard .env))
-    include .env
-    export
+	include .env
+	export
 endif
 
 .PHONY: help
