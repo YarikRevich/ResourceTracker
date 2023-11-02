@@ -30,6 +30,7 @@ clone: ## Clone Terraform configuration files to local directory
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
+	cat .env
 	echo ${DOCKER_IMAGE_NAME}
 #
 #	@mvn -pl agent -T10 compile jib:build \
