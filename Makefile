@@ -2,8 +2,8 @@
 .ONESHELL:
 
 ifneq (,$(wildcard .env))
-	include .env
-	export
+    include .env
+    export
 endif
 
 .PHONY: help
@@ -31,7 +31,11 @@ clone: ## Clone Terraform configuration files to local directory
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
-	@mvn -T10 -D jib:build
+	@mvn -T10 compile jib:build \
+        -Dimage=${DOCKER_IMAGE_NAME} \
+        -Dtags=${DOCKER_IMAGE_TAG} \
+        -Dusername=${DOCKER_HUB_USERNAME} \
+        -Dpassword=${DOCKER_HUB_PASSWORD}
 
 .PHONY: build-api-server
 build-api-server: clean ## Build API Server application

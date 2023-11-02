@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  validate:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,7 @@ jobs:
         run: |
           sed -i "s,DOCKER_HUB_USERNAME=,DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }},g" ".env.template"
           sed -i "s,DOCKER_HUB_PASSWORD=,DOCKER_HUB_PASSWORD=${{ secrets.DOCKER_HUB_PASSWORD }},g" ".env.template"
+          sed -i "s,DOCKER_IMAGE_NAME=,DOCKER_IMAGE_NAME=${{ secrets.DOCKER_HUB_PASSWORD }},g" ".env.template"
           sed -i "s,DOCKER_IMAGE_TAG=,DOCKER_IMAGE_TAG=${{ github.sha }},g" ".env.template"
           
           cp .env.template .env

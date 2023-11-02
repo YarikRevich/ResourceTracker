@@ -5,10 +5,10 @@ import java.util.Properties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.streams.StreamsConfig;
-import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.beans.factory.annotation.Value;
 
 public class KafkaConfigurationBuilder {
-  @Value("#{environment.RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER}")
+//  @Value("#{environment.RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER}")
   private String envBootstrapServer;
   public String bootstrapServer;
   public String clientId;
