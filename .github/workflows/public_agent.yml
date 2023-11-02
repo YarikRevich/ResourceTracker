@@ -31,11 +31,7 @@ jobs:
           sed -i "s,DOCKER_REGISTRY_PASSWORD=,DOCKER_REGISTRY_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }},g" ".env.template"
           sed -i "s,DOCKER_IMAGE_NAME=,DOCKER_IMAGE_NAME=${{ secrets.DOCKER_IMAGE_NAME }},g" ".env.template"
           sed -i "s,DOCKER_IMAGE_TAG=,DOCKER_IMAGE_TAG=${{ env.hash }},g" ".env.template"
-          
-          echo ${{secrets.DOCKER_REGISTRY_USERNAME}} | sed 's/./& /g'
-          echo ${{secrets.DOCKER_REGISTRY_PASSWORD}} | sed 's/./& /g'
-          echo ${{secrets.DOCKER_IMAGE_NAME}} | sed 's/./& /g'
-          
+
           cp .env.template .env
 
       - name: "Build Agent Docker image"
