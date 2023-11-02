@@ -1,6 +1,7 @@
 name: Publish Agent
 
 on:
+  release:
   workflow_dispatch:
 
 jobs:
@@ -15,6 +16,10 @@ jobs:
           java-version: '21'
           cache: maven
           distribution: 'temurin'
+
+      - name: "Install prerequisites"
+        run: |
+          make prepare
 
       - name: "Modify .env using .env.development template"
         run: |

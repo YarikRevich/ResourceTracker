@@ -14,9 +14,15 @@ jobs:
         java-version: '21'
         cache: maven
         distribution: 'temurin'
+
+    - name: "Install prerequisites"
+      run: |
+        make prepare
+
     - name: "Build CLI"
       run: |
         make build-cli
+
     - name: "Build GUI"
       run: |
         make build-gui
