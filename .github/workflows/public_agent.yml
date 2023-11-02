@@ -1,10 +1,11 @@
 name: Publish Agent
 
 on:
+  release:
   workflow_dispatch:
 
 jobs:
-  validate:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,12 +17,21 @@ jobs:
           cache: maven
           distribution: 'temurin'
 
+      - name: "Install prerequisites"
+        run: |
+          make prepare
+
+      - name: "Retrieve latest commit hash"
+        run: |
+          echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: "Modify .env using .env.development template"
         run: |
-          sed -i "s,DOCKER_HUB_USERNAME=,DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }},g" ".env.template"
-          sed -i "s,DOCKER_HUB_PASSWORD=,DOCKER_HUB_PASSWORD=${{ secrets.DOCKER_HUB_PASSWORD }},g" ".env.template"
-          sed -i "s,DOCKER_IMAGE_TAG=,DOCKER_IMAGE_TAG=${{ github.sha }},g" ".env.template"
-          
+          sed -i "s,DOCKER_REGISTRY_USERNAME=,DOCKER_REGISTRY_USERNAME=${{ secrets.DOCKER_REGISTRY_USERNAME }},g" ".env.template"
+          sed -i "s,DOCKER_REGISTRY_PASSWORD=,DOCKER_REGISTRY_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }},g" ".env.template"
+          sed -i "s,DOCKER_IMAGE_NAME=,DOCKER_IMAGE_NAME=${{ secrets.DOCKER_IMAGE_NAME }},g" ".env.template"
+          sed -i "s,DOCKER_IMAGE_TAG=,DOCKER_IMAGE_TAG=${{ env.hash }},g" ".env.template"
+
           cp .env.template .env
 
       - name: "Build Agent Docker image"

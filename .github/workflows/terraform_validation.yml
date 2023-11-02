@@ -11,6 +11,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.6
+
       - name: "Run deployment validation"
         run: |
           pushd config/tf
