@@ -1,9 +1,11 @@
 package com.resourcetracker.service.terraform.command;
 
-import org.springframework.stereotype.Service;
+import jakarta.enterprise.context.ApplicationScoped;
+import process.SProcess;
+import process.SProcessExecutor.OS;
 
-@Service
-public class InitCommand extends Command {
+@ApplicationScoped
+public class InitCommand extends SProcess {
     @Override
     public String getCommand() {
 //        procService

@@ -18,15 +18,19 @@
   </properties>
 
   <dependencies>
-    <!-- LOCAL -->
+    <!-- THIRD PARTY -->
     <dependency>
-      <groupId>Shell-Command-Executor-Lib</groupId>
-      <artifactId>Shell-Command-Executor-Lib</artifactId>
-      <scope>system</scope>
-      <systemPath>${basedir}/../lib/Shell-Command-Executor-Lib-0.5.0-SNAPSHOT.jar</systemPath>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
-
-    <!-- THIRD-PARTY -->
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
