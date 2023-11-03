@@ -1,11 +1,14 @@
 package com.resourcetracker.service.terraform.command;
 
-import org.springframework.stereotype.Service;
+import jakarta.enterprise.context.ApplicationScoped;
+import process.SProcess;
+import process.SProcessExecutor.OS;
 
-@Service
-public class DestroyCommand extends Command {
+@ApplicationScoped
+public class DestroyCommand extends SProcess {
     @Override
     public String getCommand() {
+
 //        procService
 //                .build()
 //                .setCommand("terraform")

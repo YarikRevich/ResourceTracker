@@ -7,6 +7,8 @@ info:
 paths:
   /v1/state:
     get:
+      tags:
+        - StateResource
       responses:
         200:
           description: Retrieves the current resource state
@@ -17,6 +19,8 @@ paths:
                   $ref: "#/components/schemas/State"
   /v1/terraform/apply:
     post:
+      tags:
+        - TerraformResource
       requestBody:
         content:
           application/json:
@@ -29,6 +33,8 @@ paths:
             application/json: {}
   /v1/terraform/destroy:
     post:
+      tags:
+        - TerraformResource
       requestBody:
         description: Destroys new terraform infrastructure
         content:
