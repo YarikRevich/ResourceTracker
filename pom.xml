@@ -346,6 +346,31 @@
           </configuration>
         </plugin>
 
+        <!-- MAVEN JAR TRANSFER -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${main.basedir}/../bin</outputDirectory>
+                <resources>
+                  <resource>
+                    <directory>${basedir}/target</directory>
+                    <include>*.jar</include>
+                    <filtering>false</filtering>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <!-- QUARKUS BUILD -->
         <plugin>
           <groupId>io.quarkus.platform</groupId>

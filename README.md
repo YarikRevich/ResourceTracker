@@ -15,15 +15,22 @@ A cloud-native tool resource state tracking.
 
 ## Setup
 
-### CLI
-
 All setup related operations are processed via **Makefile** placed in the root directory.
 
-In order to build the project it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
+### CLI
+
+In order to build CLI it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
 ```shell
-make build
+make build-cli
 ```
 
-After the execution of command given above all the executables will be generated and placed into **bin** folder in the root directory of the project
+After the execution of command given above the executable will be generated and placed into **bin** folder in the root directory of the project
 
 ### GUI
+
+In order to build GUI it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
+```shell
+make build-gui
+```
+
+After the execution of command given above the executable will be generated and placed into **bin** folder in the root directory of the project
