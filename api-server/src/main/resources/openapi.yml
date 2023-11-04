@@ -11,12 +11,12 @@ paths:
         - StateResource
       responses:
         200:
-          description: Retrieves the current resource state
+          description: Current resource state is successfully retrieved
           content:
             application/json:
               schema:
                 items:
-                  $ref: "#/components/schemas/State"
+                  $ref: "#/components/schemas/ResourceState"
   /v1/terraform/apply:
     post:
       tags:
@@ -25,12 +25,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Application'
+              $ref: '#/components/schemas/TerraformDeploymentApplication'
       responses:
         201:
-          description: Deploys new terraform infrastructure
-          content:
-            application/json: {}
+          description: New remote intrustructure was successfully deployed
+        400:
+          description: Given deployment application contains incorrect data
   /v1/terraform/destroy:
     post:
       tags:
@@ -40,21 +40,54 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Application'
+              $ref: '#/components/schemas/TerraformDestructionApplication'
       responses:
         201:
-          description:
-          content:
-            application/json: { }
+          description: Deployed remote infrustructure is succcessfully destroyed
 components:
   schemas:
-    State:
+    ResourceState:
       properties:
-        description:
-          type: string
+        logs:
+          type: array
+          items:
+            type: string
+    TerraformDeploymentApplication:
+      properties:
+        requests:
+          type: array
+          items:
+            $ref: "#/components/schemas/Request"
+    Request:
+      properties:
         name:
           type: string
-    Application:
+        script:
+          type: string
+        frequency:
+          type: string
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          oneOf:
+            - $ref: '#/components/schemas/AWSCredentials'
+    Provider:
+      type: string
+      enum:
+        - aws
+    AWSCredentials:
       properties:
-        description:
-          type:
+        access_key:
+          type: string
+        secret_key:
+          type: string
+        profile:
+          type: string
+        region:
+          type: string
+    TerraformDestructionApplication:
+      properties:
+        name:
+          type: array
+          items:
+            type: string
