@@ -295,6 +295,7 @@
                 <generateApiDocumentation>true</generateApiDocumentation>
                 <auth>false</auth>
                 <configOptions>
+                  <useTags>true</useTags>
                   <interfaceOnly>true</interfaceOnly>
                   <useJakartaEe>true</useJakartaEe>
                   <useSwaggerAnnotations>false</useSwaggerAnnotations>
