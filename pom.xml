@@ -348,27 +348,23 @@
 
         <!-- MAVEN JAR TRANSFER -->
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
+          <groupId>com.coderplus.maven.plugins</groupId>
+          <artifactId>copy-rename-maven-plugin</artifactId>
+          <version>1.0</version>
           <executions>
             <execution>
               <phase>package</phase>
               <goals>
-                <goal>copy-resources</goal>
+                <goal>copy</goal>
               </goals>
-              <configuration>
-                <outputDirectory>${main.basedir}/../bin</outputDirectory>
-                <resources>
-                  <resource>
-                    <directory>${basedir}/target</directory>
-                    <include>*.jar</include>
-                    <filtering>false</filtering>
-                  </resource>
-                </resources>
-              </configuration>
             </execution>
           </executions>
+        </plugin>
+
+        <!-- SHELL COMMAND EXECUTION -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
         </plugin>
 
         <!-- QUARKUS BUILD -->
@@ -414,7 +410,6 @@
           </configuration>
           <executions>
             <execution>
-              <id>docker</id>
               <goals>
                 <goal>build</goal>
               </goals>

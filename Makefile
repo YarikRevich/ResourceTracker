@@ -1,4 +1,4 @@
-.PHONY: help, clean, prepare, test, clone, build-agent, build-cli, build-gui
+.PHONY: help, clean, prepare, test, create-local, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
 
 ifneq (,$(wildcard .env))
 include .env
@@ -23,10 +23,22 @@ test: clean ## Run both unit and integration tests
 	@mvn test
 	@mvn verify
 
-.PHONY: clone
-clone: ## Clone Terraform configuration files to local directory
-	@mkdir $(HOME)/.resourcetracker 2> /dev/null
+.PHONY: create-local
+create-local: ## Create ResourceTracker local directory
+ifeq (,$(wildcard $(HOME)/.resourcetracker))
+	@mkdir $(HOME)/.resourcetracker
+endif
+
+.PHONY: clone-terraform
+clone-terraform: create-local ## Clone Terraform configuration files to local directory
 	@cp -r ./config/tf $(HOME)/.resourcetracker
+
+.PHONY: clone-api-server
+clone-api-server: create-local ## Clone API Server JAR into a ResourceTracker local directory
+ifeq (,$(wildcard $(HOME)/.resourcetracker/bin/api-server))
+	@mkdir -p $(HOME)/.resourcetracker/bin
+endif
+	@cp -r ./bin/api-server $(HOME)/.resourcetracker/bin/
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
@@ -45,7 +57,7 @@ build-cli: clean ## Build CLI application
 	@mvn -pl cli -T10 install
 
 .PHONY: build-gui
-build-gui: clean ## Build GUI application
+build-gui: clean build-api-server clone-api-server ## Build GUI application
 	@mvn -pl gui -T10 install
 
 
