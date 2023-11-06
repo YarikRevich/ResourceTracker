@@ -57,6 +57,16 @@
             <artifactId>jandex</artifactId>
         </dependency>
         <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
         </dependency>
@@ -89,6 +99,7 @@
     </dependencies>
 
     <build>
+        <finalName>api-server</finalName>
         <plugins>
             <plugin>
                 <groupId>io.quarkus.platform</groupId>
@@ -121,6 +132,69 @@
                     <execution>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/openapi.yml</inputSpec>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <sourceFile>${basedir}/target/quarkus-app/quarkus-run.jar</sourceFile>
+                            <destinationFile>${main.basedir}/../bin/api-server/api-server.jar</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-quarkus-lib</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <arguments>
+                                <argument>-r</argument>
+                                <argument>${basedir}/target/quarkus-app/lib</argument>
+                                <argument>${main.basedir}/../bin/api-server/lib</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-quarkus-quarkus</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <arguments>
+                                <argument>-r</argument>
+                                <argument>${basedir}/target/quarkus-app/quarkus</argument>
+                                <argument>${main.basedir}/../bin/api-server/quarkus</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-quarkus-app</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cp</executable>
+                            <arguments>
+                                <argument>-r</argument>
+                                <argument>${basedir}/target/quarkus-app/app</argument>
+                                <argument>${main.basedir}/../bin/api-server/app</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>

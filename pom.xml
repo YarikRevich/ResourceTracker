@@ -346,6 +346,27 @@
           </configuration>
         </plugin>
 
+        <!-- MAVEN JAR TRANSFER -->
+        <plugin>
+          <groupId>com.coderplus.maven.plugins</groupId>
+          <artifactId>copy-rename-maven-plugin</artifactId>
+          <version>1.0</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>copy</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- SHELL COMMAND EXECUTION -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+        </plugin>
+
         <!-- QUARKUS BUILD -->
         <plugin>
           <groupId>io.quarkus.platform</groupId>
@@ -389,7 +410,6 @@
           </configuration>
           <executions>
             <execution>
-              <id>docker</id>
               <goals>
                 <goal>build</goal>
               </goals>

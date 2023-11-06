@@ -137,6 +137,7 @@
   </dependencies>
 
   <build>
+    <finalName>cli</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -149,6 +150,18 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.coderplus.maven.plugins</groupId>
+        <artifactId>copy-rename-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <sourceFile>${basedir}/target/cli.jar</sourceFile>
+              <destinationFile>${main.basedir}/../bin/cli/cli.jar</destinationFile>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
