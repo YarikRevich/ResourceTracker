@@ -1,17 +1,25 @@
 package com.resourcetracker.resource;
 
 import com.resourcetracker.api.TerraformResourceApi;
+import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
+import com.resourcetracker.service.terraform.TerraformService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class TerraformResource implements TerraformResourceApi {
+    @Inject
+    TerraformService terraformService;
 
     /**
      * @param terraformDeploymentApplication
      */
     @Override
     public void v1TerraformApplyPost(TerraformDeploymentApplication terraformDeploymentApplication) {
-
+//        throw new TerraformException("");
+//        terraformService.apply(terraformDeploymentApplication);
     }
 
     /**
@@ -19,6 +27,6 @@ public class TerraformResource implements TerraformResourceApi {
      */
     @Override
     public void v1TerraformDestroyPost(TerraformDestructionApplication terraformDestructionApplication) {
-
+//        terraformService.destroy(terraformDestructionApplication);
     }
 }

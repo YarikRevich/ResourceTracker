@@ -66,8 +66,8 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
       essential : true,
       environment : [
         {
-          name : "RESOURCETRACKER_CONTEXT",
-          value : var.resourcetracker-context,
+          name : "RESOURCETRACKER_CONFIG",
+          value : var.resourcetracker-config,
         },
 		{
           name : "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",

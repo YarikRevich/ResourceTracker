@@ -1,4 +1,4 @@
-.PHONY: help, clean, prepare, test, create-local, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
+.PHONY: help, clean, prepare, test, lint, create-local, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
 
 ifneq (,$(wildcard .env))
 include .env
@@ -22,6 +22,10 @@ prepare: ## Install prerequisites
 test: clean ## Run both unit and integration tests
 	@mvn test
 	@mvn verify
+
+.PHONY: lint
+lint: ## Run Apache Spotless linter
+	@mvn spotless:apply
 
 .PHONY: create-local
 create-local: ## Create ResourceTracker local directory
@@ -53,11 +57,11 @@ build-api-server: clean ## Build API Server application
 	@mvn -pl api-server -T10 install
 
 .PHONY: build-cli
-build-cli: clean ## Build CLI application
+build-cli: clean clone-terraform ## Build CLI application
 	@mvn -pl cli -T10 install
 
 .PHONY: build-gui
-build-gui: clean build-api-server clone-api-server ## Build GUI application
+build-gui: clean build-api-server clone-api-server clone-terraform ## Build GUI application
 	@mvn -pl gui -T10 install
 
 

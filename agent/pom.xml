@@ -18,6 +18,14 @@
   </properties>
 
   <dependencies>
+    <!-- LOCAL -->
+    <dependency>
+      <groupId>Shell-Command-Executor-Lib</groupId>
+      <artifactId>Shell-Command-Executor-Lib</artifactId>
+      <scope>system</scope>
+      <systemPath>${basedir}/../lib/Shell-Command-Executor-Lib-0.5.0-SNAPSHOT.jar</systemPath>
+    </dependency>
+
     <!-- SPRING -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -26,6 +34,28 @@
     <dependency>
       <groupId>org.springframework.kafka</groupId>
       <artifactId>spring-kafka</artifactId>
+    </dependency>
+
+    <!-- THIRD PARTY -->
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
     </dependency>
 
     <!-- LOGGING -->

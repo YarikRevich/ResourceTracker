@@ -10,6 +10,7 @@ package com.resourcetracker.service.config;
         import org.apache.logging.log4j.LogManager;
         import org.apache.logging.log4j.Logger;
         import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.beans.factory.annotation.Value;
         import org.springframework.boot.context.event.ApplicationReadyEvent;
         import org.springframework.context.event.EventListener;
         import org.springframework.stereotype.Component;
@@ -32,7 +33,8 @@ package com.resourcetracker.service.config;
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-    public static final String DEFAULT_CONFIG_FILE_PATH = Paths.get(System.getProperty("user.home"), "resourcetracker.yaml").toString();
+    @Value("${config.file}")
+    private String CONFIG_FILE_PATH;
 
     private InputStream configFile;
 
@@ -43,25 +45,17 @@ public class ConfigService {
      */
     public ConfigService() {
         try {
-            configFile = new FileInputStream(DEFAULT_CONFIG_FILE_PATH);
+            configFile = new FileInputStream(CONFIG_FILE_PATH);
         } catch (FileNotFoundException e) {
             logger.fatal(e.getMessage());
         }
     }
 
     /**
-     * Converts json source to InputStream
-     * @param src
-     */
-    public ConfigService(String src){
-        configFile = IOUtils.toInputStream(src, "UTF-8");
-    }
-
-    /**
      * Processes configuration file
      */
     @EventListener(ApplicationReadyEvent.class)
-    public void process() {
+    private void process() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
                 .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);

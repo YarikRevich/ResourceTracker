@@ -1,11 +1,15 @@
 package com.resourcetracker.service.terraform.command;
 
+import com.resourcetracker.entity.ConfigEntity;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import process.SProcess;
 import process.SProcessExecutor.OS;
 
 @ApplicationScoped
 public class ApplyCommand extends SProcess {
+    @Inject
+    ConfigEntity config;
 
     @Override
     public String getCommand() {
@@ -20,7 +24,7 @@ public class ApplyCommand extends SProcess {
 //                .setPositionalVar("-no-color")
 //                .run();
 
-        return "";
+        return String.format("cd %s && terraform validate", config.getTerraformDirectory());
     }
 
     @Override
