@@ -10,4 +10,4 @@ cloud:
     profile: "default"
     region: "default"
 api-server:
-    host: "localhost:9089"
+    host: "http://localhost:8080"

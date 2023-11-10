@@ -2,7 +2,6 @@ package com.resourcetracker.service.command;
 
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.resource.APIServerClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +15,6 @@ import java.util.List;
 public class StopCommandService {
   @Autowired
   private ConfigService configService;
-
-  @Autowired
-  private APIServerClient apiServerClient;
 
   public void process() {
 

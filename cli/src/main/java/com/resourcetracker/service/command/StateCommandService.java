@@ -1,8 +1,8 @@
 package com.resourcetracker.service.command;
 
+import com.resourcetracker.api.StateResourceApi;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.resource.APIServerClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 public class StateCommandService {
     @Autowired
     private ConfigService configService;
-
-    @Autowired
-    private APIServerClient apiServerClient;
 
     public void process() {
 //

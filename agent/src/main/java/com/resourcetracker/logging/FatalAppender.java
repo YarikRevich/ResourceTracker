@@ -19,15 +19,11 @@ import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-@Component
 @Plugin(
         name = "FatalAppender",
         category = Core.CATEGORY_NAME,
         elementType = Appender.ELEMENT_TYPE)
 public class FatalAppender extends AbstractAppender {
-    @Autowired
-    private ApplicationContext context;
-
     private ConcurrentMap<String, LogEvent> eventMap = new ConcurrentHashMap<>();
 
     protected FatalAppender(String name, Filter filter) {
@@ -44,7 +40,6 @@ public class FatalAppender extends AbstractAppender {
     @Override
     public void append(LogEvent event) {
         if (event.getLevel().equals(Level.FATAL)){
-            SpringApplication.exit(context, () -> 1);
             System.exit(1);
         }
 

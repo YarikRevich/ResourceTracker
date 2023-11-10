@@ -7,6 +7,7 @@ import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.service.terraform.TerraformService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 
 @ApplicationScoped
 public class TerraformResource implements TerraformResourceApi {
@@ -18,6 +19,7 @@ public class TerraformResource implements TerraformResourceApi {
      */
     @Override
     public void v1TerraformApplyPost(TerraformDeploymentApplication terraformDeploymentApplication) {
+        throw new BadRequestException();
 //        throw new TerraformException("");
 //        terraformService.apply(terraformDeploymentApplication);
     }

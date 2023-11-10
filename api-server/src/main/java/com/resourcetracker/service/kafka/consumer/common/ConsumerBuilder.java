@@ -6,7 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-public class ConsumerBuilder<T extends ConsumerBuilderSource> {
+public class ConsumerBuilder<T>{ //extends ConsumerBuilderSource> {
   private ConsumerBuilderOptions opts;
   private Properties props;
   private T source;
@@ -25,7 +25,7 @@ public class ConsumerBuilder<T extends ConsumerBuilderSource> {
     ConsumerBuilderResult consumerBuilderResult = new ConsumerBuilderResult();
     consumerBuilderResult.setProps(this.props);
     consumerBuilderResult.setOpts(this.opts);
-    this.source.setConsumerBuilderResult(consumerBuilderResult);
+//    this.source.setConsumerBuilderResult(consumerBuilderResult);
     return this.source;
   }
 }

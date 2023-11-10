@@ -1,2 +1,2 @@
 kafka:
-  host: "localhost:9090"
+  host: "http://localhost:9090"

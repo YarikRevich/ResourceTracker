@@ -8,7 +8,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-public class ConsumerBase<T, V> implements ConsumerBuilderSource {
+public class ConsumerBase<T, V> {//implements ConsumerBuilderSource {
   private ConsumerBuilderResult consumerBuilderResult;
 
   public void setConsumerBuilderResult(ConsumerBuilderResult consumerBuilderResult) {

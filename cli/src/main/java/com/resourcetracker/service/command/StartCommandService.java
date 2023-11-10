@@ -1,11 +1,15 @@
 package com.resourcetracker.service.command;
 
+import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.TerraformResourceApi;
 import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.resource.APIServerClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -15,13 +19,24 @@ import java.util.List;
  */
 @Service
 public class StartCommandService {
-  @Autowired
-  private ConfigService configService;
+  private final TerraformResourceApi terraformResourceApi;
 
-  @Autowired
-  private APIServerClient apiServerClient;
+  public StartCommandService(@Autowired ConfigService configService) {
+    ApiClient apiClient = new ApiClient()
+            .setBasePath(configService.getConfig().getApiServer().getHost());
+
+    terraformResourceApi = new TerraformResourceApi(apiClient);
+  }
 
   public void process() {
+    TerraformDeploymentApplication terraformDeploymentApplication = new TerraformDeploymentApplication();
+//    terraformDeploymentApplication.addRequestsItem()
+
+    Mono<Void> response = terraformResourceApi.v1TerraformApplyPost(terraformDeploymentApplication)
+            .doOnSuccess(t -> System.out.println("Success"))
+            .doOnError(t -> System.out.println("Error"));
+    response.block();
+
 //    List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
 //
 //    synchronized (this) {

@@ -28,6 +28,27 @@
       <artifactId>spring-boot-starter-webflux</artifactId>
     </dependency>
 
+    <!-- NETTY MACOS -->
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-resolver-dns-native-macos</artifactId>
+      <classifier>osx-aarch_64</classifier>
+    </dependency>
+
+    <!-- OPENAPI -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-models</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>jackson-databind-nullable</artifactId>
+    </dependency>
+
     <!-- PICOCLI -->
     <dependency>
       <groupId>info.picocli</groupId>
@@ -46,6 +67,10 @@
     <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
     </dependency>
     <dependency>
       <groupId>jakarta.ws.rs</groupId>
@@ -117,6 +142,19 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+            <configuration>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
         <version>6.4.0</version>
@@ -127,22 +165,29 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/../api-server/src/main/resources/openapi.yml</inputSpec>
-              <generatorName>spring</generatorName>
+              <generatorName>java</generatorName>
+              <library>webclient</library>
               <apiPackage>${default.package}.api</apiPackage>
               <modelPackage>${default.package}.model</modelPackage>
+              <generateApis>true</generateApis>
+              <generateApiDocumentation>false</generateApiDocumentation>
+              <generateApiTests>false</generateApiTests>
+              <generateApiDocumentation>false</generateApiDocumentation>
               <generateModelTests>false</generateModelTests>
               <generateModelDocumentation>false</generateModelDocumentation>
-              <generateSupportingFiles>false</generateSupportingFiles>
-              <generateApiTests>false</generateApiTests>
-              <generateApiDocumentation>true</generateApiDocumentation>
+              <generateSupportingFiles>true</generateSupportingFiles>
               <auth>false</auth>
               <configOptions>
                 <sourceFolder>src/java/main</sourceFolder>
+                <useSpringController>true</useSpringController>
+                <interfaceOnly>false</interfaceOnly>
                 <useTags>true</useTags>
                 <useJakartaEe>true</useJakartaEe>
                 <useSwaggerAnnotations>false</useSwaggerAnnotations>
                 <useRuntimeException>true</useRuntimeException>
                 <dateLibrary>java8</dateLibrary>
+                <java8>true</java8>
+                <oas3>true</oas3>
               </configOptions>
             </configuration>
           </execution>
@@ -150,4 +195,22 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <spring.profiles.active>dev</spring.profiles.active>
+      </properties>
+    </profile>
+    <profile>
+      <id>prod</id>
+      <properties>
+        <spring.profiles.active>prod</spring.profiles.active>
+      </properties>
+    </profile>
+  </profiles>
 </project>

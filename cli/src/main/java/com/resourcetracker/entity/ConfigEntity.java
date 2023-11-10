@@ -43,7 +43,7 @@ public class ConfigEntity {
         String frequency;
     }
 
-    SortedSet<Request> requests;
+    List<Request> requests;
 
     @Getter
     public static class Cloud extends AWSProviderEntity {
@@ -58,4 +58,13 @@ public class ConfigEntity {
     }
 
     Cloud cloud;
+
+    @Getter
+    public static class APIServer {
+        @NotBlank
+        String host;
+    }
+
+    @JsonProperty("api-server")
+    APIServer apiServer;
 }

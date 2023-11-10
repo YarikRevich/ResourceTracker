@@ -1,5 +1,6 @@
 package com.resourcetracker.service.scheduler;
 
+import com.resourcetracker.entity.ExecutionResultEntity;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.kafka.producer.KafkaService;
 import com.resourcetracker.service.scheduler.command.ScriptExecCommandService;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import process.SProcess;
 import process.SProcessExecutor;
 import process.exceptions.NonMatchingOSException;
+import process.exceptions.SProcessNotYetStartedException;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -44,7 +46,7 @@ public class SchedulerService {
         });
     }
 
-    public void exec(String input) {
+    private void exec(String input) {
         ScriptExecCommandService scriptExecCommand = new ScriptExecCommandService(input);
         try {
             processExecutor.executeCommand(scriptExecCommand);
@@ -52,7 +54,13 @@ public class SchedulerService {
             throw new RuntimeException(e);
         }
 
-        kafkaService.send()
-//        kafkaTemplate.send(Constants.KAFKA_STATUS_TOPIC, formattedOutput);
+        String errorOutput;
+        try {
+            errorOutput = scriptExecCommand.getErrorOutput();
+        } catch (SProcessNotYetStartedException e) {
+            throw new RuntimeException(e);
+        }
+
+        kafkaService.send(ExecutionResultEntity.of(errorOutput));
     }
 }

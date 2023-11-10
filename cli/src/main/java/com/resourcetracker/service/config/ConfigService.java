@@ -6,12 +6,16 @@ package com.resourcetracker.service.config;
         import java.io.InputStream;
         import java.nio.file.Paths;
 
+        import jakarta.annotation.PostConstruct;
         import org.apache.commons.io.IOUtils;
         import org.apache.logging.log4j.LogManager;
         import org.apache.logging.log4j.Logger;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.beans.factory.annotation.Value;
         import org.springframework.boot.context.event.ApplicationReadyEvent;
+        import org.springframework.boot.info.BuildProperties;
+        import org.springframework.context.event.ApplicationContextEvent;
+        import org.springframework.context.event.ContextRefreshedEvent;
         import org.springframework.context.event.EventListener;
         import org.springframework.stereotype.Component;
 
@@ -33,9 +37,6 @@ package com.resourcetracker.service.config;
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-    @Value("${config.file}")
-    private String CONFIG_FILE_PATH;
-
     private InputStream configFile;
 
     private ConfigEntity parsedConfigFile;
@@ -43,9 +44,9 @@ public class ConfigService {
     /**
      * Opens YAML configuration file
      */
-    public ConfigService() {
+    public ConfigService(@Value("${config.root}") String configRootPath, @Value("${config.file}") String configFilePath) {
         try {
-            configFile = new FileInputStream(CONFIG_FILE_PATH);
+            configFile = new FileInputStream(Paths.get(System.getProperty("user.home"), configRootPath, configFilePath).toString());
         } catch (FileNotFoundException e) {
             logger.fatal(e.getMessage());
         }
@@ -54,7 +55,7 @@ public class ConfigService {
     /**
      * Processes configuration file
      */
-    @EventListener(ApplicationReadyEvent.class)
+    @PostConstruct
     private void process() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
@@ -62,6 +63,7 @@ public class ConfigService {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {
         });
+
         try {
             parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll().getFirst();
         } catch (IOException e) {

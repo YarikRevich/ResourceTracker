@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import com.resourcetracker.exception.CronExpressionException;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,24 +37,21 @@ import org.springframework.stereotype.Service;
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-    @Value("#{environment.RESOURCETRACKER_CONFIG}")
-    private String CONFIG_FILE;
-
-    private final InputStream configFile;
+    private InputStream configFile;
 
     private ConfigEntity parsedConfigFile;
 
     /**
      * Opens YAML configuration file
      */
-    public ConfigService() {
-        configFile = IOUtils.toInputStream(CONFIG_FILE, "UTF-8");
+    public ConfigService(@Value("${RESOURCETRACKER_CONFIG}") String configFile) {
+//        configFile = IOUtils.toInputStream(CONFIG_FILE, "UTF-8");
     }
 
     /**
      * Processes configuration file
      */
-    @EventListener(ApplicationReadyEvent.class)
+    @PostConstruct
     private void process() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
