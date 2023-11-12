@@ -81,6 +81,11 @@
 
       <!-- QUARKUS -->
       <dependency>
+        <groupId>io.quarkiverse.openapi.generator</groupId>
+        <artifactId>quarkus-openapi-generator</artifactId>
+        <version>2.2.13</version>
+      </dependency>
+      <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-rest-client</artifactId>
         <version>3.4.3</version>
@@ -238,6 +243,12 @@
         <artifactId>guava</artifactId>
         <version>32.1.3-jre</version>
       </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.annotation</artifactId>
+        <version>6.0.0</version>
+        <scope>provided</scope>
+      </dependency>
 
       <!-- LOGGING -->
       <dependency>
@@ -385,34 +396,6 @@
           <groupId>org.openapitools</groupId>
           <artifactId>openapi-generator-maven-plugin</artifactId>
           <version>6.4.0</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>generate</goal>
-              </goals>
-              <configuration>
-                <inputSpec>${project.basedir}/src/main/resources/openapi.yml</inputSpec>
-                <generatorName>jaxrs-spec</generatorName>
-                <apiPackage>${default.package}.api</apiPackage>
-                <modelPackage>${default.package}.model</modelPackage>
-                <generateModelTests>false</generateModelTests>
-                <generateModelDocumentation>false</generateModelDocumentation>
-                <generateSupportingFiles>false</generateSupportingFiles>
-                <generateApiTests>false</generateApiTests>
-                <generateApiDocumentation>true</generateApiDocumentation>
-                <auth>false</auth>
-                <configOptions>
-                  <sourceFolder>src/java/main</sourceFolder>
-                  <useTags>true</useTags>
-                  <interfaceOnly>true</interfaceOnly>
-                  <useJakartaEe>true</useJakartaEe>
-                  <useSwaggerAnnotations>false</useSwaggerAnnotations>
-                  <useRuntimeException>true</useRuntimeException>
-                  <dateLibrary>java8</dateLibrary>
-                </configOptions>
-              </configuration>
-            </execution>
-          </executions>
         </plugin>
 
         <!-- JAVAFX -->

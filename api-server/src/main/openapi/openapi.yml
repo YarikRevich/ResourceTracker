@@ -1,8 +1,14 @@
 openapi: 3.0.1
 info:
-  title: Static OpenAPI document of ResourceTracker API Server
+  title: OpenAPI document of ResourceTracker API Server
   description: ResourceTracker API Server Open API documentation
   version: "1.0"
+
+tags:
+  - name: TopicResource
+    description: Contains all endpoints related to specific topics and their data filtering
+  - name: TerraformResource
+    description: Contains endpoints related to Terraform deployment operations
 
 paths:
   /v1/topic/logs:

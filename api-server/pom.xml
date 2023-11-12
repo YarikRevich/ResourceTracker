@@ -25,6 +25,14 @@
 
         <!-- QUARKUS-->
         <dependency>
+            <groupId>io.quarkiverse.openapi.generator</groupId>
+            <artifactId>quarkus-openapi-generator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client</artifactId>
         </dependency>
@@ -115,6 +123,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.annotation</artifactId>
+        </dependency>
 
         <!-- LOGGING -->
         <dependency>
@@ -147,24 +159,42 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/openapi.yml</inputSpec>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.openapitools</groupId>-->
+<!--                <artifactId>openapi-generator-maven-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <inputSpec>${project.basedir}/src/main/resources/openapi.yml</inputSpec>-->
+<!--                            <generatorName>jaxrs-spec</generatorName>-->
+<!--                            <apiPackage>${default.package}.api</apiPackage>-->
+<!--                            <modelPackage>${default.package}.model</modelPackage>-->
+<!--                            <generateModelTests>false</generateModelTests>-->
+<!--                            <generateModelDocumentation>false</generateModelDocumentation>-->
+<!--                            <generateSupportingFiles>false</generateSupportingFiles>-->
+<!--                            <generateApiTests>false</generateApiTests>-->
+<!--                            <generateApiDocumentation>true</generateApiDocumentation>-->
+<!--                            <auth>false</auth>-->
+<!--                            <configOptions>-->
+<!--                                <sourceFolder>src/java/main</sourceFolder>-->
+<!--                                <useTags>true</useTags>-->
+<!--                                <interfaceOnly>true</interfaceOnly>-->
+<!--                                <useJakartaEe>true</useJakartaEe>-->
+<!--                                <useSwaggerAnnotations>false</useSwaggerAnnotations>-->
+<!--                                <useRuntimeException>true</useRuntimeException>-->
+<!--                                <useResponseEntity>true</useResponseEntity>-->
+<!--                                <dateLibrary>java8</dateLibrary>-->
+<!--                            </configOptions>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
