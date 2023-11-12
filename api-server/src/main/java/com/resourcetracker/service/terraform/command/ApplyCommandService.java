@@ -11,8 +11,7 @@ public class ApplyCommandService extends SProcess {
     @Inject
     ConfigEntity config;
 
-    public void setInput() {
-
+    public void setTerraformDirectory() {
     }
 
     @Override

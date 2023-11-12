@@ -1,4 +1,4 @@
-package com.resourcetracker.service.terraform.provider.aws;
+package com.resourcetracker.service.vendor.aws;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 //import com.resourcetracker.services.provider.aws.wrapper.entity.ECSDescribeNetworkInterfacesResult;
 //import com.resourcetracker.services.provider.aws.wrapper.entity.ECSDescribeTaskResult;
 //import com.resourcetracker.services.provider.aws.wrapper.entity.ECSListTasksResult;
-import com.resourcetracker.service.terraform.provider.common.IProvider;
 
 /**
  * AWS implementation of Provider

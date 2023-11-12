@@ -24,10 +24,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TerraformDeploymentApplication'
+              $ref: "#/components/schemas/TerraformDeploymentApplication"
       responses:
         201:
           description: New remote infrastructure was successfully deployed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TerraformDeploymentApplicationResult"
         400:
           description: Given deployment application contains incorrect data
   /v1/terraform/destroy:
@@ -39,7 +43,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TerraformDestructionApplication'
+              $ref: "#/components/schemas/TerraformDestructionApplication"
       responses:
         201:
           description: Deployed remote infrastructure is successfully destroyed
@@ -85,7 +89,7 @@ components:
           $ref: "#/components/schemas/Provider"
         credentials:
           oneOf:
-            - $ref: '#/components/schemas/AWSCredentials'
+            - $ref: "#/components/schemas/AWSCredentials"
     Provider:
       type: string
       enum:
@@ -99,6 +103,10 @@ components:
         profile:
           type: string
         region:
+          type: string
+    TerraformDeploymentApplicationResult:
+      properties:
+        machineAddress:
           type: string
     TerraformDestructionApplication:
       properties:

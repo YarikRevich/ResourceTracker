@@ -1,8 +1,5 @@
-package com.resourcetracker.service.terraform.provider.aws.wrapper;
+package com.resourcetracker.service.vendor.aws.wrapper;
 
-import java.util.ArrayList;
-import java.util.List;
-//
 //import com.amazonaws.services.ec2.model.NetworkInterface;
 //import com.amazonaws.services.ec2.model.NetworkInterfaceAssociation;
 //import com.resourcetracker.services.provider.aws.wrapper.entity.ECSDescribeNetworkInterfacesResult;

@@ -1,13 +1,11 @@
-package com.resourcetracker.kafka;
+package com.resourcetracker.service.kafka;
 
 import java.util.Properties;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.context.annotation.Import;
+
 //import org.springframework.test.annotation.DirtiesContext;
 //import org.springframework.test.context.junit.jupiter.SpringExtension;
 //import org.testcontainers.containers.KafkaContainer;
@@ -29,7 +27,7 @@ import org.springframework.context.annotation.Import;
 //@DirtiesContext
 //@Import({ StatusProducer.class })
 //@ExtendWith(SpringExtension.class)
-public class KafkaTest {
+public class KafkaServiceTest {
 //    private static final Logger logger = LogManager.getLogger(StatusSplitStream.class);
 
     private Properties kafkaConfiguration;

@@ -62,36 +62,19 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
 
   container_definitions = jsonencode([
     {
-      name : "resourcetracker-deploy",
+      name : "resourcetracker-agent",
       essential : true,
       environment : [
         {
           name : "RESOURCETRACKER_CONFIG",
-          value : var.resourcetracker-config,
+          value : var.resourcetracker_agent_context,
         },
 		{
           name : "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
           value : "resourcetracker-kafka:9091",
         }
       ],
-      image : "yariksvitlitskiy/resourcetracker_deploy:latest",
-    },
-    {
-      name : "resourcetracker-zookeeper",
-      essential : true,
-      environment : [
-        {
-          name : "ALLOW_ANONYMOUS_LOGIN",
-          value : "yes",
-        }
-      ],
-      image : "bitnami/zookeeper:latest",
-      portMappings : [
-        {
-          "containerPort" : 2128,
-          "hostPort" : 2128
-        }
-      ],
+      image : "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
     },
     {
       name : "resourcetracker-kafka",
@@ -103,6 +86,10 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
           }, {
           name : "KAFKA_CFG_ZOOKEEPER_CONNECT",
           value : "resourcetracker_zookeeper:2181"
+        },
+        {
+          name: "KAFKA_ENABLE_KRAFT",
+          value: ""
         }
       ],
       image : "bitnami/kafka:latest",

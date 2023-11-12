@@ -1,4 +1,4 @@
-package com.resourcetracker.service.terraform.provider.aws.wrapper;
+package com.resourcetracker.service.vendor.aws.wrapper;
 
 //import com.amazonaws.services.ecs.AmazonECS;
 //import com.amazonaws.services.ecs.AmazonECSClientBuilder;

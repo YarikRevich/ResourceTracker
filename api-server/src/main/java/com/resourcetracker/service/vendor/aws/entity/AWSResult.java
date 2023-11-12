@@ -1,4 +1,4 @@
-package com.resourcetracker.service.terraform.provider.aws.entity;
+package com.resourcetracker.service.vendor.aws.entity;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -6,17 +6,14 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 
 import java.io.IOException;
-import java.io.Serializable;
 
-public class AWSResult implements Serializable {
+public class AWSResult {
+  @Getter
   public static class RawResult{
-    public String value;
-
-    public String getValue() {
-      return value;
-    }
+    String value;
   }
 
   @JsonAlias({"ecs_task_definition"})

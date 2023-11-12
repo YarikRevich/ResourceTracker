@@ -1,8 +1,6 @@
 package com.resourcetracker.resource;
 
-import com.resourcetracker.api.StateResourceApi;
 import com.resourcetracker.api.TopicResourceApi;
-import com.resourcetracker.model.ResourceState;
 import com.resourcetracker.model.TopicLogs;
 import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.service.kafka.KafkaService;

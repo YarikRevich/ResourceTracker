@@ -1,8 +1,12 @@
 package com.resourcetracker.service.scheduler;
 
+import com.resourcetracker.entity.CommandExecutorOutputEntity;
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.entity.ScriptExecCommandInputEntity;
+import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.exception.SchedulerException;
 import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.executor.CommandExecutorService;
 import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.machine.MachineService;
 import com.resourcetracker.service.scheduler.command.ScriptExecCommandService;
@@ -36,61 +40,46 @@ public class SchedulerService {
     @Autowired
     private MachineService machineService;
 
+    @Autowired
+    private CommandExecutorService commandExecutorService;
+
+    @Autowired
+    private ScriptExecCommandService scriptExecCommandService;
+
     private final ScheduledExecutorService scheduledExecutorService;
     private final ExecutorService executorService;
-    private final SProcessExecutor processExecutor;
 
     public SchedulerService() {
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         this.executorService = Executors.newVirtualThreadPerTaskExecutor();
-        this.processExecutor = SProcessExecutor.getCommandExecutor();
     }
 
     public void start() {
-        configService.getConfig().getRequests().forEach(request -> {
-            scheduledExecutorService.scheduleAtFixedRate(
+        configService.getConfig().getRequests().forEach(request ->
+                scheduledExecutorService.scheduleAtFixedRate(
                     () -> executorService.execute(() -> exec(request.getScript())),
                     0,
                     configService.getCronExpressionInMilliseconds(request.getFrequency()),
                     TimeUnit.MILLISECONDS
-            );
-        });
+        ));
     }
 
     private void exec(String input) {
-        ScriptExecCommandService scriptExecCommand = new ScriptExecCommandService(input);
-        try {
-            processExecutor.executeCommand(scriptExecCommand);
-        } catch (IOException | NonMatchingOSException e) {
-            logger.fatal(e.getMessage());
-        }
+        scriptExecCommandService.setInput(ScriptExecCommandInputEntity.of(input));
+
+        CommandExecutorOutputEntity scriptExecCommandOutput;
 
         try {
-            if (!scriptExecCommand.waitForOutput()){
-                logger.fatal(new SchedulerException().getMessage());
-            }
-        } catch (IOException e){
+            scriptExecCommandOutput = commandExecutorService.executeCommand(scriptExecCommandService);
+        } catch (CommandExecutorException e) {
             logger.fatal(e.getMessage());
-        }
-
-        String normalOutput = null;
-        try {
-            normalOutput = scriptExecCommand.getNormalOutput();
-        } catch (SProcessNotYetStartedException e) {
-            logger.fatal(e.getMessage());
-        }
-
-        String errorOutput = null;
-        try {
-            errorOutput = scriptExecCommand.getErrorOutput();
-        } catch (SProcessNotYetStartedException e) {
-            logger.fatal(e.getMessage());
+            return;
         }
 
         kafkaService.send(KafkaLogsTopicEntity.of(
                 UUID.randomUUID(),
-                normalOutput,
-                errorOutput,
+                scriptExecCommandOutput.getNormalOutput(),
+                scriptExecCommandOutput.getErrorOutput(),
                 machineService.getHostName(),
                 machineService.getHostAddress(),
                 Timestamp.from(Instant.now())));

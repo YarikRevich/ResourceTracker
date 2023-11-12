@@ -1,14 +1,15 @@
 package com.resourcetracker.service.terraform;
 
 //import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.entity.CommandExecutorOutputEntity;
+import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
+import com.resourcetracker.service.executor.CommandExecutorService;
 import com.resourcetracker.service.terraform.command.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import process.SProcessExecutor;
-import process.exceptions.NonMatchingOSException;
 import process.exceptions.SProcessNotYetStartedException;
 
 import java.io.IOException;
@@ -27,8 +28,6 @@ import java.util.Objects;
 
 @ApplicationScoped
 public class TerraformService {
-
-
   @Inject
   CommandExecutorService commandExecutorService;
 
@@ -51,65 +50,27 @@ public class TerraformService {
    *         going
    */
   public void apply(TerraformDeploymentApplication terraformDeploymentApplication) throws TerraformException {
+    CommandExecutorOutputEntity initCommandOutput;
+
     try {
-      processExecutor.executeCommand(initCommandService);
-    } catch (IOException | NonMatchingOSException e) {
+      initCommandOutput = commandExecutorService.executeCommand(initCommandService);
+    } catch (CommandExecutorException e) {
       throw new TerraformException(e.getMessage());
     }
 
-    try {
-      if (!initCommandService.waitForOutput()){
-        throw new TerraformException();
-      }
-    } catch (IOException e){
-      throw new TerraformException(e.getMessage());
-    }
+    String initCommandErrorOutput = initCommandOutput.getErrorOutput();
 
-    String initCommandErrorOutput;
-
-    try {
-      initCommandErrorOutput = initCommandService.getErrorOutput();
-    } catch (SProcessNotYetStartedException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    if (Objects.isNull(initCommandErrorOutput)){
-      throw new TerraformException();
-    }
-
-    try {
-      processExecutor.executeCommand(applyCommandService);
-    } catch (IOException | NonMatchingOSException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    try {
-      if (!applyCommandService.waitForOutput()){
-        throw new TerraformException();
-      }
-    } catch (IOException e){
-      throw new TerraformException(e.getMessage());
-    }
-
-    String applyCommandErrorOutput;
-
-    try {
-      applyCommandErrorOutput = applyCommandService.getErrorOutput();
-    } catch (SProcessNotYetStartedException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    if (Objects.isNull(applyCommandErrorOutput)){
-      throw new TerraformException();
+    if (Objects.nonNull(initCommandErrorOutput)){
+      throw new TerraformException(initCommandErrorOutput);
     }
   }
 
   public void destroy(TerraformDestructionApplication terraformDestructionApplication) throws TerraformException {
-    try {
-      processExecutor.executeCommand(destroyCommandService);
-    } catch (IOException | NonMatchingOSException e) {
-      throw new TerraformException(e.getMessage());
-    }
+//    try {
+//      processExecutor.executeCommand(destroyCommandService);
+//    } catch (IOException | NonMatchingOSException e) {
+//      throw new TerraformException(e.getMessage());
+//    }
 
     try {
       if (!destroyCommandService.waitForOutput()){
