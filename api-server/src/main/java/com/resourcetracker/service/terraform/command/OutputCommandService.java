@@ -5,7 +5,7 @@ import process.SProcess;
 import process.SProcessExecutor.OS;
 
 @ApplicationScoped
-public class OutputCommand extends SProcess {
+public class OutputCommandService extends SProcess {
     @Override
     public String getCommand() {
 //        procService

@@ -4,14 +4,9 @@ package com.resourcetracker.service.terraform;
 import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
-import com.resourcetracker.service.terraform.command.OutputCommand;
-import com.resourcetracker.service.terraform.command.ApplyCommand;
-import com.resourcetracker.service.terraform.command.DestroyCommand;
-import com.resourcetracker.service.terraform.command.InitCommand;
+import com.resourcetracker.service.terraform.command.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import process.SProcessExecutor;
 import process.exceptions.NonMatchingOSException;
 import process.exceptions.SProcessNotYetStartedException;
@@ -32,25 +27,22 @@ import java.util.Objects;
 
 @ApplicationScoped
 public class TerraformService {
-  private static final Logger logger = LogManager.getLogger(TerraformService.class);
 
-  private final SProcessExecutor processExecutor;
 
   @Inject
-  ApplyCommand applyCommand;
+  CommandExecutorService commandExecutorService;
 
   @Inject
-  DestroyCommand destroyCommand;
+  ApplyCommandService applyCommandService;
 
   @Inject
-  InitCommand initCommand;
+  DestroyCommandService destroyCommandService;
 
   @Inject
-  OutputCommand outputCommand;
+  InitCommandService initCommandService;
 
-  TerraformService() {
-    this.processExecutor = SProcessExecutor.getCommandExecutor();
-  }
+  @Inject
+  OutputCommandService outputCommandService;
 
   /**
    * Starts remote execution on a chosen provider
@@ -60,13 +52,13 @@ public class TerraformService {
    */
   public void apply(TerraformDeploymentApplication terraformDeploymentApplication) throws TerraformException {
     try {
-      processExecutor.executeCommand(initCommand);
+      processExecutor.executeCommand(initCommandService);
     } catch (IOException | NonMatchingOSException e) {
       throw new TerraformException(e.getMessage());
     }
 
     try {
-      if (!initCommand.waitForOutput()){
+      if (!initCommandService.waitForOutput()){
         throw new TerraformException();
       }
     } catch (IOException e){
@@ -76,7 +68,7 @@ public class TerraformService {
     String initCommandErrorOutput;
 
     try {
-      initCommandErrorOutput = initCommand.getErrorOutput();
+      initCommandErrorOutput = initCommandService.getErrorOutput();
     } catch (SProcessNotYetStartedException e) {
       throw new TerraformException(e.getMessage());
     }
@@ -86,13 +78,13 @@ public class TerraformService {
     }
 
     try {
-      processExecutor.executeCommand(applyCommand);
+      processExecutor.executeCommand(applyCommandService);
     } catch (IOException | NonMatchingOSException e) {
       throw new TerraformException(e.getMessage());
     }
 
     try {
-      if (!applyCommand.waitForOutput()){
+      if (!applyCommandService.waitForOutput()){
         throw new TerraformException();
       }
     } catch (IOException e){
@@ -102,7 +94,7 @@ public class TerraformService {
     String applyCommandErrorOutput;
 
     try {
-      applyCommandErrorOutput = applyCommand.getErrorOutput();
+      applyCommandErrorOutput = applyCommandService.getErrorOutput();
     } catch (SProcessNotYetStartedException e) {
       throw new TerraformException(e.getMessage());
     }
@@ -114,13 +106,13 @@ public class TerraformService {
 
   public void destroy(TerraformDestructionApplication terraformDestructionApplication) throws TerraformException {
     try {
-      processExecutor.executeCommand(destroyCommand);
+      processExecutor.executeCommand(destroyCommandService);
     } catch (IOException | NonMatchingOSException e) {
       throw new TerraformException(e.getMessage());
     }
 
     try {
-      if (!destroyCommand.waitForOutput()){
+      if (!destroyCommandService.waitForOutput()){
         throw new TerraformException();
       }
     } catch (IOException e){
@@ -130,7 +122,7 @@ public class TerraformService {
     String destroyCommandErrorOutput;
 
     try {
-      destroyCommandErrorOutput = destroyCommand.getErrorOutput();
+      destroyCommandErrorOutput = destroyCommandService.getErrorOutput();
     } catch (SProcessNotYetStartedException e) {
       throw new TerraformException(e.getMessage());
     }

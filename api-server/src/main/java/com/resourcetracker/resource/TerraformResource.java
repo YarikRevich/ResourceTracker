@@ -14,17 +14,11 @@ public class TerraformResource implements TerraformResourceApi {
     @Inject
     TerraformService terraformService;
 
-    /**
-     * @param terraformDeploymentApplication
-     */
     @Override
     public void v1TerraformApplyPost(TerraformDeploymentApplication terraformDeploymentApplication) {
         terraformService.apply(terraformDeploymentApplication);
     }
 
-    /**
-     * @param terraformDestructionApplication
-     */
     @Override
     public void v1TerraformDestroyPost(TerraformDestructionApplication terraformDestructionApplication) {
         terraformService.destroy(terraformDestructionApplication);
