@@ -17,6 +17,7 @@ import process.exceptions.NonMatchingOSException;
 import process.exceptions.SProcessNotYetStartedException;
 
 import java.io.IOException;
+import java.util.Objects;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Import;
 //import org.springframework.stereotype.Service;
@@ -66,57 +67,76 @@ public class TerraformService {
 
     try {
       if (!initCommand.waitForOutput()){
-
+        throw new TerraformException();
       }
     } catch (IOException e){
-      logger.fatal(e);
+      throw new TerraformException(e.getMessage());
     }
+
+    String initCommandErrorOutput;
 
     try {
-      System.out.println(initCommand.getErrorOutput());
+      initCommandErrorOutput = initCommand.getErrorOutput();
     } catch (SProcessNotYetStartedException e) {
-      logger.fatal(e);
+      throw new TerraformException(e.getMessage());
     }
 
-    try {
-      System.out.println(initCommand.getNormalOutput());
-    } catch (SProcessNotYetStartedException e) {
-      throw new RuntimeException(e);
+    if (Objects.isNull(initCommandErrorOutput)){
+      throw new TerraformException();
     }
-
-
-
-
-
 
     try {
       processExecutor.executeCommand(applyCommand);
     } catch (IOException | NonMatchingOSException e) {
-      logger.fatal(e);
+      throw new TerraformException(e.getMessage());
     }
 
     try {
       if (!applyCommand.waitForOutput()){
-
+        throw new TerraformException();
       }
     } catch (IOException e){
-      logger.fatal(e);
+      throw new TerraformException(e.getMessage());
     }
 
-    try {
-      System.out.println(applyCommand.getErrorOutput());
-    } catch (SProcessNotYetStartedException e) {
-      logger.fatal(e);
-    }
+    String applyCommandErrorOutput;
 
     try {
-      System.out.println(applyCommand.getNormalOutput());
+      applyCommandErrorOutput = applyCommand.getErrorOutput();
     } catch (SProcessNotYetStartedException e) {
-      throw new RuntimeException(e);
+      throw new TerraformException(e.getMessage());
+    }
+
+    if (Objects.isNull(applyCommandErrorOutput)){
+      throw new TerraformException();
     }
   }
 
   public void destroy(TerraformDestructionApplication terraformDestructionApplication) throws TerraformException {
+    try {
+      processExecutor.executeCommand(destroyCommand);
+    } catch (IOException | NonMatchingOSException e) {
+      throw new TerraformException(e.getMessage());
+    }
 
+    try {
+      if (!destroyCommand.waitForOutput()){
+        throw new TerraformException();
+      }
+    } catch (IOException e){
+      throw new TerraformException(e.getMessage());
+    }
+
+    String destroyCommandErrorOutput;
+
+    try {
+      destroyCommandErrorOutput = destroyCommand.getErrorOutput();
+    } catch (SProcessNotYetStartedException e) {
+      throw new TerraformException(e.getMessage());
+    }
+
+    if (Objects.isNull(destroyCommandErrorOutput)){
+      throw new TerraformException();
+    }
   }
 }

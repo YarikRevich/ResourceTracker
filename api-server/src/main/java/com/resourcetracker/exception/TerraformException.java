@@ -8,6 +8,10 @@ import java.io.IOException;
  * @author YarikRevich
  */
 public class TerraformException extends IOException {
+    public TerraformException() {
+        super("Invalid Terraform deployment behaviour");
+    }
+
     public TerraformException(String message) {
         super(message);
     }

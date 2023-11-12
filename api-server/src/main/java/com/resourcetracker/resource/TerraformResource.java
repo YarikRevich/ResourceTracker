@@ -19,9 +19,7 @@ public class TerraformResource implements TerraformResourceApi {
      */
     @Override
     public void v1TerraformApplyPost(TerraformDeploymentApplication terraformDeploymentApplication) {
-        throw new BadRequestException();
-//        throw new TerraformException("");
-//        terraformService.apply(terraformDeploymentApplication);
+        terraformService.apply(terraformDeploymentApplication);
     }
 
     /**
@@ -29,6 +27,6 @@ public class TerraformResource implements TerraformResourceApi {
      */
     @Override
     public void v1TerraformDestroyPost(TerraformDestructionApplication terraformDestructionApplication) {
-//        terraformService.destroy(terraformDestructionApplication);
+        terraformService.destroy(terraformDestructionApplication);
     }
 }

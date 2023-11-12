@@ -5,18 +5,17 @@ info:
   version: "1.0"
 
 paths:
-  /v1/state:
+  /v1/topic/logs:
     get:
       tags:
-        - StateResource
+        - TopicResource
       responses:
         200:
           description: Current resource state is successfully retrieved
           content:
             application/json:
               schema:
-                items:
-                  $ref: "#/components/schemas/ResourceState"
+                $ref: "#/components/schemas/TopicLogs"
   /v1/terraform/apply:
     post:
       tags:
@@ -28,7 +27,7 @@ paths:
               $ref: '#/components/schemas/TerraformDeploymentApplication'
       responses:
         201:
-          description: New remote intrustructure was successfully deployed
+          description: New remote infrastructure was successfully deployed
         400:
           description: Given deployment application contains incorrect data
   /v1/terraform/destroy:
@@ -36,22 +35,38 @@ paths:
       tags:
         - TerraformResource
       requestBody:
-        description: Destroys new terraform infrastructure
+        description: Destroys new Terraform infrastructure
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TerraformDestructionApplication'
       responses:
         201:
-          description: Deployed remote infrustructure is succcessfully destroyed
+          description: Deployed remote infrastructure is successfully destroyed
 components:
   schemas:
-    ResourceState:
+    TopicLogs:
       properties:
-        logs:
+        result:
           type: array
           items:
-            type: string
+            $ref: "#/components/schemas/TopicLogsResult"
+    TopicLogsResult:
+      properties:
+        id:
+          type: string
+          format: uuid
+        data:
+          type: string
+        error:
+          type: string
+        hostname:
+          type: string
+        hostaddress:
+          type: string
+        timestamp:
+          type: string
+          format: timestamp
     TerraformDeploymentApplication:
       properties:
         requests:

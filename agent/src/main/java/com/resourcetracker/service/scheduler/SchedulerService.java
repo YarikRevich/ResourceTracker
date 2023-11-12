@@ -1,17 +1,23 @@
 package com.resourcetracker.service.scheduler;
 
-import com.resourcetracker.entity.ExecutionResultEntity;
+import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.exception.SchedulerException;
 import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.kafka.producer.KafkaService;
+import com.resourcetracker.service.kafka.KafkaService;
+import com.resourcetracker.service.machine.MachineService;
 import com.resourcetracker.service.scheduler.command.ScriptExecCommandService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import process.SProcess;
 import process.SProcessExecutor;
 import process.exceptions.NonMatchingOSException;
 import process.exceptions.SProcessNotYetStartedException;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,11 +25,16 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class SchedulerService {
+    private static final Logger logger = LogManager.getLogger(SchedulerService.class);
+
     @Autowired
     private ConfigService configService;
 
     @Autowired
     private KafkaService kafkaService;
+
+    @Autowired
+    private MachineService machineService;
 
     private final ScheduledExecutorService scheduledExecutorService;
     private final ExecutorService executorService;
@@ -51,16 +62,37 @@ public class SchedulerService {
         try {
             processExecutor.executeCommand(scriptExecCommand);
         } catch (IOException | NonMatchingOSException e) {
-            throw new RuntimeException(e);
+            logger.fatal(e.getMessage());
         }
 
-        String errorOutput;
+        try {
+            if (!scriptExecCommand.waitForOutput()){
+                logger.fatal(new SchedulerException().getMessage());
+            }
+        } catch (IOException e){
+            logger.fatal(e.getMessage());
+        }
+
+        String normalOutput = null;
+        try {
+            normalOutput = scriptExecCommand.getNormalOutput();
+        } catch (SProcessNotYetStartedException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        String errorOutput = null;
         try {
             errorOutput = scriptExecCommand.getErrorOutput();
         } catch (SProcessNotYetStartedException e) {
-            throw new RuntimeException(e);
+            logger.fatal(e.getMessage());
         }
 
-        kafkaService.send(ExecutionResultEntity.of(errorOutput));
+        kafkaService.send(KafkaLogsTopicEntity.of(
+                UUID.randomUUID(),
+                normalOutput,
+                errorOutput,
+                machineService.getHostName(),
+                machineService.getHostAddress(),
+                Timestamp.from(Instant.now())));
     }
 }
