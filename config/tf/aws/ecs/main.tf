@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
       essential : true,
       environment : [
         {
-          name : "RESOURCETRACKER_CONFIG",
+          name : "RESOURCETRACKER_AGENT_CONTEXT",
           value : var.resourcetracker_agent_context,
         },
 		{

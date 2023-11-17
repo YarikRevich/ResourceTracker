@@ -19,6 +19,9 @@ import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * FatalAppender provides custom flow for logging process.
+ */
 @Plugin(
         name = "FatalAppender",
         category = Core.CATEGORY_NAME,

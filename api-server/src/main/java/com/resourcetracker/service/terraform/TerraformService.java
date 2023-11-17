@@ -52,6 +52,7 @@ public class TerraformService {
   public void apply(TerraformDeploymentApplication terraformDeploymentApplication) throws TerraformException {
     CommandExecutorOutputEntity initCommandOutput;
 
+
     try {
       initCommandOutput = commandExecutorService.executeCommand(initCommandService);
     } catch (CommandExecutorException e) {

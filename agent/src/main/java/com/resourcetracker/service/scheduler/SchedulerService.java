@@ -27,6 +27,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * SchedulerService provides access to schedule incoming
+ * tasks to be executed with the given conditions.
+ */
 @Service
 public class SchedulerService {
     private static final Logger logger = LogManager.getLogger(SchedulerService.class);
@@ -49,11 +53,18 @@ public class SchedulerService {
     private final ScheduledExecutorService scheduledExecutorService;
     private final ExecutorService executorService;
 
+    /**
+     * Default constructor, which initializes scheduler thread executor
+     * and virtual thread executor.
+     */
     public SchedulerService() {
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         this.executorService = Executors.newVirtualThreadPerTaskExecutor();
     }
 
+    /**
+     * Starts executor listening process.
+     */
     public void start() {
         configService.getConfig().getRequests().forEach(request ->
                 scheduledExecutorService.scheduleAtFixedRate(
@@ -64,6 +75,11 @@ public class SchedulerService {
         ));
     }
 
+    /**
+     * Executes given script and sends result as message
+     * to Kafka cluster.
+     * @param input script to be executed
+     */
     private void exec(String input) {
         scriptExecCommandService.setInput(ScriptExecCommandInputEntity.of(input));
 

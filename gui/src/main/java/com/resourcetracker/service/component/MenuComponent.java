@@ -1,4 +1,4 @@
-package com.resourcetracker.component;
+package com.resourcetracker.service.component;
 
 public class MenuComponent {
 //    Menu m = new Menu("Menu");

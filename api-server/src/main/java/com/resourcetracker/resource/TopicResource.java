@@ -37,7 +37,7 @@ public class TopicResource implements TopicResourceApi {
 
                     return topicLogsResult;
                 })
-                .collect(Collectors.toList()));
+                .toList());
 
         return topicLogs;
     }

@@ -3,8 +3,11 @@ package com.resourcetracker.service.command;
 import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.TerraformResourceApi;
 import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.exception.StartCommandFailException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.service.config.ConfigService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ import java.util.List;
  */
 @Service
 public class StartCommandService {
+  private static final Logger logger = LogManager.getLogger(StartCommandService.class);
+
   private final TerraformResourceApi terraformResourceApi;
 
   public StartCommandService(@Autowired ConfigService configService) {
@@ -33,8 +38,7 @@ public class StartCommandService {
 //    terraformDeploymentApplication.addRequestsItem()
 
     Mono<Void> response = terraformResourceApi.v1TerraformApplyPost(terraformDeploymentApplication)
-            .doOnSuccess(t -> System.out.println("Success"))
-            .doOnError(t -> System.out.println("Error"));
+            .doOnError(t -> logger.fatal(new StartCommandFailException().getMessage()));
     response.block();
 
 //    List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();

@@ -7,6 +7,7 @@ package com.resourcetracker.service.config;
         import java.nio.file.Paths;
 
         import jakarta.annotation.PostConstruct;
+        import jakarta.annotation.PreDestroy;
         import org.apache.commons.io.IOUtils;
         import org.apache.logging.log4j.LogManager;
         import org.apache.logging.log4j.Logger;
@@ -76,5 +77,14 @@ public class ConfigService {
      */
     public ConfigEntity getConfig() {
         return parsedConfigFile;
+    }
+
+    @PreDestroy
+    private void close() {
+        try {
+            configFile.close();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
     }
 }

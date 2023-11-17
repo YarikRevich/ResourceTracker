@@ -1,4 +1,4 @@
-package com.resourcetracker.component;
+package com.resourcetracker.service.component;
 
 public class ProgressComponent {
     // create a progressbar

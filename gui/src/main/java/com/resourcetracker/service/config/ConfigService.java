@@ -1,13 +1,11 @@
 package com.resourcetracker.service.config;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
+import java.nio.file.Paths;
 
-import com.resourcetracker.exception.CronExpressionException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.apache.commons.io.IOUtils;
@@ -16,8 +14,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.info.BuildProperties;
+import org.springframework.context.event.ApplicationContextEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -45,8 +45,12 @@ public class ConfigService {
     /**
      * Opens YAML configuration file
      */
-    public ConfigService(@Value("${RESOURCETRACKER_AGENT_CONTEXT}") String configFile) {
-//        configFile = IOUtils.toInputStream(CONFIG_FILE, "UTF-8");
+    public ConfigService(@Value("${config.root}") String configRootPath, @Value("${config.file}") String configFilePath) {
+        try {
+            configFile = new FileInputStream(Paths.get(System.getProperty("user.home"), configRootPath, configFilePath).toString());
+        } catch (FileNotFoundException e) {
+            logger.fatal(e.getMessage());
+        }
     }
 
     /**
@@ -60,21 +64,12 @@ public class ConfigService {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {
         });
+
         try {
             parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll().getFirst();
         } catch (IOException e) {
             logger.fatal(e.getMessage());
         }
-    }
-
-    public Long getCronExpressionInMilliseconds(String src) {
-        CronExpression cronExpression = CronExpression.parse(src);
-        LocalDateTime nextExecutionTime = cronExpression.next(LocalDateTime.now());
-        if (Objects.isNull(nextExecutionTime)){
-            logger.fatal(new CronExpressionException().getMessage());
-        }
-        LocalDateTime afterNextExecutionTime = cronExpression.next(nextExecutionTime);
-        return Duration.between(nextExecutionTime, afterNextExecutionTime).toMillis();
     }
 
     /**

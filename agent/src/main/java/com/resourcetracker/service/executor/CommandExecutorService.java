@@ -10,14 +10,26 @@ import process.exceptions.SProcessNotYetStartedException;
 
 import java.io.IOException;
 
+/**
+ * CommandExecutorService provides command execution service.
+ */
 @Service
 public class CommandExecutorService {
     private final SProcessExecutor processExecutor;
 
+    /**
+     * Default constructor, which initializes shell process executor.
+     */
     CommandExecutorService() {
         this.processExecutor = SProcessExecutor.getCommandExecutor();
     }
 
+    /**
+     * Executes given command and gathers its output.
+     * @param command command to be executed
+     * @return CommandExecutorOutputEntity output, which consists of both stdout and stderr
+     * @throws CommandExecutorException when command execution fails or output is not gathered
+     */
     public CommandExecutorOutputEntity executeCommand(SProcess command) throws CommandExecutorException {
         try {
             processExecutor.executeCommand(command);

@@ -1,6 +1,5 @@
 package com.resourcetracker.service.machine;
 
-import com.resourcetracker.service.kafka.KafkaService;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * MachineService provides access to current machine info.
+ */
 @Getter
 @Service
 public class MachineService {
@@ -18,6 +20,10 @@ public class MachineService {
 
     private final String hostAddress;
 
+    /**
+     * Default constructor, which gathers data about machine
+     * where ResourceTracker Agent is run.
+     */
     public MachineService() {
         InetAddress localHost = null;
         try {
