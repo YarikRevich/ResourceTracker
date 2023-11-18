@@ -16,17 +16,17 @@ public class BaseCommandService {
   @Autowired
   private StopCommandService stopCommandService;
 
-  @Command(description = "Start ")
+  @Command(description = "Start remote requests execution")
   void start() {
     startCommandService.process();
   }
 
-  @Command(description = "")
+  @Command(description = "Retrieve state of remote requests executions")
   void state() {
     stateCommandService.process();
   }
 
-  @Command(description = "")
+  @Command(description = "Stop remote requests execution")
   void stop() {
     stopCommandService.process();
   }

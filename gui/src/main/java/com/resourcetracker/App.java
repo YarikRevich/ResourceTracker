@@ -18,6 +18,12 @@ public class App extends Application {
         Application.launch();
     }
 
+
+    @Override
+    public void init() {
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+    }
+
     /**
      *
      * @param stage

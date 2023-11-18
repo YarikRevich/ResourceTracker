@@ -1,10 +1,10 @@
 package com.resourcetracker.service.config;
 
-        import java.io.FileInputStream;
-        import java.io.FileNotFoundException;
-        import java.io.IOException;
-        import java.io.InputStream;
+        import java.io.*;
         import java.nio.file.Paths;
+        import java.time.Duration;
+        import java.time.LocalDateTime;
+        import java.util.Objects;
 
         import jakarta.annotation.PostConstruct;
         import jakarta.annotation.PreDestroy;
@@ -18,6 +18,7 @@ package com.resourcetracker.service.config;
         import org.springframework.context.event.ApplicationContextEvent;
         import org.springframework.context.event.ContextRefreshedEvent;
         import org.springframework.context.event.EventListener;
+        import org.springframework.scheduling.support.CronExpression;
         import org.springframework.stereotype.Component;
 
         import com.fasterxml.jackson.annotation.JsonInclude;
@@ -70,6 +71,42 @@ public class ConfigService {
         } catch (IOException e) {
             logger.fatal(e.getMessage());
         }
+    }
+
+    public String getRequestFileContent(String src) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(src));
+        } catch (FileNotFoundException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        String currentLine = null;
+        try {
+            currentLine = reader.readLine();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        while (currentLine != null) {
+            result.append(currentLine);
+
+            try {
+                currentLine = reader.readLine();
+            } catch (IOException e) {
+                logger.fatal(e.getMessage());
+            }
+        }
+
+        try {
+            reader.close();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        return result.toString();
     }
 
     /**
