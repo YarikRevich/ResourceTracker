@@ -1,56 +1,94 @@
 package com.resourcetracker.service.command;
 
+import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.TerraformResourceApi;
+import com.resourcetracker.exception.BodyIsNull;
+import com.resourcetracker.model.Provider;
+import com.resourcetracker.model.RequestCredentials;
+import com.resourcetracker.model.Request;
+import com.resourcetracker.model.TerraformDeploymentApplication;
+import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.resource.APIServerClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Manages starting of each project
- * described in a configuration file
  */
 @Service
 public class StartCommandService {
-  @Autowired
-  private ConfigService configService;
+  private static final Logger logger = LogManager.getLogger(StartCommandService.class);
 
-  @Autowired
-  private APIServerClient apiServerClient;
+  private final TerraformResourceApi terraformResourceApi;
 
-  public void process() {
-//    List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
-//
-//    synchronized (this) {
-//      for (ConfigEntity configEntity : parsedConfigFile) {
-//        new Thread(new StartRunner(configEntity)).run();
-//      }
-//    }
-//
-//    for (ConfigEntity configEntity : parsedConfigFile) {
-//      if (configEntity.getProject().getName() == project) {
-//        terraformService.setConfigEntity(configEntity);
-//        String kafkaBootstrapServer = terraformService.start();
-//
-//        stateService.setKafkaBootstrapServer(kafkaBootstrapServer);
-//        stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-//        logger.info(String.format("Project %s is successfully started!", project));
-//        break;
-//      }
-//    }
+  private final ConfigService configService;
+
+  /**
+   *
+   * @param configService
+   */
+  public StartCommandService(@Autowired ConfigService configService) {
+    this.configService = configService;
+
+    ApiClient apiClient = new ApiClient()
+            .setBasePath(configService.getConfig().getApiServer().getHost());
+
+    this.terraformResourceApi = new TerraformResourceApi(apiClient);
   }
 
-//  @Override
-//  public void run() {
-//    if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)) {
-//      terraformService.setConfigEntity(configEntity);
-//      terraformService.start();
-//
-//      stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-//      numberOfStartedProjects++;
-//    }
-//  }
+  /**
+   *
+   */
+  public void process() {
+    TerraformDeploymentApplication terraformDeploymentApplication = new TerraformDeploymentApplication();
+
+    configService.getConfig().getRequests().forEach(element -> {
+      Request terraformDeploymentRequest = new Request();
+
+      terraformDeploymentRequest.setName(element.getName());
+      terraformDeploymentRequest.setFrequency(element.getFrequency());
+
+      String script = configService.getScript(element);
+      terraformDeploymentRequest.setScript(script);
+
+      RequestCredentials terraformDeploymentRequestCredentials = new RequestCredentials();
+
+      switch (configService.getConfig().getCloud().getProvider()) {
+        case AWS -> {
+          terraformDeploymentRequest.setProvider(Provider.AWS);
+
+          ConfigEntity.Cloud.AWSCredentials credentials = configService.getCredentials();
+
+          ConfigEntity.Cloud.AWSCredentials.AWSCredentialsFile credentialsFile = configService.getCredentialsFile(credentials.getFile());
+
+          terraformDeploymentRequestCredentials.setAccessKey(credentialsFile.getAccessKey());
+          terraformDeploymentRequestCredentials.setSecretKey(credentialsFile.getSecretKey());
+          terraformDeploymentRequestCredentials.setRegion(credentials.getRegion());
+          terraformDeploymentRequestCredentials.setProfile(credentials.getProfile());
+        }
+      }
+
+      terraformDeploymentRequest.setCredentials(terraformDeploymentRequestCredentials);
+
+      terraformDeploymentApplication.addRequestsItem(terraformDeploymentRequest);
+    });
+
+    Mono<TerraformDeploymentApplicationResult> response = terraformResourceApi.v1TerraformApplyPost(terraformDeploymentApplication)
+            .doOnError(t -> logger.fatal(t.getMessage()));
+    TerraformDeploymentApplicationResult body = response.block();
+    if (Objects.isNull(body)) {
+      logger.fatal(new BodyIsNull().getMessage());
+    }
+
+    System.out.printf("Deployment finished with the given configuration file!\nAddress of the deployed machine is %s", body.getMachineAddress());
+  }
 }

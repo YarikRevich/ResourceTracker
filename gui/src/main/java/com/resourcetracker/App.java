@@ -1,5 +1,6 @@
 package com.resourcetracker;
 
+import com.resourcetracker.service.stage.MainStage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -17,15 +18,23 @@ public class App extends Application {
         Application.launch();
     }
 
+
+    @Override
+    public void init() {
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+    }
+
     /**
      *
      * @param stage
      */
     @Override
     public void start(Stage stage) {
+        MainStage mainStage = new MainStage();
+
         var label = new Label("Hello world!");
         var scene = new Scene(new StackPane(label), 640, 480);
-        stage.setScene(scene);
-        stage.show();
+        mainStage.setScene(scene);
+        mainStage.show();
     }
 }

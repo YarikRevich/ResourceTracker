@@ -1,0 +1,122 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI document of ResourceTracker API Server
+  description: ResourceTracker API Server Open API documentation
+  version: "1.0"
+
+tags:
+  - name: TopicResource
+    description: Contains all endpoints related to specific topics and their data filtering
+  - name: TerraformResource
+    description: Contains endpoints related to Terraform deployment operations
+
+paths:
+  /v1/topic/logs:
+    get:
+      tags:
+        - TopicResource
+      responses:
+        200:
+          description: Current resource state is successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopicLogs"
+  /v1/terraform/apply:
+    post:
+      tags:
+        - TerraformResource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TerraformDeploymentApplication"
+      responses:
+        201:
+          description: New remote infrastructure was successfully deployed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TerraformDeploymentApplicationResult"
+        400:
+          description: Given deployment application contains incorrect data
+  /v1/terraform/destroy:
+    post:
+      tags:
+        - TerraformResource
+      requestBody:
+        description: Destroys new Terraform infrastructure
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TerraformDestructionApplication"
+      responses:
+        201:
+          description: Deployed remote infrastructure is successfully destroyed
+components:
+  schemas:
+    TopicLogs:
+      properties:
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicLogsResult"
+    TopicLogsResult:
+      properties:
+        id:
+          type: string
+          format: uuid
+        data:
+          type: string
+        error:
+          type: string
+        hostname:
+          type: string
+        hostaddress:
+          type: string
+        timestamp:
+          type: string
+          format: timestamp
+    TerraformDeploymentApplication:
+      properties:
+        requests:
+          type: array
+          items:
+            $ref: "#/components/schemas/Request"
+    Request:
+      properties:
+        name:
+          type: string
+        script:
+          type: string
+        frequency:
+          type: string
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          oneOf:
+            - $ref: "#/components/schemas/AWSCredentials"
+    Provider:
+      type: string
+      enum:
+        - aws
+    AWSCredentials:
+      properties:
+        access_key:
+          type: string
+        secret_key:
+          type: string
+        profile:
+          type: string
+        region:
+          type: string
+    TerraformDeploymentApplicationResult:
+      properties:
+        machineAddress:
+          type: string
+    TerraformDestructionApplication:
+      properties:
+        name:
+          type: array
+          items:
+            type: string

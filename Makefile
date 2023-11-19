@@ -1,4 +1,6 @@
-.PHONY: help, clean, prepare, test, create-local, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
+.PHONY: help, clean, prepare, test, lint, create-local, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
+
+dev := $(or $(dev), 'false')
 
 ifneq (,$(wildcard .env))
 include .env
@@ -22,6 +24,10 @@ prepare: ## Install prerequisites
 test: clean ## Run both unit and integration tests
 	@mvn test
 	@mvn verify
+
+.PHONY: lint
+lint: ## Run Apache Spotless linter
+	@mvn spotless:apply
 
 .PHONY: create-local
 create-local: ## Create ResourceTracker local directory
@@ -50,14 +56,26 @@ build-agent: clean ## Build Agent Docker image
 
 .PHONY: build-api-server
 build-api-server: clean ## Build API Server application
+ifeq ($(dev), 'false')
 	@mvn -pl api-server -T10 install
+else
+	@mvn -P dev -pl api-server -T10 install
+endif
 
 .PHONY: build-cli
-build-cli: clean ## Build CLI application
+build-cli: clean clone-terraform ## Build CLI application
+ifeq ($(dev), 'false')
 	@mvn -pl cli -T10 install
+else
+	@mvn -P dev -pl cli -T10 install
+endif
 
 .PHONY: build-gui
-build-gui: clean build-api-server clone-api-server ## Build GUI application
+build-gui: clean build-api-server clone-api-server clone-terraform ## Build GUI application
+ifeq ($(dev), 'false')
 	@mvn -pl gui -T10 install
+else
+	@mvn -P dev -pl gui -T10 install
+endif
 
 

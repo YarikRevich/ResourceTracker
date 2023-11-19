@@ -1,17 +1,25 @@
 package com.resourcetracker.service.config;
 
-        import java.io.FileInputStream;
-        import java.io.FileNotFoundException;
-        import java.io.IOException;
-        import java.io.InputStream;
+        import java.io.*;
         import java.nio.file.Paths;
+        import java.time.Duration;
+        import java.time.LocalDateTime;
+        import java.util.Objects;
 
+        import com.resourcetracker.exception.ScriptDataException;
+        import jakarta.annotation.PostConstruct;
+        import jakarta.annotation.PreDestroy;
         import org.apache.commons.io.IOUtils;
         import org.apache.logging.log4j.LogManager;
         import org.apache.logging.log4j.Logger;
         import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.beans.factory.annotation.Value;
         import org.springframework.boot.context.event.ApplicationReadyEvent;
+        import org.springframework.boot.info.BuildProperties;
+        import org.springframework.context.event.ApplicationContextEvent;
+        import org.springframework.context.event.ContextRefreshedEvent;
         import org.springframework.context.event.EventListener;
+        import org.springframework.scheduling.support.CronExpression;
         import org.springframework.stereotype.Component;
 
         import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,42 +40,36 @@ package com.resourcetracker.service.config;
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-    public static final String DEFAULT_CONFIG_FILE_PATH = Paths.get(System.getProperty("user.home"), "resourcetracker.yaml").toString();
-
     private InputStream configFile;
 
     private ConfigEntity parsedConfigFile;
 
     /**
-     * Opens YAML configuration file
+     * Default constructor, which opens configuration file at the given path.
+     * @param configRootPath base path to the configuration file
+     * @param configFilePath name of the configuration file
      */
-    public ConfigService() {
+    public ConfigService(@Value("${config.root}") String configRootPath, @Value("${config.file}") String configFilePath) {
         try {
-            configFile = new FileInputStream(DEFAULT_CONFIG_FILE_PATH);
+            configFile = new FileInputStream(Paths.get(System.getProperty("user.home"), configRootPath, configFilePath).toString());
         } catch (FileNotFoundException e) {
             logger.fatal(e.getMessage());
         }
     }
 
     /**
-     * Converts json source to InputStream
-     * @param src
+     * Reads configuration from the opened configuration file
+     * using mapping with a configuration entity.
      */
-    public ConfigService(String src){
-        configFile = IOUtils.toInputStream(src, "UTF-8");
-    }
-
-    /**
-     * Processes configuration file
-     */
-    @EventListener(ApplicationReadyEvent.class)
-    public void process() {
+    @PostConstruct
+    private void process() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
                 .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {
         });
+
         try {
             parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll().getFirst();
         } catch (IOException e) {
@@ -76,9 +78,97 @@ public class ConfigService {
     }
 
     /**
+     * Extracts data from the given script file.
+     * @param src path to the script file
+     * @return data from the given script file
+     */
+    private String getFileContent(String src) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(src));
+        } catch (FileNotFoundException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        String currentLine = null;
+        try {
+            currentLine = reader.readLine();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        while (currentLine != null) {
+            result.append(currentLine);
+
+            try {
+                currentLine = reader.readLine();
+            } catch (IOException e) {
+                logger.fatal(e.getMessage());
+            }
+        }
+
+        try {
+            reader.close();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Selects explicit script, if given, or retrieves
+     * it from the given script file. If both are not given
+     * throws exception.
+     * @param src request entity, where both explicit script
+     *            and script file can be found
+     * @return script data to be executed
+     */
+    public String getScript(ConfigEntity.Request src) {
+        if (Objects.isNull(src.getRun())) {
+            if (!Objects.isNull(src.getFile())){
+                return getFileContent(src.getFile());
+            }
+
+            logger.fatal(new ScriptDataException().getMessage());
+        }
+
+        return src.getRun();
+    }
+
+    /**
+     * Deserializes given in the configuration file credentials
+     * into the requested provider type.
+     * @return credentials for a requested provider
+     * @param <T> type of the provider
+     */
+    public <T> T getCredentials() {
+        return (T) parsedConfigFile.getCloud().getCredentials();
+    }
+
+    /**
+     *
+     * @param src
+     */
+    public <T> T getCredentialsFile(String src) {
+       return null;
+    }
+
+    /**
      * @return Parsed configuration entity
      */
     public ConfigEntity getConfig() {
         return parsedConfigFile;
+    }
+
+    @PreDestroy
+    private void close() {
+        try {
+            configFile.close();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
     }
 }

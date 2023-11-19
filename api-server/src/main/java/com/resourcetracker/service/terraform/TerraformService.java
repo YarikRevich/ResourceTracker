@@ -1,12 +1,19 @@
 package com.resourcetracker.service.terraform;
 
 //import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.terraform.command.OutputCommand;
-import com.resourcetracker.service.terraform.command.ApplyCommand;
-import com.resourcetracker.service.terraform.command.DestroyCommand;
-import com.resourcetracker.service.terraform.command.InitCommand;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.resourcetracker.entity.CommandExecutorOutputEntity;
+import com.resourcetracker.exception.CommandExecutorException;
+import com.resourcetracker.exception.TerraformException;
+import com.resourcetracker.model.TerraformDeploymentApplication;
+import com.resourcetracker.model.TerraformDestructionApplication;
+import com.resourcetracker.service.executor.CommandExecutorService;
+import com.resourcetracker.service.terraform.command.*;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import process.exceptions.SProcessNotYetStartedException;
+
+import java.io.IOException;
+import java.util.Objects;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Import;
 //import org.springframework.stereotype.Service;
@@ -19,24 +26,22 @@ import org.apache.logging.log4j.Logger;
 //import com.resourcetracker.services.provider.common.IProvider;
 //import com.resourcetracker.services.provider.gcp.GCP;
 
-//@Service
+@ApplicationScoped
 public class TerraformService {
-  private static final Logger logger = LogManager.getLogger(TerraformService.class);
+  @Inject
+  CommandExecutorService commandExecutorService;
 
-//  @Autowired
-//  private ConfigService configService;
-//
-//  @Autowired
-//  private ApplyCommand applyCommand;
-//
-//  @Autowired
-//  private DestroyCommand destroyCommand;
-//
-//  @Autowired
-//  private InitCommand initCommand;
-//
-//  @Autowired
-//  private OutputCommand outputCommand;
+  @Inject
+  ApplyCommandService applyCommandService;
+
+  @Inject
+  DestroyCommandService destroyCommandService;
+
+  @Inject
+  InitCommandService initCommandService;
+
+  @Inject
+  OutputCommandService outputCommandService;
 
   /**
    * Starts remote execution on a chosen provider
@@ -44,14 +49,48 @@ public class TerraformService {
    * @return URL endpoint to the remote resources where execution is
    *         going
    */
-  public String apply() {
-//    configService.getConfig().getCloud().getProvider().toString();
+  public void apply(TerraformDeploymentApplication terraformDeploymentApplication) throws TerraformException {
+    CommandExecutorOutputEntity initCommandOutput;
 
-    return "";
-//		return chosenProvider.start();
+
+    try {
+      initCommandOutput = commandExecutorService.executeCommand(initCommandService);
+    } catch (CommandExecutorException e) {
+      throw new TerraformException(e.getMessage());
+    }
+
+    String initCommandErrorOutput = initCommandOutput.getErrorOutput();
+
+    if (Objects.nonNull(initCommandErrorOutput)){
+      throw new TerraformException(initCommandErrorOutput);
+    }
   }
 
-  public void destroy() {
+  public void destroy(TerraformDestructionApplication terraformDestructionApplication) throws TerraformException {
+//    try {
+//      processExecutor.executeCommand(destroyCommandService);
+//    } catch (IOException | NonMatchingOSException e) {
+//      throw new TerraformException(e.getMessage());
+//    }
 
+    try {
+      if (!destroyCommandService.waitForOutput()){
+        throw new TerraformException();
+      }
+    } catch (IOException e){
+      throw new TerraformException(e.getMessage());
+    }
+
+    String destroyCommandErrorOutput;
+
+    try {
+      destroyCommandErrorOutput = destroyCommandService.getErrorOutput();
+    } catch (SProcessNotYetStartedException e) {
+      throw new TerraformException(e.getMessage());
+    }
+
+    if (Objects.isNull(destroyCommandErrorOutput)){
+      throw new TerraformException();
+    }
   }
 }
