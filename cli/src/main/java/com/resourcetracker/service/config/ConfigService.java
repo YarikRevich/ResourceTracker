@@ -148,8 +148,12 @@ public class ConfigService {
         return (T) parsedConfigFile.getCloud().getCredentials();
     }
 
-    public void getCredentialsFile() {
-        
+    /**
+     *
+     * @param src
+     */
+    public <T> T getCredentialsFile(String src) {
+       return null;
     }
 
     /**

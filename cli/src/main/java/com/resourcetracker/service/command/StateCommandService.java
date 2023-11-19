@@ -1,7 +1,9 @@
 package com.resourcetracker.service.command;
 
-import com.resourcetracker.api.TerraformResourceApi;
-import com.resourcetracker.exception.StartCommandFailException;
+import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.TopicResourceApi;
+import com.resourcetracker.exception.BodyIsNull;
+import com.resourcetracker.model.TopicLogs;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 @Service
 public class StateCommandService {
     private static final Logger logger = LogManager.getLogger(StateCommandService.class);
 
-    private final TerraformResourceApi terraformResourceApi;
+    private final TopicResourceApi topicResourceApi;
 
     private final ConfigService configService;
 
@@ -23,22 +27,32 @@ public class StateCommandService {
         ApiClient apiClient = new ApiClient()
                 .setBasePath(configService.getConfig().getApiServer().getHost());
 
-        this.terraformResourceApi = new TerraformResourceApi(apiClient);
+        this.topicResourceApi = new TopicResourceApi(apiClient);
 
     }
 
     public void process() {
-        TerraformDeploymentApplication terraformDeploymentApplication = new TerraformDeploymentApplication();
+        Mono<TopicLogs> response = topicResourceApi.v1TopicLogsGet()
+                .doOnError(t -> logger.fatal(t.getMessage()));
+        TopicLogs body = response.block();
+        if (Objects.isNull(body)) {
+            logger.fatal(new BodyIsNull().getMessage());
+        }
 
-        configService.getConfig().getRequests().forEach(element -> {
-            String script = configService.getScript(element);
+        StringBuilder output = new StringBuilder();
 
-            //    terraformDeploymentApplication.addRequestsItem()
+        body.getResult().forEach(element -> {
+            output.append(String.format(
+                    "ID: %s\nData: %s\nError: %s\nHostname: %s\nHostaddress: %s\nTimestamp: %s\n\n",
+                    element.getId(),
+                    element.getData(),
+                    element.getError(),
+                    element.getHostname(),
+                    element.getHostaddress(),
+                    element.getTimestamp()
+            ));
         });
 
-
-        Mono<Void> response = terraformResourceApi.v1GetState(terraformDeploymentApplication)
-                .doOnError(t -> logger.fatal(new StartCommandFailException().getMessage()));
-        response.block();
+        System.out.println(output);
     }
 }

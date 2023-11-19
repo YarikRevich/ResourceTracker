@@ -107,6 +107,45 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../api-server/src/main/openapi/openapi.yml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <library>quarkus</library>
+                            <apiPackage>${default.package}.api</apiPackage>
+                            <modelPackage>${default.package}.model</modelPackage>
+                            <generateApis>true</generateApis>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateApiTests>false</generateApiTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <auth>false</auth>
+                            <configOptions>
+                                <sourceFolder>src/main/java</sourceFolder>
+                                <unhandledException>true</unhandledException>
+                                <serializableModel>true</serializableModel>
+                                <interfaceOnly>false</interfaceOnly>
+                                <useTags>true</useTags>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                                <useRuntimeException>true</useRuntimeException>
+                                <dateLibrary>java8</dateLibrary>
+                                <java8>true</java8>
+                                <oas3>true</oas3>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
                 <executions>

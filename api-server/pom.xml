@@ -193,7 +193,7 @@
                             <generateSupportingFiles>true</generateSupportingFiles>
                             <auth>false</auth>
                             <configOptions>
-                                <sourceFolder>src/java/main</sourceFolder>
+                                <sourceFolder>src/main/java</sourceFolder>
                                 <unhandledException>true</unhandledException>
                                 <serializableModel>true</serializableModel>
                                 <interfaceOnly>false</interfaceOnly>

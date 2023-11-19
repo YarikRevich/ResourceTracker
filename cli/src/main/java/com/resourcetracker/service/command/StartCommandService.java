@@ -1,8 +1,14 @@
 package com.resourcetracker.service.command;
 
+import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.TerraformResourceApi;
+import com.resourcetracker.exception.BodyIsNull;
+import com.resourcetracker.model.Provider;
+import com.resourcetracker.model.RequestCredentials;
+import com.resourcetracker.model.Request;
+import com.resourcetracker.model.TerraformDeploymentApplication;
+import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 import com.resourcetracker.entity.ConfigEntity;
-import com.resourcetracker.exception.StartCommandFailException;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Manages starting of each project
@@ -36,7 +43,6 @@ public class StartCommandService {
             .setBasePath(configService.getConfig().getApiServer().getHost());
 
     this.terraformResourceApi = new TerraformResourceApi(apiClient);
-
   }
 
   /**
@@ -61,21 +67,28 @@ public class StartCommandService {
           terraformDeploymentRequest.setProvider(Provider.AWS);
 
           ConfigEntity.Cloud.AWSCredentials credentials = configService.getCredentials();
-          terraformDeploymentRequestCredentials.setAccessKey(credentials.get);
+
+          ConfigEntity.Cloud.AWSCredentials.AWSCredentialsFile credentialsFile = configService.getCredentialsFile(credentials.getFile());
+
+          terraformDeploymentRequestCredentials.setAccessKey(credentialsFile.getAccessKey());
+          terraformDeploymentRequestCredentials.setSecretKey(credentialsFile.getSecretKey());
+          terraformDeploymentRequestCredentials.setRegion(credentials.getRegion());
+          terraformDeploymentRequestCredentials.setProfile(credentials.getProfile());
         }
       }
-
 
       terraformDeploymentRequest.setCredentials(terraformDeploymentRequestCredentials);
 
       terraformDeploymentApplication.addRequestsItem(terraformDeploymentRequest);
     });
 
-
     Mono<TerraformDeploymentApplicationResult> response = terraformResourceApi.v1TerraformApplyPost(terraformDeploymentApplication)
             .doOnError(t -> logger.fatal(t.getMessage()));
-    response.block();
+    TerraformDeploymentApplicationResult body = response.block();
+    if (Objects.isNull(body)) {
+      logger.fatal(new BodyIsNull().getMessage());
+    }
 
-    System.out.println("Deployment finished with the given configuration file!");
+    System.out.printf("Deployment finished with the given configuration file!\nAddress of the deployed machine is %s", body.getMachineAddress());
   }
 }

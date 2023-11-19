@@ -1,9 +1,9 @@
 package com.resourcetracker.service.command;
 
-import com.resourcetracker.ApiClient;
-import com.resourcetracker.api.TerraformResourceApi;
-import com.resourcetracker.exception.StartCommandFailException;
-import com.resourcetracker.model.TerraformDeploymentApplication;
+//import com.resourcetracker.ApiClient;
+//import com.resourcetracker.api.TerraformResourceApi;
+//import com.resourcetracker.exception.StartCommandFailException;
+//import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,22 +18,22 @@ import reactor.core.publisher.Mono;
 public class StartCommandService {
   private static final Logger logger = LogManager.getLogger(StartCommandService.class);
 
-  private final TerraformResourceApi terraformResourceApi;
+//  private final TerraformResourceApi terraformResourceApi;
 
-  public StartCommandService(@Autowired ConfigService configService) {
-    ApiClient apiClient = new ApiClient()
-            .setBasePath(configService.getConfig().getApiServer().getHost());
+//  public StartCommandService(@Autowired ConfigService configService) {
+//    ApiClient apiClient = new ApiClient()
+//            .setBasePath(configService.getConfig().getApiServer().getHost());
+//
+//    terraformResourceApi = new TerraformResourceApi(apiClient);
+//  }
 
-    terraformResourceApi = new TerraformResourceApi(apiClient);
-  }
-
-  public void process() {
-    TerraformDeploymentApplication terraformDeploymentApplication = new TerraformDeploymentApplication();
-//    terraformDeploymentApplication.addRequestsItem()
-
-    Mono<Void> response = terraformResourceApi.v1TerraformApplyPost(terraformDeploymentApplication)
-            .doOnError(t -> logger.fatal(new StartCommandFailException().getMessage()));
-    response.block();
+//  public void process() {
+//    TerraformDeploymentApplication terraformDeploymentApplication = new TerraformDeploymentApplication();
+////    terraformDeploymentApplication.addRequestsItem()
+//
+//    Mono<Void> response = terraformResourceApi.v1TerraformApplyPost(terraformDeploymentApplication)
+//            .doOnError(t -> logger.fatal(new StartCommandFailException().getMessage()));
+//    response.block();
 
 //    List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
 //
@@ -54,7 +54,7 @@ public class StartCommandService {
 //        break;
 //      }
 //    }
-  }
+//  }
 
 //  @Override
 //  public void run() {

@@ -10,6 +10,5 @@ resource "kafka_logs_topic" "logs" {
   config = {
     "segment.ms"     = "20000"
     "cleanup.policy" = "compact"
-    "retention."
   }
 }

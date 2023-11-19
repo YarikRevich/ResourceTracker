@@ -42,6 +42,13 @@ public class ConfigEntity {
 
         @Getter
         public static class AWSCredentials {
+            @Getter
+            public static class AWSCredentialsFile {
+                String accessKey;
+
+                String secretKey;
+            }
+
             @Pattern(regexp = "^(((./)?)|((~/.)?)|((/?))?)([a-zA-Z/]*)((\\.([a-z]+))?)$")
             String file;
 
