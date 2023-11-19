@@ -10,10 +10,10 @@ import com.resourcetracker.service.vendor.aws.AWSService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
-import org.openapi.quarkus.openapi_yml.api.TerraformResourceApi;
+import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
-public class TerraformResource implements TerraformResourceApi {
+public class TerraformResource extends TerraformResourceApi {
     @Inject
     TerraformService terraformService;
 
@@ -21,7 +21,7 @@ public class TerraformResource implements TerraformResourceApi {
     AWSService awsService;
 
     @Override
-    public TerraformDeploymentApplicationResult v1TerraformApplyPost(TerraformDeploymentApplication terraformDeploymentApplication) {
+    public Response v1TerraformApplyPost(TerraformDeploymentApplication terraformDeploymentApplication) {
 //        new TerraformDeploymentApplicationResult();
         // terraformService.apply(terraformDeploymentApplication)
 
@@ -33,7 +33,8 @@ public class TerraformResource implements TerraformResourceApi {
     }
 
     @Override
-    public void v1TerraformDestroyPost(TerraformDestructionApplication terraformDestructionApplication) {
+    public Response v1TerraformDestroyPost(TerraformDestructionApplication terraformDestructionApplication) {
+        return null;
 //        terraformService.destroy(terraformDestructionApplication);
     }
 }

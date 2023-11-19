@@ -6,6 +6,7 @@ package com.resourcetracker.service.config;
         import java.time.LocalDateTime;
         import java.util.Objects;
 
+        import com.resourcetracker.exception.ScriptDataException;
         import jakarta.annotation.PostConstruct;
         import jakarta.annotation.PreDestroy;
         import org.apache.commons.io.IOUtils;
@@ -44,7 +45,9 @@ public class ConfigService {
     private ConfigEntity parsedConfigFile;
 
     /**
-     * Opens YAML configuration file
+     * Default constructor, which opens configuration file at the given path.
+     * @param configRootPath base path to the configuration file
+     * @param configFilePath name of the configuration file
      */
     public ConfigService(@Value("${config.root}") String configRootPath, @Value("${config.file}") String configFilePath) {
         try {
@@ -55,7 +58,8 @@ public class ConfigService {
     }
 
     /**
-     * Processes configuration file
+     * Reads configuration from the opened configuration file
+     * using mapping with a configuration entity.
      */
     @PostConstruct
     private void process() {
@@ -73,7 +77,12 @@ public class ConfigService {
         }
     }
 
-    public String getRequestFileContent(String src) {
+    /**
+     * Extracts data from the given script file.
+     * @param src path to the script file
+     * @return data from the given script file
+     */
+    private String getFileContent(String src) {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(src));
@@ -107,6 +116,40 @@ public class ConfigService {
         }
 
         return result.toString();
+    }
+
+    /**
+     * Selects explicit script, if given, or retrieves
+     * it from the given script file. If both are not given
+     * throws exception.
+     * @param src request entity, where both explicit script
+     *            and script file can be found
+     * @return script data to be executed
+     */
+    public String getScript(ConfigEntity.Request src) {
+        if (Objects.isNull(src.getRun())) {
+            if (!Objects.isNull(src.getFile())){
+                return getFileContent(src.getFile());
+            }
+
+            logger.fatal(new ScriptDataException().getMessage());
+        }
+
+        return src.getRun();
+    }
+
+    /**
+     * Deserializes given in the configuration file credentials
+     * into the requested provider type.
+     * @return credentials for a requested provider
+     * @param <T> type of the provider
+     */
+    public <T> T getCredentials() {
+        return (T) parsedConfigFile.getCloud().getCredentials();
+    }
+
+    public void getCredentialsFile() {
+        
     }
 
     /**

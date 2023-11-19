@@ -6,12 +6,13 @@ import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.service.kafka.KafkaService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class TopicResource implements TopicResourceApi {
+public class TopicResource extends TopicResourceApi {
     @Inject
     KafkaService kafkaService;
 
@@ -19,7 +20,7 @@ public class TopicResource implements TopicResourceApi {
      * @return
      */
     @Override
-    public TopicLogs v1TopicLogsGet() {
+    public Response v1TopicLogsGet() {
         TopicLogs topicLogs = new TopicLogs();
 
         topicLogs.setResult(kafkaService
@@ -39,6 +40,7 @@ public class TopicResource implements TopicResourceApi {
                 })
                 .toList());
 
-        return topicLogs;
+//        return topicLogs;
+        return null;
     }
 }

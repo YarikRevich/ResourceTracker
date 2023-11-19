@@ -1,24 +1,17 @@
 package com.resourcetracker.service.config;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
+import java.io.FileInputStream;
+import java.nio.file.Paths;
 
-import com.resourcetracker.exception.CronExpressionException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import org.apache.commons.io.IOUtils;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.support.CronExpression;
-import org.springframework.stereotype.Component;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,30 +20,40 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
-import org.springframework.stereotype.Service;
 
 /**
  * Service for processing configuration file
  *
  * @author YarikRevich
  */
-@Service
+@ApplicationScoped
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
+
+    @ConfigProperty(name = "config.root")
+    String configRootPath;
+
+    @ConfigProperty(name = "config.file")
+    String configFilePath;
 
     private InputStream configFile;
 
     private ConfigEntity parsedConfigFile;
 
     /**
-     * Opens YAML configuration file
+     * Default constructor, which opens configuration file at the given path.
      */
-    public ConfigService(@Value("${RESOURCETRACKER_AGENT_CONTEXT}") String agentContext) {
-        configFile = IOUtils.toInputStream(agentContext, "UTF-8");
+    public ConfigService() {
+        try {
+            configFile = new FileInputStream(Paths.get(System.getProperty("user.home"), configRootPath, configFilePath).toString());
+        } catch (FileNotFoundException e) {
+            logger.fatal(e.getMessage());
+        }
     }
 
     /**
-     * Processes configuration file
+     * Reads configuration from the opened configuration file
+     * using mapping with a configuration entity.
      */
     @PostConstruct
     private void process() {
@@ -60,26 +63,12 @@ public class ConfigService {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {
         });
+
         try {
             parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll().getFirst();
         } catch (IOException e) {
             logger.fatal(e.getMessage());
         }
-    }
-
-    /**
-     * Converts frequency from cron expression to milliseconds.
-     * @param src cron expression to be converted
-     * @return frequency in milliseconds
-     */
-    public Long getCronExpressionInMilliseconds(String src) {
-        CronExpression cronExpression = CronExpression.parse(src);
-        LocalDateTime nextExecutionTime = cronExpression.next(LocalDateTime.now());
-        if (Objects.isNull(nextExecutionTime)){
-            logger.fatal(new CronExpressionException().getMessage());
-        }
-        LocalDateTime afterNextExecutionTime = cronExpression.next(nextExecutionTime);
-        return Duration.between(nextExecutionTime, afterNextExecutionTime).toMillis();
     }
 
     /**

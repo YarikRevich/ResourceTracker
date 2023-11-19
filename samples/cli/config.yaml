@@ -6,8 +6,9 @@ requests:
         ping google.com
 cloud:
     provider: "aws"
-    credentials: "~/.aws/credentials"
-    profile: "default"
-    region: "default"
+    credentials:
+      file: "~/.aws/credentials"
+      profile: "default"
+      region: "default"
 api-server:
     host: "http://localhost:8080"

@@ -1,8 +1,10 @@
 package com.resourcetracker.service.kafka;
 
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.service.config.ConfigService;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -24,8 +26,8 @@ public class KafkaService {
     @ConfigProperty(name = "kafka.topic")
     String kafkaTopic;
 
-    @ConfigProperty(name = "kafka.bootstrap.server")
-    String kafkaBootstrapServer;
+    @Inject
+    ConfigService configService;
 
     private final AdminClient kafkaAdminClient;
 
@@ -33,6 +35,8 @@ public class KafkaService {
 
     public KafkaService() {
         Properties kafkaAdminClientProps = new Properties();
+
+        String kafkaBootstrapServer = configService.getConfig().getKafka().getHost();
 
         kafkaAdminClientProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
         kafkaAdminClientProps.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 3000);

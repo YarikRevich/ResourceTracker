@@ -25,10 +25,6 @@
 
         <!-- QUARKUS-->
         <dependency>
-            <groupId>io.quarkiverse.openapi.generator</groupId>
-            <artifactId>quarkus-openapi-generator</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client-jackson</artifactId>
         </dependency>
@@ -128,6 +124,14 @@
             <artifactId>org.osgi.annotation</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
@@ -166,39 +170,45 @@
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.openapitools</groupId>-->
-<!--                <artifactId>openapi-generator-maven-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>generate</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <inputSpec>${project.basedir}/src/main/resources/openapi.yml</inputSpec>-->
-<!--                            <generatorName>jaxrs-spec</generatorName>-->
-<!--                            <apiPackage>${default.package}.api</apiPackage>-->
-<!--                            <modelPackage>${default.package}.model</modelPackage>-->
-<!--                            <generateModelTests>false</generateModelTests>-->
-<!--                            <generateModelDocumentation>false</generateModelDocumentation>-->
-<!--                            <generateSupportingFiles>false</generateSupportingFiles>-->
-<!--                            <generateApiTests>false</generateApiTests>-->
-<!--                            <generateApiDocumentation>true</generateApiDocumentation>-->
-<!--                            <auth>false</auth>-->
-<!--                            <configOptions>-->
-<!--                                <sourceFolder>src/java/main</sourceFolder>-->
-<!--                                <useTags>true</useTags>-->
-<!--                                <interfaceOnly>true</interfaceOnly>-->
-<!--                                <useJakartaEe>true</useJakartaEe>-->
-<!--                                <useSwaggerAnnotations>false</useSwaggerAnnotations>-->
-<!--                                <useRuntimeException>true</useRuntimeException>-->
-<!--                                <useResponseEntity>true</useResponseEntity>-->
-<!--                                <dateLibrary>java8</dateLibrary>-->
-<!--                            </configOptions>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../api-server/src/main/openapi/openapi.yml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <library>quarkus</library>
+                            <apiPackage>${default.package}.api</apiPackage>
+                            <modelPackage>${default.package}.model</modelPackage>
+                            <generateApis>true</generateApis>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateApiTests>false</generateApiTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <auth>false</auth>
+                            <configOptions>
+                                <sourceFolder>src/java/main</sourceFolder>
+                                <unhandledException>true</unhandledException>
+                                <serializableModel>true</serializableModel>
+                                <interfaceOnly>false</interfaceOnly>
+                                <useTags>true</useTags>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                                <useRuntimeException>true</useRuntimeException>
+                                <dateLibrary>java8</dateLibrary>
+                                <java8>true</java8>
+                                <oas3>true</oas3>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>

@@ -1,6 +1,6 @@
 package com.resourcetracker.service.terraform.command;
 
-import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import process.SProcess;
@@ -9,7 +9,7 @@ import process.SProcessExecutor.OS;
 @ApplicationScoped
 public class ApplyCommandService extends SProcess {
     @Inject
-    ConfigEntity config;
+    PropertiesEntity config;
 
     public void setTerraformDirectory() {
     }

@@ -157,14 +157,13 @@
       <plugin>
         <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>6.4.0</version>
         <executions>
           <execution>
             <goals>
               <goal>generate</goal>
             </goals>
             <configuration>
-              <inputSpec>${project.basedir}/../api-server/src/main/resources/openapi.yml</inputSpec>
+              <inputSpec>${project.basedir}/../api-server/src/main/openapi/openapi.yml</inputSpec>
               <generatorName>java</generatorName>
               <library>webclient</library>
               <apiPackage>${default.package}.api</apiPackage>

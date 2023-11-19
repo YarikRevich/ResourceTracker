@@ -1,29 +1,23 @@
 package com.resourcetracker.service.vendor.aws;
 
-import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesRequest;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesResult;
 import com.amazonaws.services.ec2.model.NetworkInterface;
-import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.entity.AWSDeploymentResult;
-import com.resourcetracker.entity.ConfigEntity;
-import com.resourcetracker.service.kafka.KafkaService;
+import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * AWS implementation of Provider
@@ -37,7 +31,7 @@ public class AWSService {
 
     public AWSDeploymentResult getEcsTaskRunDetails(String src) {
         ObjectMapper mapper = new ObjectMapper();
-        ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {
+        ObjectReader reader = mapper.reader().forType(new TypeReference<PropertiesEntity>() {
         });
         try {
             return reader.<AWSDeploymentResult>readValues(src).readAll().getFirst();
