@@ -1,46 +1,45 @@
 package com.resourcetracker.resource;
 
 import com.resourcetracker.api.TopicResourceApi;
-import com.resourcetracker.model.TopicLogs;
 import com.resourcetracker.model.TopicLogsResult;
+import com.resourcetracker.model.TopicLogsUnit;
 import com.resourcetracker.service.kafka.KafkaService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+/**
+ * Contains implementation of TopicResource.
+ */
 @ApplicationScoped
-public class TopicResource extends TopicResourceApi {
+public class TopicResource implements TopicResourceApi {
     @Inject
     KafkaService kafkaService;
 
     /**
-     * @return
+     * Implementation for declared in OpenAPI configuration v1TopicLogsGet method.
+     * @return related Kafka topic messages.
      */
     @Override
-    public Response v1TopicLogsGet() {
-        TopicLogs topicLogs = new TopicLogs();
+    public TopicLogsResult v1TopicLogsGet() {
+        TopicLogsResult topicLogs = new TopicLogsResult();
 
         topicLogs.setResult(kafkaService
                 .consumeLogs()
                 .stream()
                 .map(element -> {
-                    TopicLogsResult topicLogsResult = new TopicLogsResult();
+                    TopicLogsUnit topicLogsUnit = new TopicLogsUnit();
 
-                    topicLogsResult.setId(element.getId());
-                    topicLogsResult.setData(element.getData());
-                    topicLogsResult.setError(element.getError());
-                    topicLogsResult.setHostname(element.getHostName());
-                    topicLogsResult.setHostaddress(element.getHostAddress());
-                    topicLogsResult.setTimestamp(element.getTimestamp().toString());
+                    topicLogsUnit.setId(element.getId());
+                    topicLogsUnit.setData(element.getData());
+                    topicLogsUnit.setError(element.getError());
+                    topicLogsUnit.setHostname(element.getHostName());
+                    topicLogsUnit.setHostaddress(element.getHostAddress());
+                    topicLogsUnit.setTimestamp(element.getTimestamp().toString());
 
-                    return topicLogsResult;
+                    return topicLogsUnit;
                 })
                 .toList());
 
-//        return topicLogs;
-        return null;
+        return topicLogs;
     }
 }

@@ -21,12 +21,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TopicLogs"
+                $ref: "#/components/schemas/TopicLogsResult"
   /v1/terraform/apply:
     post:
       tags:
         - TerraformResource
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -45,6 +46,7 @@ paths:
       tags:
         - TerraformResource
       requestBody:
+        required: true
         description: Destroys new Terraform infrastructure
         content:
           application/json:
@@ -55,13 +57,13 @@ paths:
           description: Deployed remote infrastructure is successfully destroyed
 components:
   schemas:
-    TopicLogs:
+    TopicLogsResult:
       properties:
         result:
           type: array
           items:
-            $ref: "#/components/schemas/TopicLogsResult"
-    TopicLogsResult:
+            $ref: "#/components/schemas/TopicLogsUnit"
+    TopicLogsUnit:
       properties:
         id:
           type: string
@@ -82,8 +84,13 @@ components:
         requests:
           type: array
           items:
-            $ref: "#/components/schemas/Request"
-    Request:
+            $ref: "#/components/schemas/DeploymentRequest"
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          oneOf:
+            - $ref: "#/components/schemas/AWSCredentials"
+    DeploymentRequest:
       properties:
         name:
           type: string
@@ -91,20 +98,13 @@ components:
           type: string
         frequency:
           type: string
-        provider:
-          $ref: "#/components/schemas/Provider"
-        credentials:
-          oneOf:
-            - $ref: "#/components/schemas/AWSCredentials"
     Provider:
       type: string
       enum:
         - aws
     AWSCredentials:
       properties:
-        access_key:
-          type: string
-        secret_key:
+        file:
           type: string
         profile:
           type: string
@@ -116,7 +116,16 @@ components:
           type: string
     TerraformDestructionApplication:
       properties:
-        name:
+        requests:
           type: array
           items:
-            type: string
+            $ref: "#/components/schemas/DestructionRequest"
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          oneOf:
+            - $ref: "#/components/schemas/AWSCredentials"
+    DestructionRequest:
+      properties:
+        name:
+          type: string

@@ -149,14 +149,6 @@ public class ConfigService {
     }
 
     /**
-     *
-     * @param src
-     */
-    public <T> T getCredentialsFile(String src) {
-       return null;
-    }
-
-    /**
      * @return Parsed configuration entity
      */
     public ConfigEntity getConfig() {

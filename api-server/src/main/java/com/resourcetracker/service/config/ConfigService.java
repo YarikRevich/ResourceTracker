@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.nio.file.Paths;
 
+import com.resourcetracker.model.AWSCredentials;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -30,12 +32,6 @@ import com.resourcetracker.entity.ConfigEntity;
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-    @ConfigProperty(name = "config.root")
-    String configRootPath;
-
-    @ConfigProperty(name = "config.file")
-    String configFilePath;
-
     private InputStream configFile;
 
     private ConfigEntity parsedConfigFile;
@@ -43,7 +39,8 @@ public class ConfigService {
     /**
      * Default constructor, which opens configuration file at the given path.
      */
-    public ConfigService() {
+    @Inject
+    public ConfigService(@ConfigProperty(name = "config.root") String configRootPath, @ConfigProperty(name = "config.file") String configFilePath) {
         try {
             configFile = new FileInputStream(Paths.get(System.getProperty("user.home"), configRootPath, configFilePath).toString());
         } catch (FileNotFoundException e) {
@@ -69,6 +66,14 @@ public class ConfigService {
         } catch (IOException e) {
             logger.fatal(e.getMessage());
         }
+    }
+
+    /**
+     * Converts given credentials CSV file to a certain object.
+     * @return converted credentials.
+     */
+    public <T> T getConvertedCredentials() {
+        return null;
     }
 
     /**

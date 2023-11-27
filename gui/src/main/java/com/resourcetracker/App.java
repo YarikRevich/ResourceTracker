@@ -31,10 +31,6 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         MainStage mainStage = new MainStage();
-
-        var label = new Label("Hello world!");
-        var scene = new Scene(new StackPane(label), 640, 480);
-        mainStage.setScene(scene);
-        mainStage.show();
+        mainStage.getContent().show();
     }
 }

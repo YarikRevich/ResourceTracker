@@ -1,28 +1,28 @@
-package com.resourcetracker.service.terraform.command;
+package com.resourcetracker.service.terraform.provider.aws.command;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import process.SProcess;
 import process.SProcessExecutor.OS;
 
 @ApplicationScoped
-public class DestroyCommandService extends SProcess {
+public class OutputCommandService extends SProcess {
     @Override
     public String getCommand() {
-
 //        procService
 //                .build()
 //                .setCommand("terraform")
 //                .setFlag("-chdir", this.getDirectory())
 //                .setEnvVars(this.getEnvVars())
-//                .setCommand("destroy")
+//                .setCommand("output")
+//                .setPositionalVar("-json")
 //                .setPositionalVar("-no-color")
 //                .run();
-
+//
         return "";
     }
 
     @Override
     public OS getOSType() {
-        return OS.UNIX;
+        return OS.ANY;
     }
 }

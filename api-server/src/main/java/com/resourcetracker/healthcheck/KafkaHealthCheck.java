@@ -5,20 +5,22 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.health.*;
 
+@Liveness
 @ApplicationScoped
-public class AvailabilityHealthCheck {
+public class KafkaHealthCheck implements HealthCheck {
     @Inject
     KafkaService kafkaService;
 
-    @Liveness
-    @Readiness
-    public HealthCheckResponse kafkaConnection() {
-        HealthCheckResponseBuilder healthCheckResponse = HealthCheckResponse.builder().name("Kafka connection availability");
+    @Override
+    public HealthCheckResponse call() {
+        HealthCheckResponseBuilder healthCheckResponse = HealthCheckResponse.named("Kafka connection availability");
 
         if (kafkaService.isConnected()){
-            return healthCheckResponse.up().build();
+            healthCheckResponse.up();
         } else {
-            return healthCheckResponse.down().build();
+            healthCheckResponse.down();
         }
+
+        return healthCheckResponse.build();
     }
 }

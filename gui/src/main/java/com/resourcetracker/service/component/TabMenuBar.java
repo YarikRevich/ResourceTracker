@@ -11,6 +11,7 @@ public class TabMenuBar {
         Menu helpMenu = new Menu("Help");
 
         MenuBar menuBar = new MenuBar();
+
         menuBar.getMenus().addAll(preferenciesMenu, helpMenu);
         menuBar.useSystemMenuBarProperty().set(true);
 

@@ -81,11 +81,6 @@
 
       <!-- QUARKUS -->
       <dependency>
-        <groupId>io.quarkiverse.openapi.generator</groupId>
-        <artifactId>quarkus-openapi-generator</artifactId>
-        <version>2.2.13</version>
-      </dependency>
-      <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-rest-client</artifactId>
         <version>3.4.3</version>
@@ -98,6 +93,11 @@
       <dependency>
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+        <version>3.4.3</version>
+      </dependency>
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-smallrye-openapi</artifactId>
         <version>3.4.3</version>
       </dependency>
       <dependency>
@@ -174,7 +174,7 @@
       <dependency>
         <groupId>org.jboss.logging</groupId>
         <artifactId>jboss-logging</artifactId>
-        <version>3.4.1.Final</version>
+        <version>3.4.3.Final</version>
       </dependency>
       <dependency>
         <groupId>jakarta.json</groupId>

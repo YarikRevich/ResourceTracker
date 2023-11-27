@@ -8,5 +8,5 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class PropertiesEntity {
     @ConfigProperty(name = "terraform.directory")
-    public String terraformDirectory;
+    String terraformDirectory;
 }

@@ -1,4 +1,4 @@
-.PHONY: help, clean, prepare, test, lint, create-local, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
+.PHONY: help, clean, prepare, test, lint, create-local, clone-config, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
 
 dev := $(or $(dev), 'false')
 
@@ -32,8 +32,12 @@ lint: ## Run Apache Spotless linter
 .PHONY: create-local
 create-local: ## Create ResourceTracker local directory
 ifeq (,$(wildcard $(HOME)/.resourcetracker))
-	@mkdir $(HOME)/.resourcetracker
+	@mkdir -p $(HOME)/.resourcetracker/config
 endif
+
+.PHONY: clone-config
+clone-config: create-local ## Clone configuration files to local directory
+	@cp -r ./samples/config/* $(HOME)/.resourcetracker/config
 
 .PHONY: clone-terraform
 clone-terraform: create-local ## Clone Terraform configuration files to local directory
@@ -56,6 +60,9 @@ build-agent: clean ## Build Agent Docker image
 
 .PHONY: build-api-server
 build-api-server: clean ## Build API Server application
+ifneq (,$(wildcard ./bin/api-server))
+	@rm -r ./bin/api-server
+endif
 ifeq ($(dev), 'false')
 	@mvn -pl api-server -T10 install
 else
@@ -64,6 +71,9 @@ endif
 
 .PHONY: build-cli
 build-cli: clean clone-terraform ## Build CLI application
+ifneq (,$(wildcard ./bin/cli))
+	@rm -r ./bin/cli
+endif
 ifeq ($(dev), 'false')
 	@mvn -pl cli -T10 install
 else
@@ -72,6 +82,9 @@ endif
 
 .PHONY: build-gui
 build-gui: clean build-api-server clone-api-server clone-terraform ## Build GUI application
+ifneq (,$(wildcard ./bin/gui))
+	@rm -r ./bin/gui
+endif
 ifeq ($(dev), 'false')
 	@mvn -pl gui -T10 install
 else

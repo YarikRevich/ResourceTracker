@@ -2,8 +2,14 @@ package com.resourcetracker.service.scene;
 
 import javafx.scene.Scene;
 
-public class SettingsLanguagesScene extends Scene {
+public class SettingsLanguagesScene {
+    private final Scene settingsLanguagesScene;
+
     public SettingsLanguagesScene() {
-        super(null);
+        this.settingsLanguagesScene = new Scene(null);
+    }
+
+    public Scene getContent() {
+        return settingsLanguagesScene;
     }
 }

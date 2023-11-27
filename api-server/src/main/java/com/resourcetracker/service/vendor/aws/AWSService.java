@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.entity.AWSDeploymentResult;
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.exception.AWSRunTaskFailureException;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * AWS implementation of Provider
@@ -29,6 +31,11 @@ import java.util.Objects;
 public class AWSService {
     private static final Logger logger = LogManager.getLogger(AWSService.class);
 
+    /**
+     *
+     * @param src
+     * @return
+     */
     public AWSDeploymentResult getEcsTaskRunDetails(String src) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectReader reader = mapper.reader().forType(new TypeReference<PropertiesEntity>() {
@@ -42,6 +49,58 @@ public class AWSService {
         return null;
     }
 
+    /**
+     *
+     * @param awsDeploymentResult
+     * @throws AWSRunTaskFailureException
+     */
+    public void runEcsTask(AWSDeploymentResult awsDeploymentResult) throws AWSRunTaskFailureException {
+        AwsVpcConfiguration awsVpcConfiguration = new AwsVpcConfiguration()
+                .withSubnets(awsDeploymentResult.getResourceTrackerMainSubnetId().getValue())
+                .withSecurityGroups(awsDeploymentResult.getResourceTrackerSecurityGroup().getValue());
+
+        NetworkConfiguration networkConfiguration = new NetworkConfiguration()
+                .withAwsvpcConfiguration(awsVpcConfiguration);
+
+        RunTaskRequest runTaskRequest = new RunTaskRequest()
+                .withTaskDefinition(awsDeploymentResult.getEcsTaskDefinition().getValue())
+                .withCluster(awsDeploymentResult.getEcsCluster().getValue())
+                .withNetworkConfiguration(networkConfiguration)
+                .withLaunchType(LaunchType.FARGATE);
+
+        RunTaskResult runTaskResult = AmazonECSClientBuilder
+                .standard()
+                .build()
+                .runTask(runTaskRequest);
+
+        String output = gatherRunEcsTaskResultOutput(runTaskResult);
+        if (!output.isEmpty()) {
+            throw new AWSRunTaskFailureException(output);
+        }
+    }
+
+    /**
+     *
+     * @param runTaskResult
+     * @return
+     */
+    private String gatherRunEcsTaskResultOutput(RunTaskResult runTaskResult) {
+        return runTaskResult.getFailures()
+                .stream()
+                .map(element ->
+                        String.format(
+                                "%s, %s, %s",
+                                element.getArn(),
+                                element.getDetail(),
+                                element.getReason()))
+                .collect(Collectors.joining(";"));
+    }
+
+    /**
+     *
+     * @param awsDeploymentResult
+     * @return
+     */
     public String getMachineAddress(AWSDeploymentResult awsDeploymentResult) {
         String ecsTaskArn = getEcsTaskArn("");
 
@@ -50,6 +109,11 @@ public class AWSService {
         return getEcsTaskPublicId(ecsTaskNetworkInterfaceId);
     }
 
+    /**
+     *
+     * @param ecsClusterId
+     * @return
+     */
     private String getEcsTaskArn(String ecsClusterId) {
         ListTasksRequest listTasksRequest = new ListTasksRequest()
                 .withCluster(ecsClusterId);
@@ -62,6 +126,12 @@ public class AWSService {
         return listTasksResult.getTaskArns().get(0);
     }
 
+    /**
+     *
+     * @param ecsClusterId
+     * @param ecsTaskArn
+     * @return
+     */
     private String getEcsTaskNetworkInterfaceId(String ecsClusterId, String ecsTaskArn) {
             DescribeTasksRequest describeTaskRequest = new DescribeTasksRequest()
                     .withCluster(ecsClusterId)
@@ -96,6 +166,11 @@ public class AWSService {
                 .getValue();
     }
 
+    /**
+     *
+     * @param networkInterfaceId
+     * @return
+     */
     private String getEcsTaskPublicId(String networkInterfaceId) {
         DescribeNetworkInterfacesRequest describeNetworkInterfacesRequest = new DescribeNetworkInterfacesRequest()
                 .withNetworkInterfaceIds(List.of(networkInterfaceId));
@@ -109,18 +184,4 @@ public class AWSService {
 
         return networkInterfaces.getAssociation().getPublicIp();
     }
-//  private void selectEnvVars(){
-//    terraformAPIService.setEnvVar(Constants.AWS_SHARED_CREDENTIALS_FILE, configEntity.getCloud().getCredentials());
-//    terraformAPIService.setEnvVar(Constants.AWS_PROFILE, configEntity.getCloud().getProfile());
-//    terraformAPIService.setEnvVar(Constants.AWS_REGION, configEntity.getCloud().getRegion());
-//  }
-//
-//  private void selectVars(){
-//    terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_VAR, configEntity.toJSONAsContext());
-//  }
-//
-//  private void selectBackendConfig(){
-//    terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, configEntity.getCloud().getCredentials());
-//    terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_PROFILE, configEntity.getCloud().getProfile());
-//  }
 }

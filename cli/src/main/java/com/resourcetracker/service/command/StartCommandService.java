@@ -68,10 +68,7 @@ public class StartCommandService {
 
           ConfigEntity.Cloud.AWSCredentials credentials = configService.getCredentials();
 
-          ConfigEntity.Cloud.AWSCredentials.AWSCredentialsFile credentialsFile = configService.getCredentialsFile(credentials.getFile());
-
-          terraformDeploymentRequestCredentials.setAccessKey(credentialsFile.getAccessKey());
-          terraformDeploymentRequestCredentials.setSecretKey(credentialsFile.getSecretKey());
+          terraformDeploymentRequestCredentials.setCredentialsFile(credentials.getFile());
           terraformDeploymentRequestCredentials.setRegion(credentials.getRegion());
           terraformDeploymentRequestCredentials.setProfile(credentials.getProfile());
         }
