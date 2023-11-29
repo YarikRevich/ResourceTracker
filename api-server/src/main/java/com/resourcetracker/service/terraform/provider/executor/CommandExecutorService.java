@@ -1,4 +1,4 @@
-package com.resourcetracker.service.executor;
+package com.resourcetracker.service.terraform.provider.executor;
 
 import com.resourcetracker.entity.CommandExecutorOutputEntity;
 import com.resourcetracker.exception.CommandExecutorException;
@@ -10,6 +10,10 @@ import process.exceptions.SProcessNotYetStartedException;
 
 import java.io.IOException;
 
+/**
+ * Represents command executor service to execute
+ * commands used for provider deployment operations.
+ */
 @ApplicationScoped
 public class CommandExecutorService {
     private final SProcessExecutor processExecutor;
@@ -18,6 +22,12 @@ public class CommandExecutorService {
         this.processExecutor = SProcessExecutor.getCommandExecutor();
     }
 
+    /**
+     * Executes given command.
+     * @param command standalone command
+     * @return output result, which consists of stdout and stderr.
+     * @throws CommandExecutorException when any execution step failed.
+     */
     public CommandExecutorOutputEntity executeCommand(SProcess command) throws CommandExecutorException {
         try {
             processExecutor.executeCommand(command);
@@ -28,7 +38,7 @@ public class CommandExecutorService {
         try {
             command.waitForCompletion();
         } catch (SProcessNotYetStartedException | InterruptedException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new CommandExecutorException(e.getMessage());
         }
 
         String commandErrorOutput;

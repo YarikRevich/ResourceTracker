@@ -64,6 +64,7 @@ public class ConfigService {
     @PostConstruct
     private void process() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
+                .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
                 .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

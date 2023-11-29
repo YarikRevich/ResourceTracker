@@ -1,12 +1,15 @@
 package com.resourcetracker.service.config;
 
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.FileInputStream;
+import java.io.*;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
+import java.util.List;
 
-import com.resourcetracker.model.AWSCredentials;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import com.resourcetracker.entity.AWSCredentialsEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Service for processing configuration file
@@ -55,6 +59,7 @@ public class ConfigService {
     @PostConstruct
     private void process() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
+                .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
                 .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -70,10 +75,18 @@ public class ConfigService {
 
     /**
      * Converts given credentials CSV file to a certain object.
+     * Exposed as a static method to be used with Terraform command definitions.
+     * @param path path to the file to be parsed.
      * @return converted credentials.
      */
-    public <T> T getConvertedCredentials() {
-        return null;
+
+    @SuppressWarnings("unchecked")
+    static public <T> List<T> getConvertedCredentials(Class<T> obj, String path) throws FileNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        return new CsvToBeanBuilder(new FileReader(path))
+                .withType(obj.getDeclaredConstructor().newInstance().getClass())
+                .withIgnoreLeadingWhiteSpace(true)
+                .build()
+                .parse();
     }
 
     /**

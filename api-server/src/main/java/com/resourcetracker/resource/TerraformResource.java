@@ -1,7 +1,10 @@
 package com.resourcetracker.resource;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.resourcetracker.api.TerraformResourceApi;
 import com.resourcetracker.entity.AWSDeploymentResult;
+import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDeploymentApplicationResult;
@@ -23,10 +26,10 @@ import java.util.Objects;
 @ApplicationScoped
 public class TerraformResource implements TerraformResourceApi {
     @Inject
-    TerraformService terraformService;
+    PropertiesEntity properties;
 
     @Inject
-    AWSService awsService;
+    TerraformService terraformService;
 
     /**
      * Implementation for declared in OpenAPI configuration v1TerraformApplyPost method.
@@ -39,7 +42,16 @@ public class TerraformResource implements TerraformResourceApi {
         if (Objects.isNull(terraformDeploymentApplication)){
             throw new BadRequestException();
         }
-        TerraformDeploymentApplicationResult terraformDeploymentApplicationResult = new TerraformDeploymentApplicationResult()
+        TerraformDeploymentApplicationResult terraformDeploymentApplicationResult = new TerraformDeploymentApplicationResult();
+
+        AWSService awsService = new AWSService(AWSService.getAWSCredentialsProvider(
+                terraformDeploymentApplication.getCredentials().getAccessKey(),
+                terraformDeploymentApplication.getCredentials().getSecretKey()
+        ));
+
+        if (!awsService.isS3BucketExist(properties.getRemoteStorageName())){
+            awsService.createS3Bucket(properties.getRemoteStorageName());
+        }
 
         String terraformOutput = terraformService.apply(terraformDeploymentApplication);
 
@@ -48,6 +60,7 @@ public class TerraformResource implements TerraformResourceApi {
         String machineAddress = awsService.getMachineAddress(awsDeploymentResult);
 
         terraformDeploymentApplicationResult.setMachineAddress(machineAddress);
+
         return terraformDeploymentApplicationResult;
     }
 
@@ -60,6 +73,15 @@ public class TerraformResource implements TerraformResourceApi {
     public void v1TerraformDestroyPost(TerraformDestructionApplication terraformDestructionApplication) {
         if (Objects.isNull(terraformDestructionApplication)){
             throw new BadRequestException();
+        }
+
+        AWSService awsService = new AWSService(AWSService.getAWSCredentialsProvider(
+                terraformDestructionApplication.getCredentials().getAccessKey(),
+                terraformDestructionApplication.getCredentials().getSecretKey()
+        ));
+
+        if (awsService.isS3BucketExist(properties.getRemoteStorageName())){
+            awsService.removeS3Bucket(properties.getRemoteStorageName());
         }
 
         terraformService.destroy(terraformDestructionApplication);

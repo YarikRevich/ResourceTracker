@@ -13,6 +13,9 @@ A cloud-native tool resource state tracking.
 
 ![](./docs/detailed-design.png)
 
+ResourceTracker uses server-side data validation. It means, that on client side no data transformation or further analysis are made.
+Only API Server calls are on client side responsibility. 
+
 ## Setup
 
 All setup related operations are processed via **Makefile** placed in the root directory.

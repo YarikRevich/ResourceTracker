@@ -9,4 +9,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 public class PropertiesEntity {
     @ConfigProperty(name = "terraform.directory")
     String terraformDirectory;
+
+    @ConfigProperty(name = "remote-storage.name")
+    String remoteStorageName;
 }

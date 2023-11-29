@@ -77,8 +77,7 @@ public class SchedulerService {
     }
 
     /**
-     * Executes given script and sends result as message
-     * to Kafka cluster.
+     * Executes given script and sends result as message to Kafka cluster.
      * @param input script to be executed
      */
     private void exec(String input) {

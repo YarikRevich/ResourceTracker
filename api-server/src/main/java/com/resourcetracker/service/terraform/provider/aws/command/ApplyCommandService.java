@@ -37,20 +37,6 @@ public class ApplyCommandService extends SProcess {
 //    terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_PROFILE, configEntity.getCloud().getProfile());
 //  }
 
-
-    //    private String getEnvironmentVariables() {
-//        return new HashMap<String, String>() {{
-//            put("AWS_SHARED_CREDENTIALS_FILE", credentials.getFile());
-//        }}
-//                .entrySet()
-//                .stream()
-//                .map(element -> String.format(
-//                        "%s=%s",
-//                        element.getKey(),
-//                        element.getValue()))
-//                .collect(Collectors.joining(" "));
-//    }
-
     @Override
     public String getCommand() {
 //        procService
