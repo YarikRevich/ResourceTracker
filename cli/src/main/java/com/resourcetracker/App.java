@@ -1,20 +1,18 @@
 package com.resourcetracker;
 
-import com.resourcetracker.service.command.StartCommandService;
-import com.resourcetracker.service.command.StateCommandService;
-import com.resourcetracker.service.command.StopCommandService;
+import com.resourcetracker.service.resource.command.StartCommandService;
+import com.resourcetracker.service.resource.command.StateCommandService;
+import com.resourcetracker.service.resource.command.StopCommandService;
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import com.resourcetracker.service.command.BaseCommandService;
+import com.resourcetracker.service.resource.command.BaseCommandService;
 //import com.resourcetracker.service.KafkaConsumerWrapper;
 
 import picocli.CommandLine;
@@ -29,7 +27,7 @@ import picocli.CommandLine;
         BuildProperties.class
 })
 public class App implements ApplicationRunner, ExitCodeGenerator {
-  int exitCode;
+  private int exitCode;
 
   @Autowired
   private BaseCommandService baseCommandService;
@@ -44,6 +42,4 @@ public class App implements ApplicationRunner, ExitCodeGenerator {
   public int getExitCode() {
     return exitCode;
   }
-
-
 }

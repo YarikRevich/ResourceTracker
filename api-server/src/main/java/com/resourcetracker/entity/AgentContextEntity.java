@@ -6,9 +6,13 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Represents context sent to ResourceTracker Agent
+ * as a variable during deployment operation.
+ */
 @Setter
 @AllArgsConstructor(staticName = "of")
-public class AgentContextEntity implements Serializable {
+public class AgentContextEntity {
     @Setter
     @AllArgsConstructor(staticName = "of")
     static class Request {

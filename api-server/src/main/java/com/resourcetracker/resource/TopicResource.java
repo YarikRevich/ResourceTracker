@@ -1,11 +1,18 @@
 package com.resourcetracker.resource;
 
 import com.resourcetracker.api.TopicResourceApi;
+import com.resourcetracker.entity.KafkaLogsTopicEntity;
 import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.model.TopicLogsUnit;
 import com.resourcetracker.service.kafka.KafkaService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.ServerErrorException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Contains implementation of TopicResource.
@@ -21,25 +28,23 @@ public class TopicResource implements TopicResourceApi {
      */
     @Override
     public TopicLogsResult v1TopicLogsGet() {
-        TopicLogsResult topicLogs = new TopicLogsResult();
+        if (!kafkaService.isConnected()){
+            throw new InternalServerErrorException();
+        }
 
-        topicLogs.setResult(kafkaService
-                .consumeLogs()
-                .stream()
-                .map(element -> {
-                    TopicLogsUnit topicLogsUnit = new TopicLogsUnit();
+        List<KafkaLogsTopicEntity> logs = kafkaService.consumeLogs();
 
-                    topicLogsUnit.setId(element.getId());
-                    topicLogsUnit.setData(element.getData());
-                    topicLogsUnit.setError(element.getError());
-                    topicLogsUnit.setHostname(element.getHostName());
-                    topicLogsUnit.setHostaddress(element.getHostAddress());
-                    topicLogsUnit.setTimestamp(element.getTimestamp().toString());
-
-                    return topicLogsUnit;
-                })
-                .toList());
-
-        return topicLogs;
+        return TopicLogsResult.of(
+                logs
+                        .stream()
+                        .map(element -> TopicLogsUnit.of(
+                                element.getId(),
+                                        element.getData(),
+                                        element.getError(),
+                                        element.getHostName(),
+                                        element.getHostAddress(),
+                                        element.getTimestamp().toString())
+                                ).toList()
+        );
     }
 }

@@ -1,13 +1,14 @@
-package com.resourcetracker.service.terraform.provider;
+package com.resourcetracker.service.dispatcher.provider;
 
 import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
 
 /**
- * Interface for Terraform service to execute cloud providers.
+ * Interface for Dispatcher service to execute cloud provider
+ * deployment related actions.
  */
-public interface IProvider {
+public interface IDispatcherProvider {
     /**
      * Applies certain provider deployment configuration.
      * @param terraformDeploymentApplication deployment application.

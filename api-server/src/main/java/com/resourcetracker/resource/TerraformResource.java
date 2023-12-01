@@ -9,6 +9,7 @@ import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 import com.resourcetracker.model.TerraformDestructionApplication;
+import com.resourcetracker.service.dispatcher.DispatcherService;
 import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.terraform.TerraformService;
 import com.resourcetracker.service.vendor.aws.AWSService;
@@ -31,6 +32,9 @@ public class TerraformResource implements TerraformResourceApi {
     @Inject
     TerraformService terraformService;
 
+    @Inject
+    DispatcherService dispatcherService;
+
     /**
      * Implementation for declared in OpenAPI configuration v1TerraformApplyPost method.
      * @param terraformDeploymentApplication application used by Terraform to perform deployment.
@@ -42,7 +46,6 @@ public class TerraformResource implements TerraformResourceApi {
         if (Objects.isNull(terraformDeploymentApplication)){
             throw new BadRequestException();
         }
-        TerraformDeploymentApplicationResult terraformDeploymentApplicationResult = new TerraformDeploymentApplicationResult();
 
         AWSService awsService = new AWSService(AWSService.getAWSCredentialsProvider(
                 terraformDeploymentApplication.getCredentials().getAccessKey(),
@@ -59,9 +62,7 @@ public class TerraformResource implements TerraformResourceApi {
         awsService.runEcsTask(awsDeploymentResult);
         String machineAddress = awsService.getMachineAddress(awsDeploymentResult);
 
-        terraformDeploymentApplicationResult.setMachineAddress(machineAddress);
-
-        return terraformDeploymentApplicationResult;
+        return TerraformDeploymentApplicationResult.of(machineAddress);
     }
 
     /**

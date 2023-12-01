@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.resourcetracker.exception.CronExpressionException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -38,7 +39,7 @@ import org.springframework.stereotype.Service;
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-    private InputStream configFile;
+    private final InputStream configFile;
 
     private ConfigEntity parsedConfigFile;
 
@@ -54,7 +55,7 @@ public class ConfigService {
      */
     @PostConstruct
     private void process() {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
+        ObjectMapper mapper = new ObjectMapper(new JsonFactory())
                 .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
                 .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);

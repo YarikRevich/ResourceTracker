@@ -1,8 +1,8 @@
-package com.resourcetracker.service.command;
+package com.resourcetracker.service.resource.command;
 
 import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.TopicResourceApi;
-import com.resourcetracker.exception.BodyIsNull;
+import com.resourcetracker.exception.BodyValidationException;
 import com.resourcetracker.model.TopicLogs;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +36,7 @@ public class StateCommandService {
                 .doOnError(t -> logger.fatal(t.getMessage()));
         TopicLogs body = response.block();
         if (Objects.isNull(body)) {
-            logger.fatal(new BodyIsNull().getMessage());
+            logger.fatal(new BodyValidationException().getMessage());
         }
 
         StringBuilder output = new StringBuilder();

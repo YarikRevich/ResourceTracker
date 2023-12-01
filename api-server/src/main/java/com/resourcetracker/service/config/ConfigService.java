@@ -5,6 +5,7 @@ import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -72,6 +73,77 @@ public class ConfigService {
             logger.fatal(e.getMessage());
         }
     }
+
+    /**
+     * Extracts data from the given script file.
+     * @param src path to the script file
+     * @return data from the given script file
+     */
+    private String getFileContent(String src) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(src));
+        } catch (FileNotFoundException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        String currentLine = null;
+        try {
+            currentLine = reader.readLine();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        while (currentLine != null) {
+            result.append(currentLine);
+
+            try {
+                currentLine = reader.readLine();
+            } catch (IOException e) {
+                logger.fatal(e.getMessage());
+            }
+        }
+
+        try {
+            reader.close();
+        } catch (IOException e) {
+            logger.fatal(e.getMessage());
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Selects explicit script, if given, or retrieves
+     * it from the given script file. If both are not given
+     * throws exception.
+     * @param src request entity, where both explicit script
+     *            and script file can be found
+     * @return script data to be executed
+     */
+//    public String getScript(ConfigEntity.Request src) {
+//        if (Objects.isNull(src.getRun())) {
+//            if (!Objects.isNull(src.getFile())){
+//                return getFileContent(src.getFile());
+//            }
+//
+//            logger.fatal(new ScriptDataException().getMessage());
+//        }
+//
+//        return src.getRun();
+//    }
+
+    //        TerraformDeploymentApplicationCredentials credentials = terraformDeploymentApplication.getCredentials();
+
+//        AWSCredentialsEntity file;
+//        try {
+//             file = ConfigService.getConvertedCredentials(
+//                     AWSCredentialsEntity.class, credentials.getFile()).get(1);
+//        } catch (FileNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+//            throw new TerraformException(e.getMessage());
+//        }
 
     /**
      * Converts given credentials CSV file to a certain object.

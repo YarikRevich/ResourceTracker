@@ -1,60 +1,44 @@
 package com.resourcetracker.service.terraform.provider.aws.command;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.service.terraform.provider.aws.common.AWSProviderConfigurationHelper;
 import jakarta.enterprise.context.ApplicationScoped;
+import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
 import process.SProcess;
+import process.SProcessExecutor;
 import process.SProcessExecutor.OS;
 
-@ApplicationScoped
+import java.nio.file.Paths;
+
+/**
+ * Represents Terraform apply command.
+ */
 public class ApplyCommandService extends SProcess {
-    private final PropertiesEntity properties;
+    private final String command;
+    private final OS osType;
 
-    public ApplyCommandService(PropertiesEntity properties) {
-        this.properties = properties;
+    public ApplyCommandService(
+            TerraformDeploymentApplicationCredentials credentials, PropertiesEntity properties) {
+        this.osType = SProcessExecutor.getCommandExecutor().getOSType();
+
+        this.command = switch (osType){
+            case WINDOWS -> null;
+            case UNIX, MAC, ANY -> String.format(
+                    "terraform apply -chdir=%s %s %s -input=false -no-color -auto-approve",
+                    Paths.get(properties.getTerraformDirectory(), com.resourcetracker.model.Provider.AWS.toString()),
+                    AWSProviderConfigurationHelper.getBackendConfig(credentials),
+                    AWSProviderConfigurationHelper.getVariables("", properties.getGitCommitId())
+            );
+        };
     }
-
-    private String getEnvironmentVariables() {
-        return "";
-    }
-
-    private String getVariables() {
-        return "";
-    }
-
-
-    //  private void selectEnvVars(){
-//    terraformAPIService.setEnvVar(Constants.AWS_SHARED_CREDENTIALS_FILE, configEntity.getCloud().getCredentials());
-//    terraformAPIService.setEnvVar(Constants.AWS_PROFILE, configEntity.getCloud().getProfile());
-//    terraformAPIService.setEnvVar(Constants.AWS_REGION, configEntity.getCloud().getRegion());
-//  }
-//
-//  private void selectVars(){
-//    terraformAPIService.setVar(Constants.TERRAFORM_CONTEXT_VAR, configEntity.toJSONAsContext());
-//  }
-//
-//  private void selectBackendConfig(){
-//    terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_CONFIG_SHARED_CREDENTIALS_FILE, configEntity.getCloud().getCredentials());
-//    terraformAPIService.setBackendConfig(Constants.TERRAFORM_BACKEND_PROFILE, configEntity.getCloud().getProfile());
-//  }
 
     @Override
     public String getCommand() {
-//        procService
-//                .build()
-//                .setCommand("terraform")
-//                .setFlag("-chdir", this.getDirectory())
-//                .setEnvVars(this.getEnvVars())
-//                .setCommand("apply")
-//                .setMapOfFlag("-var", this.getVars())
-//                .setPositionalVar("-auto-approve")
-//                .setPositionalVar("-no-color")
-//                .run();
-
-        return String.format("cd %s && terraform validate", properties.getTerraformDirectory());
+        return command;
     }
 
     @Override
     public OS getOSType() {
-        return OS.ANY;
+        return osType;
     }
 }

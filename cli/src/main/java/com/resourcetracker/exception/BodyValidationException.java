@@ -2,8 +2,8 @@ package com.resourcetracker.exception;
 
 import java.io.IOException;
 
-public class BodyIsNull extends IOException {
-    public BodyIsNull() {
+public class BodyValidationException extends IOException {
+    public BodyValidationException() {
         super("Received body is null");
     }
 }

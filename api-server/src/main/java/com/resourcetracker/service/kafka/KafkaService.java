@@ -80,7 +80,7 @@ public class KafkaService {
         return false;
     }
 
-    public boolean isAvailable() {
+    private boolean isAvailable() {
         URL url;
         try {
             url = URI.create(kafkaBootstrapServer).toURL();
@@ -114,7 +114,10 @@ public class KafkaService {
 
     @PreDestroy
     private void close() {
-        kafkaAdminClient.close();
+        if (!Objects.isNull(kafkaAdminClient)) {
+            kafkaAdminClient.close();
+        }
+
         kafkaConsumer.close();
     }
 }

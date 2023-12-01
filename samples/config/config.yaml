@@ -2,8 +2,6 @@ requests:
     - name: "first"
       frequency: "10 * * * *"
       file: "script.sh"
-      run: |
-        ping google.com
 cloud:
     provider: "aws"
     credentials:

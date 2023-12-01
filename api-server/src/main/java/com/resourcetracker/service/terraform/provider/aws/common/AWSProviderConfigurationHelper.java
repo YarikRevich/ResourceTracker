@@ -1,7 +1,7 @@
 package com.resourcetracker.service.terraform.provider.aws.common;
 
-import com.resourcetracker.entity.AWSDeploymentCredentialsEntity;
 import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
+import com.resourcetracker.service.terraform.common.TerraformConfigurationHelper;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -16,18 +16,11 @@ public class AWSProviderConfigurationHelper {
      * @return composed backend configuration.
      */
     static public String getBackendConfig(TerraformDeploymentApplicationCredentials credentials) {
-        return new HashMap<String, String>() {{
+        return TerraformConfigurationHelper.getBackendConfig(new HashMap<>() {{
             put("region", credentials.getRegion());
             put("access_key", credentials.getAccessKey());
             put("secret_key", credentials.getSecretKey());
-        }}
-                .entrySet()
-                .stream()
-                .map(element -> String.format(
-                        "-backend-config='%s=%s'",
-                        element.getKey(),
-                        element.getValue()))
-                .collect(Collectors.joining(" "));
+        }});
     }
 
     /**
@@ -36,18 +29,24 @@ public class AWSProviderConfigurationHelper {
      * @return composed environment variables.
      */
     static public String getEnvironmentVariables(TerraformDeploymentApplicationCredentials credentials) {
-        return new HashMap<String, String>() {{
+        return TerraformConfigurationHelper.getEnvironmentVariables(new HashMap<>() {{
             put("AWS_ACCESS_KEY_ID", credentials.getAccessKey());
             put("AWS_SECRET_ACCESS_KEY", credentials.getSecretKey());
             put("AWS_PROFILE", credentials.getProfile());
             put("AWS_REGION", credentials.getRegion());
-        }}
-                .entrySet()
-                .stream()
-                .map(element -> String.format(
-                        "%s=%s",
-                        element.getKey(),
-                        element.getValue()))
-                .collect(Collectors.joining(" "));
+        }});
+    }
+
+    /**
+     * Composes input variables for AWS vendor.
+     * @param context input for ResourceTracker Agent.
+     * @param version version of ResourceTracker Agent implementation.
+     * @return composed environment variables.
+     */
+    static public String getVariables(String context, String version) {
+        return TerraformConfigurationHelper.getVariables(new HashMap<>() {{
+            put("resourcetracker_agent_context", context);
+            put("resourcetracker_agent_version", version);
+        }});
     }
 }

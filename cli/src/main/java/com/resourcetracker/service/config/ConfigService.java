@@ -2,25 +2,12 @@ package com.resourcetracker.service.config;
 
         import java.io.*;
         import java.nio.file.Paths;
-        import java.time.Duration;
-        import java.time.LocalDateTime;
-        import java.util.Objects;
 
-        import com.resourcetracker.exception.ScriptDataException;
         import jakarta.annotation.PostConstruct;
         import jakarta.annotation.PreDestroy;
-        import org.apache.commons.io.IOUtils;
         import org.apache.logging.log4j.LogManager;
         import org.apache.logging.log4j.Logger;
-        import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.beans.factory.annotation.Value;
-        import org.springframework.boot.context.event.ApplicationReadyEvent;
-        import org.springframework.boot.info.BuildProperties;
-        import org.springframework.context.event.ApplicationContextEvent;
-        import org.springframework.context.event.ContextRefreshedEvent;
-        import org.springframework.context.event.EventListener;
-        import org.springframework.scheduling.support.CronExpression;
-        import org.springframework.stereotype.Component;
 
         import com.fasterxml.jackson.annotation.JsonInclude;
         import com.fasterxml.jackson.core.type.TypeReference;
@@ -78,66 +65,66 @@ public class ConfigService {
         }
     }
 
-    /**
-     * Extracts data from the given script file.
-     * @param src path to the script file
-     * @return data from the given script file
-     */
-    private String getFileContent(String src) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(src));
-        } catch (FileNotFoundException e) {
-            logger.fatal(e.getMessage());
-        }
-
-        StringBuilder result = new StringBuilder();
-
-        String currentLine = null;
-        try {
-            currentLine = reader.readLine();
-        } catch (IOException e) {
-            logger.fatal(e.getMessage());
-        }
-
-        while (currentLine != null) {
-            result.append(currentLine);
-
-            try {
-                currentLine = reader.readLine();
-            } catch (IOException e) {
-                logger.fatal(e.getMessage());
-            }
-        }
-
-        try {
-            reader.close();
-        } catch (IOException e) {
-            logger.fatal(e.getMessage());
-        }
-
-        return result.toString();
-    }
-
-    /**
-     * Selects explicit script, if given, or retrieves
-     * it from the given script file. If both are not given
-     * throws exception.
-     * @param src request entity, where both explicit script
-     *            and script file can be found
-     * @return script data to be executed
-     */
-    public String getScript(ConfigEntity.Request src) {
-        if (Objects.isNull(src.getRun())) {
-            if (!Objects.isNull(src.getFile())){
-                return getFileContent(src.getFile());
-            }
-
-            logger.fatal(new ScriptDataException().getMessage());
-        }
-
-        return src.getRun();
-    }
+//    /**
+//     * Extracts data from the given script file.
+//     * @param src path to the script file
+//     * @return data from the given script file
+//     */
+//    private String getFileContent(String src) {
+//        BufferedReader reader = null;
+//        try {
+//            reader = new BufferedReader(new FileReader(src));
+//        } catch (FileNotFoundException e) {
+//            logger.fatal(e.getMessage());
+//        }
+//
+//        StringBuilder result = new StringBuilder();
+//
+//        String currentLine = null;
+//        try {
+//            currentLine = reader.readLine();
+//        } catch (IOException e) {
+//            logger.fatal(e.getMessage());
+//        }
+//
+//        while (currentLine != null) {
+//            result.append(currentLine);
+//
+//            try {
+//                currentLine = reader.readLine();
+//            } catch (IOException e) {
+//                logger.fatal(e.getMessage());
+//            }
+//        }
+//
+//        try {
+//            reader.close();
+//        } catch (IOException e) {
+//            logger.fatal(e.getMessage());
+//        }
+//
+//        return result.toString();
+//    }
+//
+//    /**
+//     * Selects explicit script, if given, or retrieves
+//     * it from the given script file. If both are not given
+//     * throws exception.
+//     * @param src request entity, where both explicit script
+//     *            and script file can be found
+//     * @return script data to be executed
+//     */
+//    public String getScript(ConfigEntity.Request src) {
+//        if (Objects.isNull(src.getRun())) {
+//            if (!Objects.isNull(src.getFile())){
+//                return getFileContent(src.getFile());
+//            }
+//
+//            logger.fatal(new ScriptDataException().getMessage());
+//        }
+//
+//        return src.getRun();
+//    }
 
     /**
      * Deserializes given in the configuration file credentials
@@ -146,7 +133,13 @@ public class ConfigService {
      * @param <T> type of the provider
      */
     public <T> T getCredentials() {
-        return (T) parsedConfigFile.getCloud().getCredentials();
+        try {
+            return (T) parsedConfigFile.getCloud().getCredentials();
+        } catch (ClassCastException e){
+
+        }
+
+        // TODO: add manual validation of field values.
     }
 
     /**

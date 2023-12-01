@@ -160,6 +160,10 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -208,6 +212,7 @@
                             <generateSupportingFiles>true</generateSupportingFiles>
                             <auth>false</auth>
                             <configOptions>
+                                <additionalModelTypeAnnotations>@lombok.Data @lombok.NoArgsConstructor @lombok.AllArgsConstructor(staticName = "of")</additionalModelTypeAnnotations>
                                 <sourceFolder>src/main/java</sourceFolder>
                                 <unhandledException>true</unhandledException>
                                 <serializableModel>true</serializableModel>
@@ -235,6 +240,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

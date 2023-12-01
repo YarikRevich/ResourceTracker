@@ -3,7 +3,7 @@ package com.resourcetracker.service.terraform;
 import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
-import com.resourcetracker.service.terraform.provider.aws.AWSProviderService;
+import com.resourcetracker.service.terraform.provider.aws.AWSTerraformProviderService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -14,7 +14,7 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class TerraformService {
   @Inject
-  AWSProviderService awsProviderService;
+  AWSTerraformProviderService awsProviderService;
 
   /**
    * Applies certain provider deployment configuration.

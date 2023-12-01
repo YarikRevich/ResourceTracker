@@ -11,6 +11,8 @@ tags:
     description: Contains endpoints related to Terraform deployment operations
   - name: ValidationResource
     description: Contains all endpoints related to both data validation and its further retrieval.
+  - name: InfoResource
+    description: Contains all endpoints related to general info of API Server.
 
 paths:
   /v1/topic/logs:
@@ -24,6 +26,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TopicLogsResult"
+        503:
+          description: Kafka service is not available
   /v1/terraform/apply:
     post:
       tags:
@@ -99,7 +103,17 @@ paths:
                 $ref: "#/components/schemas/ValidationScriptApplicationResult"
         400:
           description: Given script application contains incorrect data
-
+  /v1/info/version:
+    get:
+      tags:
+        - InfoResource
+      responses:
+        200:
+          description: General information about running API Server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationInfoResult"
 components:
   schemas:
     TopicLogsResult:
@@ -209,12 +223,24 @@ components:
           type: string
     ValidationCredentialsApplication:
       required:
+        - provider
         - file
       properties:
+        provider:
+          $ref: "#/components/schemas/Provider"
         file:
           type: string
           format: base64
     ValidationCredentialsApplicationResult:
+      required:
+        - valid
+        - credentials
+      properties:
+        valid:
+          type: boolean
+        credentials:
+          oneOf:
+            - $ref: "#/components/schemas/AWSCredentials"
     ValidationScriptApplication:
       required:
         - file
@@ -223,3 +249,21 @@ components:
           type: string
           format: base64
     ValidationScriptApplicationResult:
+      required:
+        - valid
+        - data
+      properties:
+        valid:
+          type: boolean
+        data:
+          type: string
+    ApplicationInfoResult:
+      properties:
+        externalApi:
+          $ref: "#/components/schemas/ApplicationExternalApiInfoResult"
+    ApplicationExternalApiInfoResult:
+      required:
+        - version
+      properties:
+        version:
+          type: string

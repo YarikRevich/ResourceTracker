@@ -1,34 +1,28 @@
 package com.resourcetracker.service.terraform.provider.aws;
 
-import com.resourcetracker.entity.AWSCredentialsEntity;
-import com.resourcetracker.entity.AWSDeploymentCredentialsEntity;
 import com.resourcetracker.entity.CommandExecutorOutputEntity;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
-import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
 import com.resourcetracker.model.TerraformDestructionApplication;
-import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.terraform.provider.aws.command.ApplyCommandService;
+import com.resourcetracker.service.terraform.provider.aws.command.OutputCommandService;
 import com.resourcetracker.service.terraform.provider.executor.CommandExecutorService;
-import com.resourcetracker.service.terraform.provider.IProvider;
+import com.resourcetracker.service.terraform.provider.ITerraformProvider;
 import com.resourcetracker.service.terraform.provider.aws.command.DestroyCommandService;
 import com.resourcetracker.service.terraform.provider.aws.command.InitCommandService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import process.exceptions.SProcessNotYetStartedException;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 /**
  * Represents Terraform provider implementation for AWS vendor.
  */
 @ApplicationScoped
-public class AWSProviderService implements IProvider {
+public class AWSTerraformProviderService implements ITerraformProvider {
     @Inject
     PropertiesEntity properties;
 
@@ -36,19 +30,9 @@ public class AWSProviderService implements IProvider {
     CommandExecutorService commandExecutorService;
 
     /**
-     * @see IProvider
+     * @see ITerraformProvider
      */
     public String apply(TerraformDeploymentApplication terraformDeploymentApplication) throws TerraformException {
-        TerraformDeploymentApplicationCredentials credentials = terraformDeploymentApplication.getCredentials();
-
-//        AWSCredentialsEntity file;
-//        try {
-//             file = ConfigService.getConvertedCredentials(
-//                     AWSCredentialsEntity.class, credentials.getFile()).get(1);
-//        } catch (FileNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//            throw new TerraformException(e.getMessage());
-//        }
-
         InitCommandService initCommandService = new InitCommandService(
                 terraformDeploymentApplication.getCredentials(),
                 properties);
@@ -67,25 +51,49 @@ public class AWSProviderService implements IProvider {
             throw new TerraformException(initCommandErrorOutput);
         }
 
-//        ApplyCommandService applyCommandService = new ApplyCommandService();
+        ApplyCommandService applyCommandService = new ApplyCommandService(
+                terraformDeploymentApplication.getCredentials(),
+                properties);
 
-        return null;
+        CommandExecutorOutputEntity applyCommandOutput;
+
+        try {
+            applyCommandOutput = commandExecutorService.executeCommand(applyCommandService);
+        } catch (CommandExecutorException e) {
+            throw new TerraformException(e.getMessage());
+        }
+
+        String applyCommandErrorOutput = applyCommandOutput.getErrorOutput();
+
+        if (Objects.nonNull(applyCommandErrorOutput)){
+            throw new TerraformException(applyCommandErrorOutput);
+        }
+
+        OutputCommandService outputCommandService = new OutputCommandService(
+                terraformDeploymentApplication.getCredentials(),
+                properties);
+
+        CommandExecutorOutputEntity outputCommandOutput;
+
+        try {
+            outputCommandOutput = commandExecutorService.executeCommand(outputCommandService);
+        } catch (CommandExecutorException e) {
+            throw new TerraformException(e.getMessage());
+        }
+
+        String outputCommandErrorOutput = outputCommandOutput.getErrorOutput();
+
+        if (Objects.nonNull(outputCommandErrorOutput)){
+            throw new TerraformException(outputCommandErrorOutput);
+        }
+
+        return outputCommandOutput.getNormalOutput();
     }
 
     /**
-     * @see IProvider
+     * @see ITerraformProvider
      */
     public void destroy(TerraformDestructionApplication terraformDestructionApplication) throws TerraformException {
-        TerraformDeploymentApplicationCredentials credentials = terraformDestructionApplication.getCredentials();
-
-//        AWSCredentialsEntity file;
-//        try {
-//            file = ConfigService.getConvertedCredentials(
-//                    AWSCredentialsEntity.class, credentials.getFile()).get(1);
-//        } catch (FileNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//            throw new TerraformException(e.getMessage());
-//        }
-
         DestroyCommandService destroyCommandService = new DestroyCommandService(
                 terraformDestructionApplication.getCredentials(),
                 properties);
