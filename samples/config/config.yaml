@@ -6,7 +6,6 @@ cloud:
     provider: "aws"
     credentials:
       file: "~/.aws/credentials"
-      profile: "default"
-      region: "default"
+      region: "us-west-2"
 api-server:
     host: "http://localhost:8080"

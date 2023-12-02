@@ -1,6 +1,6 @@
 package com.resourcetracker.service.terraform.provider.aws;
 
-import com.resourcetracker.entity.CommandExecutorOutputEntity;
+import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.exception.TerraformException;
@@ -14,7 +14,6 @@ import com.resourcetracker.service.terraform.provider.aws.command.DestroyCommand
 import com.resourcetracker.service.terraform.provider.aws.command.InitCommandService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import process.exceptions.SProcessNotYetStartedException;
 
 import java.util.Objects;
 
@@ -37,7 +36,7 @@ public class AWSTerraformProviderService implements ITerraformProvider {
                 terraformDeploymentApplication.getCredentials(),
                 properties);
 
-        CommandExecutorOutputEntity initCommandOutput;
+        CommandExecutorOutputDto initCommandOutput;
 
         try {
             initCommandOutput = commandExecutorService.executeCommand(initCommandService);
@@ -55,7 +54,7 @@ public class AWSTerraformProviderService implements ITerraformProvider {
                 terraformDeploymentApplication.getCredentials(),
                 properties);
 
-        CommandExecutorOutputEntity applyCommandOutput;
+        CommandExecutorOutputDto applyCommandOutput;
 
         try {
             applyCommandOutput = commandExecutorService.executeCommand(applyCommandService);
@@ -73,7 +72,7 @@ public class AWSTerraformProviderService implements ITerraformProvider {
                 terraformDeploymentApplication.getCredentials(),
                 properties);
 
-        CommandExecutorOutputEntity outputCommandOutput;
+        CommandExecutorOutputDto outputCommandOutput;
 
         try {
             outputCommandOutput = commandExecutorService.executeCommand(outputCommandService);
@@ -98,7 +97,7 @@ public class AWSTerraformProviderService implements ITerraformProvider {
                 terraformDestructionApplication.getCredentials(),
                 properties);
 
-        CommandExecutorOutputEntity destroyCommandOutput;
+        CommandExecutorOutputDto destroyCommandOutput;
 
         try {
             destroyCommandOutput = commandExecutorService.executeCommand(destroyCommandService);

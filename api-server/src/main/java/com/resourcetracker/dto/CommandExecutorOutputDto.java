@@ -1,11 +1,11 @@
-package com.resourcetracker.entity;
+package com.resourcetracker.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor(staticName = "of")
-public class CommandExecutorOutputEntity {
+public class CommandExecutorOutputDto {
     String normalOutput;
 
     String errorOutput;

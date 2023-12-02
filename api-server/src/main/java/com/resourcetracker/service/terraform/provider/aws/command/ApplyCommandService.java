@@ -2,7 +2,6 @@ package com.resourcetracker.service.terraform.provider.aws.command;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.terraform.provider.aws.common.AWSProviderConfigurationHelper;
-import jakarta.enterprise.context.ApplicationScoped;
 import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
 import process.SProcess;
 import process.SProcessExecutor;

@@ -1,16 +1,12 @@
 package com.resourcetracker.service.config;
 
 import java.io.*;
-import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 
-import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.bean.HeaderColumnNameMappingStrategy;
-import com.resourcetracker.entity.AWSCredentialsEntity;
+import com.resourcetracker.exception.SecretsConversionException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
-import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Service for processing configuration file
@@ -137,28 +132,24 @@ public class ConfigService {
 
     //        TerraformDeploymentApplicationCredentials credentials = terraformDeploymentApplication.getCredentials();
 
-//        AWSCredentialsEntity file;
-//        try {
-//             file = ConfigService.getConvertedCredentials(
-//                     AWSCredentialsEntity.class, credentials.getFile()).get(1);
-//        } catch (FileNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//            throw new TerraformException(e.getMessage());
-//        }
-
     /**
      * Converts given credentials CSV file to a certain object.
      * Exposed as a static method to be used with Terraform command definitions.
-     * @param path path to the file to be parsed.
+     * @param file given file stream to be processed.
      * @return converted credentials.
+     * @throws SecretsConversionException if any operation in conversion flow failed.
      */
-
     @SuppressWarnings("unchecked")
-    static public <T> List<T> getConvertedCredentials(Class<T> obj, String path) throws FileNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        return new CsvToBeanBuilder(new FileReader(path))
-                .withType(obj.getDeclaredConstructor().newInstance().getClass())
-                .withIgnoreLeadingWhiteSpace(true)
-                .build()
-                .parse();
+    static public <T> List<T> getConvertedSecrets(Class<T> obj, InputStream file) throws SecretsConversionException {
+        try {
+            return new CsvToBeanBuilder(new BufferedReader(new InputStreamReader(file)))
+                    .withType(obj.getDeclaredConstructor().newInstance().getClass())
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build()
+                    .parse();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e){
+            throw new SecretsConversionException(e.getMessage());
+        }
     }
 
     /**

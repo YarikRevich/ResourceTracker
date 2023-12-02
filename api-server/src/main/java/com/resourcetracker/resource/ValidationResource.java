@@ -1,33 +1,63 @@
 package com.resourcetracker.resource;
 
 import com.resourcetracker.api.ValidationResourceApi;
+import com.resourcetracker.dto.AWSSecretsDto;
 import com.resourcetracker.model.Provider;
-import com.resourcetracker.model.ValidationCredentialsApplicationResult;
+import com.resourcetracker.model.ValidationSecretsApplicationResult;
 import com.resourcetracker.model.ValidationScriptApplicationResult;
+import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.vendor.VendorFacade;
+import com.resourcetracker.service.vendor.aws.AWSVendorService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.SneakyThrows;
+
+import java.io.InputStream;
 
 /**
  * Contains implementation of ValidationResource.
  */
+@ApplicationScoped
 public class ValidationResource implements ValidationResourceApi {
+    @Inject
+    VendorFacade vendorFacade;
+
     /**
      * Implementation for declared in OpenAPI configuration v1CredentialsAcquirePost method.
      * @param provider remote cloud provider to be selected for processing.
-     * @param _file given file to be processed.
+     * @param _fileInputStream given file to be processed.
      * @return Credentials validation result.
      */
     @Override
-    public ValidationCredentialsApplicationResult v1CredentialsAcquirePost(Provider provider, String _file) {
-        return ValidationCredentialsApplicationResult.of(false, null);
+    @SneakyThrows
+    public ValidationSecretsApplicationResult v1SecretsAcquirePost(Provider provider, InputStream _fileInputStream) {
+        return switch (provider) {
+            case AWS -> {
+                AWSSecretsDto secrets = ConfigService.getConvertedSecrets(
+                        AWSSecretsDto.class, _fileInputStream).get(1);
+
+                yield ValidationSecretsApplicationResult.of(
+                        vendorFacade.isCredentialsValid(
+                                provider,
+                                AWSVendorService.getAWSCredentialsProvider(secrets)
+                        ),
+                        com.resourcetracker.model.ValidationSecretsApplicationResultSecrets.of(
+                                credentials.getAccessKey(),
+                                credentials.getSecretKey()
+                        )
+                );
+            }
+        };
     }
 
     /**
      * Implementation for declared in OpenAPI configuration v1ScriptAcquirePost method.
-     * @param _file given file to be processed.
+     * @param _fileInputStream given file to be processed.
      * @return Script validation result.
      */
     @Override
-    public ValidationScriptApplicationResult v1ScriptAcquirePost(String _file) {
-        System.out.println(_file);
+    public ValidationScriptApplicationResult v1ScriptAcquirePost(InputStream _fileInputStream) {
+
         return null;
     }
 }

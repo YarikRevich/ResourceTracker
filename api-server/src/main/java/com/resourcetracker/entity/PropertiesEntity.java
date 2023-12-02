@@ -5,8 +5,7 @@ import lombok.Getter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
- * Exposes access to properties setup in the project
- * to provide further configuration.
+ * Exposes access to properties setup to be used for further configuration.
  */
 @Getter
 @ApplicationScoped
@@ -20,6 +19,6 @@ public class PropertiesEntity {
     @ConfigProperty(name = "remote-storage.name")
     String remoteStorageName;
 
-//    @ConfigProperty(name = "git.branch")
+    @ConfigProperty(name = "git.commit.id.abbrev")
     String gitCommitId;
 }

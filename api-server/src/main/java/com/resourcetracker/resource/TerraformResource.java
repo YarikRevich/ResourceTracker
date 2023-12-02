@@ -1,22 +1,17 @@
 package com.resourcetracker.resource;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.resourcetracker.api.TerraformResourceApi;
 import com.resourcetracker.entity.AWSDeploymentResult;
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 import com.resourcetracker.model.TerraformDestructionApplication;
-import com.resourcetracker.service.dispatcher.DispatcherService;
-import com.resourcetracker.service.kafka.KafkaService;
-import com.resourcetracker.service.terraform.TerraformService;
-import com.resourcetracker.service.vendor.aws.AWSService;
+import com.resourcetracker.service.terraform.TerraformAdapter;
+import com.resourcetracker.service.vendor.VendorFacade;
+import com.resourcetracker.service.vendor.aws.AWSVendorService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.core.Response;
 import lombok.SneakyThrows;
 
 import java.util.Objects;
@@ -27,13 +22,10 @@ import java.util.Objects;
 @ApplicationScoped
 public class TerraformResource implements TerraformResourceApi {
     @Inject
-    PropertiesEntity properties;
+    TerraformAdapter terraformAdapter;
 
     @Inject
-    TerraformService terraformService;
-
-    @Inject
-    DispatcherService dispatcherService;
+    VendorFacade vendorFacade;
 
     /**
      * Implementation for declared in OpenAPI configuration v1TerraformApplyPost method.
@@ -47,20 +39,18 @@ public class TerraformResource implements TerraformResourceApi {
             throw new BadRequestException();
         }
 
-        AWSService awsService = new AWSService(AWSService.getAWSCredentialsProvider(
+        AWSVendorService awsVendorService = new AWSVendorService(AWSVendorService.getAWSCredentialsProvider(
                 terraformDeploymentApplication.getCredentials().getAccessKey(),
                 terraformDeploymentApplication.getCredentials().getSecretKey()
         ));
 
-        if (!awsService.isS3BucketExist(properties.getRemoteStorageName())){
-            awsService.createS3Bucket(properties.getRemoteStorageName());
-        }
+        vendorFacade.initBackendStorage(terraformDeploymentApplication.getProvider());
 
-        String terraformOutput = terraformService.apply(terraformDeploymentApplication);
+        String terraformOutput = terraformAdapter.apply(terraformDeploymentApplication);
 
-        AWSDeploymentResult awsDeploymentResult = awsService.getEcsTaskRunDetails(terraformOutput);
-        awsService.runEcsTask(awsDeploymentResult);
-        String machineAddress = awsService.getMachineAddress(awsDeploymentResult);
+        AWSDeploymentResult awsDeploymentResult = awsVendorService.getEcsTaskRunDetails(terraformOutput);
+        awsVendorService.runEcsTask(awsDeploymentResult);
+        String machineAddress = awsVendorService.getMachineAddress(awsDeploymentResult);
 
         return TerraformDeploymentApplicationResult.of(machineAddress);
     }
@@ -76,15 +66,10 @@ public class TerraformResource implements TerraformResourceApi {
             throw new BadRequestException();
         }
 
-        AWSService awsService = new AWSService(AWSService.getAWSCredentialsProvider(
-                terraformDestructionApplication.getCredentials().getAccessKey(),
-                terraformDestructionApplication.getCredentials().getSecretKey()
-        ));
+        terraformAdapter.destroy(terraformDestructionApplication);
 
-        if (awsService.isS3BucketExist(properties.getRemoteStorageName())){
-            awsService.removeS3Bucket(properties.getRemoteStorageName());
-        }
-
-        terraformService.destroy(terraformDestructionApplication);
+        vendorFacade.destroyBackendStorage(
+                terraformDestructionApplication.getProvider(),
+                terraformDestructionApplication.getCredentials());
     }
 }

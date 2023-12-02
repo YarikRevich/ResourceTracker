@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Provides access to external config source used as a source of Git info.
@@ -28,41 +29,17 @@ public class GitBuildConfigSourceService implements ConfigSource {
     public GitBuildConfigSourceService() {
         this.properties = new Properties();
 
-        String rootPath = null;
-
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream gitBuildPropertiesStream = classLoader.getResourceAsStream("git.properties");
         try {
-            rootPath = Thread
-                    .currentThread()
-                    .getContextClassLoader()
-                    .getResource("")
-                    .getPath();
-        } catch (NullPointerException e){
+            properties.load(gitBuildPropertiesStream);
+        } catch (IOException e) {
             logger.fatal(e.getMessage());
         }
-
-        System.out.println(rootPath);
-
-        URL gitBuildProperties = ClassLoader.getSystemResource(Paths.get(rootPath, "application.properties").toString());
-
-        System.out.println(gitBuildProperties);
-//        InputStream gitBuildPropertiesStream = null;
-//        try {
-//            gitBuildPropertiesStream = gitBuildProperties.openStream();
-//        } catch (IOException e) {
-//            logger.fatal(e.getMessage());
-//        }
-//
-//        try {
-//            properties.load(gitBuildPropertiesStream);
-//        } catch (IOException e) {
-//            logger.fatal(e.getMessage());
-//        }
-
-        System.out.println(properties);
     }
 
     /**
-     * @return
+     * @see ConfigSource
      */
     @Override
     public Map<String, String> getProperties() {
@@ -70,15 +47,19 @@ public class GitBuildConfigSourceService implements ConfigSource {
     }
 
     /**
-     * @return
+     * @see ConfigSource
      */
     @Override
     public Set<String> getPropertyNames() {
-        return null;
+        return properties
+                .keySet()
+                .stream()
+                .map(element -> (String)element)
+                .collect(Collectors.toSet());
     }
 
     /**
-     * @return
+     * @see ConfigSource
      */
     @Override
     public int getOrdinal() {
@@ -86,19 +67,18 @@ public class GitBuildConfigSourceService implements ConfigSource {
     }
 
     /**
-     * @param s
-     * @return
+     * @see ConfigSource
      */
     @Override
     public String getValue(String s) {
-        return null;
+        return (String)properties.get(s);
     }
 
     /**
-     * @return
+     * @see ConfigSource
      */
     @Override
     public String getName() {
-        return null;
+        return GitBuildConfigSourceService.class.getSimpleName();
     }
 }

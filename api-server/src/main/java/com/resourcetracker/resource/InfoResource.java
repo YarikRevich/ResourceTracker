@@ -23,7 +23,8 @@ public class InfoResource implements InfoResourceApi {
     public ApplicationInfoResult v1InfoVersionGet() {
         return ApplicationInfoResult.of(
                 ApplicationExternalApiInfoResult.of(
-                        properties.getApplicationVersion()
+                        properties.getApplicationVersion(),
+                        properties.getGitCommitId()
                 )
         );
     }

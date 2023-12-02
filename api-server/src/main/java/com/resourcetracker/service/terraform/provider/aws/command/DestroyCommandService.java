@@ -1,9 +1,6 @@
 package com.resourcetracker.service.terraform.provider.aws.command;
 
-import com.resourcetracker.entity.AWSCredentialsEntity;
-import com.resourcetracker.entity.AWSDeploymentCredentialsEntity;
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.model.AWSCredentials;
 import com.resourcetracker.model.Provider;
 import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
 import com.resourcetracker.service.terraform.provider.aws.common.AWSProviderConfigurationHelper;
@@ -12,8 +9,6 @@ import process.SProcessExecutor;
 import process.SProcessExecutor.OS;
 
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 
 /**
  * Represents Terraform destroy command.

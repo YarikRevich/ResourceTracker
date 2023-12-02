@@ -12,7 +12,7 @@ import jakarta.inject.Inject;
  * vendors to perform provider related operations.
  */
 @ApplicationScoped
-public class TerraformService {
+public class TerraformAdapter {
   @Inject
   AWSTerraformProviderService awsProviderService;
 

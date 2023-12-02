@@ -26,7 +26,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TopicLogsResult"
-        503:
+        500:
           description: Kafka service is not available
   /v1/terraform/apply:
     post:
@@ -63,24 +63,24 @@ paths:
           description: Deployed remote infrastructure is successfully destroyed
         400:
           description: Given destruction application contains incorrect data
-  /v1/credentials/acquire:
+  /v1/secrets/acquire:
     post:
       tags:
         - ValidationResource
       requestBody:
         required: true
-        description: Checks if the given credentials file contains correct data
+        description: Checks if the given secrets file contains correct data
         content:
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/ValidationCredentialsApplication"
+              $ref: "#/components/schemas/ValidationSecretsApplication"
       responses:
         201:
-          description: Given credentials file is confirmed to be correct
+          description: Given secrets file is confirmed to be correct
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationCredentialsApplicationResult"
+                $ref: "#/components/schemas/ValidationSecretsApplicationResult"
         400:
           description: Given script application contains incorrect data
   /v1/script/acquire:
@@ -181,18 +181,21 @@ components:
         - aws
     AWSCredentials:
       required:
+        - secrets
+        - region
+      properties:
+        secrets:
+          $ref: "#/components/schemas/AWSSecrets"
+        region:
+          type: string
+    AWSSecrets:
+      required:
         - accessKey
         - secretKey
-        - profile
-        - region
       properties:
         accessKey:
           type: string
         secretKey:
-          type: string
-        profile:
-          type: string
-        region:
           type: string
     TerraformDeploymentApplicationResult:
       required:
@@ -221,7 +224,7 @@ components:
       properties:
         name:
           type: string
-    ValidationCredentialsApplication:
+    ValidationSecretsApplication:
       required:
         - provider
         - file
@@ -230,24 +233,24 @@ components:
           $ref: "#/components/schemas/Provider"
         file:
           type: string
-          format: base64
-    ValidationCredentialsApplicationResult:
+          format: binary
+    ValidationSecretsApplicationResult:
       required:
         - valid
         - credentials
       properties:
         valid:
           type: boolean
-        credentials:
+        secrets:
           oneOf:
-            - $ref: "#/components/schemas/AWSCredentials"
+            - $ref: "#/components/schemas/AWSSecrets"
     ValidationScriptApplication:
       required:
         - file
       properties:
         file:
           type: string
-          format: base64
+          format: binary
     ValidationScriptApplicationResult:
       required:
         - valid
@@ -264,6 +267,9 @@ components:
     ApplicationExternalApiInfoResult:
       required:
         - version
+        - hash
       properties:
         version:
+          type: string
+        hash:
           type: string

@@ -1,18 +1,10 @@
 package com.resourcetracker.exception;
 
 import java.io.IOException;
+import java.util.Formatter;
 
-/**
- * Handles exceptions thrown by the cloud deployment service
- *
- * @author YarikRevich
- */
 public class TerraformException extends IOException {
-    public TerraformException() {
-        super("Invalid Terraform deployment behaviour");
-    }
-
-    public TerraformException(String message) {
-        super(message);
+    public TerraformException(Object... message) {
+        super(new Formatter().format("Invalid Terraform deployment behaviour", message).toString());
     }
 }

@@ -1,6 +1,6 @@
 package com.resourcetracker.service.terraform.provider.executor;
 
-import com.resourcetracker.entity.CommandExecutorOutputEntity;
+import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.exception.CommandExecutorException;
 import jakarta.enterprise.context.ApplicationScoped;
 import process.SProcess;
@@ -28,7 +28,7 @@ public class CommandExecutorService {
      * @return output result, which consists of stdout and stderr.
      * @throws CommandExecutorException when any execution step failed.
      */
-    public CommandExecutorOutputEntity executeCommand(SProcess command) throws CommandExecutorException {
+    public CommandExecutorOutputDto executeCommand(SProcess command) throws CommandExecutorException {
         try {
             processExecutor.executeCommand(command);
         } catch (IOException | NonMatchingOSException e) {
@@ -57,6 +57,6 @@ public class CommandExecutorService {
             throw new CommandExecutorException(e.getMessage());
         }
 
-        return CommandExecutorOutputEntity.of(commandNormalOutput, commandErrorOutput);
+        return CommandExecutorOutputDto.of(commandNormalOutput, commandErrorOutput);
     }
 }

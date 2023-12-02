@@ -3,7 +3,7 @@ package com.resourcetracker.service.vendor.aws;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.profile.path.cred.CredentialsDefaultLocationProvider;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesRequest;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesResult;
@@ -11,20 +11,18 @@ import com.amazonaws.services.ec2.model.NetworkInterface;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.resourcetracker.dto.AWSSecretsDto;
 import com.resourcetracker.entity.AWSDeploymentResult;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.AWSRunTaskFailureException;
-import com.resourcetracker.service.config.ConfigService;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.services.s3.S3ClientBuilder;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,26 +30,20 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Provides access to AWS SDK to perform subprocesses
- * needed for AWS provider management.
+ * Provides access to AWS SDK to perform subprocesses needed for AWS provider management.
  */
-public class AWSService {
-    private static final Logger logger = LogManager.getLogger(AWSService.class);
-
-    private final AWSCredentialsProvider awsCredentialsProvider;
-
-    public AWSService(AWSCredentialsProvider awsCredentialsProvider) {
-        this.awsCredentialsProvider = awsCredentialsProvider;
-    }
+@ApplicationScoped
+public class AWSVendorService {
+    private static final Logger logger = LogManager.getLogger(AWSVendorService.class);
 
     /**
      * Composes AWS Credentials Provider used by AWS SDK clients.
-     * @param accessKey access key exposed by AWS client.
-     * @param secretKey secret key exposed by AWS client.
+     * @param secrets AWS client secrets.
      * @return composed AWS Credentials Provider.
      */
-    static public AWSCredentialsProvider getAWSCredentialsProvider(String accessKey, String secretKey) {
-        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey));
+    static public AWSCredentialsProvider getAWSCredentialsProvider(AWSSecretsDto secrets) {
+        return new AWSStaticCredentialsProvider(
+                new BasicAWSCredentials(secrets.getAccessKey(), secrets.getSecretKey()));
     }
 
     /**
@@ -77,7 +69,7 @@ public class AWSService {
      * @param awsDeploymentResult composed ECS Task details.
      * @throws AWSRunTaskFailureException thrown when AWS Task run action fails.
      */
-    public void runEcsTask(AWSDeploymentResult awsDeploymentResult) throws AWSRunTaskFailureException {
+    public void runEcsTask(AWSDeploymentResult awsDeploymentResult, AWSCredentialsProvider awsCredentialsProvider) throws AWSRunTaskFailureException {
         AwsVpcConfiguration awsVpcConfiguration = new AwsVpcConfiguration()
                 .withSubnets(awsDeploymentResult.getResourceTrackerMainSubnetId().getValue())
                 .withSecurityGroups(awsDeploymentResult.getResourceTrackerSecurityGroup().getValue());
@@ -122,23 +114,23 @@ public class AWSService {
 
     /**
      * Retrieves remote machine address from the given ECS Task details.
-     * @param awsDeploymentResult composed ECS Task details.
+     * @param ecsClusterId cluster id of the ECS Task.
      * @return remote machine address.
      */
-    public String getMachineAddress(AWSDeploymentResult awsDeploymentResult) {
-        String ecsTaskArn = getEcsTaskArn("");
+    public String getMachineAddress(String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider) {
+        String ecsTaskArn = getEcsTaskArn(ecsClusterId, awsCredentialsProvider);
 
-        String ecsTaskNetworkInterfaceId = getEcsTaskNetworkInterfaceId("", ecsTaskArn);
+        String ecsTaskNetworkInterfaceId = getEcsTaskNetworkInterfaceId(ecsClusterId, ecsTaskArn, awsCredentialsProvider);
 
-        return getEcsTaskPublicId(ecsTaskNetworkInterfaceId);
+        return getEcsTaskPublicIp(ecsTaskNetworkInterfaceId, awsCredentialsProvider);
     }
 
     /**
-     *
-     * @param ecsClusterId
-     * @return
+     * Retrieves ECS Task ARN started in the given cluster id.
+     * @param ecsClusterId cluster id of the ECS Task.
+     * @return ECS Task ARN in the given cluster id.
      */
-    private String getEcsTaskArn(String ecsClusterId) {
+    private String getEcsTaskArn(String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider) {
         ListTasksRequest listTasksRequest = new ListTasksRequest()
                 .withCluster(ecsClusterId);
 
@@ -152,12 +144,12 @@ public class AWSService {
     }
 
     /**
-     *
-     * @param ecsClusterId
-     * @param ecsTaskArn
-     * @return
+     * Retrieves network interface ID of the ECS Task container.
+     * @param ecsClusterId ECS Task cluster ID.
+     * @param ecsTaskArn ECS Task ARN.
+     * @return network interface ID of the ECS Task container.
      */
-    private String getEcsTaskNetworkInterfaceId(String ecsClusterId, String ecsTaskArn) {
+    private String getEcsTaskNetworkInterfaceId(String ecsClusterId, String ecsTaskArn, AWSCredentialsProvider awsCredentialsProvider) {
             DescribeTasksRequest describeTaskRequest = new DescribeTasksRequest()
                     .withCluster(ecsClusterId)
                     .withTasks(List.of(ecsTaskArn));
@@ -193,11 +185,11 @@ public class AWSService {
     }
 
     /**
-     *
-     * @param networkInterfaceId
-     * @return
+     * Retrieves public IP of the ECS Task container.
+     * @param networkInterfaceId ECS Task interface ID.
+     * @return public IP of the ECS Task container.
      */
-    private String getEcsTaskPublicId(String networkInterfaceId) {
+    private String getEcsTaskPublicIp(String networkInterfaceId, AWSCredentialsProvider awsCredentialsProvider) {
         DescribeNetworkInterfacesRequest describeNetworkInterfacesRequest = new DescribeNetworkInterfacesRequest()
                 .withNetworkInterfaceIds(List.of(networkInterfaceId));
 
@@ -217,7 +209,7 @@ public class AWSService {
      * @param name name of the S3 bucket.
      * @return result of the check.
      */
-    public boolean isS3BucketExist(String name) {
+    public boolean isS3BucketExist(String name, AWSCredentialsProvider awsCredentialsProvider) {
         return AmazonS3ClientBuilder
                 .standard()
                 .withCredentials(awsCredentialsProvider)
@@ -229,7 +221,7 @@ public class AWSService {
      * Creates S3 bucket with the given name.
      * @param name name of the S3 bucket.
      */
-    public void createS3Bucket(String name) {
+    public void createS3Bucket(String name, AWSCredentialsProvider awsCredentialsProvider) {
         AmazonS3ClientBuilder
                 .standard()
                 .withCredentials(awsCredentialsProvider)
@@ -241,11 +233,27 @@ public class AWSService {
      * Removes S3 bucket with the given name
      * @param name name of the S3 bucket.
      */
-    public void removeS3Bucket(String name) {
+    public void removeS3Bucket(String name, AWSCredentialsProvider awsCredentialsProvider) {
         AmazonS3ClientBuilder
                 .standard()
                 .withCredentials(awsCredentialsProvider)
                 .build()
                 .deleteBucket(name);
+    }
+
+    /**
+     * Checks if the selected credentials are valid.
+     * @return result of credentials validation.
+     */
+    public boolean isCallerValid(AWSCredentialsProvider awsCredentialsProvider) {
+        return !Objects.isNull(
+                AWSSecurityTokenServiceClientBuilder
+                .standard()
+                .withCredentials(awsCredentialsProvider)
+                .build()
+                .getCallerIdentity(
+                        new GetCallerIdentityRequest())
+                .getArn()
+        );
     }
 }

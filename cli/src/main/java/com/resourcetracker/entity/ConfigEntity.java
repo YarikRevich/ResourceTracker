@@ -53,9 +53,6 @@ public class ConfigEntity {
             String file;
 
             @NotBlank
-            String profile;
-
-            @NotBlank
             String region;
         }
 
