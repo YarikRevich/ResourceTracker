@@ -20,12 +20,11 @@ import org.springframework.stereotype.Component;
         KafkaService.class,
         MachineService.class,
         CommandExecutorService.class,
-        ExecCommandService.class,
-        FatalAppender.class
+        ExecCommandService.class
 })
 public class App implements ApplicationRunner {
-    @Autowired
-    FatalAppender fatalAppender;
+//    @Autowired
+//    FatalAppender fatalAppender;
 
     @Autowired
     SchedulerService schedulerService;

@@ -1,6 +1,5 @@
 package com.resourcetracker.service.scheduler.command;
 
-import com.resourcetracker.dto.ScriptExecCommandInputDto;
 import org.springframework.stereotype.Service;
 import process.SProcess;
 import process.SProcessExecutor;
@@ -8,31 +7,26 @@ import process.SProcessExecutor;
 /**
  *
  */
-@Service
 public class ExecCommandService extends SProcess {
-    private ScriptExecCommandInputDto input;
+    private final String command;
+    private final SProcessExecutor.OS osType;
 
-    /**
-     *
-     * @param input
-     */
-    public void setInput(ScriptExecCommandInputDto input) {
-        this.input = input;
+    public ExecCommandService(String input) {
+        this.osType = SProcessExecutor.getCommandExecutor().getOSType();
+
+        this.command = switch (osType){
+            case WINDOWS -> null;
+            case UNIX, MAC, ANY -> input;
+        };
     }
 
-    /**
-     * @return
-     */
     @Override
     public String getCommand() {
-        return input.getScript();
+        return command;
     }
 
-    /**
-     * @return
-     */
     @Override
     public SProcessExecutor.OS getOSType() {
-        return null;
+        return osType;
     }
 }

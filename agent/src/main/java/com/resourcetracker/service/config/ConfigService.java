@@ -44,14 +44,18 @@ public class ConfigService {
     private ConfigEntity parsedConfigFile;
 
     /**
-     * Opens YAML configuration file
+     * Opens YAML configuration file.
      */
-    public ConfigService(@Value("${RESOURCETRACKER_AGENT_CONTEXT}") String agentContext) {
-        configFile = IOUtils.toInputStream(agentContext, "UTF-8");
+    public ConfigService(@Value("${RESOURCETRACKER_AGENT_CONTEXT}") String context) {
+        if (Objects.isNull(context)) {
+            logger.fatal("");
+        }
+
+        configFile = IOUtils.toInputStream(context, "UTF-8");
     }
 
     /**
-     * Processes configuration file
+     * Processes configuration file.
      */
     @PostConstruct
     private void process() {
@@ -67,21 +71,6 @@ public class ConfigService {
         } catch (IOException e) {
             logger.fatal(e.getMessage());
         }
-    }
-
-    /**
-     * Converts frequency from cron expression to milliseconds.
-     * @param src cron expression to be converted
-     * @return frequency in milliseconds
-     */
-    public Long getCronExpressionInMilliseconds(String src) {
-        CronExpression cronExpression = CronExpression.parse(src);
-        LocalDateTime nextExecutionTime = cronExpression.next(LocalDateTime.now());
-        if (Objects.isNull(nextExecutionTime)){
-            logger.fatal(new CronExpressionException().getMessage());
-        }
-        LocalDateTime afterNextExecutionTime = cronExpression.next(nextExecutionTime);
-        return Duration.between(nextExecutionTime, afterNextExecutionTime).toMillis();
     }
 
     /**

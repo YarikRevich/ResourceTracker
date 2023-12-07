@@ -1,9 +1,10 @@
 package com.resourcetracker.service.scheduler;
 
+import com.resourcetracker.converter.CronExpressionConverter;
 import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
-import com.resourcetracker.dto.ScriptExecCommandInputDto;
 import com.resourcetracker.exception.CommandExecutorException;
+import com.resourcetracker.exception.CronExpressionException;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.scheduler.executor.CommandExecutorService;
 import com.resourcetracker.service.kafka.KafkaService;
@@ -41,9 +42,6 @@ public class SchedulerService {
     @Autowired
     private CommandExecutorService commandExecutorService;
 
-    @Autowired
-    private ExecCommandService execCommandService;
-
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
     private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
@@ -53,13 +51,21 @@ public class SchedulerService {
      * and executes them with the help of local command executor service.
      */
     public void start() {
-        configService.getConfig().getRequests().forEach(request ->
-                scheduledExecutorService.scheduleAtFixedRate(
+        configService.getConfig().getRequests().forEach(request -> {
+            Long period = 0L;
+            try {
+                CronExpressionConverter.convert(request.getFrequency());
+            } catch (CronExpressionException e){
+                logger.fatal(e.getMessage());
+            }
+
+            scheduledExecutorService.scheduleAtFixedRate(
                     () -> executorService.execute(() -> exec(request.getScript())),
                     0,
-                    configService.getCronExpressionInMilliseconds(request.getFrequency()),
+                    period,
                     TimeUnit.MILLISECONDS
-        ));
+            );
+        });
     }
 
     /**
@@ -67,7 +73,7 @@ public class SchedulerService {
      * @param input script to be executed.
      */
     private void exec(String input) {
-        execCommandService.setInput(ScriptExecCommandInputDto.of(input));
+        ExecCommandService execCommandService = new ExecCommandService(input);
 
         CommandExecutorOutputDto scriptExecCommandOutput = null;
         try {
