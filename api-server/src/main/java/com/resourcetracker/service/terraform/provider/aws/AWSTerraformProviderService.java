@@ -93,6 +93,7 @@ public class AWSTerraformProviderService implements ITerraformProvider {
      * @see ITerraformProvider
      */
     public void destroy(TerraformDestructionApplication terraformDestructionApplication) throws TerraformException {
+//        terraformDestructionApplication.getCredentials().get
         DestroyCommandService destroyCommandService = new DestroyCommandService(
                 terraformDestructionApplication.getCredentials(),
                 properties);

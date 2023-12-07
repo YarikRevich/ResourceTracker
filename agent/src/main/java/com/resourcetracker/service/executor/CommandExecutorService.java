@@ -1,6 +1,6 @@
 package com.resourcetracker.service.executor;
 
-import com.resourcetracker.entity.CommandExecutorOutputEntity;
+import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.exception.CommandExecutorException;
 import org.springframework.stereotype.Service;
 import process.SProcess;
@@ -30,7 +30,7 @@ public class CommandExecutorService {
      * @return CommandExecutorOutputEntity output, which consists of both stdout and stderr
      * @throws CommandExecutorException when command execution fails or output is not gathered
      */
-    public CommandExecutorOutputEntity executeCommand(SProcess command) throws CommandExecutorException {
+    public CommandExecutorOutputDto executeCommand(SProcess command) throws CommandExecutorException {
         try {
             processExecutor.executeCommand(command);
         } catch (IOException | NonMatchingOSException e) {
@@ -61,6 +61,6 @@ public class CommandExecutorService {
             throw new CommandExecutorException(e.getMessage());
         }
 
-        return CommandExecutorOutputEntity.of(commandNormalOutput, commandErrorOutput);
+        return CommandExecutorOutputDto.of(commandNormalOutput, commandErrorOutput);
     }
 }

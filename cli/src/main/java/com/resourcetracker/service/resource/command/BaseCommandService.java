@@ -16,6 +16,9 @@ public class BaseCommandService {
   @Autowired
   private StopCommandService stopCommandService;
 
+  @Autowired
+  private VersionCommandService versionCommandService;
+
   @Command(description = "Start remote requests execution")
   void start() {
     startCommandService.process();
@@ -30,4 +33,7 @@ public class BaseCommandService {
   void stop() {
     stopCommandService.process();
   }
+
+  @Command(description = "Stop remote requests execution")
+  void version() { versionCommandService.process(); }
 }

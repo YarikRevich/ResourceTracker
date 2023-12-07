@@ -1,6 +1,6 @@
 package com.resourcetracker.service.scheduler.command;
 
-import com.resourcetracker.entity.ScriptExecCommandInputEntity;
+import com.resourcetracker.dto.ScriptExecCommandInputDto;
 import org.springframework.stereotype.Service;
 import process.SProcess;
 import process.SProcessExecutor;
@@ -10,13 +10,13 @@ import process.SProcessExecutor;
  */
 @Service
 public class ScriptExecCommandService extends SProcess {
-    private ScriptExecCommandInputEntity input;
+    private ScriptExecCommandInputDto input;
 
     /**
      *
      * @param input
      */
-    public void setInput(ScriptExecCommandInputEntity input) {
+    public void setInput(ScriptExecCommandInputDto input) {
         this.input = input;
     }
 

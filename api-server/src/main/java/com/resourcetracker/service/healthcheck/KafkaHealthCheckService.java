@@ -1,4 +1,4 @@
-package com.resourcetracker.healthcheck;
+package com.resourcetracker.service.healthcheck;
 
 import com.resourcetracker.service.kafka.KafkaService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,7 +7,7 @@ import org.eclipse.microprofile.health.*;
 
 @Liveness
 @ApplicationScoped
-public class KafkaHealthCheck implements HealthCheck {
+public class KafkaHealthCheckService implements HealthCheck {
     @Inject
     KafkaService kafkaService;
 

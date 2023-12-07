@@ -3,7 +3,6 @@ package com.resourcetracker.service.vendor.aws;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesRequest;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesResult;
@@ -17,7 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.dto.AWSSecretsDto;
-import com.resourcetracker.entity.AWSDeploymentResult;
+import com.resourcetracker.dto.AWSDeploymentResultDto;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.AWSRunTaskFailureException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -51,12 +50,12 @@ public class AWSVendorService {
      * @param src raw details returned by Terraform deployment application.
      * @return composed ECS Task details.
      */
-    public AWSDeploymentResult getEcsTaskRunDetails(String src) {
+    public AWSDeploymentResultDto getEcsTaskRunDetails(String src) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectReader reader = mapper.reader().forType(new TypeReference<PropertiesEntity>() {
         });
         try {
-            return reader.<AWSDeploymentResult>readValues(src).readAll().getFirst();
+            return reader.<AWSDeploymentResultDto>readValues(src).readAll().getFirst();
         } catch (IOException e) {
             logger.fatal(e.getMessage());
         }
@@ -66,20 +65,20 @@ public class AWSVendorService {
 
     /**
      * Runs ECS Task with the given configuration properties.
-     * @param awsDeploymentResult composed ECS Task details.
+     * @param awsDeploymentResultDto composed ECS Task details.
      * @throws AWSRunTaskFailureException thrown when AWS Task run action fails.
      */
-    public void runEcsTask(AWSDeploymentResult awsDeploymentResult, AWSCredentialsProvider awsCredentialsProvider) throws AWSRunTaskFailureException {
+    public void runEcsTask(AWSDeploymentResultDto awsDeploymentResultDto, AWSCredentialsProvider awsCredentialsProvider) throws AWSRunTaskFailureException {
         AwsVpcConfiguration awsVpcConfiguration = new AwsVpcConfiguration()
-                .withSubnets(awsDeploymentResult.getResourceTrackerMainSubnetId().getValue())
-                .withSecurityGroups(awsDeploymentResult.getResourceTrackerSecurityGroup().getValue());
+                .withSubnets(awsDeploymentResultDto.getResourceTrackerMainSubnetId().getValue())
+                .withSecurityGroups(awsDeploymentResultDto.getResourceTrackerSecurityGroup().getValue());
 
         NetworkConfiguration networkConfiguration = new NetworkConfiguration()
                 .withAwsvpcConfiguration(awsVpcConfiguration);
 
         RunTaskRequest runTaskRequest = new RunTaskRequest()
-                .withTaskDefinition(awsDeploymentResult.getEcsTaskDefinition().getValue())
-                .withCluster(awsDeploymentResult.getEcsCluster().getValue())
+                .withTaskDefinition(awsDeploymentResultDto.getEcsTaskDefinition().getValue())
+                .withCluster(awsDeploymentResultDto.getEcsCluster().getValue())
                 .withNetworkConfiguration(networkConfiguration)
                 .withLaunchType(LaunchType.FARGATE);
 

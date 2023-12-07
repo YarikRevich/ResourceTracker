@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
  *
  * @author YarikRevich
  */
+@Service
 public class ConfigService {
     private static final Logger logger = LogManager.getLogger(ConfigService.class);
 

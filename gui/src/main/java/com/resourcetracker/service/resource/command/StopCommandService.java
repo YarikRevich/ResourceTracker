@@ -1,4 +1,4 @@
-package com.resourcetracker.service.command;
+package com.resourcetracker.service.resource.command;
 
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;

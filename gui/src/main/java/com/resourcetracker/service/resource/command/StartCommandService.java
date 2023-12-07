@@ -1,15 +1,12 @@
-package com.resourcetracker.service.command;
+package com.resourcetracker.service.resource.command;
 
 //import com.resourcetracker.ApiClient;
 //import com.resourcetracker.api.TerraformResourceApi;
 //import com.resourcetracker.exception.StartCommandFailException;
 //import com.resourcetracker.model.TerraformDeploymentApplication;
-import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 /**
  * Manages starting of each project

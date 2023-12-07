@@ -126,6 +126,10 @@ public class ConfigService {
 //        return src.getRun();
 //    }
 
+    public InputStream openScriptFiles() {
+        InputStream targetStream = new FileInputStream(initialFile);
+    }
+
     /**
      * Deserializes given in the configuration file credentials
      * into the requested provider type.

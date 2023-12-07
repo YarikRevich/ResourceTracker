@@ -13,6 +13,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class AgentContextEntity {
+    /**
+     * Represents ResourceTracker Agent requests to be executed.
+     */
     @Setter
     @AllArgsConstructor(staticName = "of")
     static class Request {

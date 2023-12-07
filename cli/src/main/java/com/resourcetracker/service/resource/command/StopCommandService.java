@@ -1,7 +1,7 @@
 package com.resourcetracker.service.resource.command;
 
 import com.resourcetracker.ApiClient;
-import com.resourcetracker.api.TerraformResourceApi;
+import com.resourcetracker.api.InfoResourceApi;
 import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;

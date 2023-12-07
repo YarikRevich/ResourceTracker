@@ -1,6 +1,6 @@
 package com.resourcetracker.service.terraform.provider.aws.common;
 
-import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
+//import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
 import com.resourcetracker.service.terraform.common.TerraformConfigurationHelper;
 
 import java.util.HashMap;
@@ -15,12 +15,13 @@ public class AWSProviderConfigurationHelper {
      * @param credentials AWS vendor credentials to perform operation.
      * @return composed backend configuration.
      */
-    static public String getBackendConfig(TerraformDeploymentApplicationCredentials credentials) {
-        return TerraformConfigurationHelper.getBackendConfig(new HashMap<>() {{
-            put("region", credentials.getRegion());
-            put("access_key", credentials.getAccessKey());
-            put("secret_key", credentials.getSecretKey());
-        }});
+    static public String getBackendConfig(Object credentials) {
+//        return TerraformConfigurationHelper.getBackendConfig(new HashMap<>() {{
+//            put("region", credentials.getRegion());
+//            put("access_key", credentials.getSecrets().getAccessKey());
+//            put("secret_key", credentials.getSecrets().getSecretKey());
+//        }});
+        return "";
     }
 
     /**
@@ -28,13 +29,13 @@ public class AWSProviderConfigurationHelper {
      * @param credentials AWS vendor credentials to perform operation.
      * @return composed environment variables.
      */
-    static public String getEnvironmentVariables(TerraformDeploymentApplicationCredentials credentials) {
-        return TerraformConfigurationHelper.getEnvironmentVariables(new HashMap<>() {{
-            put("AWS_ACCESS_KEY_ID", credentials.getAccessKey());
-            put("AWS_SECRET_ACCESS_KEY", credentials.getSecretKey());
-            put("AWS_PROFILE", credentials.getProfile());
-            put("AWS_REGION", credentials.getRegion());
-        }});
+    static public String getEnvironmentVariables(Object credentials) {
+//        return TerraformConfigurationHelper.getEnvironmentVariables(new HashMap<>() {{
+//            put("AWS_ACCESS_KEY_ID", credentials.getSecrets().getAccessKey());
+//            put("AWS_SECRET_ACCESS_KEY", credentials.getSecrets().getSecretKey());
+//            put("AWS_REGION", credentials.getRegion());
+//        }});
+        return "";
     }
 
     /**
@@ -44,9 +45,11 @@ public class AWSProviderConfigurationHelper {
      * @return composed environment variables.
      */
     static public String getVariables(String context, String version) {
-        return TerraformConfigurationHelper.getVariables(new HashMap<>() {{
-            put("resourcetracker_agent_context", context);
-            put("resourcetracker_agent_version", version);
-        }});
+//        return TerraformConfigurationHelper.getVariables(new HashMap<>() {{
+//            put("resourcetracker_agent_context", context);
+//            put("resourcetracker_agent_version", version);
+//        }});
+
+        return "";
     }
 }

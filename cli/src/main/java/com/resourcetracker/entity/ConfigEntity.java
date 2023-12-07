@@ -10,8 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 /**
- * Represents configuration model used for ResourceTracker
- * deployment operation.
+ * Represents configuration model used for ResourceTracker deployment operation.
  */
 @Getter
 public class ConfigEntity {

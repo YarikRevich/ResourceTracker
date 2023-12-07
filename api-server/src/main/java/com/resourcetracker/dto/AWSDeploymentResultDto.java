@@ -1,16 +1,11 @@
-package com.resourcetracker.entity;
+package com.resourcetracker.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 
-import java.io.IOException;
-
-public class AWSDeploymentResult {
+public class AWSDeploymentResultDto {
     @Getter
     public static class RawResult{
         String value;

@@ -1,10 +1,9 @@
 package com.resourcetracker.service.scheduler;
 
-import com.resourcetracker.entity.CommandExecutorOutputEntity;
+import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
-import com.resourcetracker.entity.ScriptExecCommandInputEntity;
+import com.resourcetracker.dto.ScriptExecCommandInputDto;
 import com.resourcetracker.exception.CommandExecutorException;
-import com.resourcetracker.exception.SchedulerException;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.executor.CommandExecutorService;
 import com.resourcetracker.service.kafka.KafkaService;
@@ -14,11 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import process.SProcessExecutor;
-import process.exceptions.NonMatchingOSException;
-import process.exceptions.SProcessNotYetStartedException;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
@@ -28,8 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * SchedulerService provides access to schedule incoming
- * tasks to be executed with the given conditions.
+ * Exposes opportunity to schedule incoming requests.
  */
 @Service
 public class SchedulerService {
@@ -50,21 +44,13 @@ public class SchedulerService {
     @Autowired
     private ScriptExecCommandService scriptExecCommandService;
 
-    private final ScheduledExecutorService scheduledExecutorService;
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-    private final ExecutorService executorService;
-
-    /**
-     * Default constructor, which initializes scheduler thread executor
-     * and virtual thread executor.
-     */
-    public SchedulerService() {
-        this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        this.executorService = Executors.newVirtualThreadPerTaskExecutor();
-    }
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     /**
-     * Starts executor listening process.
+     * Starts executor listening process, which receives incoming requests
+     * and executes them with the help of local command executor service.
      */
     public void start() {
         configService.getConfig().getRequests().forEach(request ->
@@ -78,18 +64,16 @@ public class SchedulerService {
 
     /**
      * Executes given script and sends result as message to Kafka cluster.
-     * @param input script to be executed
+     * @param input script to be executed.
      */
     private void exec(String input) {
-        scriptExecCommandService.setInput(ScriptExecCommandInputEntity.of(input));
+        scriptExecCommandService.setInput(ScriptExecCommandInputDto.of(input));
 
-        CommandExecutorOutputEntity scriptExecCommandOutput;
-
+        CommandExecutorOutputDto scriptExecCommandOutput = null;
         try {
             scriptExecCommandOutput = commandExecutorService.executeCommand(scriptExecCommandService);
         } catch (CommandExecutorException e) {
             logger.fatal(e.getMessage());
-            return;
         }
 
         kafkaService.send(KafkaLogsTopicEntity.of(

@@ -160,8 +160,7 @@ components:
         provider:
           $ref: "#/components/schemas/Provider"
         credentials:
-          oneOf:
-            - $ref: "#/components/schemas/AWSCredentials"
+          $ref: "#/components/schemas/CredentialsFields"
     DeploymentRequest:
       required:
         - name
@@ -179,24 +178,6 @@ components:
       type: string
       enum:
         - aws
-    AWSCredentials:
-      required:
-        - secrets
-        - region
-      properties:
-        secrets:
-          $ref: "#/components/schemas/AWSSecrets"
-        region:
-          type: string
-    AWSSecrets:
-      required:
-        - accessKey
-        - secretKey
-      properties:
-        accessKey:
-          type: string
-        secretKey:
-          type: string
     TerraformDeploymentApplicationResult:
       required:
         - machineAddress
@@ -216,8 +197,79 @@ components:
         provider:
           $ref: "#/components/schemas/Provider"
         credentials:
-          oneOf:
-            - $ref: "#/components/schemas/AWSCredentials"
+          $ref: "#/components/schemas/CredentialsFields"
+
+    CredentialsFields:
+      anyOf:
+        - $ref: "#/components/schemas/AWSCredentials"
+        - $ref: "#/components/schemas/GCPCredentials"
+
+    AWSCredentials:
+      required:
+        - secrets
+        - region
+      properties:
+        secrets:
+          $ref: "#/components/schemas/AWSSecrets"
+        region:
+          type: string
+    AWSSecrets:
+      required:
+        - accessKey
+        - secretKey
+      properties:
+        accessKey:
+          type: string
+        secretKey:
+          type: string
+
+    GCPCredentials:
+      required:
+        - key
+      properties:
+        key:
+          type: string
+
+
+
+#    CredentialsFields:
+#      type: object
+#      properties:
+#        credentialsType:
+#          type: string
+#          enum: [ AWS, GCP ]
+#      discriminator:
+#        propertyName: credentialsType
+#        mapping:
+#          AWS: '#/components/schemas/AWSCredentials'
+#          GCP: '#/components/schemas/GCPCredentials'
+#      #---------------------------------------------------------------------------
+#      # Concrete classes
+#      #---------------------------------------------------------------------------
+#    AWSCredentials:
+#      allOf:
+#        - $ref: "#/components/schemas/CredentialsFields"
+#        - type: object
+#          properties:
+#              accessKey:
+#                type: string
+#    GCPCredentials:
+#      allOf:
+#        - $ref: "#/components/schemas/CredentialsFields"
+#        - type: object
+#          properties:
+#            key:
+#              type: string
+#
+#
+
+
+
+
+
+
+
+
     DestructionRequest:
       required:
         - name
@@ -247,10 +299,13 @@ components:
     ValidationScriptApplication:
       required:
         - file
+      type: object
       properties:
         file:
-          type: string
-          format: binary
+          type: array
+          items:
+            type: string
+            format: binary
     ValidationScriptApplicationResult:
       required:
         - valid
@@ -259,7 +314,9 @@ components:
         valid:
           type: boolean
         data:
-          type: string
+          type: array
+          items:
+            type: string
     ApplicationInfoResult:
       properties:
         externalApi:

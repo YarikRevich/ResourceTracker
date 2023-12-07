@@ -111,48 +111,6 @@ public class ConfigService {
     }
 
     /**
-     * Selects explicit script, if given, or retrieves
-     * it from the given script file. If both are not given
-     * throws exception.
-     * @param src request entity, where both explicit script
-     *            and script file can be found
-     * @return script data to be executed
-     */
-//    public String getScript(ConfigEntity.Request src) {
-//        if (Objects.isNull(src.getRun())) {
-//            if (!Objects.isNull(src.getFile())){
-//                return getFileContent(src.getFile());
-//            }
-//
-//            logger.fatal(new ScriptDataException().getMessage());
-//        }
-//
-//        return src.getRun();
-//    }
-
-    //        TerraformDeploymentApplicationCredentials credentials = terraformDeploymentApplication.getCredentials();
-
-    /**
-     * Converts given credentials CSV file to a certain object.
-     * Exposed as a static method to be used with Terraform command definitions.
-     * @param file given file stream to be processed.
-     * @return converted credentials.
-     * @throws SecretsConversionException if any operation in conversion flow failed.
-     */
-    @SuppressWarnings("unchecked")
-    static public <T> List<T> getConvertedSecrets(Class<T> obj, InputStream file) throws SecretsConversionException {
-        try {
-            return new CsvToBeanBuilder(new BufferedReader(new InputStreamReader(file)))
-                    .withType(obj.getDeclaredConstructor().newInstance().getClass())
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build()
-                    .parse();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e){
-            throw new SecretsConversionException(e.getMessage());
-        }
-    }
-
-    /**
      * @return Parsed configuration entity
      */
     public ConfigEntity getConfig() {

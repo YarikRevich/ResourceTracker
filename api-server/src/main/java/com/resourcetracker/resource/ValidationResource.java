@@ -1,6 +1,8 @@
 package com.resourcetracker.resource;
 
 import com.resourcetracker.api.ValidationResourceApi;
+import com.resourcetracker.converter.ScriptConverter;
+import com.resourcetracker.converter.SecretsConverter;
 import com.resourcetracker.dto.AWSSecretsDto;
 import com.resourcetracker.model.Provider;
 import com.resourcetracker.model.ValidationSecretsApplicationResult;
@@ -8,6 +10,7 @@ import com.resourcetracker.model.ValidationScriptApplicationResult;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.vendor.VendorFacade;
 import com.resourcetracker.service.vendor.aws.AWSVendorService;
+import com.resourcetracker.model.ValidationSecretsApplicationResultSecrets;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.SneakyThrows;
@@ -33,17 +36,16 @@ public class ValidationResource implements ValidationResourceApi {
     public ValidationSecretsApplicationResult v1SecretsAcquirePost(Provider provider, InputStream _fileInputStream) {
         return switch (provider) {
             case AWS -> {
-                AWSSecretsDto secrets = ConfigService.getConvertedSecrets(
+                AWSSecretsDto secrets = SecretsConverter.convert(
                         AWSSecretsDto.class, _fileInputStream).get(1);
 
                 yield ValidationSecretsApplicationResult.of(
                         vendorFacade.isCredentialsValid(
                                 provider,
-                                AWSVendorService.getAWSCredentialsProvider(secrets)
-                        ),
-                        com.resourcetracker.model.ValidationSecretsApplicationResultSecrets.of(
-                                credentials.getAccessKey(),
-                                credentials.getSecretKey()
+                                AWSVendorService.getAWSCredentialsProvider(secrets)),
+                        ValidationSecretsApplicationResultSecrets.of(
+                                secrets.getAccessKey(),
+                                secrets.getSecretKey()
                         )
                 );
             }
@@ -57,7 +59,9 @@ public class ValidationResource implements ValidationResourceApi {
      */
     @Override
     public ValidationScriptApplicationResult v1ScriptAcquirePost(InputStream _fileInputStream) {
-
-        return null;
+//        ScriptConverter.convert(_fileInputStream);
+        return ValidationScriptApplicationResult.of(
+                true, null
+        );
     }
 }
