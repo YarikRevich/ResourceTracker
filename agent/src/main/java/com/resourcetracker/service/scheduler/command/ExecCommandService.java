@@ -9,7 +9,7 @@ import process.SProcessExecutor;
  *
  */
 @Service
-public class ScriptExecCommandService extends SProcess {
+public class ExecCommandService extends SProcess {
     private ScriptExecCommandInputDto input;
 
     /**

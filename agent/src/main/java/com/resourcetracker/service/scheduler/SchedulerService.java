@@ -5,10 +5,10 @@ import com.resourcetracker.entity.KafkaLogsTopicEntity;
 import com.resourcetracker.dto.ScriptExecCommandInputDto;
 import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.executor.CommandExecutorService;
+import com.resourcetracker.service.scheduler.executor.CommandExecutorService;
 import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.machine.MachineService;
-import com.resourcetracker.service.scheduler.command.ScriptExecCommandService;
+import com.resourcetracker.service.scheduler.command.ExecCommandService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class SchedulerService {
     private CommandExecutorService commandExecutorService;
 
     @Autowired
-    private ScriptExecCommandService scriptExecCommandService;
+    private ExecCommandService execCommandService;
 
     private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
@@ -67,11 +67,11 @@ public class SchedulerService {
      * @param input script to be executed.
      */
     private void exec(String input) {
-        scriptExecCommandService.setInput(ScriptExecCommandInputDto.of(input));
+        execCommandService.setInput(ScriptExecCommandInputDto.of(input));
 
         CommandExecutorOutputDto scriptExecCommandOutput = null;
         try {
-            scriptExecCommandOutput = commandExecutorService.executeCommand(scriptExecCommandService);
+            scriptExecCommandOutput = commandExecutorService.executeCommand(execCommandService);
         } catch (CommandExecutorException e) {
             logger.fatal(e.getMessage());
         }

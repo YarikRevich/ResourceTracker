@@ -9,26 +9,9 @@ import org.springframework.context.ApplicationContext;
 import java.util.Arrays;
 
 @SpringBootApplication
-public class Agent implements CommandLineRunner {
-  @Autowired
-  private ApplicationContext appContext;
-
-  /**
-   * Runs application
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    SpringApplication.run(Agent.class, args);
-  }
-
-  @Override
-  public void run(String... args) throws Exception {
-
-    String[] beans = appContext.getBeanDefinitionNames();
-    Arrays.sort(beans);
-    for (String bean : beans) {
-      System.out.println(bean);
+public class Agent {
+    public static void main(String[] args) {
+      SpringApplication application = new SpringApplication(App.class);
+      System.exit(SpringApplication.exit(application.run(args)));
     }
-
-  }
 }

@@ -1,8 +1,10 @@
 package com.resourcetracker.service.kafka;
 
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.exception.InvalidBootstrapServerEnvironmentVariableException;
 import com.resourcetracker.exception.KafkaProducerSendException;
 import jakarta.annotation.PreDestroy;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
@@ -33,11 +36,17 @@ public class KafkaService {
      * @param kafkaBootstrapServer address of Kafka cluster
      */
     public KafkaService(@Value("${RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER}") String kafkaBootstrapServer) {
-        Properties kafkaProducerProperties = new Properties();
+        if (Objects.isNull(kafkaBootstrapServer)){
+            logger.fatal(new InvalidBootstrapServerEnvironmentVariableException().getMessage());
+        }
 
-        kafkaProducerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
+        Properties kafkaProducerProps = new Properties();
 
-        this.kafkaProducer = new KafkaProducer<>(kafkaProducerProperties);
+        kafkaProducerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
+        kafkaProducerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        kafkaProducerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.springframework.kafka.support.serializer.JsonSerializer");
+
+        this.kafkaProducer = new KafkaProducer<>(kafkaProducerProps);
     }
 
     /**

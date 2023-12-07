@@ -1,4 +1,4 @@
-package com.resourcetracker.service.component;
+package com.resourcetracker.service.element.menu;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;

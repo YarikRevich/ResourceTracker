@@ -1,4 +1,4 @@
-package com.resourcetracker.service.executor;
+package com.resourcetracker.service.scheduler.executor;
 
 import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.exception.CommandExecutorException;

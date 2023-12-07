@@ -1,6 +1,6 @@
 package com.resourcetracker.service.element.scene;
 
-import com.resourcetracker.service.component.TabMenuBar;
+import com.resourcetracker.service.element.menu.TabMenuBar;
 import com.resourcetracker.service.element.IElement;
 import javafx.scene.Group;
 import javafx.scene.Scene;

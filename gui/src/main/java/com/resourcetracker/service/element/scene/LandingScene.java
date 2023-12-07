@@ -1,12 +1,9 @@
 package com.resourcetracker.service.element.scene;
 
-import com.resourcetracker.service.component.TabMenuBar;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.button.BasicButton;
-import com.resourcetracker.service.element.image.collection.ConnectionStatusImageCollection;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

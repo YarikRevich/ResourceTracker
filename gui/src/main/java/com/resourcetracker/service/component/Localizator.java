@@ -2,6 +2,8 @@ package com.resourcetracker.service.component;
 
 /**
  * Localizator exposes localisation service.
+ *
+ * TODO: not planned.
  */
 public class Localizator {
     public Localizator() {

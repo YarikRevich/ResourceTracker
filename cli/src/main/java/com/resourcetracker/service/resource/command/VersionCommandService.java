@@ -6,6 +6,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Represents
+ */
 @Service
 public class VersionCommandService {
     private static final Logger logger = LogManager.getLogger(VersionCommandService.class);
