@@ -37,6 +37,15 @@ public class PropertiesEntity {
     @Value(value = "${button.basic.size.height}")
     Double basicButtonSizeHeight;
 
+    @Value(value = "scene.start.background.color.r")
+    Integer startSceneBackgroundColorR;
+
+    @Value(value = "scene.start.background.color.g")
+    Integer startSceneBackgroundColorG;
+
+    @Value(value = "scene.start.background.color.b")
+    Integer startSceneBackgroundColorB;
+
     @Value(value = "${api-server.directory}")
     String apiServerDirectory;
 }

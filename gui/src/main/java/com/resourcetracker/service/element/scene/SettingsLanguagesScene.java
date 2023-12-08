@@ -5,7 +5,9 @@ import com.resourcetracker.service.element.IElement;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import org.springframework.stereotype.Service;
 
+@Service
 public class SettingsLanguagesScene implements IElement<Scene> {
     private final Scene settingsLanguagesScene;
 

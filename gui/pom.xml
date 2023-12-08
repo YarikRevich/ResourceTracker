@@ -6,17 +6,17 @@
     <name>gui</name>
     <description>GUI for ResourceTracker</description>
 
-    <properties>
-        <start-class>
-            com.resourcetracker.GUI
-        </start-class>
-    </properties>
-
     <parent>
         <groupId>com.resourcetracker</groupId>
         <artifactId>base</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
+    <properties>
+        <start-class>
+            com.resourcetracker.GUI
+        </start-class>
+    </properties>
 
     <dependencies>
         <!-- LOCAL -->
@@ -41,6 +41,12 @@
         <dependency>
             <groupId>com.brunomnsilva</groupId>
             <artifactId>smartgraph</artifactId>
+        </dependency>
+
+        <!-- KOTLIN -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
         </dependency>
 
         <!-- SPRING BOOT -->
@@ -124,16 +130,6 @@
                 <artifactId>javafx-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.resourcetracker.GUI</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
@@ -178,7 +174,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <sourceFile>${basedir}/target/gui-jar-with-dependencies.jar</sourceFile>
+                            <sourceFile>${basedir}/target/gui.jar</sourceFile>
                             <destinationFile>${main.basedir}/../bin/gui/gui.jar</destinationFile>
                         </configuration>
                     </execution>

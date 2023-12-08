@@ -182,6 +182,13 @@
         <version>1.0.0</version>
       </dependency>
 
+      <!-- KOTLIN -->
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-stdlib</artifactId>
+        <version>1.9.21</version>
+      </dependency>
+
       <!-- THIRD PARTY -->
       <dependency>
         <groupId>org.jboss</groupId>

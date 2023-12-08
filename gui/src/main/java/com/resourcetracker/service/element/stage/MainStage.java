@@ -3,15 +3,11 @@ package com.resourcetracker.service.element.stage;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.ElementHelper;
-import com.resourcetracker.service.element.scene.LandingScene;
-import com.resourcetracker.service.element.scene.SettingsLanguagesScene;
+import com.resourcetracker.service.element.scene.StartScene;
 import com.resourcetracker.service.event.state.ConnectionStatusEvent;
-import com.resourcetracker.service.event.state.LocalState;
-import com.sun.tools.javac.Main;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,7 +25,7 @@ public class MainStage implements IElement<Stage> {
 
     public MainStage(
             @Autowired PropertiesEntity properties,
-            @Autowired LandingScene landingScene
+            @Autowired StartScene startScene
             ) {
         Platform.runLater(() -> {
             Stage mainStage = new Stage();
@@ -45,7 +41,7 @@ public class MainStage implements IElement<Stage> {
             mainStage.setX(centralPoint.getX());
             mainStage.setY(centralPoint.getY());
 
-            mainStage.setScene(landingScene.getContent());
+            mainStage.setScene(startScene.getContent());
 
             MainStage.mainStage = mainStage;
         });
