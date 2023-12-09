@@ -1,5 +1,8 @@
 package com.resourcetracker.logging;
 
+import java.time.Instant;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Core;
@@ -15,39 +18,30 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 @Component
-@Plugin(
-        name = "FatalAppender",
-        category = Core.CATEGORY_NAME,
-        elementType = Appender.ELEMENT_TYPE)
+@Plugin(name = "FatalAppender", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE)
 public class FatalAppender extends AbstractAppender {
-    @Autowired
-    private ApplicationContext context;
+  @Autowired private ApplicationContext context;
 
-    private ConcurrentMap<String, LogEvent> eventMap = new ConcurrentHashMap<>();
+  private ConcurrentMap<String, LogEvent> eventMap = new ConcurrentHashMap<>();
 
-    protected FatalAppender(String name, Filter filter) {
-        super(name, filter, null);
+  protected FatalAppender(String name, Filter filter) {
+    super(name, filter, null);
+  }
+
+  @PluginFactory
+  public static FatalAppender createAppender(
+      @PluginAttribute("name") String name, @PluginElement("Filter") Filter filter) {
+    return new FatalAppender(name, filter);
+  }
+
+  @Override
+  public void append(LogEvent event) {
+    if (event.getLevel().equals(Level.FATAL)) {
+      SpringApplication.exit(context, () -> 1);
+      System.exit(1);
     }
 
-    @PluginFactory
-    public static FatalAppender createAppender(
-            @PluginAttribute("name") String name,
-            @PluginElement("Filter") Filter filter) {
-        return new FatalAppender(name, filter);
-    }
-
-    @Override
-    public void append(LogEvent event) {
-        if (event.getLevel().equals(Level.FATAL)){
-            SpringApplication.exit(context, () -> 1);
-            System.exit(1);
-        }
-
-        eventMap.put(Instant.now().toString(), event);
-    }
+    eventMap.put(Instant.now().toString(), event);
+  }
 }

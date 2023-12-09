@@ -7,12 +7,10 @@ import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class TerraformExceptionMapper implements ExceptionMapper<TerraformException> {
-    @Override
-    public Response toResponse(TerraformException e) {
-        return Response
-                .status(
-                        Response.Status.BAD_REQUEST.getStatusCode())
-                .entity(e.getMessage())
-                .build();
-    }
+  @Override
+  public Response toResponse(TerraformException e) {
+    return Response.status(Response.Status.BAD_REQUEST.getStatusCode())
+        .entity(e.getMessage())
+        .build();
+  }
 }

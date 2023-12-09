@@ -1,44 +1,39 @@
 package com.resourcetracker.service.terraform.provider.aws.command;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.model.Provider;
-//import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
-import com.resourcetracker.service.terraform.provider.aws.common.AWSProviderConfigurationHelper;
+// import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
 import process.SProcess;
 import process.SProcessExecutor;
 import process.SProcessExecutor.OS;
 
-import java.nio.file.Paths;
-
-/**
- * Represents Terraform destroy command.
- */
+/** Represents Terraform destroy command. */
 public class DestroyCommandService extends SProcess {
-    private final String command;
-    private final OS osType;
+  private final String command;
+  private final OS osType;
 
-    public DestroyCommandService(com.resourcetracker.model.CredentialsFields credentials, PropertiesEntity properties) {
-        this.osType = SProcessExecutor.getCommandExecutor().getOSType();
+  public DestroyCommandService(
+      com.resourcetracker.model.CredentialsFields credentials, PropertiesEntity properties) {
+    this.osType = SProcessExecutor.getCommandExecutor().getOSType();
 
-        this.command = "";
-//        this.command = switch (osType){
-//            case WINDOWS -> null;
-//            case UNIX, MAC, ANY -> String.format(
-//                    "%s terraform destroy %s -chdir=%s -input=false -auto-approve -no-color",
-//                    AWSProviderConfigurationHelper.getEnvironmentVariables(credentials),
-//                    AWSProviderConfigurationHelper.getBackendConfig(credentials),
-//                    Paths.get(properties.getTerraformDirectory(), Provider.AWS.toString())
-//            );
-//        };
-    }
+    this.command = "";
+    //        this.command = switch (osType){
+    //            case WINDOWS -> null;
+    //            case UNIX, MAC, ANY -> String.format(
+    //                    "%s terraform destroy %s -chdir=%s -input=false -auto-approve -no-color",
+    //                    AWSProviderConfigurationHelper.getEnvironmentVariables(credentials),
+    //                    AWSProviderConfigurationHelper.getBackendConfig(credentials),
+    //                    Paths.get(properties.getTerraformDirectory(), Provider.AWS.toString())
+    //            );
+    //        };
+  }
 
-    @Override
-    public String getCommand() {
-        return command;
-    }
+  @Override
+  public String getCommand() {
+    return command;
+  }
 
-    @Override
-    public OS getOSType() {
-        return osType;
-    }
+  @Override
+  public OS getOSType() {
+    return osType;
+  }
 }

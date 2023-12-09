@@ -5,11 +5,11 @@ import org.springframework.context.ApplicationEvent;
 
 @Getter
 public class ConnectionStatusEvent extends ApplicationEvent {
-    private final boolean connectionEstablished;
+  private final boolean connectionEstablished;
 
-    public ConnectionStatusEvent(boolean connectionEstablished) {
-        super(connectionEstablished);
+  public ConnectionStatusEvent(boolean connectionEstablished) {
+    super(connectionEstablished);
 
-        this.connectionEstablished = connectionEstablished;
-    }
+    this.connectionEstablished = connectionEstablished;
+  }
 }

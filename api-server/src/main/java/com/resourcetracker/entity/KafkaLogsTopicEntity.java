@@ -1,24 +1,21 @@
 package com.resourcetracker.entity;
 
-import lombok.Getter;
-
 import java.sql.Timestamp;
 import java.util.UUID;
+import lombok.Getter;
 
-/**
- * Represents message received from Kafka 'logs' topic.
- */
+/** Represents message received from Kafka 'logs' topic. */
 @Getter
 public class KafkaLogsTopicEntity {
-    UUID id;
+  UUID id;
 
-    String data;
+  String data;
 
-    String error;
+  String error;
 
-    String hostName;
+  String hostName;
 
-    String hostAddress;
+  String hostAddress;
 
-    Timestamp timestamp;
+  Timestamp timestamp;
 }

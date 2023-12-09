@@ -6,13 +6,12 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 @Provider
-public class SecretsConversionExceptionMapper implements ExceptionMapper<SecretsConversionException> {
-    @Override
-    public Response toResponse(SecretsConversionException e) {
-        return Response
-                .status(
-                        Response.Status.BAD_REQUEST.getStatusCode())
-                .entity(e.getMessage())
-                .build();
-    }
+public class SecretsConversionExceptionMapper
+    implements ExceptionMapper<SecretsConversionException> {
+  @Override
+  public Response toResponse(SecretsConversionException e) {
+    return Response.status(Response.Status.BAD_REQUEST.getStatusCode())
+        .entity(e.getMessage())
+        .build();
+  }
 }

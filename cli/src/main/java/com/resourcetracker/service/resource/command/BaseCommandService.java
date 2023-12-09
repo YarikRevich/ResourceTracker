@@ -5,19 +5,19 @@ import org.springframework.stereotype.Service;
 import picocli.CommandLine.Command;
 
 @Service
-@Command(name = "help", mixinStandardHelpOptions = true, description = "Cloud-based remote resource tracker", version = "1.0")
+@Command(
+    name = "help",
+    mixinStandardHelpOptions = true,
+    description = "Cloud-based remote resource tracker",
+    version = "1.0")
 public class BaseCommandService {
-  @Autowired
-  private StartCommandService startCommandService;
+  @Autowired private StartCommandService startCommandService;
 
-  @Autowired
-  private StateCommandService stateCommandService;
+  @Autowired private StateCommandService stateCommandService;
 
-  @Autowired
-  private StopCommandService stopCommandService;
+  @Autowired private StopCommandService stopCommandService;
 
-  @Autowired
-  private VersionCommandService versionCommandService;
+  @Autowired private VersionCommandService versionCommandService;
 
   @Command(description = "Start remote requests execution")
   void start() {
@@ -35,5 +35,7 @@ public class BaseCommandService {
   }
 
   @Command(description = "Stop remote requests execution")
-  void version() { versionCommandService.process(); }
+  void version() {
+    versionCommandService.process();
+  }
 }

@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 public class ScriptConverter {
-    static public List<String> convert(List<InputStream> file) {
-        return null;
-    }
+  public static List<String> convert(List<InputStream> file) {
+    return null;
+  }
 }

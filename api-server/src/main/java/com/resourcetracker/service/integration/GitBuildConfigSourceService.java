@@ -1,84 +1,74 @@
 package com.resourcetracker.service.integration;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
-import com.resourcetracker.service.config.ConfigService;
 import io.quarkus.runtime.annotations.StaticInitSafe;
-import jakarta.validation.constraints.Null;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.eclipse.microprofile.config.spi.ConfigSource;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.eclipse.microprofile.config.spi.ConfigSource;
 
-/**
- * Provides access to external config source used as a source of Git info.
- */
+/** Provides access to external config source used as a source of Git info. */
 @StaticInitSafe
 public class GitBuildConfigSourceService implements ConfigSource {
-    private static final Logger logger = LogManager.getLogger(GitBuildConfigSourceService.class);
+  private static final Logger logger = LogManager.getLogger(GitBuildConfigSourceService.class);
 
-    private final Properties properties;
+  private final Properties properties;
 
-    public GitBuildConfigSourceService() {
-        this.properties = new Properties();
+  public GitBuildConfigSourceService() {
+    this.properties = new Properties();
 
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream gitBuildPropertiesStream = classLoader.getResourceAsStream("git.properties");
-        try {
-            properties.load(gitBuildPropertiesStream);
-        } catch (IOException e) {
-            logger.fatal(e.getMessage());
-        }
+    ClassLoader classLoader = getClass().getClassLoader();
+    InputStream gitBuildPropertiesStream = classLoader.getResourceAsStream("git.properties");
+    try {
+      properties.load(gitBuildPropertiesStream);
+    } catch (IOException e) {
+      logger.fatal(e.getMessage());
     }
+  }
 
-    /**
-     * @see ConfigSource
-     */
-    @Override
-    public Map<String, String> getProperties() {
-        return ConfigSource.super.getProperties();
-    }
+  /**
+   * @see ConfigSource
+   */
+  @Override
+  public Map<String, String> getProperties() {
+    return ConfigSource.super.getProperties();
+  }
 
-    /**
-     * @see ConfigSource
-     */
-    @Override
-    public Set<String> getPropertyNames() {
-        return properties
-                .keySet()
-                .stream()
-                .map(element -> (String)element)
-                .collect(Collectors.toSet());
-    }
+  /**
+   * @see ConfigSource
+   */
+  @Override
+  public Set<String> getPropertyNames() {
+    return properties.keySet().stream()
+        .map(element -> (String) element)
+        .collect(Collectors.toSet());
+  }
 
-    /**
-     * @see ConfigSource
-     */
-    @Override
-    public int getOrdinal() {
-        return ConfigSource.super.getOrdinal();
-    }
+  /**
+   * @see ConfigSource
+   */
+  @Override
+  public int getOrdinal() {
+    return ConfigSource.super.getOrdinal();
+  }
 
-    /**
-     * @see ConfigSource
-     */
-    @Override
-    public String getValue(String s) {
-        return (String)properties.get(s);
-    }
+  /**
+   * @see ConfigSource
+   */
+  @Override
+  public String getValue(String s) {
+    return (String) properties.get(s);
+  }
 
-    /**
-     * @see ConfigSource
-     */
-    @Override
-    public String getName() {
-        return GitBuildConfigSourceService.class.getSimpleName();
-    }
+  /**
+   * @see ConfigSource
+   */
+  @Override
+  public String getName() {
+    return GitBuildConfigSourceService.class.getSimpleName();
+  }
 }

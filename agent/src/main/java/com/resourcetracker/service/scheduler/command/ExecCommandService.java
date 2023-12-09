@@ -1,32 +1,30 @@
 package com.resourcetracker.service.scheduler.command;
 
-import org.springframework.stereotype.Service;
 import process.SProcess;
 import process.SProcessExecutor;
 
-/**
- *
- */
+/** */
 public class ExecCommandService extends SProcess {
-    private final String command;
-    private final SProcessExecutor.OS osType;
+  private final String command;
+  private final SProcessExecutor.OS osType;
 
-    public ExecCommandService(String input) {
-        this.osType = SProcessExecutor.getCommandExecutor().getOSType();
+  public ExecCommandService(String input) {
+    this.osType = SProcessExecutor.getCommandExecutor().getOSType();
 
-        this.command = switch (osType){
-            case WINDOWS -> null;
-            case UNIX, MAC, ANY -> input;
+    this.command =
+        switch (osType) {
+          case WINDOWS -> null;
+          case UNIX, MAC, ANY -> input;
         };
-    }
+  }
 
-    @Override
-    public String getCommand() {
-        return command;
-    }
+  @Override
+  public String getCommand() {
+    return command;
+  }
 
-    @Override
-    public SProcessExecutor.OS getOSType() {
-        return osType;
-    }
+  @Override
+  public SProcessExecutor.OS getOSType() {
+    return osType;
+  }
 }

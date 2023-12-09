@@ -1,7 +1,6 @@
 package com.resourcetracker.service.resource.command;
 
 import com.resourcetracker.ApiClient;
-import com.resourcetracker.api.InfoResourceApi;
 import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
@@ -21,20 +20,27 @@ public class StopCommandService {
   public StopCommandService(@Autowired ConfigService configService) {
     this.configService = configService;
 
-    ApiClient apiClient = new ApiClient()
-            .setBasePath(configService.getConfig().getApiServer().getHost());
+    ApiClient apiClient =
+        new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 
     this.terraformResourceApi = new TerraformResourceApi(apiClient);
   }
 
   public void process() {
-    TerraformDestructionApplication terraformDestructionApplication = new TerraformDestructionApplication();
+    TerraformDestructionApplication terraformDestructionApplication =
+        new TerraformDestructionApplication();
 
-    configService.getConfig().getRequests().forEach(element -> {
-      terraformDestructionApplication.addNameItem(element.getName());
-    });
+    configService
+        .getConfig()
+        .getRequests()
+        .forEach(
+            element -> {
+              terraformDestructionApplication.addNameItem(element.getName());
+            });
 
-    Mono<Void> response = terraformResourceApi.v1TerraformDestroyPost(terraformDestructionApplication)
+    Mono<Void> response =
+        terraformResourceApi
+            .v1TerraformDestroyPost(terraformDestructionApplication)
             .doOnError(t -> logger.fatal(t.getMessage()));
     response.block();
 

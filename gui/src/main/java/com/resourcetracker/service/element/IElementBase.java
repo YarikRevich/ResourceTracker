@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface IElementBase {
-    Map<UUID, Object> storage = new HashMap<>();
+  Map<UUID, Object> storage = new HashMap<>();
 
-    default void setElement(UUID id, Object element) {
-        storage.putIfAbsent(id, element);
-    }
+  default void setElement(UUID id, Object element) {
+    storage.putIfAbsent(id, element);
+  }
 
-    @SuppressWarnings("unchecked")
-    default <T> T getElement(UUID id) {
-        return (T)storage.get(id);
-    }
+  @SuppressWarnings("unchecked")
+  default <T> T getElement(UUID id) {
+    return (T) storage.get(id);
+  }
 }
