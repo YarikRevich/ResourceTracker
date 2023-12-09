@@ -4,7 +4,6 @@ import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.machine.MachineService;
 import com.resourcetracker.service.scheduler.SchedulerService;
-import com.resourcetracker.service.scheduler.command.ExecCommandService;
 import com.resourcetracker.service.scheduler.executor.CommandExecutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -18,8 +17,7 @@ import org.springframework.stereotype.Component;
   ConfigService.class,
   KafkaService.class,
   MachineService.class,
-  CommandExecutorService.class,
-  ExecCommandService.class
+  CommandExecutorService.class
 })
 public class App implements ApplicationRunner {
   //    @Autowired
