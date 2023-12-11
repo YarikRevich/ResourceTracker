@@ -7,7 +7,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /** Represents helpful functionality, which is used for elements management. */
-public class ElementHelper {
+public class WindowHelper {
   /**
    * Executes scene switch
    *
@@ -37,5 +37,11 @@ public class ElementHelper {
 
     return new Rectangle2D(
         0, 0, defaultBounds.getWidth() * widthScale, defaultBounds.getHeight() * heightScale);
+  }
+
+  public static Double getCircularElementSize(Double scale) {
+    Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
+
+    return defaultBounds.getWidth() * scale;
   }
 }

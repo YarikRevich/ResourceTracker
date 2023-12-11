@@ -5,6 +5,10 @@ package com.resourcetracker.service.element;
  *
  * @param <T> base element type.
  */
-public interface IElement<T> extends IElementBase {
+public interface IElement<T> {
+  /**
+   *
+   * @return
+   */
   T getContent();
 }

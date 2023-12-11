@@ -56,9 +56,8 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
   network_mode             = "awsvpc"
   execution_role_arn       = module.iam.resourcetracker_ecs_task_execution_role_arn
   requires_compatibilities = ["FARGATE"]
-  memory                   = 512
+  memory                   = 1024
   cpu                      = 256
-  depends_on = []
 
   container_definitions = jsonencode([
     {

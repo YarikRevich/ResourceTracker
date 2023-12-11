@@ -33,7 +33,7 @@ public class TerraformConfigurationHelper {
    */
   public static String getEnvironmentVariables(Map<String, String> attributes) {
     return attributes.entrySet().stream()
-        .map(element -> String.format("%s=%s", element.getKey(), element.getValue()))
+        .map(element -> String.format("%s='%s'", element.getKey(), element.getValue()))
         .collect(Collectors.joining(" "));
   }
 
@@ -45,7 +45,7 @@ public class TerraformConfigurationHelper {
    */
   public static String getVariables(Map<String, String> attributes) {
     return attributes.entrySet().stream()
-        .map(element -> String.format("-var %s=%s", element.getKey(), element.getValue()))
+        .map(element -> String.format("-var %s='%s'", element.getKey(), element.getValue()))
         .collect(Collectors.joining(" "));
   }
 

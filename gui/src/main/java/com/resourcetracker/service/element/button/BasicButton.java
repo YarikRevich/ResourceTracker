@@ -1,8 +1,11 @@
 package com.resourcetracker.service.element.button;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.service.element.IElement;
+import com.resourcetracker.service.element.IElementActualizable;
 import com.resourcetracker.service.element.IElementResizable;
-import com.resourcetracker.service.element.common.ElementHelper;
+import com.resourcetracker.service.element.common.WindowHelper;
+import com.resourcetracker.service.element.storage.ElementStorage;
 import ink.bluecloud.css.CssResources;
 import ink.bluecloud.css.ElementButton;
 import ink.bluecloud.css.ElementButtonKt;
@@ -11,7 +14,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 
 /** */
-public class BasicButton implements IElementResizable<Button> {
+public class BasicButton implements IElementResizable, IElement<Button> {
   UUID id = UUID.randomUUID();
 
   /**
@@ -24,7 +27,7 @@ public class BasicButton implements IElementResizable<Button> {
     Button basicButton = new Button();
 
     Rectangle2D button =
-        ElementHelper.getSizeWithScale(
+        WindowHelper.getSizeWithScale(
             properties.getBasicButtonSizeWidth(), properties.getBasicButtonSizeHeight());
 
     //    basicButton.prefWidthProperty().bind(Bindings.divide(basicButton.prefWidthProperty(),
@@ -45,7 +48,8 @@ public class BasicButton implements IElementResizable<Button> {
     basicButton.setText(text);
     basicButton.setOnAction(event -> action.run());
 
-    setElement(id, basicButton);
+    ElementStorage.setElement(id, basicButton);
+    ElementStorage.setResizable(this);
   }
 
   /**
@@ -53,22 +57,22 @@ public class BasicButton implements IElementResizable<Button> {
    */
   @Override
   public Button getContent() {
-    return getElement(id);
+    return ElementStorage.getElement(id);
   }
 
   /**
-   * @param value window width value.
+   *
    */
   @Override
-  public void prefWidth(Double value) {
-    System.out.println(value);
+  public void handlePrefWidth() {
+
   }
 
   /**
-   * @param value window height value.
+   *
    */
   @Override
-  public void prefHeight(Double value) {
-    System.out.println(value);
+  public void handlePrefHeight() {
+
   }
 }

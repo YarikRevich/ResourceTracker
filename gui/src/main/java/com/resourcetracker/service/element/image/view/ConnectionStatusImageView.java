@@ -1,79 +1,95 @@
 package com.resourcetracker.service.element.image.view;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementActualizable;
+import com.resourcetracker.service.element.IElementResizable;
+import com.resourcetracker.service.element.common.WindowHelper;
 import com.resourcetracker.service.element.image.collection.ConnectionStatusImageCollection;
-import com.resourcetracker.service.event.state.LocalState;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import javafx.scene.Group;
+
+import java.util.UUID;
+
+import com.resourcetracker.service.element.storage.ElementStorage;
+import javafx.scene.control.Button;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tooltip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/** Represents connection status image. */
 @Service
-public class ConnectionStatusImageView implements IElementActualizable<Group> {
-  @Autowired private PropertiesEntity properties;
+public class ConnectionStatusImageView implements IElementActualizable, IElementResizable, IElement<SplitPane> {
+  UUID id = UUID.randomUUID();
 
-  private static Group connectionStatusImageView;
+  public ConnectionStatusImageView(@Autowired PropertiesEntity properties) {
+    Button connectionStatusImageView = new Button();
+    connectionStatusImageView.setDisable(true);
+    SplitPane splitPane = new SplitPane(connectionStatusImageView);
+    splitPane.setTooltip(new Tooltip("I'm the Tooltip Massage"));
+//
+//    Button connectionStatusImageView = new Button();
+//    connectionStatusImageView.setDisable(false);
+//    connectionStatusImageView.setTooltip(new Tooltip("IT WORKS!"));
 
-  public ConnectionStatusImageView() {
-    Group connectionStatusImageView = new Group();
-    connectionStatusImageView
-        .getChildren()
-        .add(ConnectionStatusImageCollection.getFailedConnectionStatusImage());
+    connectionStatusImageView.setGraphic(ConnectionStatusImageCollection.getFailedConnectionStatusImage(
+            WindowHelper.getCircularElementSize(properties.getStatusImageScale())));
+//    connectionStatusImageView.(ConnectionStatusImageCollection.getFailedConnectionStatusImage(
+//            WindowHelper.getCircularElementSize(properties.getStatusImageScale())));
+//
+//    connectionStatusImageView
+//        .getChildren()
+//        .add();
 
-    ConnectionStatusImageView.connectionStatusImageView = connectionStatusImageView;
+    ElementStorage.setElement(id, splitPane);
+    ElementStorage.setActualizable(this);
+    ElementStorage.setResizable(this);
   }
 
   /**
    * @see IElementActualizable
    */
   @Override
-  public Group getContent() {
-    return connectionStatusImageView;
+  public SplitPane getContent() {
+    return ElementStorage.getElement(id);
   }
-
-  /**
-   * @param value window width value.
-   */
-  @Override
-  public void prefWidth(Double value) {}
-
-  /**
-   * @param value window height value.
-   */
-  @Override
-  public void prefHeight(Double value) {}
 
   /**
    * @see IElementActualizable
    */
   @Override
   public void handleBackgroundUpdates() {
-    ScheduledExecutorService scheduledExecutorService =
-        Executors.newSingleThreadScheduledExecutor();
-    ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+    System.out.println("in background updates");
+//    schedulerService.scheduleTask(
+//        () -> {
+//          Group connectionStatusImageView = getContent();
+//          connectionStatusImageView.getChildren().removeAll();
+//
+//          if (LocalState.isConnectionEstablished()) {
+//            connectionStatusImageView
+//                .getChildren()
+//                .add(ConnectionStatusImageCollection.getSuccessfulConnectionStatusImage());
+//          } else {
+//            connectionStatusImageView
+//                .getChildren()
+//                .add(ConnectionStatusImageCollection.getFailedConnectionStatusImage());
+//          }
+//        },
+//        properties.getProcessBackgroundPeriod());
+  }
 
-    scheduledExecutorService.scheduleAtFixedRate(
-        () ->
-            executorService.execute(
-                () -> {
-                  connectionStatusImageView.getChildren().removeAll();
+  /**
+   * @see IElementResizable
+   */
+  @Override
+  public void handlePrefWidth() {
 
-                  if (LocalState.isConnectionEstablished()) {
-                    connectionStatusImageView
-                        .getChildren()
-                        .add(ConnectionStatusImageCollection.getSuccessfulConnectionStatusImage());
-                  } else {
-                    connectionStatusImageView
-                        .getChildren()
-                        .add(ConnectionStatusImageCollection.getFailedConnectionStatusImage());
-                  }
-                }),
-        0,
-        properties.getProcessBackgroundPeriod(),
-        TimeUnit.MILLISECONDS);
+  }
+
+  /**
+   * @see IElementResizable
+   */
+  @Override
+  public void handlePrefHeight() {
+
   }
 }

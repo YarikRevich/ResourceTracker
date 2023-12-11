@@ -1,5 +1,6 @@
 package com.resourcetracker.service.element.scene.settings;
 
+import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.menu.TabMenuBar;
 import javafx.scene.Group;
@@ -8,7 +9,7 @@ import javafx.scene.control.Label;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SettingsLanguagesScene implements IElementResizable<Scene> {
+public class SettingsLanguagesScene implements IElementResizable, IElement<Scene> {
   private final Scene settingsLanguagesScene;
 
   public SettingsLanguagesScene() {
@@ -31,14 +32,18 @@ public class SettingsLanguagesScene implements IElementResizable<Scene> {
   }
 
   /**
-   * @param value window width value.
+   *
    */
   @Override
-  public void prefWidth(Double value) {}
+  public void handlePrefWidth() {
+
+  }
 
   /**
-   * @param value window height value.
+   *
    */
   @Override
-  public void prefHeight(Double value) {}
+  public void handlePrefHeight() {
+
+  }
 }

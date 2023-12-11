@@ -4,7 +4,6 @@ import com.resourcetracker.entity.KafkaLogsTopicEntity;
 import com.resourcetracker.exception.InvalidBootstrapServerEnvironmentVariableException;
 import com.resourcetracker.exception.KafkaProducerSendException;
 import jakarta.annotation.PreDestroy;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Future;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -33,7 +32,8 @@ public class KafkaService {
    * @param kafkaBootstrapServer address of Kafka cluster
    */
   public KafkaService(
-      @Value("${RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER:null}") String kafkaBootstrapServer) throws InvalidBootstrapServerEnvironmentVariableException {
+      @Value("${RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER:null}") String kafkaBootstrapServer)
+      throws InvalidBootstrapServerEnvironmentVariableException {
     if (kafkaBootstrapServer.equals("null")) {
       throw new InvalidBootstrapServerEnvironmentVariableException();
     }

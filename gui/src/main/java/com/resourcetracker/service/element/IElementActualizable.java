@@ -1,9 +1,12 @@
 package com.resourcetracker.service.element;
 
 /**
- * @param <T>
+ * Contains additional method responsible for background updates handling.
  */
-public interface IElementActualizable<T> extends IElementResizable<T> {
-  /** Represents handler for background updates, which will be running in the background. */
+public interface IElementActualizable {
+  /**
+   * Represents handler for background updates, which will be running in the background.
+   * Should be started in the constructor of the element.
+   */
   void handleBackgroundUpdates();
 }

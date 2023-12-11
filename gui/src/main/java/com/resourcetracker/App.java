@@ -1,6 +1,7 @@
 package com.resourcetracker;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.service.element.observer.ElementObserver;
 import com.resourcetracker.service.element.stage.MainStage;
 import com.resourcetracker.service.event.integrated.StageReadyEvent;
 import com.resourcetracker.service.event.state.LocalState;
@@ -20,6 +21,8 @@ public class App extends Application {
   @Autowired PropertiesEntity properties;
 
   @Autowired LocalState localState;
+
+  @Autowired ElementObserver elementObserver;
 
   @Autowired MainStage mainStage;
 

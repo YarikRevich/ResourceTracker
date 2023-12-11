@@ -5,11 +5,12 @@ import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
 import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
+import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GraphVisualizer implements IElementResizable<SmartGraphPanel<String, String>> {
+public class GraphVisualizer implements IElementResizable, IElement<SmartGraphPanel<String, String>> {
   private SmartGraphPanel<String, String> panel;
 
   public GraphVisualizer() {
@@ -60,14 +61,18 @@ public class GraphVisualizer implements IElementResizable<SmartGraphPanel<String
   }
 
   /**
-   * @param value window width value.
+   *
    */
   @Override
-  public void prefWidth(Double value) {}
+  public void handlePrefWidth() {
+
+  }
 
   /**
-   * @param value window height value.
+   *
    */
   @Override
-  public void prefHeight(Double value) {}
+  public void handlePrefHeight() {
+
+  }
 }

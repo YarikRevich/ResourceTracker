@@ -363,8 +363,15 @@
               <includes>
                 <include>src/main/java/**/*.java</include>
               </includes>
-              <trimTrailingWhitespace/>
               <endWithNewline/>
+<!--              <indent>-->
+<!--                <spaces>true</spaces>-->
+<!--                <spacesPerTab>4</spacesPerTab>-->
+<!--              </indent>-->
+              <indent>
+                <tabs>true</tabs>
+                <spacesPerTab>2</spacesPerTab>
+              </indent>
               <indent>
                 <spaces>true</spaces>
                 <spacesPerTab>4</spacesPerTab>

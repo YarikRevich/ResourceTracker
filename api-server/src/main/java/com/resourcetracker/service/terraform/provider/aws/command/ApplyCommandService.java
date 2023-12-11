@@ -19,10 +19,10 @@ public class ApplyCommandService extends SProcess {
     //        this.command = switch (osType){
     //            case WINDOWS -> null;
     //            case UNIX, MAC, ANY -> String.format(
-    //                    "terraform apply -chdir=%s %s %s -input=false -no-color -auto-approve",
+    //                    "%s terraform apply -chdir=%s %s -input=false -no-color -auto-approve",
+    //                    AWSProviderConfigurationHelper.getEnvironmentVariables(credentials),
     //                    Paths.get(properties.getTerraformDirectory(),
     // com.resourcetracker.model.Provider.AWS.toString()),
-    //                    AWSProviderConfigurationHelper.getBackendConfig(credentials),
     //                    AWSProviderConfigurationHelper.getVariables("",
     // properties.getGitCommitId())
     //            );

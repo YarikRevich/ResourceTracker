@@ -29,6 +29,12 @@ public class PropertiesEntity {
   @Value(value = "${process.background.period}")
   Integer processBackgroundPeriod;
 
+  @Value(value = "${process.window.width.period}")
+  Integer processWindowWidthPeriod;
+
+  @Value(value = "${process.window.height.period}")
+  Integer processWindowHeightPeriod;
+
   @Value(value = "${button.basic.size.width}")
   Double basicButtonSizeWidth;
 
@@ -43,6 +49,9 @@ public class PropertiesEntity {
 
   @Value(value = "${scene.start.background.color.b}")
   Integer startSceneBackgroundColorB;
+
+  @Value(value = "${image.status.scale}")
+  Double statusImageScale;
 
   @Value(value = "${api-server.directory}")
   String apiServerDirectory;

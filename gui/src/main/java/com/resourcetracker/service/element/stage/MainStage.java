@@ -2,9 +2,16 @@ package com.resourcetracker.service.element.stage;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.common.ElementHelper;
+import com.resourcetracker.service.element.common.WindowHelper;
+import com.resourcetracker.service.element.scene.main.DeploymentDetailsScene;
+import com.resourcetracker.service.element.scene.main.DeploymentScene;
 import com.resourcetracker.service.element.scene.main.StartScene;
+import com.resourcetracker.service.element.scene.settings.SettingsLanguagesScene;
 import java.util.UUID;
+
+import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.event.state.payload.WindowHeightUpdateEvent;
+import com.resourcetracker.service.event.state.payload.WindowWidthUpdateEvent;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -18,22 +25,25 @@ import org.springframework.stereotype.Service;
 public class MainStage implements IElement<Stage> {
   UUID id = UUID.randomUUID();
 
-  @Autowired private ApplicationEventPublisher applicationEventPublisher;
-
-  public MainStage(@Autowired PropertiesEntity properties, @Autowired StartScene startScene) {
+  public MainStage(
+      @Autowired PropertiesEntity properties,
+      @Autowired StartScene startScene,
+      @Autowired ApplicationEventPublisher applicationEventPublisher) {
     Platform.runLater(
         () -> {
           Stage mainStage = new Stage();
           mainStage.setTitle(properties.getWindowMainName());
 
           Rectangle2D window =
-              ElementHelper.getSizeWithScale(
+              WindowHelper.getSizeWithScale(
                   properties.getWindowMainScaleWidth(), properties.getWindowMainScaleHeight());
           mainStage.setWidth(window.getWidth());
           mainStage.setHeight(window.getHeight());
+          mainStage.setMinWidth(window.getWidth());
+          mainStage.setMinHeight(window.getHeight());
 
           Point2D centralPoint =
-              ElementHelper.getCentralPoint(mainStage.getWidth(), mainStage.getHeight());
+              WindowHelper.getCentralPoint(mainStage.getWidth(), mainStage.getHeight());
           mainStage.setX(centralPoint.getX());
           mainStage.setY(centralPoint.getY());
 
@@ -42,22 +52,20 @@ public class MainStage implements IElement<Stage> {
           mainStage
               .widthProperty()
               .addListener(
-                  (obs, oldVal, newVal) -> {
-                    startScene.prefWidth(newVal.doubleValue());
-                  });
+                  (obs, oldVal, newVal) -> applicationEventPublisher.publishEvent(
+                          new WindowWidthUpdateEvent(newVal.doubleValue())));
           mainStage
               .heightProperty()
               .addListener(
-                  (obs, oldVal, newVal) -> {
-                    startScene.prefHeight(newVal.doubleValue());
-                  });
+                  (obs, oldVal, newVal) -> applicationEventPublisher.publishEvent(
+                          new WindowHeightUpdateEvent(newVal.doubleValue())));
 
-          setElement(id, mainStage);
+            ElementStorage.setElement(id, mainStage);
         });
   }
 
   public Stage getContent() {
     //    applicationEventPublisher.publishEvent(new ConnectionStatusEvent(true));
-    return getElement(id);
+    return ElementStorage.getElement(id);
   }
 }

@@ -1,18 +1,14 @@
 package com.resourcetracker.service.element;
 
 /** */
-public interface IElementResizable<T> extends IElement<T> {
+public interface IElementResizable {
   /**
-   * Propagates actualized window width.
-   *
-   * @param value window width value.
+   * Handles window width bounds updates.
    */
-  void prefWidth(Double value);
+  void handlePrefWidth();
 
   /**
-   * Propagates actualized window height.
-   *
-   * @param value window height value.
+   * Handles window height bounds updates.
    */
-  void prefHeight(Double value);
+  void handlePrefHeight();
 }

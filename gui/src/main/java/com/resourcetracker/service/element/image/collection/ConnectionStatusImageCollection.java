@@ -11,8 +11,8 @@ public class ConnectionStatusImageCollection {
    *
    * @return shape, which represents successful connection status image.
    */
-  public static Shape getSuccessfulConnectionStatusImage() {
-    return new Circle(40, 40, 40, Color.GREEN);
+  public static Shape getSuccessfulConnectionStatusImage(Double size) {
+    return new Circle(size, size, size, Color.GREEN);
   }
 
   /**
@@ -20,7 +20,7 @@ public class ConnectionStatusImageCollection {
    *
    * @return shape, which represents failed connection status image.
    */
-  public static Shape getFailedConnectionStatusImage() {
-    return new Circle(40, 40, 40, Color.RED);
+  public static Shape getFailedConnectionStatusImage(Double size) {
+    return new Circle(size, size, size, Color.RED);
   }
 }

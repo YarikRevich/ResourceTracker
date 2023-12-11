@@ -1,9 +1,12 @@
 package com.resourcetracker.service.element.progressbar;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
-import com.resourcetracker.service.element.common.ElementHelper;
+import com.resourcetracker.service.element.common.WindowHelper;
 import java.util.UUID;
+
+import com.resourcetracker.service.element.storage.ElementStorage;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -11,7 +14,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
 
 /** */
-public class CircleProgressBar implements IElementResizable<VBox> {
+public class CircleProgressBar implements IElementResizable, IElement<VBox> {
   UUID id = UUID.randomUUID();
 
   public CircleProgressBar(PropertiesEntity properties) {
@@ -22,9 +25,9 @@ public class CircleProgressBar implements IElementResizable<VBox> {
     vbox.setAlignment(Pos.CENTER);
 
     Rectangle2D window =
-        ElementHelper.getSizeWithScale(
+        WindowHelper.getSizeWithScale(
             properties.getWindowMainScaleWidth(), properties.getWindowMainScaleHeight());
-    Point2D centralPoint = ElementHelper.getCentralPoint(window.getWidth(), window.getHeight());
+    Point2D centralPoint = WindowHelper.getCentralPoint(window.getWidth(), window.getHeight());
 
     vbox.setTranslateX(centralPoint.getX() - 20);
     vbox.setTranslateY(centralPoint.getY() + 20);
@@ -35,7 +38,8 @@ public class CircleProgressBar implements IElementResizable<VBox> {
     //        vbox.setMaxWidth(window.getWidth());
     //        vbox.setMaxHeight(window.getHeight());
 
-    setElement(id, vbox);
+    ElementStorage.setElement(id, vbox);
+    ElementStorage.setResizable(this);
 
     //
     //        ProgressBar bar = new ProgressBar(0);
@@ -100,18 +104,22 @@ public class CircleProgressBar implements IElementResizable<VBox> {
    */
   @Override
   public VBox getContent() {
-    return getElement(id);
+    return ElementStorage.getElement(id);
   }
 
   /**
-   * @param value window width value.
+   *
    */
   @Override
-  public void prefWidth(Double value) {}
+  public void handlePrefWidth() {
+
+  }
 
   /**
-   * @param value window height value.
+   *
    */
   @Override
-  public void prefHeight(Double value) {}
+  public void handlePrefHeight() {
+
+  }
 }

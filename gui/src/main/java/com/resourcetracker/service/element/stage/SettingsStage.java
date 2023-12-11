@@ -1,7 +1,7 @@
 package com.resourcetracker.service.element.stage;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.common.ElementHelper;
+import com.resourcetracker.service.element.common.WindowHelper;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -21,14 +21,14 @@ public class SettingsStage {
           settingsStage.setTitle(properties.getWindowSettingsName());
 
           Rectangle2D window =
-              ElementHelper.getSizeWithScale(
+              WindowHelper.getSizeWithScale(
                   properties.getWindowSettingsScaleWidth(),
                   properties.getWindowSettingsScaleHeight());
           settingsStage.setWidth(window.getWidth());
           settingsStage.setHeight(window.getHeight());
 
           Point2D centralPoint =
-              ElementHelper.getCentralPoint(settingsStage.getWidth(), settingsStage.getHeight());
+              WindowHelper.getCentralPoint(settingsStage.getWidth(), settingsStage.getHeight());
           settingsStage.setX(centralPoint.getX());
           settingsStage.setY(centralPoint.getY());
 
