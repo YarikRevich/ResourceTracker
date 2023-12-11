@@ -53,6 +53,12 @@ public class PropertiesEntity {
   @Value(value = "${image.status.scale}")
   Double statusImageScale;
 
+  @Value(value = "${graph.css.location}")
+  String graphCssFileLocation;
+
+  @Value(value = "${graph.properties.location}")
+  String graphPropertiesLocation;
+
   @Value(value = "${api-server.directory}")
   String apiServerDirectory;
 }

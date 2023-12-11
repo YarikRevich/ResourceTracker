@@ -81,8 +81,6 @@ public class StartSceneLayout implements IElementResizable, IElement<GridPane> {
 //        group.getChildren().add(tabMenuBar.getContent());
 //
 
-
-
         ElementStorage.setElement(id, grid);
         ElementStorage.setResizable(this);
     }
@@ -101,6 +99,7 @@ public class StartSceneLayout implements IElementResizable, IElement<GridPane> {
     @Override
     public void handlePrefWidth() {
         System.out.println(LocalState.getWindowWidth());
+
     }
 
     /**
@@ -108,6 +107,6 @@ public class StartSceneLayout implements IElementResizable, IElement<GridPane> {
      */
     @Override
     public void handlePrefHeight() {
-
+        System.out.println(LocalState.getWindowHeight());
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.cglib.core.Local;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * Represents local state management model, which is used to handle application state changes and
  * exposes them for the further usage.
@@ -31,7 +33,16 @@ public class LocalState {
    * @return
    */
   public static Boolean isWindowHeightChanged() {
-    return prevWindowHeight == null || (windowHeight != null && !prevWindowHeight.equals(windowHeight));
+    if (Objects.isNull(LocalState.getPrevWindowHeight())) {
+      return false;
+    }
+
+//    System.out.println("before");
+//    System.out.println(prevWindowHeight);
+//    System.out.println(windowHeight);
+//    System.out.println("after");
+
+    return !prevWindowHeight.equals(windowHeight);
   }
 
   /**
@@ -39,20 +50,24 @@ public class LocalState {
    * @return
    */
   public static Boolean isWindowWidthChanged() {
-    return prevWindowWidth == null || (windowWidth != null && !prevWindowWidth.equals(windowWidth));
+    if (Objects.isNull(LocalState.getPrevWindowWidth())) {
+      return false;
+    }
+
+    return !prevWindowWidth.equals(windowWidth);
   }
 
   /**
    *
    */
-  public static void synchronizeWindowHeight() {
+  public static synchronized void synchronizeWindowHeight() {
     LocalState.setPrevWindowHeight(LocalState.getWindowHeight());
   }
 
   /**
    *
    */
-  public static void synchronizeWindowWidth() {
+  public static synchronized void synchronizeWindowWidth() {
     LocalState.setPrevWindowWidth(LocalState.getWindowWidth());
   }
 
@@ -71,6 +86,10 @@ public class LocalState {
    */
   @EventListener
   void handleWindowHeightUpdateEvent(WindowHeightUpdateEvent event) {
+    if (Objects.isNull(LocalState.getPrevWindowHeight())) {
+      LocalState.setPrevWindowHeight(event.getHeight());
+    }
+
     LocalState.setWindowHeight(event.getHeight());
   }
 
@@ -79,7 +98,11 @@ public class LocalState {
    * @param event window width update event, which contains new window width.
    */
   @EventListener
-  void handleWindowHeightUpdateEvent(WindowWidthUpdateEvent event) {
+  void handleWindowWidthUpdateEvent(WindowWidthUpdateEvent event) {
+    if (Objects.isNull(LocalState.getPrevWindowWidth())) {
+      LocalState.setPrevWindowWidth(event.getWidth());
+    }
+
     LocalState.setWindowWidth(event.getWidth());
   }
 }

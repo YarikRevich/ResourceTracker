@@ -37,6 +37,12 @@ public class ElementStorage {
         storage.putIfAbsent(id, element);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     * @param <T>
+     */
     @SuppressWarnings("unchecked")
     public static <T> T getElement(UUID id) {
         return (T) storage.get(id);

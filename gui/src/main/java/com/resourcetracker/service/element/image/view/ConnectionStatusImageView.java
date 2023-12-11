@@ -58,7 +58,6 @@ public class ConnectionStatusImageView implements IElementActualizable, IElement
    */
   @Override
   public void handleBackgroundUpdates() {
-    System.out.println("in background updates");
 //    schedulerService.scheduleTask(
 //        () -> {
 //          Group connectionStatusImageView = getContent();
@@ -82,7 +81,6 @@ public class ConnectionStatusImageView implements IElementActualizable, IElement
    */
   @Override
   public void handlePrefWidth() {
-
   }
 
   /**
@@ -90,6 +88,5 @@ public class ConnectionStatusImageView implements IElementActualizable, IElement
    */
   @Override
   public void handlePrefHeight() {
-
   }
 }

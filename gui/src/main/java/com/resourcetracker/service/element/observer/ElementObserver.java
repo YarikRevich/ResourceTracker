@@ -37,15 +37,14 @@ public class ElementObserver {
      */
     @PostConstruct
     private void handlePrefWidthUpdates() {
-        SchedulerHelper.scheduleTask(() ->
+        SchedulerHelper.scheduleTask(() -> {
+                    if (LocalState.isWindowWidthChanged()) {
                         ElementStorage.getResizables()
-                                .forEach(element -> {
-                                    if (LocalState.isWindowWidthChanged()) {
-                                        element.handlePrefWidth();
+                                .forEach(IElementResizable::handlePrefWidth);
 
-                                        LocalState.synchronizeWindowWidth();
-                                    }
-                                }),
+                        LocalState.synchronizeWindowWidth();
+                    }
+                },
                 properties.getProcessWindowWidthPeriod());
     }
 
@@ -54,15 +53,14 @@ public class ElementObserver {
      */
     @PostConstruct
     private void handlePrefHeightUpdates() {
-        SchedulerHelper.scheduleTask(() ->
+        SchedulerHelper.scheduleTask(() -> {
+                    if (LocalState.isWindowHeightChanged()) {
                         ElementStorage.getResizables()
-                                .forEach(element -> {
-                                    if (LocalState.isWindowHeightChanged()) {
-                                        element.handlePrefHeight();
+                                .forEach(IElementResizable::handlePrefHeight);
 
-                                        LocalState.synchronizeWindowHeight();
-                                    }
-                                }),
+                        LocalState.synchronizeWindowHeight();
+                    }
+                },
                 properties.getProcessWindowHeightPeriod());
     }
 }
