@@ -25,8 +25,10 @@ public class SchedulerHelper {
         () -> executorService.execute(callback), 0, period, TimeUnit.MILLISECONDS);
   }
 
-  @PreDestroy
-  private void close() {
+  /**
+   * Closes schedulers and finishes awaited tasks.
+   */
+  static public void close() {
     scheduledExecutorService.close();
     executorService.close();
   }

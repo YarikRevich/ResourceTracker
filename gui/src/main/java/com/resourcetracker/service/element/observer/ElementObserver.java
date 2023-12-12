@@ -28,8 +28,8 @@ public class ElementObserver {
     private void handleBackgroundUpdates() {
         SchedulerHelper.scheduleTask(() ->
             ElementStorage.getActualizables()
-                    .forEach(IElementActualizable::handleBackgroundUpdates)
-                    , properties.getProcessBackgroundPeriod());
+                    .forEach(IElementActualizable::handleBackgroundUpdates),
+                properties.getProcessBackgroundPeriod());
     }
 
     /**

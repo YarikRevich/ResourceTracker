@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @Component
 public class LocalState {
-  @Getter @Setter private static Boolean connectionEstablished;
+  @Getter @Setter private static Boolean connectionEstablished = false;
 
   @Getter @Setter private static Double prevWindowHeight;
 

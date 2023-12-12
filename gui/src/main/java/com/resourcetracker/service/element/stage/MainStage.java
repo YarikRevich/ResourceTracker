@@ -3,10 +3,7 @@ package com.resourcetracker.service.element.stage;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.WindowHelper;
-import com.resourcetracker.service.element.scene.main.DeploymentDetailsScene;
-import com.resourcetracker.service.element.scene.main.DeploymentScene;
 import com.resourcetracker.service.element.scene.main.StartScene;
-import com.resourcetracker.service.element.scene.settings.SettingsLanguagesScene;
 import java.util.UUID;
 
 import com.resourcetracker.service.element.storage.ElementStorage;
@@ -65,7 +62,6 @@ public class MainStage implements IElement<Stage> {
   }
 
   public Stage getContent() {
-    //    applicationEventPublisher.publishEvent(new ConnectionStatusEvent(true));
     return ElementStorage.getElement(id);
   }
 }

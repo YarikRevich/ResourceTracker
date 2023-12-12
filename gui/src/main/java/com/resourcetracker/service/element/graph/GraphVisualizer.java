@@ -61,28 +61,30 @@ public class GraphVisualizer implements IElementResizable, IElement<SmartGraphPa
 
     g.insertEdge("A", "H", "0");
 
-//    SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
-//
-//    InputStream smartGraphPropertiesInputStream = getClass()
-//            .getResourceAsStream(properties.getGraphPropertiesLocation());
-//    if (Objects.isNull(smartGraphPropertiesInputStream)){
-//      throw new SmartGraphPropertiesFileNotFoundException();
-//    }
-//
-//    SmartGraphProperties smartGraphProperties = new SmartGraphProperties(smartGraphPropertiesInputStream);
-//
-//    URL smartGraphCssFileLocationURL = getClass()
-//              .getResource(properties.getGraphCssFileLocation());
-//    if (Objects.isNull(smartGraphCssFileLocationURL)) {
-//      throw new SmartGraphCssFileNotFoundException();
-//    }
-//
-//    URI smartGraphCssFileLocationURI;
-//    try {
-//      smartGraphCssFileLocationURI = smartGraphCssFileLocationURL.toURI();
-//    } catch (URISyntaxException e) {
-//      throw new SmartGraphCssFileNotFoundException(e.getMessage());
-//    }
+    SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
+
+    ClassLoader classLoader = getClass().getClassLoader();
+
+    InputStream smartGraphPropertiesInputStream = classLoader
+            .getResourceAsStream(properties.getGraphPropertiesLocation());
+    if (Objects.isNull(smartGraphPropertiesInputStream)){
+      throw new SmartGraphPropertiesFileNotFoundException();
+    }
+
+    SmartGraphProperties smartGraphProperties = new SmartGraphProperties(smartGraphPropertiesInputStream);
+
+    URL smartGraphCssFileLocationURL = classLoader
+              .getResource(properties.getGraphCssFileLocation());
+    if (Objects.isNull(smartGraphCssFileLocationURL)) {
+      throw new SmartGraphCssFileNotFoundException();
+    }
+
+    URI smartGraphCssFileLocationURI;
+    try {
+      smartGraphCssFileLocationURI = smartGraphCssFileLocationURL.toURI();
+    } catch (URISyntaxException e) {
+      throw new SmartGraphCssFileNotFoundException(e.getMessage());
+    }
 //
 //    ElementStorage.setElement(
 //            id,

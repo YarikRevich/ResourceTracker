@@ -1,5 +1,6 @@
 package com.resourcetracker.service.integration;
 
+import com.resourcetracker.entity.PropertiesEntity;
 import io.quarkus.runtime.annotations.StaticInitSafe;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +8,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -16,15 +20,17 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 public class GitBuildConfigSourceService implements ConfigSource {
   private static final Logger logger = LogManager.getLogger(GitBuildConfigSourceService.class);
 
-  private final Properties properties;
+  private static final String GIT_CONFIG_PROPERTIES_FILE = "git.properties";
+
+  private final Properties config;
 
   public GitBuildConfigSourceService() {
-    this.properties = new Properties();
+    this.config = new Properties();
 
     ClassLoader classLoader = getClass().getClassLoader();
-    InputStream gitBuildPropertiesStream = classLoader.getResourceAsStream("git.properties");
+    InputStream gitBuildPropertiesStream = classLoader.getResourceAsStream(GIT_CONFIG_PROPERTIES_FILE);
     try {
-      properties.load(gitBuildPropertiesStream);
+      config.load(gitBuildPropertiesStream);
     } catch (IOException e) {
       logger.fatal(e.getMessage());
     }
@@ -43,7 +49,7 @@ public class GitBuildConfigSourceService implements ConfigSource {
    */
   @Override
   public Set<String> getPropertyNames() {
-    return properties.keySet().stream()
+    return config.keySet().stream()
         .map(element -> (String) element)
         .collect(Collectors.toSet());
   }
@@ -61,7 +67,7 @@ public class GitBuildConfigSourceService implements ConfigSource {
    */
   @Override
   public String getValue(String s) {
-    return (String) properties.get(s);
+    return (String) config.get(s);
   }
 
   /**

@@ -11,6 +11,9 @@ import javafx.scene.shape.Shape;
 
 import java.util.UUID;
 
+/**
+ *
+ */
 public class ConnectionStatusHBox implements IElement<HBox> {
     UUID id = UUID.randomUUID();
 

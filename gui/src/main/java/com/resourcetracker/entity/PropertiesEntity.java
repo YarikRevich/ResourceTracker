@@ -29,6 +29,9 @@ public class PropertiesEntity {
   @Value(value = "${process.background.period}")
   Integer processBackgroundPeriod;
 
+  @Value(value = "${process.healthcheck.period}")
+  Integer processHealthcheckPeriod;
+
   @Value(value = "${process.window.width.period}")
   Integer processWindowWidthPeriod;
 
