@@ -12,6 +12,7 @@ import java.util.UUID;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.event.state.LocalState;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;

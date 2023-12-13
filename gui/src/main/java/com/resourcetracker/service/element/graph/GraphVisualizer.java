@@ -85,11 +85,13 @@ public class GraphVisualizer implements IElementResizable, IElement<SmartGraphPa
     } catch (URISyntaxException e) {
       throw new SmartGraphCssFileNotFoundException(e.getMessage());
     }
-//
-//    ElementStorage.setElement(
-//            id,
-//            new SmartGraphPanel<>(
-//                    g, smartGraphProperties, strategy, smartGraphCssFileLocationURI));
+
+
+
+    ElementStorage.setElement(
+            id,
+            new SmartGraphPanel<>(
+                    g, smartGraphProperties, strategy, smartGraphCssFileLocationURI));
   }
 
   /**

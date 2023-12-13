@@ -1,5 +1,6 @@
 .graph {
-    -fx-background-color: #F4FFFB;
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 25;
 }
 
 .vertex {

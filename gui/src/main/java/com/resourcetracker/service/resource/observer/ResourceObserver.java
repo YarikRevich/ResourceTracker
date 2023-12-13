@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+/**
+ * Provides resource observables to manage state of the application.
+ */
 @Component
 public class ResourceObserver {
     @Autowired
@@ -20,6 +23,9 @@ public class ResourceObserver {
     @Autowired
     private HealthCommandService healthCommandService;
 
+    /**
+     * Sends healthcheck requests to API Server and updates connection status.
+     */
     @PostConstruct
     private void handleHealthCommand() {
         SchedulerHelper.scheduleTask(() -> {

@@ -5,16 +5,23 @@ import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.WindowHelper;
 import com.resourcetracker.service.element.scene.main.StartScene;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.event.state.LocalState;
 import com.resourcetracker.service.event.state.payload.WindowHeightUpdateEvent;
 import com.resourcetracker.service.event.state.payload.WindowWidthUpdateEvent;
+import jakarta.annotation.PostConstruct;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /** MainStage represents main window. */
@@ -22,7 +29,7 @@ import org.springframework.stereotype.Service;
 public class MainStage implements IElement<Stage> {
   UUID id = UUID.randomUUID();
 
-  public MainStage(
+    public MainStage(
       @Autowired PropertiesEntity properties,
       @Autowired StartScene startScene,
       @Autowired ApplicationEventPublisher applicationEventPublisher) {
@@ -31,7 +38,7 @@ public class MainStage implements IElement<Stage> {
           Stage mainStage = new Stage();
           mainStage.setTitle(properties.getWindowMainName());
 
-          Rectangle2D window =
+            Rectangle2D window =
               WindowHelper.getSizeWithScale(
                   properties.getWindowMainScaleWidth(), properties.getWindowMainScaleHeight());
           mainStage.setWidth(window.getWidth());
@@ -49,13 +56,17 @@ public class MainStage implements IElement<Stage> {
           mainStage
               .widthProperty()
               .addListener(
-                  (obs, oldVal, newVal) -> applicationEventPublisher.publishEvent(
-                          new WindowWidthUpdateEvent(newVal.doubleValue())));
+                  (obs, oldVal, newVal) -> {
+                      applicationEventPublisher.publishEvent(
+                              new WindowWidthUpdateEvent(newVal.doubleValue()));
+                  });
           mainStage
               .heightProperty()
               .addListener(
-                  (obs, oldVal, newVal) -> applicationEventPublisher.publishEvent(
-                          new WindowHeightUpdateEvent(newVal.doubleValue())));
+                  (obs, oldVal, newVal) -> {
+                      applicationEventPublisher.publishEvent(
+                              new WindowHeightUpdateEvent(newVal.doubleValue()));
+                  });
 
             ElementStorage.setElement(id, mainStage);
         });

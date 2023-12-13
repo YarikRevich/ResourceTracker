@@ -18,12 +18,6 @@ public class WindowHelper {
     ((Stage) prev.getWindow()).setScene(next);
   }
 
-  //
-  //    public static void switchStage(Stage prev, Stage next) {
-  //        prev.close();
-  //        next.show();
-  //    }
-
   /** Retrieves */
   public static Point2D getCentralPoint(Double width, Double height) {
     Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();

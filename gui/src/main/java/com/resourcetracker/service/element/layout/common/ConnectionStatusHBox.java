@@ -19,7 +19,7 @@ public class ConnectionStatusHBox implements IElement<HBox> {
 
     public ConnectionStatusHBox(SplitPane connectionStatusImage) {
         HBox hBox = new HBox(connectionStatusImage);
-        hBox.setAlignment(Pos.CENTER_RIGHT);
+        hBox.setAlignment(Pos.TOP_RIGHT);
 
         ElementStorage.setElement(id, hBox);
     }
