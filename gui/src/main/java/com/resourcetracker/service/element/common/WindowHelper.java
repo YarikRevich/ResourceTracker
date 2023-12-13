@@ -4,7 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /** Represents helpful functionality, which is used for elements management. */
@@ -21,21 +20,21 @@ public class WindowHelper {
 
   /**
    * Switches visibility of the given element.
+   *
    * @param element element which visibility is intended to be changed.
    */
   public static void toggleElementVisibility(Node element) {
-      element.setVisible(!element.isVisible());
+    element.setVisible(!element.isVisible());
   }
 
   /** Retrieves */
   public static Point2D getCentralPoint(Double width, Double height) {
-    return new Point2D(
-        width / 2, height / 2);
+    return new Point2D(width / 2, height / 2);
   }
 
-  public static Rectangle2D getSizeWithScale(Double windowWidth, Double windowHeight, Double widthScale, Double heightScale) {
-    return new Rectangle2D(
-        0, 0, windowWidth * widthScale, windowHeight * heightScale);
+  public static Rectangle2D getSizeWithScale(
+      Double windowWidth, Double windowHeight, Double widthScale, Double heightScale) {
+    return new Rectangle2D(0, 0, windowWidth * widthScale, windowHeight * heightScale);
   }
 
   public static Double getCircularElementSize(Double windowWidth, Double scale) {

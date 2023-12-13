@@ -12,22 +12,22 @@ import com.resourcetracker.exception.SmartGraphPropertiesFileNotFoundException;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
-public class GraphVisualizer implements IElementResizable, IElement<SmartGraphPanel<String, String>> {
+public class GraphVisualizer
+    implements IElementResizable, IElement<SmartGraphPanel<String, String>> {
   UUID id = UUID.randomUUID();
 
-  public GraphVisualizer(
-          @Autowired PropertiesEntity properties) throws SmartGraphCssFileNotFoundException, SmartGraphPropertiesFileNotFoundException {
+  public GraphVisualizer(@Autowired PropertiesEntity properties)
+      throws SmartGraphCssFileNotFoundException, SmartGraphPropertiesFileNotFoundException {
     Graph<String, String> g = new GraphEdgeList<>();
     g.insertVertex("A");
     g.insertVertex("B");
@@ -65,16 +65,17 @@ public class GraphVisualizer implements IElementResizable, IElement<SmartGraphPa
 
     ClassLoader classLoader = getClass().getClassLoader();
 
-    InputStream smartGraphPropertiesInputStream = classLoader
-            .getResourceAsStream(properties.getGraphPropertiesLocation());
-    if (Objects.isNull(smartGraphPropertiesInputStream)){
+    InputStream smartGraphPropertiesInputStream =
+        classLoader.getResourceAsStream(properties.getGraphPropertiesLocation());
+    if (Objects.isNull(smartGraphPropertiesInputStream)) {
       throw new SmartGraphPropertiesFileNotFoundException();
     }
 
-    SmartGraphProperties smartGraphProperties = new SmartGraphProperties(smartGraphPropertiesInputStream);
+    SmartGraphProperties smartGraphProperties =
+        new SmartGraphProperties(smartGraphPropertiesInputStream);
 
-    URL smartGraphCssFileLocationURL = classLoader
-              .getResource(properties.getGraphCssFileLocation());
+    URL smartGraphCssFileLocationURL =
+        classLoader.getResource(properties.getGraphCssFileLocation());
     if (Objects.isNull(smartGraphCssFileLocationURL)) {
       throw new SmartGraphCssFileNotFoundException();
     }
@@ -86,12 +87,8 @@ public class GraphVisualizer implements IElementResizable, IElement<SmartGraphPa
       throw new SmartGraphCssFileNotFoundException(e.getMessage());
     }
 
-
-
     ElementStorage.setElement(
-            id,
-            new SmartGraphPanel<>(
-                    g, smartGraphProperties, strategy, smartGraphCssFileLocationURI));
+        id, new SmartGraphPanel<>(g, smartGraphProperties, strategy, smartGraphCssFileLocationURI));
   }
 
   /**
@@ -102,19 +99,11 @@ public class GraphVisualizer implements IElementResizable, IElement<SmartGraphPa
     return ElementStorage.getElement(id);
   }
 
-  /**
-   *
-   */
+  /** */
   @Override
-  public void handlePrefWidth() {
+  public void handlePrefWidth() {}
 
-  }
-
-  /**
-   *
-   */
+  /** */
   @Override
-  public void handlePrefHeight() {
-
-  }
+  public void handlePrefHeight() {}
 }

@@ -1,9 +1,8 @@
 package com.resourcetracker.service.element.menu;
 
 import com.resourcetracker.service.element.IElement;
-import java.util.UUID;
-
 import com.resourcetracker.service.element.storage.ElementStorage;
+import java.util.UUID;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import org.springframework.stereotype.Service;

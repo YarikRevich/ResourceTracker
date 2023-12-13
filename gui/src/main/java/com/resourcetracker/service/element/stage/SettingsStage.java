@@ -21,12 +21,12 @@ public class SettingsStage {
           Stage settingsStage = new Stage();
           settingsStage.setTitle(properties.getWindowSettingsName());
 
-            Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
+          Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
 
           Rectangle2D window =
               WindowHelper.getSizeWithScale(
-                      defaultBounds.getWidth(),
-                      defaultBounds.getHeight(),
+                  defaultBounds.getWidth(),
+                  defaultBounds.getHeight(),
                   properties.getWindowSettingsScaleWidth(),
                   properties.getWindowSettingsScaleHeight());
           settingsStage.setWidth(window.getWidth());

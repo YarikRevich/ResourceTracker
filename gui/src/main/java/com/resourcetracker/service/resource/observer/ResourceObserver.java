@@ -9,27 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-/**
- * Provides resource observables to manage state of the application.
- */
+/** Provides resource observables to manage state of the application. */
 @Component
 public class ResourceObserver {
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+  @Autowired private ApplicationEventPublisher applicationEventPublisher;
 
-    @Autowired
-    private PropertiesEntity properties;
+  @Autowired private PropertiesEntity properties;
 
-    @Autowired
-    private HealthCommandService healthCommandService;
+  @Autowired private HealthCommandService healthCommandService;
 
-    /**
-     * Sends healthcheck requests to API Server and updates connection status.
-     */
-    @PostConstruct
-    private void handleHealthCommand() {
-        SchedulerHelper.scheduleTask(() -> {
-            applicationEventPublisher.publishEvent(new ConnectionStatusEvent(true));
-        }, properties.getProcessHealthcheckPeriod());
-    }
+  /** Sends healthcheck requests to API Server and updates connection status. */
+  @PostConstruct
+  private void handleHealthCommand() {
+    SchedulerHelper.scheduleTask(
+        () -> {
+          applicationEventPublisher.publishEvent(new ConnectionStatusEvent(true));
+        },
+        properties.getProcessHealthcheckPeriod());
+  }
 }

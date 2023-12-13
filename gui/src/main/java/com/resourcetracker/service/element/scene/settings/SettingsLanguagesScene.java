@@ -31,19 +31,11 @@ public class SettingsLanguagesScene implements IElementResizable, IElement<Scene
     return settingsLanguagesScene;
   }
 
-  /**
-   *
-   */
+  /** */
   @Override
-  public void handlePrefWidth() {
+  public void handlePrefWidth() {}
 
-  }
-
-  /**
-   *
-   */
+  /** */
   @Override
-  public void handlePrefHeight() {
-
-  }
+  public void handlePrefHeight() {}
 }

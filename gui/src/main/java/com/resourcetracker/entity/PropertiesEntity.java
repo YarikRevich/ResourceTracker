@@ -38,6 +38,9 @@ public class PropertiesEntity {
   @Value(value = "${process.window.height.period}")
   Integer processWindowHeightPeriod;
 
+  @Value(value = "${spinner.initial.delay}")
+  Integer spinnerInitialDelay;
+
   @Value(value = "${button.basic.size.width}")
   Double basicButtonSizeWidth;
 

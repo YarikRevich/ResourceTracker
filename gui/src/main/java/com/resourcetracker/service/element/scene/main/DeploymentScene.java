@@ -15,19 +15,11 @@ public class DeploymentScene implements IElementResizable, IElement<Scene> {
     return null;
   }
 
-  /**
-   *
-   */
+  /** */
   @Override
-  public void handlePrefWidth() {
+  public void handlePrefWidth() {}
 
-  }
-
-  /**
-   *
-   */
+  /** */
   @Override
-  public void handlePrefHeight() {
-
-  }
+  public void handlePrefHeight() {}
 }

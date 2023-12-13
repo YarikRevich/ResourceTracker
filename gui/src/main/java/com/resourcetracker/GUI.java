@@ -16,8 +16,7 @@ public class GUI {
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-    PropertySourcesPlaceholderConfigurer propsConfig
-            = new PropertySourcesPlaceholderConfigurer();
+    PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();
     propsConfig.setLocation(new ClassPathResource(GIT_CONFIG_PROPERTIES_FILE));
     propsConfig.setIgnoreResourceNotFound(true);
     propsConfig.setIgnoreUnresolvablePlaceholders(true);

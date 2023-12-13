@@ -5,20 +5,17 @@ import com.resourcetracker.service.element.common.WindowHelper;
 import com.resourcetracker.service.event.state.payload.ConnectionStatusEvent;
 import com.resourcetracker.service.event.state.payload.WindowHeightUpdateEvent;
 import com.resourcetracker.service.event.state.payload.WindowWidthUpdateEvent;
+import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Represents local state management model, which is used to handle application state changes and
@@ -26,16 +23,13 @@ import java.util.concurrent.CountDownLatch;
  */
 @Component
 public class LocalState {
-  @Autowired
-  private PropertiesEntity properties;
+  @Autowired private PropertiesEntity properties;
 
-  @Autowired
-  private ApplicationEventPublisher applicationEventPublisher;
+  @Autowired private ApplicationEventPublisher applicationEventPublisher;
 
   @Getter @Setter private static Boolean connectionEstablished = false;
 
-  @Getter @Setter
-  private static Double prevWindowHeight;
+  @Getter @Setter private static Double prevWindowHeight;
 
   @Getter @Setter private static Double windowHeight;
 
@@ -44,12 +38,13 @@ public class LocalState {
   @Getter @Setter private static Double windowWidth;
 
   @Getter private static CountDownLatch locker = new CountDownLatch(1);
+
   /**
-   *
    * @return
    */
   public static synchronized Boolean isWindowHeightChanged() {
-    if (Objects.isNull(LocalState.getPrevWindowHeight()) && !Objects.isNull(LocalState.getWindowHeight())) {
+    if (Objects.isNull(LocalState.getPrevWindowHeight())
+        && !Objects.isNull(LocalState.getWindowHeight())) {
       return true;
     } else if (Objects.isNull(LocalState.getPrevWindowHeight())) {
       return false;
@@ -59,11 +54,11 @@ public class LocalState {
   }
 
   /**
-   *
    * @return
    */
   public static synchronized Boolean isWindowWidthChanged() {
-    if (Objects.isNull(LocalState.getPrevWindowWidth()) && !Objects.isNull(LocalState.getWindowWidth())) {
+    if (Objects.isNull(LocalState.getPrevWindowWidth())
+        && !Objects.isNull(LocalState.getWindowWidth())) {
       return true;
     } else if (Objects.isNull(LocalState.getPrevWindowWidth())) {
       return false;
@@ -72,16 +67,12 @@ public class LocalState {
     return !prevWindowWidth.equals(windowWidth);
   }
 
-  /**
-   *
-   */
+  /** */
   public static synchronized void synchronizeWindowHeight() {
     LocalState.setPrevWindowHeight(LocalState.getWindowHeight());
   }
 
-  /**
-   *
-   */
+  /** */
   public static synchronized void synchronizeWindowWidth() {
     LocalState.setPrevWindowWidth(LocalState.getWindowWidth());
   }
@@ -91,20 +82,19 @@ public class LocalState {
     Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
 
     Rectangle2D window =
-            WindowHelper.getSizeWithScale(
-                    defaultBounds.getWidth(),
-                    defaultBounds.getHeight(),
-                    properties.getWindowMainScaleWidth(),
-                    properties.getWindowMainScaleHeight());
+        WindowHelper.getSizeWithScale(
+            defaultBounds.getWidth(),
+            defaultBounds.getHeight(),
+            properties.getWindowMainScaleWidth(),
+            properties.getWindowMainScaleHeight());
 
-    applicationEventPublisher.publishEvent(
-            new WindowWidthUpdateEvent(window.getWidth()));
-    applicationEventPublisher.publishEvent(
-            new WindowHeightUpdateEvent(window.getHeight()));
+    applicationEventPublisher.publishEvent(new WindowWidthUpdateEvent(window.getWidth()));
+    applicationEventPublisher.publishEvent(new WindowHeightUpdateEvent(window.getHeight()));
   }
 
   /**
    * Handles changes of connection establishment status.
+   *
    * @param event connection status event, which contains connection establishment status.
    */
   @EventListener
@@ -114,6 +104,7 @@ public class LocalState {
 
   /**
    * Handles changes of window height update.
+   *
    * @param event window height update event, which contains new window height.
    */
   @EventListener
@@ -123,6 +114,7 @@ public class LocalState {
 
   /**
    * Handles changes of window width update.
+   *
    * @param event window width update event, which contains new window width.
    */
   @EventListener

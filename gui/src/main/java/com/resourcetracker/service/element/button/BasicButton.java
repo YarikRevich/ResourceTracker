@@ -2,7 +2,6 @@ package com.resourcetracker.service.element.button;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementActualizable;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.common.WindowHelper;
 import com.resourcetracker.service.element.storage.ElementStorage;
@@ -13,8 +12,6 @@ import ink.bluecloud.css.ElementButtonKt;
 import java.util.UUID;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
-import javafx.stage.Screen;
-import org.springframework.cglib.core.Local;
 
 /** */
 public class BasicButton implements IElementResizable, IElement<Button> {
@@ -60,32 +57,28 @@ public class BasicButton implements IElementResizable, IElement<Button> {
     return ElementStorage.getElement(id);
   }
 
-  /**
-   *
-   */
+  /** */
   @Override
   public void handlePrefWidth() {
-    Rectangle2D size = WindowHelper.getSizeWithScale(
+    Rectangle2D size =
+        WindowHelper.getSizeWithScale(
             LocalState.getWindowWidth(),
             LocalState.getWindowHeight(),
             properties.getBasicButtonSizeWidth(),
-            properties.getBasicButtonSizeHeight()
-    );
+            properties.getBasicButtonSizeHeight());
 
     getContent().setPrefWidth(size.getWidth());
   }
 
-  /**
-   *
-   */
+  /** */
   @Override
   public void handlePrefHeight() {
-    Rectangle2D size = WindowHelper.getSizeWithScale(
+    Rectangle2D size =
+        WindowHelper.getSizeWithScale(
             LocalState.getWindowWidth(),
             LocalState.getWindowHeight(),
             properties.getBasicButtonSizeWidth(),
-            properties.getBasicButtonSizeHeight()
-    );
+            properties.getBasicButtonSizeHeight());
 
     getContent().setPrefHeight(size.getHeight());
   }

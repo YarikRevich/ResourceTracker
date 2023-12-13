@@ -3,26 +3,20 @@ package com.resourcetracker.service.element.stage;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.WindowHelper;
+import com.resourcetracker.service.element.progressbar.CircleProgressBar;
 import com.resourcetracker.service.element.scene.main.StartScene;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.state.LocalState;
 import com.resourcetracker.service.event.state.payload.WindowHeightUpdateEvent;
 import com.resourcetracker.service.event.state.payload.WindowWidthUpdateEvent;
-import jakarta.annotation.PostConstruct;
+import com.resourcetracker.service.scheduler.SchedulerHelper;
+import java.util.UUID;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /** MainStage represents main window. */
@@ -30,23 +24,24 @@ import org.springframework.stereotype.Service;
 public class MainStage implements IElement<Stage> {
   UUID id = UUID.randomUUID();
 
-    public MainStage(
+  public MainStage(
       @Autowired PropertiesEntity properties,
       @Autowired StartScene startScene,
+      @Autowired CircleProgressBar circleProgressBar,
       @Autowired ApplicationEventPublisher applicationEventPublisher) {
     Platform.runLater(
         () -> {
           Stage mainStage = new Stage();
           mainStage.setTitle(properties.getWindowMainName());
 
-            Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
+          Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
 
-            Rectangle2D window =
+          Rectangle2D window =
               WindowHelper.getSizeWithScale(
-                      defaultBounds.getWidth(),
-                      defaultBounds.getHeight(),
-                      properties.getWindowMainScaleWidth(),
-                      properties.getWindowMainScaleHeight());
+                  defaultBounds.getWidth(),
+                  defaultBounds.getHeight(),
+                  properties.getWindowMainScaleWidth(),
+                  properties.getWindowMainScaleHeight());
 
           mainStage.setWidth(window.getWidth());
           mainStage.setHeight(window.getHeight());
@@ -64,18 +59,22 @@ public class MainStage implements IElement<Stage> {
               .widthProperty()
               .addListener(
                   (obs, oldVal, newVal) -> {
-                      applicationEventPublisher.publishEvent(
-                              new WindowWidthUpdateEvent(newVal.doubleValue()));
+                    applicationEventPublisher.publishEvent(
+                        new WindowWidthUpdateEvent(newVal.doubleValue()));
                   });
           mainStage
               .heightProperty()
               .addListener(
                   (obs, oldVal, newVal) -> {
-                      applicationEventPublisher.publishEvent(
-                              new WindowHeightUpdateEvent(newVal.doubleValue()));
+                    applicationEventPublisher.publishEvent(
+                        new WindowHeightUpdateEvent(newVal.doubleValue()));
                   });
 
-            ElementStorage.setElement(id, mainStage);
+          SchedulerHelper.scheduleTimer(
+              () -> WindowHelper.toggleElementVisibility(circleProgressBar.getContent()),
+              properties.getSpinnerInitialDelay());
+
+          ElementStorage.setElement(id, mainStage);
         });
   }
 

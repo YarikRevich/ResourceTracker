@@ -7,7 +7,6 @@ package com.resourcetracker.service.element;
  */
 public interface IElement<T> {
   /**
-   *
    * @return
    */
   T getContent();

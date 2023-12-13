@@ -2,13 +2,12 @@ package com.resourcetracker.service.hand.executor;
 
 import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.exception.CommandExecutorException;
+import java.io.IOException;
 import org.springframework.stereotype.Service;
 import process.SProcess;
 import process.SProcessExecutor;
 import process.exceptions.NonMatchingOSException;
 import process.exceptions.SProcessNotYetStartedException;
-
-import java.io.IOException;
 
 /**
  * Represents command executor service to execute commands used for provider deployment operations.
