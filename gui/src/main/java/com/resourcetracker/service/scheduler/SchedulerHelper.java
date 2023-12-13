@@ -13,9 +13,16 @@ public class SchedulerHelper {
           Executors.newSingleThreadScheduledExecutor();
   private static final ExecutorService executorService =
           Executors.newVirtualThreadPerTaskExecutor();
+//
+//  // then, when you want to schedule a task
+//  Runnable task = ....
+//          executor.schedule(task, 5, TimeUnit.SECONDS);
+//
+//// and finally, when your program wants to exit
+//executor.shutdown();
 
   /**
-   * Schedules given callback with the specified period.
+   * Schedules given task with the specified period.
    *
    * @param callback callback to be scheduled.
    * @param period period of the task execution.
@@ -23,6 +30,16 @@ public class SchedulerHelper {
   static public void scheduleTask(Runnable callback, Integer period) {
     scheduledExecutorService.scheduleAtFixedRate(
         () -> executorService.execute(callback), 0, period, TimeUnit.MILLISECONDS);
+  }
+
+  /**
+   * Schedules given task with the specified delay.
+   * @param callback
+   * @param period
+   */
+  static public void scheduleTimer(Runnable callback, Integer period) {
+    scheduledExecutorService.schedule(
+            () -> executorService.execute(callback), period, TimeUnit.MILLISECONDS);
   }
 
   /**

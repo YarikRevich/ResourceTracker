@@ -15,6 +15,7 @@ import jakarta.annotation.PostConstruct;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,15 @@ public class MainStage implements IElement<Stage> {
           Stage mainStage = new Stage();
           mainStage.setTitle(properties.getWindowMainName());
 
+            Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
+
             Rectangle2D window =
               WindowHelper.getSizeWithScale(
-                  properties.getWindowMainScaleWidth(), properties.getWindowMainScaleHeight());
+                      defaultBounds.getWidth(),
+                      defaultBounds.getHeight(),
+                      properties.getWindowMainScaleWidth(),
+                      properties.getWindowMainScaleHeight());
+
           mainStage.setWidth(window.getWidth());
           mainStage.setHeight(window.getHeight());
           mainStage.setMinWidth(window.getWidth());

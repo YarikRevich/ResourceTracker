@@ -22,7 +22,8 @@ public class ElementObserver {
     private PropertiesEntity properties;
 
     /**
-     *
+     * Handles background updates and propagates them
+     * to proper actualizable elements.
      */
     @PostConstruct
     private void handleBackgroundUpdates() {
@@ -33,7 +34,8 @@ public class ElementObserver {
     }
 
     /**
-     *
+     * Handles window width resize updates and propagates them
+     * to proper resizable elements.
      */
     @PostConstruct
     private void handlePrefWidthUpdates() {
@@ -49,7 +51,8 @@ public class ElementObserver {
     }
 
     /**
-     *
+     * Handles window height resize updates and propagates them
+     * to proper resizable elements.
      */
     @PostConstruct
     private void handlePrefHeightUpdates() {

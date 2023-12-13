@@ -6,8 +6,10 @@ import com.resourcetracker.service.event.state.payload.ConnectionStatusEvent;
 import com.resourcetracker.service.event.state.payload.WindowHeightUpdateEvent;
 import com.resourcetracker.service.event.state.payload.WindowWidthUpdateEvent;
 import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,7 +34,8 @@ public class LocalState {
 
   @Getter @Setter private static Boolean connectionEstablished = false;
 
-  @Getter @Setter private static Double prevWindowHeight;
+  @Getter @Setter
+  private static Double prevWindowHeight;
 
   @Getter @Setter private static Double windowHeight;
 
@@ -45,7 +48,7 @@ public class LocalState {
    *
    * @return
    */
-  public static Boolean isWindowHeightChanged() {
+  public static synchronized Boolean isWindowHeightChanged() {
     if (Objects.isNull(LocalState.getPrevWindowHeight()) && !Objects.isNull(LocalState.getWindowHeight())) {
       return true;
     } else if (Objects.isNull(LocalState.getPrevWindowHeight())) {
@@ -59,7 +62,7 @@ public class LocalState {
    *
    * @return
    */
-  public static Boolean isWindowWidthChanged() {
+  public static synchronized Boolean isWindowWidthChanged() {
     if (Objects.isNull(LocalState.getPrevWindowWidth()) && !Objects.isNull(LocalState.getWindowWidth())) {
       return true;
     } else if (Objects.isNull(LocalState.getPrevWindowWidth())) {
@@ -85,9 +88,14 @@ public class LocalState {
 
   @EventListener(classes = {ContextRefreshedEvent.class})
   public void eventListen(ContextRefreshedEvent contextRefreshedEvent) {
+    Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
+
     Rectangle2D window =
             WindowHelper.getSizeWithScale(
-                    properties.getWindowMainScaleWidth(), properties.getWindowMainScaleHeight());
+                    defaultBounds.getWidth(),
+                    defaultBounds.getHeight(),
+                    properties.getWindowMainScaleWidth(),
+                    properties.getWindowMainScaleHeight());
 
     applicationEventPublisher.publishEvent(
             new WindowWidthUpdateEvent(window.getWidth()));
@@ -109,7 +117,7 @@ public class LocalState {
    * @param event window height update event, which contains new window height.
    */
   @EventListener
-  void handleWindowHeightUpdateEvent(WindowHeightUpdateEvent event) {
+  synchronized void handleWindowHeightUpdateEvent(WindowHeightUpdateEvent event) {
     LocalState.setWindowHeight(event.getHeight());
   }
 
@@ -118,7 +126,7 @@ public class LocalState {
    * @param event window width update event, which contains new window width.
    */
   @EventListener
-  void handleWindowWidthUpdateEvent(WindowWidthUpdateEvent event) {
+  synchronized void handleWindowWidthUpdateEvent(WindowWidthUpdateEvent event) {
     LocalState.setWindowWidth(event.getWidth());
   }
 }

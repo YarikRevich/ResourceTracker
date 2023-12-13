@@ -5,6 +5,7 @@ import com.resourcetracker.service.element.common.WindowHelper;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,12 @@ public class SettingsStage {
           Stage settingsStage = new Stage();
           settingsStage.setTitle(properties.getWindowSettingsName());
 
+            Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
+
           Rectangle2D window =
               WindowHelper.getSizeWithScale(
+                      defaultBounds.getWidth(),
+                      defaultBounds.getHeight(),
                   properties.getWindowSettingsScaleWidth(),
                   properties.getWindowSettingsScaleHeight());
           settingsStage.setWidth(window.getWidth());

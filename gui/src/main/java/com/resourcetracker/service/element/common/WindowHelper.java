@@ -2,6 +2,7 @@ package com.resourcetracker.service.element.common;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -18,24 +19,26 @@ public class WindowHelper {
     ((Stage) prev.getWindow()).setScene(next);
   }
 
+  /**
+   * Switches visibility of the given element.
+   * @param element element which visibility is intended to be changed.
+   */
+  public static void toggleElementVisibility(Node element) {
+      element.setVisible(!element.isVisible());
+  }
+
   /** Retrieves */
   public static Point2D getCentralPoint(Double width, Double height) {
-    Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-
     return new Point2D(
-        (primScreenBounds.getWidth() - width) / 2, (primScreenBounds.getHeight() - height) / 2);
+        width / 2, height / 2);
   }
 
-  public static Rectangle2D getSizeWithScale(Double widthScale, Double heightScale) {
-    Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
-
+  public static Rectangle2D getSizeWithScale(Double windowWidth, Double windowHeight, Double widthScale, Double heightScale) {
     return new Rectangle2D(
-        0, 0, defaultBounds.getWidth() * widthScale, defaultBounds.getHeight() * heightScale);
+        0, 0, windowWidth * widthScale, windowHeight * heightScale);
   }
 
-  public static Double getCircularElementSize(Double scale) {
-    Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
-
-    return defaultBounds.getWidth() * scale;
+  public static Double getCircularElementSize(Double windowWidth, Double scale) {
+    return windowWidth * scale;
   }
 }

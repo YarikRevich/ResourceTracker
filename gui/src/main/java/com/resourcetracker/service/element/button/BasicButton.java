@@ -6,16 +6,21 @@ import com.resourcetracker.service.element.IElementActualizable;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.common.WindowHelper;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.event.state.LocalState;
 import ink.bluecloud.css.CssResources;
 import ink.bluecloud.css.ElementButton;
 import ink.bluecloud.css.ElementButtonKt;
 import java.util.UUID;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.stage.Screen;
+import org.springframework.cglib.core.Local;
 
 /** */
 public class BasicButton implements IElementResizable, IElement<Button> {
   UUID id = UUID.randomUUID();
+
+  private final PropertiesEntity properties;
 
   /**
    * Default constructor used for initialization purpose. Does not require to be scheduled, because
@@ -24,11 +29,9 @@ public class BasicButton implements IElementResizable, IElement<Button> {
    * @param properties properties used for application configuration purposes.
    */
   public BasicButton(String text, PropertiesEntity properties, Runnable action) {
-    Button basicButton = new Button();
+    this.properties = properties;
 
-    Rectangle2D button =
-        WindowHelper.getSizeWithScale(
-            properties.getBasicButtonSizeWidth(), properties.getBasicButtonSizeHeight());
+    Button basicButton = new Button();
 
     //    basicButton.prefWidthProperty().bind(Bindings.divide(basicButton.prefWidthProperty(),
     // 10));
@@ -36,9 +39,6 @@ public class BasicButton implements IElementResizable, IElement<Button> {
     //        System.out.println("window updated");
     ////      updateWindowHeight(rootPane);
     //    });
-
-    basicButton.setPrefWidth(button.getWidth());
-    basicButton.setPrefHeight(button.getHeight());
 
     ElementButtonKt.theme(basicButton, ElementButton.greenButton);
     basicButton.getStylesheets().add(CssResources.globalCssFile);
@@ -65,7 +65,14 @@ public class BasicButton implements IElementResizable, IElement<Button> {
    */
   @Override
   public void handlePrefWidth() {
+    Rectangle2D size = WindowHelper.getSizeWithScale(
+            LocalState.getWindowWidth(),
+            LocalState.getWindowHeight(),
+            properties.getBasicButtonSizeWidth(),
+            properties.getBasicButtonSizeHeight()
+    );
 
+    getContent().setPrefWidth(size.getWidth());
   }
 
   /**
@@ -73,6 +80,13 @@ public class BasicButton implements IElementResizable, IElement<Button> {
    */
   @Override
   public void handlePrefHeight() {
+    Rectangle2D size = WindowHelper.getSizeWithScale(
+            LocalState.getWindowWidth(),
+            LocalState.getWindowHeight(),
+            properties.getBasicButtonSizeWidth(),
+            properties.getBasicButtonSizeHeight()
+    );
 
+    getContent().setPrefHeight(size.getHeight());
   }
 }

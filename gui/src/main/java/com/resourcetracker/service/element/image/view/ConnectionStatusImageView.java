@@ -7,16 +7,19 @@ import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.common.WindowHelper;
 import com.resourcetracker.service.element.image.collection.ConnectionStatusImageCollection;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.event.state.LocalState;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +39,6 @@ public class ConnectionStatusImageView implements IElementActualizable, IElement
     connectionStatusImageView.setDisable(true);
     SplitPane splitPane = new SplitPane(connectionStatusImageView);
     splitPane.setTooltip(new Tooltip(CONNECTION_STATUS_ESTABLISH_FAILED));
-
-    connectionStatusImageView.setGraphic(ConnectionStatusImageCollection.getFailedConnectionStatusImage(
-            WindowHelper.getCircularElementSize(properties.getStatusImageScale())));
 
     ElementStorage.setElement(id, splitPane);
     ElementStorage.setActualizable(this);
@@ -67,38 +67,13 @@ public class ConnectionStatusImageView implements IElementActualizable, IElement
       if (LocalState.getConnectionEstablished()) {
         splitPane.getTooltip().setText(CONNECTION_STATUS_ESTABLISH_SUCCEEDED);
         button.setGraphic(ConnectionStatusImageCollection.getSuccessfulConnectionStatusImage(
-                WindowHelper.getCircularElementSize(properties.getStatusImageScale())));
+                WindowHelper.getCircularElementSize(LocalState.getWindowWidth(), properties.getStatusImageScale())));
       } else {
         splitPane.getTooltip().setText(CONNECTION_STATUS_ESTABLISH_FAILED);
         button.setGraphic(ConnectionStatusImageCollection.getFailedConnectionStatusImage(
-                WindowHelper.getCircularElementSize(properties.getStatusImageScale())));
+                WindowHelper.getCircularElementSize(LocalState.getWindowWidth(), properties.getStatusImageScale())));
       }
     });
-//    Platform.runLater(() -> {
-//      splitPane.setTooltip(new Tooltip("I'm the Tooltip Massage"));
-
-
-//      getContent().getScene().setFill(Color.AQUA);
-//      splitPane.setDisable(false);
-//    });
-//    ElementStorage.setElement(id, splitPane);
-
-//    schedulerService.scheduleTask(
-//        () -> {
-//          Group connectionStatusImageView = getContent();
-//          connectionStatusImageView.getChildren().removeAll();
-//
-//          if (LocalState.isConnectionEstablished()) {
-//            connectionStatusImageView
-//                .getChildren()
-//                .add(ConnectionStatusImageCollection.getSuccessfulConnectionStatusImage());
-//          } else {
-//            connectionStatusImageView
-//                .getChildren()
-//                .add(ConnectionStatusImageCollection.getFailedConnectionStatusImage());
-//          }
-//        },
-//        properties.getProcessBackgroundPeriod());
   }
 
   /**
@@ -106,6 +81,10 @@ public class ConnectionStatusImageView implements IElementActualizable, IElement
    */
   @Override
   public void handlePrefWidth() {
+    if (Objects.isNull(((Button)getContent().getItems().get(0)).getGraphic())){
+      ((Button)getContent().getItems().get(0)).setGraphic(ConnectionStatusImageCollection.getFailedConnectionStatusImage(
+              WindowHelper.getCircularElementSize(LocalState.getWindowWidth(), properties.getStatusImageScale())));
+    }
   }
 
   /**

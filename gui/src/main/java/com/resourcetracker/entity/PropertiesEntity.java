@@ -64,4 +64,7 @@ public class PropertiesEntity {
 
   @Value(value = "${api-server.directory}")
   String apiServerDirectory;
+
+  @Value(value = "${git.commit.id.abbrev}")
+  String gitCommitId;
 }
