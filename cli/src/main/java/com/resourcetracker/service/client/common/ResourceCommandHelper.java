@@ -1,4 +1,4 @@
-package com.resourcetracker.service.resource.common;
+package com.resourcetracker.service.client.common;
 
 /** Contains helpful tools used for resource requests management. */
 public class ResourceCommandHelper {

@@ -1,4 +1,4 @@
-package com.resourcetracker.service.resource.command;
+package com.resourcetracker.service.client.command;
 
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 /** Manages starting of each project described in a configuration file */
 @Service
-public class StopCommandService {
+public class DestroyCommandService {
   @Autowired private ConfigService configService;
 
   public void process() {

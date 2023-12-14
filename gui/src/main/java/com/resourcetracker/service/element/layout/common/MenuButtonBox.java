@@ -49,6 +49,7 @@ public class MenuButtonBox implements IElementResizable, IElement<VBox> {
                 .getContent(),
             new BasicButton("Settings", properties, () -> settingsStage.getContent().show())
                 .getContent());
+    vbox.setTranslateY(10);
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setFillWidth(true);
 

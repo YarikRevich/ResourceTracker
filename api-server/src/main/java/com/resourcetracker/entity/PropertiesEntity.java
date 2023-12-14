@@ -11,6 +11,12 @@ public class PropertiesEntity {
   @ConfigProperty(name = "quarkus.application.version")
   String applicationVersion;
 
+  @ConfigProperty(name = "quarkus.http.host")
+  String applicationHost;
+
+  @ConfigProperty(name = "quarkus.http.port")
+  Integer applicationPort;
+
   @ConfigProperty(name = "terraform.directory")
   String terraformDirectory;
 

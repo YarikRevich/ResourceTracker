@@ -13,6 +13,8 @@ tags:
     description: Contains all endpoints related to both data validation and its further retrieval.
   - name: InfoResource
     description: Contains all endpoints related to general info of API Server.
+  - name: HealthCheckResource
+    description: ""
 
 paths:
   /v1/topic/logs:
@@ -114,6 +116,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApplicationInfoResult"
+  /v1/health:
+    get:
+      tags:
+        - HealthCheckResource
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheckResult"
 components:
   schemas:
     TopicLogsResult:
@@ -330,3 +343,28 @@ components:
           type: string
         hash:
           type: string
+    HealthCheckResult:
+      required:
+        - status
+        - checks
+      properties:
+        status:
+          $ref: "#/components/schemas/HealthCheckStatus"
+        checks:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthCheckUnit"
+    HealthCheckUnit:
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+        status:
+          $ref: "#/components/schemas/HealthCheckStatus"
+    HealthCheckStatus:
+      type: string
+      enum:
+        - UP
+        - DOWN

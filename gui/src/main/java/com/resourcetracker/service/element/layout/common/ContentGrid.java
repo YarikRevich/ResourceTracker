@@ -16,13 +16,16 @@ public class ContentGrid<K extends IElement<?>> implements IElementResizable, IE
     grid.setGridLinesVisible(true);
 
     RowConstraints row1 = new RowConstraints();
-    row1.setVgrow(Priority.ALWAYS);
+    //    row1.setVgrow(Priority.SOMETIMES);
 
     grid.getRowConstraints().add(0, row1);
 
     ColumnConstraints column1 = new ColumnConstraints();
+    column1.setHgrow(Priority.ALWAYS);
     column1.setPercentWidth(30);
+
     ColumnConstraints column2 = new ColumnConstraints();
+    column2.setHgrow(Priority.ALWAYS);
     column2.setPercentWidth(70);
 
     grid.getColumnConstraints().add(0, column1);
@@ -30,9 +33,6 @@ public class ContentGrid<K extends IElement<?>> implements IElementResizable, IE
 
     grid.addColumn(0, buttons.getContent());
     grid.addColumn(1, (Node) element.getContent());
-
-    ElementStorage.setElement(id, grid);
-    ElementStorage.setResizable(this);
 
     ElementStorage.setElement(id, grid);
     ElementStorage.setResizable(this);
@@ -55,6 +55,6 @@ public class ContentGrid<K extends IElement<?>> implements IElementResizable, IE
   /** */
   @Override
   public void handlePrefHeight() {
-    getContent().setMinWidth(LocalState.getWindowWidth());
+    getContent().setMinHeight(LocalState.getWindowHeight());
   }
 }

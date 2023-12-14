@@ -63,6 +63,19 @@
             <artifactId>spring-context</artifactId>
         </dependency>
 
+        <!-- NETTY MACOS -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <classifier>osx-aarch_64</classifier>
+        </dependency>
+
+        <!-- OPENAPI -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+        </dependency>
+
         <!-- THIRD PARTY -->
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -139,8 +152,8 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/../api-server/src/main/openapi/openapi.yml</inputSpec>
-                            <generatorName>jaxrs-spec</generatorName>
-                            <library>quarkus</library>
+                            <generatorName>java</generatorName>
+                            <library>webclient</library>
                             <apiPackage>${default.package}.api</apiPackage>
                             <modelPackage>${default.package}.model</modelPackage>
                             <generateApis>true</generateApis>
@@ -153,8 +166,7 @@
                             <auth>false</auth>
                             <configOptions>
                                 <sourceFolder>src/main/java</sourceFolder>
-                                <unhandledException>true</unhandledException>
-                                <serializableModel>true</serializableModel>
+                                <useSpringController>true</useSpringController>
                                 <interfaceOnly>false</interfaceOnly>
                                 <useTags>true</useTags>
                                 <useJakartaEe>true</useJakartaEe>

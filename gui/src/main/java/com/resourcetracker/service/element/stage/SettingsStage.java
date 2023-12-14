@@ -1,7 +1,11 @@
 package com.resourcetracker.service.element.stage;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.WindowHelper;
+import com.resourcetracker.service.element.menu.TabMenuBar;
+import com.resourcetracker.service.element.storage.ElementStorage;
+import java.util.UUID;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -12,10 +16,10 @@ import org.springframework.stereotype.Service;
 
 /** SettingsStage represents settings window. */
 @Service
-public class SettingsStage {
-  private static Stage settingsStage;
+public class SettingsStage implements IElement<Stage> {
+  UUID id = UUID.randomUUID();
 
-  public SettingsStage(@Autowired PropertiesEntity properties) {
+  public SettingsStage(@Autowired PropertiesEntity properties, @Autowired TabMenuBar tabMenuBar) {
     Platform.runLater(
         () -> {
           Stage settingsStage = new Stage();
@@ -37,11 +41,11 @@ public class SettingsStage {
           settingsStage.setX(centralPoint.getX());
           settingsStage.setY(centralPoint.getY());
 
-          SettingsStage.settingsStage = settingsStage;
+          ElementStorage.setElement(id, settingsStage);
         });
   }
 
   public Stage getContent() {
-    return settingsStage;
+    return ElementStorage.getElement(id);
   }
 }

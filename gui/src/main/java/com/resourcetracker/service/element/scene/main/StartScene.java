@@ -3,7 +3,6 @@ package com.resourcetracker.service.element.scene.main;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.layout.scene.main.StartSceneLayout;
-import com.resourcetracker.service.element.menu.TabMenuBar;
 import com.resourcetracker.service.element.progressbar.CircleProgressBar;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import java.util.UUID;
@@ -21,12 +20,10 @@ public class StartScene implements IElement<Scene> {
   public StartScene(
       @Autowired PropertiesEntity properties,
       @Autowired StartSceneLayout startSceneLayout,
-      @Autowired CircleProgressBar circleProgressBar,
-      @Autowired TabMenuBar tabMenuBar) {
+      @Autowired CircleProgressBar circleProgressBar) {
     Group group = new Group();
     group.getChildren().add(startSceneLayout.getContent());
     group.getChildren().add(circleProgressBar.getContent());
-    group.getChildren().add(tabMenuBar.getContent());
 
     ElementStorage.setElement(
         id,

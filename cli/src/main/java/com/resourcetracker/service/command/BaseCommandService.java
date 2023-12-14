@@ -1,4 +1,4 @@
-package com.resourcetracker.service.resource.command;
+package com.resourcetracker.service.command;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

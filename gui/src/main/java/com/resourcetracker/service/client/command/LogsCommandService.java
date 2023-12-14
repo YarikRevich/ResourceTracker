@@ -1,11 +1,11 @@
-package com.resourcetracker.service.resource.command;
+package com.resourcetracker.service.client.command;
 
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StateCommandService {
+public class LogsCommandService {
   @Autowired private ConfigService configService;
 
   public void process() {

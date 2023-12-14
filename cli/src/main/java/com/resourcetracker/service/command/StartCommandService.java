@@ -1,4 +1,4 @@
-package com.resourcetracker.service.resource.command;
+package com.resourcetracker.service.command;
 
 import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.TerraformResourceApi;
@@ -85,8 +85,8 @@ public class StartCommandService {
     Mono<TerraformDeploymentApplicationResult> response =
         terraformResourceApi
             .v1TerraformApplyPost(terraformDeploymentApplication)
-            .doOnError(t -> logger.fatal(t.getMessage()))
-            .doOnSuccess(t -> logger.info());
+            .doOnError(element -> logger.fatal(t.getMessage()))
+            .doOnSuccess(element -> logger.info());
     TerraformDeploymentApplicationResult body = response.block();
     if (Objects.isNull(body)) {
       logger.fatal(new BodyValidationException().getMessage());

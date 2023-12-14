@@ -5,7 +5,7 @@ import com.resourcetracker.service.element.observer.ElementObserver;
 import com.resourcetracker.service.element.stage.MainStage;
 import com.resourcetracker.service.event.integrated.StageReadyEvent;
 import com.resourcetracker.service.event.state.LocalState;
-import com.resourcetracker.service.resource.observer.ResourceObserver;
+import com.resourcetracker.service.client.observer.ResourceObserver;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
 import javafx.application.Application;
 import javafx.application.HostServices;

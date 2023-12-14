@@ -1,4 +1,4 @@
-package com.resourcetracker.service.resource.command;
+package com.resourcetracker.service.command;
 
 import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.TopicResourceApi;

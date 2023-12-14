@@ -30,9 +30,11 @@ public class ElementStorage {
   }
 
   /**
-   * @param id
-   * @return
-   * @param <T>
+   * Retrieves element in the global element storage.
+   *
+   * @param id ID of the element to be retrieved.
+   * @return retrieved element.
+   * @param <T> type of the element to be retrieved.
    */
   @SuppressWarnings("unchecked")
   public static <T> T getElement(UUID id) {
@@ -40,14 +42,18 @@ public class ElementStorage {
   }
 
   /**
-   * @param actualizable
+   * Saves actualizable element in the actualizable element storage.
+   *
+   * @param actualizable actualizable element to be saved.
    */
   public static void setActualizable(IElementActualizable actualizable) {
     actualizables.add(actualizable);
   }
 
   /**
-   * @param resizable
+   * Saves resizable element in the resizable element storage.
+   *
+   * @param resizable resizable element to be saved.
    */
   public static void setResizable(IElementResizable resizable) {
     resizables.add(resizable);

@@ -1,4 +1,4 @@
-package com.resourcetracker.service.resource.command;
+package com.resourcetracker.service.client.command;
 
 // import com.resourcetracker.ApiClient;
 // import com.resourcetracker.api.TerraformResourceApi;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 /** Manages starting of each project */
 @Service
-public class StartCommandService {
-  private static final Logger logger = LogManager.getLogger(StartCommandService.class);
+public class ApplyCommandService {
+  private static final Logger logger = LogManager.getLogger(ApplyCommandService.class);
 
   //  private final TerraformResourceApi terraformResourceApi;
 

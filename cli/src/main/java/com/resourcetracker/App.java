@@ -1,11 +1,11 @@
 package com.resourcetracker;
 
 import com.resourcetracker.service.config.ConfigService;
-import com.resourcetracker.service.resource.command.BaseCommandService;
+import com.resourcetracker.service.command.BaseCommandService;
 // import com.resourcetracker.service.KafkaConsumerWrapper;
-import com.resourcetracker.service.resource.command.StartCommandService;
-import com.resourcetracker.service.resource.command.StateCommandService;
-import com.resourcetracker.service.resource.command.StopCommandService;
+import com.resourcetracker.service.command.StartCommandService;
+import com.resourcetracker.service.command.StateCommandService;
+import com.resourcetracker.service.command.StopCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
