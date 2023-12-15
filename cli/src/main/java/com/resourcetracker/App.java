@@ -3,9 +3,9 @@ package com.resourcetracker;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.command.BaseCommandService;
 // import com.resourcetracker.service.KafkaConsumerWrapper;
-import com.resourcetracker.service.command.StartCommandService;
-import com.resourcetracker.service.command.StateCommandService;
-import com.resourcetracker.service.command.StopCommandService;
+import com.resourcetracker.service.command.external.StartExternalCommandService;
+import com.resourcetracker.service.command.external.StateExternalCommandService;
+import com.resourcetracker.service.command.external.StopExternalCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -18,9 +18,9 @@ import picocli.CommandLine;
 @Component
 @Import({
   BaseCommandService.class,
-  StartCommandService.class,
-  StateCommandService.class,
-  StopCommandService.class,
+  StartExternalCommandService.class,
+  StateExternalCommandService.class,
+  StopExternalCommandService.class,
   ConfigService.class,
   BuildProperties.class
 })

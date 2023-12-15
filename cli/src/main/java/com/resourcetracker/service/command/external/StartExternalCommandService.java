@@ -1,11 +1,13 @@
-package com.resourcetracker.service.command;
+package com.resourcetracker.service.command.external;
 
-import com.resourcetracker.ApiClient;
-import com.resourcetracker.api.TerraformResourceApi;
-import com.resourcetracker.api.ValidationResourceApi;
 import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.exception.BodyValidationException;
 import com.resourcetracker.model.*;
+import com.resourcetracker.service.client.command.ApplyClientCommandService;
+import com.resourcetracker.service.client.command.CredentialsAcquireClientCommandService;
+import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
+import com.resourcetracker.service.command.ICommand;
 import com.resourcetracker.service.config.ConfigService;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
@@ -16,32 +18,28 @@ import reactor.core.publisher.Mono;
 
 /** Represents 'start' command service, which exposes opportunity to execute its processing. */
 @Service
-public class StartCommandService {
-  private static final Logger logger = LogManager.getLogger(StartCommandService.class);
+public class StartExternalCommandService implements ICommand {
+  private static final Logger logger = LogManager.getLogger(StartExternalCommandService.class);
 
-  private final TerraformResourceApi terraformResourceApi;
+  @Autowired
+  private ConfigService configService;
 
-  private final ValidationResourceApi validationResourceApi;
+  @Autowired
+  private ApplyClientCommandService applyClientCommandService;
 
-  private final ConfigService configService;
+  @Autowired
+  private CredentialsAcquireClientCommandService credentialsAcquireClientCommandService;
 
-  public StartCommandService(@Autowired ConfigService configService) {
-    this.configService = configService;
+  @Autowired
+  private SecretsAcquireClientCommandService secretsAcquireClientCommandService;
 
-    ApiClient apiClient =
-        new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
-
-    this.terraformResourceApi = new TerraformResourceApi(apiClient);
-    this.validationResourceApi = new ValidationResourceApi(apiClient);
-  }
-
-  /** Provides command process execution. */
-  public void process() {
+  /**
+   * @see ICommand
+   */
+  public void process() throws ApiServerNotAvailableException {
     switch (configService.getConfig().getCloud().getProvider()) {
-      case AWS -> {
-        validationResourceApi.v1CredentialsAcquirePost(
-            Provider.AWS, configService.getConfig().getCloud().getCredentials());
-      }
+      case AWS -> validationResourceApi.v1CredentialsAcquirePost(
+          Provider.AWS, configService.getConfig().getCloud().getCredentials());
     }
 
     TerraformDeploymentApplication terraformDeploymentApplication =

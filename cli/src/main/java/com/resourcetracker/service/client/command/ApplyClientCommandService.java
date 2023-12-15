@@ -1,26 +1,29 @@
 package com.resourcetracker.service.client.command;
 
-// import com.resourcetracker.ApiClient;
-// import com.resourcetracker.api.TerraformResourceApi;
-// import com.resourcetracker.exception.StartCommandFailException;
-// import com.resourcetracker.model.TerraformDeploymentApplication;
+import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.TerraformResourceApi;
+import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.model.TerraformDeploymentApplicationResult;
+import com.resourcetracker.service.client.IClientCommand;
+import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** Manages starting of each project */
 @Service
-public class ApplyCommandService {
-  private static final Logger logger = LogManager.getLogger(ApplyCommandService.class);
+public class ApplyClientCommandService implements IClientCommand<TerraformDeploymentApplicationResult> {
+  private static final Logger logger = LogManager.getLogger(ApplyClientCommandService.class);
 
-  //  private final TerraformResourceApi terraformResourceApi;
+    private final TerraformResourceApi terraformResourceApi;
 
-  //  public StartCommandService(@Autowired ConfigService configService) {
-  //    ApiClient apiClient = new ApiClient()
-  //            .setBasePath(configService.getConfig().getApiServer().getHost());
-  //
-  //    terraformResourceApi = new TerraformResourceApi(apiClient);
-  //  }
+    public ApplyClientCommandService(@Autowired ConfigService configService) {
+      ApiClient apiClient = new ApiClient()
+              .setBasePath(configService.getConfig().getApiServer().getHost());
+
+      this.terraformResourceApi = new TerraformResourceApi(apiClient);
+    }
 
   //  public void process() {
   //    TerraformDeploymentApplication terraformDeploymentApplication = new
@@ -53,14 +56,15 @@ public class ApplyCommandService {
   //    }
   //  }
 
-  //  @Override
-  //  public void run() {
-  //    if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED)) {
-  //      terraformService.setConfigEntity(configEntity);
-  //      terraformService.start();
-  //
-  //      stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-  //      numberOfStartedProjects++;
-  //    }
-  //  }
+  /**
+   * @return
+   * @throws ApiServerNotAvailableException
+   */
+  @Override
+  public TerraformDeploymentApplicationResult process() throws ApiServerNotAvailableException {
+//    terraformResourceApi
+//            .v1TerraformApplyPost()
+
+    return null;
+  }
 }

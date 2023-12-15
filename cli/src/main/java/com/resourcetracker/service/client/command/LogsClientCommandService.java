@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LogsCommandService {
+public class LogsClientCommandService {
   @Autowired private ConfigService configService;
 
   public void process() {

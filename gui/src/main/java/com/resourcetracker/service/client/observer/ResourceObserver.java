@@ -3,7 +3,7 @@ package com.resourcetracker.service.client.observer;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.HealthCheckResult;
-import com.resourcetracker.service.client.command.HealthCommandService;
+import com.resourcetracker.service.client.command.HealthClientCommandService;
 import com.resourcetracker.service.event.state.payload.ConnectionStatusEvent;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
 import jakarta.annotation.PostConstruct;
@@ -18,7 +18,7 @@ public class ResourceObserver {
 
   @Autowired private PropertiesEntity properties;
 
-  @Autowired private HealthCommandService healthCommandService;
+  @Autowired private HealthClientCommandService healthCommandService;
 
   /** Sends healthcheck requests to API Server and updates connection status. */
   @PostConstruct

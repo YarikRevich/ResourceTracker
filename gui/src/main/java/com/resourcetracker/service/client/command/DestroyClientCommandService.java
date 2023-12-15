@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 /** Manages starting of each project described in a configuration file */
 @Service
-public class DestroyCommandService {
+public class DestroyClientCommandService {
   @Autowired private ConfigService configService;
 
   public void process() {

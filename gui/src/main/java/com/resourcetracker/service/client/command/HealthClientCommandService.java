@@ -13,12 +13,12 @@ import org.springframework.web.reactive.function.client.WebClientRequestExceptio
 
 /** */
 @Service
-public class HealthCommandService implements IResourceCommand<HealthCheckResult> {
-  private static final Logger logger = LogManager.getLogger(HealthCommandService.class);
+public class HealthClientCommandService implements IClientCommand<HealthCheckResult> {
+  private static final Logger logger = LogManager.getLogger(HealthClientCommandService.class);
 
   private final HealthCheckResourceApi healthCheckResourceApi;
 
-  public HealthCommandService(@Autowired ConfigService configService) {
+  public HealthClientCommandService(@Autowired ConfigService configService) {
     ApiClient apiClient =
         new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 
@@ -26,7 +26,7 @@ public class HealthCommandService implements IResourceCommand<HealthCheckResult>
   }
 
   /**
-   * @see IResourceCommand
+   * @see IClientCommand
    */
   public HealthCheckResult process() throws ApiServerNotAvailableException {
     try {
