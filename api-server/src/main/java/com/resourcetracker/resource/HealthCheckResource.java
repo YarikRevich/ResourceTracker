@@ -7,48 +7,27 @@ import com.resourcetracker.model.HealthCheckStatus;
 import com.resourcetracker.service.client.SmallRyeHealthCheckClientService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.WebApplicationException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.WebApplicationException;
-import lombok.SneakyThrows;
 import org.apache.http.HttpHost;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class HealthCheckResource implements HealthCheckResourceApi {
-  @Inject PropertiesEntity properties;
+  @Inject
+  @RestClient
+  SmallRyeHealthCheckClientService smallRyeHealthCheckClientService;
 
-  /**
-   * @return
-   */
   @Override
   public HealthCheckResult v1HealthGet() {
-    URL url;
     try {
-      url = URI.create(String.format(
-              "%s://%s:%d",
-              HttpHost.DEFAULT_SCHEME_NAME,
-              properties.getApplicationHost(),
-              properties.getApplicationPort())).toURL();
-    } catch (MalformedURLException e) {
-      throw new InternalServerErrorException();
-    }
-
-    SmallRyeHealthCheckClientService smallRyeHealthCheckClientService =
-        RestClientBuilder.newBuilder()
-            .baseUrl(url)
-            .build(SmallRyeHealthCheckClientService.class);
-
-    HealthCheckResult result;
-    try {
-      result = smallRyeHealthCheckClientService.qHealthGet();
+      return smallRyeHealthCheckClientService.qHealthGet();
     } catch (WebApplicationException e) {
-        return e.getResponse().readEntity(HealthCheckResult.class);
+      return e.getResponse().readEntity(HealthCheckResult.class);
     }
-    return result;
   }
 }

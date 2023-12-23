@@ -4,7 +4,7 @@ import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElementActualizable;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.state.LocalState;
+import com.resourcetracker.service.event.LocalState;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;

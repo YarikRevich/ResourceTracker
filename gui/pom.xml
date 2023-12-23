@@ -165,7 +165,7 @@
                             <generateSupportingFiles>true</generateSupportingFiles>
                             <auth>false</auth>
                             <configOptions>
-                                <additionalModelTypeAnnotations>@lombok.Data @lombok.NoArgsConstructor @lombok.AllArgsConstructor(staticName = "of")</additionalModelTypeAnnotations>
+<!--                                <additionalModelTypeAnnotations>@lombok.Data @lombok.NoArgsConstructor @lombok.AllArgsConstructor(staticName = "of")</additionalModelTypeAnnotations>-->
                                 <sourceFolder>src/main/java</sourceFolder>
                                 <useSpringController>true</useSpringController>
                                 <interfaceOnly>false</interfaceOnly>

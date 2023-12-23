@@ -2,13 +2,14 @@ package com.resourcetracker.resource;
 
 import com.resourcetracker.api.TopicResourceApi;
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.exception.KafkaServiceNotAvailableException;
 import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.model.TopicLogsUnit;
 import com.resourcetracker.service.kafka.KafkaService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.InternalServerErrorException;
 import java.util.List;
+import lombok.SneakyThrows;
 
 /** Contains implementation of TopicResource. */
 @ApplicationScoped
@@ -21,9 +22,10 @@ public class TopicResource implements TopicResourceApi {
    * @return related Kafka topic messages.
    */
   @Override
+  @SneakyThrows
   public TopicLogsResult v1TopicLogsGet() {
     if (!kafkaService.isConnected()) {
-      throw new InternalServerErrorException();
+      throw new KafkaServiceNotAvailableException();
     }
 
     List<KafkaLogsTopicEntity> logs = kafkaService.consumeLogs();

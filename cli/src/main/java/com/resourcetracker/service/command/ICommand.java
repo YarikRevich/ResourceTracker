@@ -1,13 +1,9 @@
 package com.resourcetracker.service.command;
 
-import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.exception.ApiServerException;
 
-/**
- * Represents common command interface.
- */
+/** Represents common command interface. */
 public interface ICommand {
-    /**
-     * Processes certain request for an external command.
-     */
-    void process() throws ApiServerNotAvailableException;
+  /** Processes certain request for an external command. */
+  void process() throws ApiServerException;
 }

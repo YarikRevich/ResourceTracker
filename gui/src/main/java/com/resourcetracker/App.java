@@ -1,26 +1,25 @@
 package com.resourcetracker;
 
-import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.service.client.observer.ResourceObserver;
+import com.resourcetracker.service.element.font.FontLoader;
 import com.resourcetracker.service.element.observer.ElementObserver;
 import com.resourcetracker.service.element.stage.MainStage;
-import com.resourcetracker.service.event.integrated.StageReadyEvent;
-import com.resourcetracker.service.event.state.LocalState;
-import com.resourcetracker.service.client.observer.ResourceObserver;
+import com.resourcetracker.service.event.LocalState;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+/** Represents entrypoint for the application. */
 public class App extends Application {
   private ConfigurableApplicationContext applicationContext;
-
-  @Autowired private PropertiesEntity properties;
 
   @Autowired private LocalState localState;
 
@@ -28,14 +27,20 @@ public class App extends Application {
 
   @Autowired private ResourceObserver resourceObserver;
 
+  @Autowired private FontLoader fontLoader;
+
   @Autowired private MainStage mainStage;
 
-  /** Launches application by internal application state. */
+  /**
+   * @see Application
+   */
   public void launch() {
     Application.launch();
   }
 
-  /** Responsible for the initialization of OS related functionality. */
+  /**
+   * @see Application
+   */
   @Override
   public void init() {
     ApplicationContextInitializer<GenericApplicationContext> initializer =
@@ -54,7 +59,9 @@ public class App extends Application {
     System.setProperty("apple.laf.useScreenMenuBar", "true");
   }
 
-  /** Stops internal application by internal calls. */
+  /**
+   * @see Application
+   */
   @Override
   public void stop() {
     applicationContext.close();
@@ -63,12 +70,11 @@ public class App extends Application {
   }
 
   /**
-   * @param stage
+   * @see Application
    */
   @Override
+  @SneakyThrows
   public void start(Stage stage) {
     mainStage.getContent().show();
-
-    applicationContext.publishEvent(new StageReadyEvent(mainStage.getContent()));
   }
 }

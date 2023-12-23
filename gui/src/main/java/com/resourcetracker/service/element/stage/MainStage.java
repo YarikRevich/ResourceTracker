@@ -2,12 +2,12 @@ package com.resourcetracker.service.element.stage;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.common.WindowHelper;
-import com.resourcetracker.service.element.progressbar.CircleProgressBar;
-import com.resourcetracker.service.element.scene.main.StartScene;
+import com.resourcetracker.service.element.common.ElementHelper;
+import com.resourcetracker.service.element.progressbar.stage.main.MainCircleProgressBar;
+import com.resourcetracker.service.element.scene.main.MainStartScene;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.state.payload.WindowHeightUpdateEvent;
-import com.resourcetracker.service.event.state.payload.WindowWidthUpdateEvent;
+import com.resourcetracker.service.event.payload.MainWindowHeightUpdateEvent;
+import com.resourcetracker.service.event.payload.MainWindowWidthUpdateEvent;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
 import java.util.UUID;
 import javafx.application.Platform;
@@ -26,8 +26,8 @@ public class MainStage implements IElement<Stage> {
 
   public MainStage(
       @Autowired PropertiesEntity properties,
-      @Autowired StartScene startScene,
-      @Autowired CircleProgressBar circleProgressBar,
+      @Autowired MainStartScene startScene,
+      @Autowired MainCircleProgressBar mainCircleProgressBar,
       @Autowired ApplicationEventPublisher applicationEventPublisher) {
     Platform.runLater(
         () -> {
@@ -36,20 +36,30 @@ public class MainStage implements IElement<Stage> {
 
           Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
 
-          Rectangle2D window =
-              WindowHelper.getSizeWithScale(
+          Rectangle2D windowMin =
+              ElementHelper.getSizeWithScale(
                   defaultBounds.getWidth(),
                   defaultBounds.getHeight(),
-                  properties.getWindowMainScaleWidth(),
-                  properties.getWindowMainScaleHeight());
+                  properties.getWindowMainScaleMinWidth(),
+                  properties.getWindowMainScaleMinHeight());
 
-          mainStage.setWidth(window.getWidth());
-          mainStage.setHeight(window.getHeight());
-          mainStage.setMinWidth(window.getWidth());
-          mainStage.setMinHeight(window.getHeight());
+          mainStage.setWidth(windowMin.getWidth());
+          mainStage.setHeight(windowMin.getHeight());
+          mainStage.setMinWidth(windowMin.getWidth());
+          mainStage.setMinHeight(windowMin.getHeight());
+
+          Rectangle2D windowMax =
+              ElementHelper.getSizeWithScale(
+                  defaultBounds.getWidth(),
+                  defaultBounds.getHeight(),
+                  properties.getWindowMainScaleMaxWidth(),
+                  properties.getWindowMainScaleMaxHeight());
+
+          mainStage.setMaxWidth(windowMax.getWidth());
+          mainStage.setMaxHeight(windowMax.getHeight());
 
           Point2D centralPoint =
-              WindowHelper.getCentralPoint(mainStage.getWidth(), mainStage.getHeight());
+              ElementHelper.getCentralPoint(mainStage.getWidth(), mainStage.getHeight());
           mainStage.setX(centralPoint.getX());
           mainStage.setY(centralPoint.getY());
 
@@ -60,19 +70,24 @@ public class MainStage implements IElement<Stage> {
               .addListener(
                   (obs, oldVal, newVal) -> {
                     applicationEventPublisher.publishEvent(
-                        new WindowWidthUpdateEvent(newVal.doubleValue()));
+                        new MainWindowWidthUpdateEvent(newVal.doubleValue()));
                   });
           mainStage
               .heightProperty()
               .addListener(
                   (obs, oldVal, newVal) -> {
                     applicationEventPublisher.publishEvent(
-                        new WindowHeightUpdateEvent(newVal.doubleValue()));
+                        new MainWindowHeightUpdateEvent(newVal.doubleValue()));
                   });
 
-          SchedulerHelper.scheduleTimer(
-              () -> WindowHelper.toggleElementVisibility(circleProgressBar.getContent()),
-              properties.getSpinnerInitialDelay());
+          mainStage.setOnShown(
+              event -> {
+                ElementHelper.toggleElementVisibility(mainCircleProgressBar.getContent());
+
+                SchedulerHelper.scheduleTimer(
+                    () -> ElementHelper.toggleElementVisibility(mainCircleProgressBar.getContent()),
+                    properties.getSpinnerInitialDelay());
+              });
 
           ElementStorage.setElement(id, mainStage);
         });

@@ -2,20 +2,31 @@ package com.resourcetracker.entity;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
 
 /** Represents application properties used for application configuration. */
 @Getter
 @Configuration
 public class PropertiesEntity {
+  private static final String GIT_CONFIG_PROPERTIES_FILE = "git.properties";
+
   @Value(value = "${window.main.name}")
   String windowMainName;
 
-  @Value(value = "${window.main.scale.width}")
-  Double windowMainScaleWidth;
+  @Value(value = "${window.main.scale.min.width}")
+  Double windowMainScaleMinWidth;
 
-  @Value(value = "${window.main.scale.height}")
-  Double windowMainScaleHeight;
+  @Value(value = "${window.main.scale.min.height}")
+  Double windowMainScaleMinHeight;
+
+  @Value(value = "${window.main.scale.max.width}")
+  Double windowMainScaleMaxWidth;
+
+  @Value(value = "${window.main.scale.max.height}")
+  Double windowMainScaleMaxHeight;
 
   @Value(value = "${window.settings.name}")
   String windowSettingsName;
@@ -47,14 +58,59 @@ public class PropertiesEntity {
   @Value(value = "${button.basic.size.height}")
   Double basicButtonSizeHeight;
 
-  @Value(value = "${scene.start.background.color.r}")
-  Integer startSceneBackgroundColorR;
+  @Value(value = "${scene.general.background.color.r}")
+  Integer generalBackgroundColorR;
 
-  @Value(value = "${scene.start.background.color.g}")
-  Integer startSceneBackgroundColorG;
+  @Value(value = "${scene.general.background.color.g}")
+  Integer generalBackgroundColorG;
 
-  @Value(value = "${scene.start.background.color.b}")
-  Integer startSceneBackgroundColorB;
+  @Value(value = "${scene.general.background.color.b}")
+  Integer generalBackgroundColorB;
+
+  @Value(value = "${scene.common.header.background.color.r}")
+  Integer commonSceneHeaderBackgroundColorR;
+
+  @Value(value = "${scene.common.header.background.color.g}")
+  Integer commonSceneHeaderBackgroundColorG;
+
+  @Value(value = "${scene.common.header.background.color.b}")
+  Integer commonSceneHeaderBackgroundColorB;
+
+  @Value(value = "${scene.common.header.connection.background.color.r}")
+  Integer commonSceneHeaderConnectionStatusBackgroundColorR;
+
+  @Value(value = "${scene.common.header.connection.background.color.g}")
+  Integer commonSceneHeaderConnectionStatusBackgroundColorG;
+
+  @Value(value = "${scene.common.header.connection.background.color.b}")
+  Integer commonSceneHeaderConnectionStatusBackgroundColorB;
+
+  @Value(value = "${scene.common.menu.background.color.r}")
+  Integer commonSceneMenuBackgroundColorR;
+
+  @Value(value = "${scene.common.menu.background.color.g}")
+  Integer commonSceneMenuBackgroundColorG;
+
+  @Value(value = "${scene.common.menu.background.color.b}")
+  Integer commonSceneMenuBackgroundColorB;
+
+  @Value(value = "${scene.common.content.background.color.r}")
+  Integer commonSceneContentBackgroundColorR;
+
+  @Value(value = "${scene.common.content.background.color.g}")
+  Integer commonSceneContentBackgroundColorG;
+
+  @Value(value = "${scene.common.content.background.color.b}")
+  Integer commonSceneContentBackgroundColorB;
+
+  @Value(value = "${scene.common.footer.background.color.r}")
+  Integer commonSceneFooterBackgroundColorR;
+
+  @Value(value = "${scene.common.footer.background.color.g}")
+  Integer commonSceneFooterBackgroundColorG;
+
+  @Value(value = "${scene.common.footer.background.color.b}")
+  Integer commonSceneFooterBackgroundColorB;
 
   @Value(value = "${image.status.scale}")
   Double statusImageScale;
@@ -70,4 +126,13 @@ public class PropertiesEntity {
 
   @Value(value = "${git.commit.id.abbrev}")
   String gitCommitId;
+
+  @Bean
+  public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+    PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();
+    propsConfig.setLocation(new ClassPathResource(GIT_CONFIG_PROPERTIES_FILE));
+    propsConfig.setIgnoreResourceNotFound(true);
+    propsConfig.setIgnoreUnresolvablePlaceholders(true);
+    return propsConfig;
+  }
 }

@@ -10,17 +10,15 @@ public class SchedulerStorage {
   private static final Map<UUID, ScheduledFuture<?>> storage = new HashMap<>();
 
   /**
-   *
-   *
    * @param id
    * @param element
    */
   public static void setThread(UUID id, ScheduledFuture<?> element) {
     storage.putIfAbsent(id, element);
-  };
+  }
+  ;
 
   /**
-   *
    * @param id
    * @return
    */

@@ -2,69 +2,40 @@ package com.resourcetracker.service.client.command;
 
 import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.TerraformResourceApi;
+import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 import com.resourcetracker.service.client.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
-/** Manages starting of each project */
+/** Represents apply client command service. */
 @Service
-public class ApplyClientCommandService implements IClientCommand<TerraformDeploymentApplicationResult> {
-  private static final Logger logger = LogManager.getLogger(ApplyClientCommandService.class);
+public class ApplyClientCommandService
+    implements IClientCommand<
+        TerraformDeploymentApplicationResult, TerraformDeploymentApplication> {
+  private final TerraformResourceApi terraformResourceApi;
 
-    private final TerraformResourceApi terraformResourceApi;
+  public ApplyClientCommandService(@Autowired ConfigService configService) {
+    ApiClient apiClient =
+        new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 
-    public ApplyClientCommandService(@Autowired ConfigService configService) {
-      ApiClient apiClient = new ApiClient()
-              .setBasePath(configService.getConfig().getApiServer().getHost());
-
-      this.terraformResourceApi = new TerraformResourceApi(apiClient);
-    }
-
-  //  public void process() {
-  //    TerraformDeploymentApplication terraformDeploymentApplication = new
-  // TerraformDeploymentApplication();
-  ////    terraformDeploymentApplication.addRequestsItem()
-  //
-  //    Mono<Void> response =
-  // terraformResourceApi.v1TerraformApplyPost(terraformDeploymentApplication)
-  //            .doOnError(t -> logger.fatal(new StartCommandFailException().getMessage()));
-  //    response.block();
-
-  //    List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
-  //
-  //    synchronized (this) {
-  //      for (ConfigEntity configEntity : parsedConfigFile) {
-  //        new Thread(new StartRunner(configEntity)).run();
-  //      }
-  //    }
-  //
-  //    for (ConfigEntity configEntity : parsedConfigFile) {
-  //      if (configEntity.getProject().getName() == project) {
-  //        terraformService.setConfigEntity(configEntity);
-  //        String kafkaBootstrapServer = terraformService.start();
-  //
-  //        stateService.setKafkaBootstrapServer(kafkaBootstrapServer);
-  //        stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED);
-  //        logger.info(String.format("Project %s is successfully started!", project));
-  //        break;
-  //      }
-  //    }
-  //  }
+    this.terraformResourceApi = new TerraformResourceApi(apiClient);
+  }
 
   /**
-   * @return
-   * @throws ApiServerNotAvailableException
+   * @see IClientCommand
    */
   @Override
-  public TerraformDeploymentApplicationResult process() throws ApiServerNotAvailableException {
-//    terraformResourceApi
-//            .v1TerraformApplyPost()
-
-    return null;
+  public TerraformDeploymentApplicationResult process(TerraformDeploymentApplication input)
+      throws ApiServerException {
+    try {
+      return terraformResourceApi.v1TerraformApplyPost(input).block();
+    } catch (WebClientRequestException e) {
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()));
+    }
   }
 }

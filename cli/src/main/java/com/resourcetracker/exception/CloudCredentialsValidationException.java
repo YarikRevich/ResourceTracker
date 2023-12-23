@@ -1,10 +1,18 @@
 package com.resourcetracker.exception;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Formatter;
 
-/** Represents */
 public class CloudCredentialsValidationException extends IOException {
   public CloudCredentialsValidationException() {
-    super("Given cloud credentials are not valid!");
+    this("");
+  }
+
+  public CloudCredentialsValidationException(Object... message) {
+    super(
+        new Formatter()
+            .format("Given cloud credentials are not valid!: %s", Arrays.stream(message).toArray())
+            .toString());
   }
 }

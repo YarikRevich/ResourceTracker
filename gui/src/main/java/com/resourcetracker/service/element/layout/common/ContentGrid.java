@@ -1,22 +1,23 @@
 package com.resourcetracker.service.element.layout.common;
 
 import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.state.LocalState;
 import java.util.UUID;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
 
-public class ContentGrid<K extends IElement<?>> implements IElementResizable, IElement<GridPane> {
+/** Represents content grid used in main stage. */
+public class ContentGrid implements IElement<GridPane> {
   UUID id = UUID.randomUUID();
 
-  public ContentGrid(MenuButtonBox buttons, K element) {
+  public ContentGrid(VBox buttons, Node element) {
     GridPane grid = new GridPane();
-    grid.setGridLinesVisible(true);
+    grid.setPadding(new Insets(5, 5, 5, 5));
+    grid.setHgap(10);
 
     RowConstraints row1 = new RowConstraints();
-    //    row1.setVgrow(Priority.SOMETIMES);
+    row1.setVgrow(Priority.ALWAYS);
 
     grid.getRowConstraints().add(0, row1);
 
@@ -28,33 +29,19 @@ public class ContentGrid<K extends IElement<?>> implements IElementResizable, IE
     column2.setHgrow(Priority.ALWAYS);
     column2.setPercentWidth(70);
 
-    grid.getColumnConstraints().add(0, column1);
-    grid.getColumnConstraints().add(1, column2);
+    grid.getColumnConstraints().addAll(column1, column2);
 
-    grid.addColumn(0, buttons.getContent());
-    grid.addColumn(1, (Node) element.getContent());
+    grid.addColumn(0, buttons);
+    grid.addColumn(1, element);
 
     ElementStorage.setElement(id, grid);
-    ElementStorage.setResizable(this);
   }
 
   /**
-   * @return
+   * @see IElement
    */
   @Override
   public GridPane getContent() {
     return ElementStorage.getElement(id);
-  }
-
-  /** */
-  @Override
-  public void handlePrefWidth() {
-    getContent().setMinWidth(LocalState.getWindowWidth());
-  }
-
-  /** */
-  @Override
-  public void handlePrefHeight() {
-    getContent().setMinHeight(LocalState.getWindowHeight());
   }
 }

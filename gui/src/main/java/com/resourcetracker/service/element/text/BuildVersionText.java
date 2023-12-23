@@ -3,8 +3,10 @@ package com.resourcetracker.service.element.text;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
+import com.resourcetracker.service.element.font.FontLoader;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import java.util.UUID;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,10 @@ public class BuildVersionText implements IElementResizable, IElement<Label> {
 
   public BuildVersionText(@Autowired PropertiesEntity properties) {
     Label label = new Label(String.format("BuildVersion: %s", properties.getGitCommitId()));
+    label.setFont(FontLoader.getFont12());
     label.setAlignment(Pos.CENTER_LEFT);
-    label.setMaxWidth(180);
     label.setWrapText(true);
+    label.setPadding(new Insets(0, 0, 0, 10));
 
     ElementStorage.setElement(id, label);
   }

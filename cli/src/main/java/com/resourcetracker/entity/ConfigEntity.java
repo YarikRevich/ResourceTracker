@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /** Represents configuration model used for ResourceTracker deployment operation. */
 @Getter
@@ -43,6 +44,7 @@ public class ConfigEntity {
     @NotBlank Provider provider;
 
     @Getter
+    @NoArgsConstructor
     public static class AWSCredentials {
       @Pattern(regexp = "^(((./)?)|((~/.)?)|((/?))?)([a-zA-Z/]*)((\\.([a-z]+))?)$")
       String file;

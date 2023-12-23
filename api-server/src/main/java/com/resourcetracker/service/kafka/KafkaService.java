@@ -40,8 +40,8 @@ public class KafkaService {
     this.kafkaBootstrapServer = configService.getConfig().getKafka().getHost();
 
     kafkaAdminClientProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
-    kafkaAdminClientProps.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 1000);
-    kafkaAdminClientProps.put(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, 1000);
+    kafkaAdminClientProps.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
+    kafkaAdminClientProps.put(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, 5000);
     kafkaAdminClientProps.put(ConsumerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, 5000);
 
     this.kafkaAdminClientProps = kafkaAdminClientProps;

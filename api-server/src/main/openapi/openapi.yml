@@ -14,7 +14,7 @@ tags:
   - name: InfoResource
     description: Contains all endpoints related to general info of API Server.
   - name: HealthCheckResource
-    description: ""
+    description: Contains all endpoints related to general API Server health information.
 
 paths:
   /v1/topic/logs:
@@ -73,7 +73,7 @@ paths:
         required: true
         description: Checks if the given secrets file contains correct data
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: "#/components/schemas/ValidationSecretsApplication"
       responses:
@@ -84,7 +84,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidationSecretsApplicationResult"
         400:
-          description: Given script application contains incorrect data
+          description: Given secrets application contains incorrect data
   /v1/script/acquire:
     post:
       tags:
@@ -93,7 +93,7 @@ paths:
         required: true
         description: Checks if the given script file contains allowed data
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: "#/components/schemas/ValidationScriptApplication"
       responses:
@@ -122,7 +122,7 @@ paths:
         - HealthCheckResource
       responses:
         200:
-          description: ""
+          description: General health information about running API Server
           content:
             application/json:
               schema:
@@ -215,7 +215,6 @@ components:
     CredentialsFields:
       anyOf:
         - $ref: "#/components/schemas/AWSCredentials"
-        - $ref: "#/components/schemas/GCPCredentials"
 
     AWSCredentials:
       required:
@@ -235,14 +234,6 @@ components:
           type: string
         secretKey:
           type: string
-
-    GCPCredentials:
-      required:
-        - key
-      properties:
-        key:
-          type: string
-
 
 
 #    CredentialsFields:
@@ -298,7 +289,6 @@ components:
           $ref: "#/components/schemas/Provider"
         file:
           type: string
-          format: binary
     ValidationSecretsApplicationResult:
       required:
         - valid
@@ -311,25 +301,19 @@ components:
             - $ref: "#/components/schemas/AWSSecrets"
     ValidationScriptApplication:
       required:
-        - file
+        - files
       type: object
       properties:
-        file:
+        files:
           type: array
           items:
             type: string
-            format: binary
     ValidationScriptApplicationResult:
       required:
         - valid
-        - data
       properties:
         valid:
           type: boolean
-        data:
-          type: array
-          items:
-            type: string
     ApplicationInfoResult:
       properties:
         externalApi:

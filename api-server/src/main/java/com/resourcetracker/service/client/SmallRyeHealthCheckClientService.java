@@ -7,11 +7,9 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-/**
- * Represents client for SmallRye health check endpoints.
- */
+/** Represents client for SmallRye health check endpoints. */
 @Path("/q")
-@RegisterRestClient
+@RegisterRestClient(configKey = "small-rye-health-check")
 public interface SmallRyeHealthCheckClientService {
   @GET
   @Path("/health")

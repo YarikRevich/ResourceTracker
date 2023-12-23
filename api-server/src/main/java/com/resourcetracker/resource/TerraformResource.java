@@ -33,21 +33,16 @@ public class TerraformResource implements TerraformResourceApi {
       throw new BadRequestException();
     }
 
-    System.out.println(terraformDeploymentApplication.getCredentials());
+    vendorFacade.initBackendStorage(terraformDeploymentApplication);
 
-    //        vendorFacade.initBackendStorage(
-    //                terraformDeploymentApplication.getProvider(),
-    //                terraformDeploymentApplication.getCredentials());
-    //
-    //        String terraformOutput = terraformAdapter.apply(terraformDeploymentApplication);
-    //
+    //    String terraformOutput = terraformAdapter.apply(terraformDeploymentApplication);
+
     //        String machineAddress = vendorFacade.startContainerExecution(
     //                terraformDeploymentApplication.getProvider(),
     //                terraformOutput,
     //                terraformDeploymentApplication.getCredentials());
 
-    //        return TerraformDeploymentApplicationResult.of(machineAddress);
-    return null;
+    return TerraformDeploymentApplicationResult.of("198.123.0.2");
   }
 
   /**
@@ -65,8 +60,6 @@ public class TerraformResource implements TerraformResourceApi {
 
     terraformAdapter.destroy(terraformDestructionApplication);
 
-    vendorFacade.destroyBackendStorage(
-        terraformDestructionApplication.getProvider(),
-        terraformDestructionApplication.getCredentials());
+    vendorFacade.destroyBackendStorage(terraformDestructionApplication);
   }
 }

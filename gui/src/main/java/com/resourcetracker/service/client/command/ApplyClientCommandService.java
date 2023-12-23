@@ -1,28 +1,29 @@
 package com.resourcetracker.service.client.command;
 
 import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.TerraformResourceApi;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.resourcetracker.api.TerraformResourceApi;
-import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 
 /** Manages starting of each project */
 @Service
-public class ApplyClientCommandService implements IClientCommand<TerraformDeploymentApplicationResult> {
+public class ApplyClientCommandService
+    implements IClientCommand<TerraformDeploymentApplicationResult> {
   private static final Logger logger = LogManager.getLogger(ApplyClientCommandService.class);
 
-    private final TerraformResourceApi terraformResourceApi;
+  private final TerraformResourceApi terraformResourceApi;
 
-    public ApplyClientCommandService(@Autowired ConfigService configService) {
-      ApiClient apiClient = new ApiClient()
-              .setBasePath(configService.getConfig().getApiServer().getHost());
+  public ApplyClientCommandService(@Autowired ConfigService configService) {
+    ApiClient apiClient =
+        new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 
-      this.terraformResourceApi = new TerraformResourceApi(apiClient);
-    }
+    this.terraformResourceApi = new TerraformResourceApi(apiClient);
+  }
 
   //  public void process() {
   //    TerraformDeploymentApplication terraformDeploymentApplication = new

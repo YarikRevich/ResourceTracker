@@ -20,7 +20,7 @@ public class KafkaLogsTopicEntity {
   /** Represents hostname of the machine where ResourceTracker Agent gets started. */
   String hostName;
 
-  /** Represents hostaddress of the machine where ResourceTracker Agent gets started. */
+  /** Represents host address of the machine where ResourceTracker Agent gets started. */
   String hostAddress;
 
   /** Represents timestamp is the event when message gets sent to Kafka cluster. */

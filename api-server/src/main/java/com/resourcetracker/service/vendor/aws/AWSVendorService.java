@@ -9,9 +9,14 @@ import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesResult;
 import com.amazonaws.services.ec2.model.NetworkInterface;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.HeadBucketRequest;
+import com.amazonaws.services.s3.waiters.AmazonS3Waiters;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
+import com.amazonaws.services.securitytoken.model.AWSSecurityTokenServiceException;
 import com.amazonaws.services.securitytoken.model.GetCallerIdentityRequest;
+import com.amazonaws.waiters.WaiterParameters;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -68,7 +73,9 @@ public class AWSVendorService {
    * @throws AWSRunTaskFailureException thrown when AWS Task run action fails.
    */
   public void runEcsTask(
-      AWSDeploymentResultDto awsDeploymentResultDto, AWSCredentialsProvider awsCredentialsProvider)
+      AWSDeploymentResultDto awsDeploymentResultDto,
+      AWSCredentialsProvider awsCredentialsProvider,
+      String region)
       throws AWSRunTaskFailureException {
     AwsVpcConfiguration awsVpcConfiguration =
         new AwsVpcConfiguration()
@@ -88,6 +95,7 @@ public class AWSVendorService {
 
     RunTaskResult runTaskResult =
         AmazonECSClientBuilder.standard()
+            .withRegion(region)
             .withCredentials(awsCredentialsProvider)
             .build()
             .runTask(runTaskRequest);
@@ -120,13 +128,13 @@ public class AWSVendorService {
    * @return remote machine address.
    */
   public String getMachineAddress(
-      String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider) {
-    String ecsTaskArn = getEcsTaskArn(ecsClusterId, awsCredentialsProvider);
+      String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider, String region) {
+    String ecsTaskArn = getEcsTaskArn(ecsClusterId, awsCredentialsProvider, region);
 
     String ecsTaskNetworkInterfaceId =
-        getEcsTaskNetworkInterfaceId(ecsClusterId, ecsTaskArn, awsCredentialsProvider);
+        getEcsTaskNetworkInterfaceId(ecsClusterId, ecsTaskArn, awsCredentialsProvider, region);
 
-    return getEcsTaskPublicIp(ecsTaskNetworkInterfaceId, awsCredentialsProvider);
+    return getEcsTaskPublicIp(ecsTaskNetworkInterfaceId, awsCredentialsProvider, region);
   }
 
   /**
@@ -135,11 +143,13 @@ public class AWSVendorService {
    * @param ecsClusterId cluster id of the ECS Task.
    * @return ECS Task ARN in the given cluster id.
    */
-  private String getEcsTaskArn(String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider) {
+  private String getEcsTaskArn(
+      String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider, String region) {
     ListTasksRequest listTasksRequest = new ListTasksRequest().withCluster(ecsClusterId);
 
     ListTasksResult listTasksResult =
         AmazonECSClientBuilder.standard()
+            .withRegion(region)
             .withCredentials(awsCredentialsProvider)
             .build()
             .listTasks(listTasksRequest);
@@ -155,12 +165,16 @@ public class AWSVendorService {
    * @return network interface ID of the ECS Task container.
    */
   private String getEcsTaskNetworkInterfaceId(
-      String ecsClusterId, String ecsTaskArn, AWSCredentialsProvider awsCredentialsProvider) {
+      String ecsClusterId,
+      String ecsTaskArn,
+      AWSCredentialsProvider awsCredentialsProvider,
+      String region) {
     DescribeTasksRequest describeTaskRequest =
         new DescribeTasksRequest().withCluster(ecsClusterId).withTasks(List.of(ecsTaskArn));
 
     DescribeTasksResult describeTasksResult =
         AmazonECSClientBuilder.standard()
+            .withRegion(region)
             .withCredentials(awsCredentialsProvider)
             .build()
             .describeTasks(describeTaskRequest);
@@ -193,12 +207,13 @@ public class AWSVendorService {
    * @return public IP of the ECS Task container.
    */
   private String getEcsTaskPublicIp(
-      String networkInterfaceId, AWSCredentialsProvider awsCredentialsProvider) {
+      String networkInterfaceId, AWSCredentialsProvider awsCredentialsProvider, String region) {
     DescribeNetworkInterfacesRequest describeNetworkInterfacesRequest =
         new DescribeNetworkInterfacesRequest().withNetworkInterfaceIds(List.of(networkInterfaceId));
 
     DescribeNetworkInterfacesResult describeNetworkInterfacesResult =
         AmazonEC2ClientBuilder.standard()
+            .withRegion(region)
             .withCredentials(awsCredentialsProvider)
             .build()
             .describeNetworkInterfaces(describeNetworkInterfacesRequest);
@@ -215,8 +230,10 @@ public class AWSVendorService {
    * @param name name of the S3 bucket.
    * @return result of the check.
    */
-  public boolean isS3BucketExist(String name, AWSCredentialsProvider awsCredentialsProvider) {
+  public boolean isS3BucketExist(
+      String name, AWSCredentialsProvider awsCredentialsProvider, String region) {
     return AmazonS3ClientBuilder.standard()
+        .withRegion(region)
         .withCredentials(awsCredentialsProvider)
         .build()
         .doesBucketExistV2(name);
@@ -227,11 +244,17 @@ public class AWSVendorService {
    *
    * @param name name of the S3 bucket.
    */
-  public void createS3Bucket(String name, AWSCredentialsProvider awsCredentialsProvider) {
-    AmazonS3ClientBuilder.standard()
-        .withCredentials(awsCredentialsProvider)
-        .build()
-        .createBucket(name);
+  public void createS3Bucket(
+      String name, AWSCredentialsProvider awsCredentialsProvider, String region) {
+    AmazonS3 simpleStorage =
+        AmazonS3ClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
+    simpleStorage.createBucket(name);
+
+    AmazonS3Waiters simpleStorageWaiter = simpleStorage.waiters();
+    simpleStorageWaiter.bucketExists().run(new WaiterParameters<>(new HeadBucketRequest(name)));
   }
 
   /**
@@ -239,8 +262,10 @@ public class AWSVendorService {
    *
    * @param name name of the S3 bucket.
    */
-  public void removeS3Bucket(String name, AWSCredentialsProvider awsCredentialsProvider) {
+  public void removeS3Bucket(
+      String name, AWSCredentialsProvider awsCredentialsProvider, String region) {
     AmazonS3ClientBuilder.standard()
+        .withRegion(region)
         .withCredentials(awsCredentialsProvider)
         .build()
         .deleteBucket(name);
@@ -251,12 +276,17 @@ public class AWSVendorService {
    *
    * @return result of credentials validation.
    */
-  public boolean isCallerValid(AWSCredentialsProvider awsCredentialsProvider) {
-    return !Objects.isNull(
-        AWSSecurityTokenServiceClientBuilder.standard()
-            .withCredentials(awsCredentialsProvider)
-            .build()
-            .getCallerIdentity(new GetCallerIdentityRequest())
-            .getArn());
+  public boolean isCallerValid(AWSCredentialsProvider awsCredentialsProvider, String region) {
+    try {
+      return !Objects.isNull(
+          AWSSecurityTokenServiceClientBuilder.standard()
+              .withRegion(region)
+              .withCredentials(awsCredentialsProvider)
+              .build()
+              .getCallerIdentity(new GetCallerIdentityRequest())
+              .getArn());
+    } catch (AWSSecurityTokenServiceException e) {
+      return false;
+    }
   }
 }

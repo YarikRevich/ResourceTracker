@@ -1,7 +1,6 @@
 package com.resourcetracker.service.scheduler;
 
 import com.resourcetracker.service.scheduler.storage.SchedulerStorage;
-
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -19,7 +18,8 @@ public class SchedulerHelper {
    * @param period period of the task execution.
    */
   public static void scheduleTask(Runnable callback, Integer period) {
-    ScheduledFuture<?> element = scheduledExecutorService.scheduleAtFixedRate(
+    ScheduledFuture<?> element =
+        scheduledExecutorService.scheduleAtFixedRate(
             () -> executorService.execute(callback), 0, period, TimeUnit.MILLISECONDS);
 
     SchedulerStorage.setThread(UUID.randomUUID(), element);
@@ -34,6 +34,15 @@ public class SchedulerHelper {
   public static void scheduleTimer(Runnable callback, Integer delay) {
     scheduledExecutorService.schedule(
         () -> executorService.execute(callback), delay, TimeUnit.MILLISECONDS);
+  }
+
+  /**
+   * Schedules given task with immediately.
+   *
+   * @param callback task to be scheduled.
+   */
+  public static void scheduleOnce(Runnable callback) {
+    scheduleTimer(callback, 0);
   }
 
   /** Closes schedulers and finishes awaited tasks. */

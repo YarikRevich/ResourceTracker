@@ -1,9 +1,9 @@
 package com.resourcetracker.service.client.command;
 
 import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.HealthCheckResourceApi;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.HealthCheckResult;
-import com.resourcetracker.api.HealthCheckResourceApi;
 import com.resourcetracker.service.config.ConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,10 +30,7 @@ public class HealthClientCommandService implements IClientCommand<HealthCheckRes
    */
   public HealthCheckResult process() throws ApiServerNotAvailableException {
     try {
-      return healthCheckResourceApi
-              .v1HealthGet()
-              .doOnError(element -> logger.fatal(element.getMessage()))
-              .block();
+      return healthCheckResourceApi.v1HealthGet().block();
     } catch (WebClientRequestException e) {
       throw new ApiServerNotAvailableException(e.getMessage());
     }

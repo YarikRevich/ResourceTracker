@@ -25,4 +25,7 @@ public class PropertiesEntity {
 
   @ConfigProperty(name = "git.commit.id.abbrev")
   String gitCommitId;
+
+  @ConfigProperty(name = "aws.default.region")
+  String awsDefaultRegion;
 }
