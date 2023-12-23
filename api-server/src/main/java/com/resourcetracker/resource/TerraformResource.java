@@ -35,7 +35,7 @@ public class TerraformResource implements TerraformResourceApi {
 
     vendorFacade.initBackendStorage(terraformDeploymentApplication);
 
-    //    String terraformOutput = terraformAdapter.apply(terraformDeploymentApplication);
+    String terraformOutput = terraformAdapter.apply(terraformDeploymentApplication);
 
     //        String machineAddress = vendorFacade.startContainerExecution(
     //                terraformDeploymentApplication.getProvider(),

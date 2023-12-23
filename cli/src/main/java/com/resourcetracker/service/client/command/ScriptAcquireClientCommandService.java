@@ -37,7 +37,7 @@ public class ScriptAcquireClientCommandService
           .v1ScriptAcquirePost(ValidationScriptApplication.of(input.getFileContent()))
           .block();
     } catch (WebClientRequestException e) {
-      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()));
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }
   }
 }

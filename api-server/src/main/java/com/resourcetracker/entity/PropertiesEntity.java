@@ -20,6 +20,9 @@ public class PropertiesEntity {
   @ConfigProperty(name = "terraform.directory")
   String terraformDirectory;
 
+  @ConfigProperty(name = "workspace.directory")
+  String workspaceDirectory;
+
   @ConfigProperty(name = "remote-storage.name")
   String remoteStorageName;
 

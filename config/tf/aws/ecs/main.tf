@@ -70,7 +70,7 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
         },
 		{
           name : "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
-          value : "resourcetracker-kafka:9091",
+          value : "resourcetracker-kafka:9093",
         }
       ],
       image : "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
@@ -80,22 +80,23 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
       essential : true,
       environment : [
         {
-          name : "ALLOW_PLAINTEXT_LISTENER",
-          value : "yes",
-          }, {
-          name : "KAFKA_CFG_ZOOKEEPER_CONNECT",
-          value : "resourcetracker_zookeeper:2181"
+          name : "KRAFT_CONTAINER_HOST_NAME",
+          value : "0.0.0.0",
         },
         {
-          name: "KAFKA_ENABLE_KRAFT",
-          value: ""
+          name : "KRAFT_CREATE_TOPICS",
+          value : "logs",
+        },
+        {
+          name: "KRAFT_PARTITIONS_PER_TOPIC",
+          value: "1"
         }
       ],
-      image : "bitnami/kafka:latest",
+      image : "moeenz/docker-kafka-kraft:latest",
       portMappings : [
         {
-          "containerPort" : 9091,
-          "hostPort" : 9091
+          "containerPort" : 9093,
+          "hostPort" : 9093
         }
       ],
     }

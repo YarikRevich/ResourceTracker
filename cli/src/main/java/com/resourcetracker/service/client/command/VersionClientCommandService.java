@@ -30,7 +30,7 @@ public class VersionClientCommandService implements IClientCommand<ApplicationIn
     try {
       return infoResourceApi.v1InfoVersionGet().block();
     } catch (WebClientRequestException e) {
-      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()));
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }
   }
 }

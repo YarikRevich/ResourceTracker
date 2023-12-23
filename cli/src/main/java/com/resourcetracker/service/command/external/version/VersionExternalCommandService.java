@@ -26,7 +26,7 @@ public class VersionExternalCommandService implements ICommand {
       ApplicationInfoResult applicationInfoResult = versionClientCommandService.process(null);
 
       System.out.printf(
-          "API Server version: %s\n", applicationInfoResult.getExternalApi().getVersion());
+          "API Server version: %s\n", applicationInfoResult.getExternalApi().getHash());
     } finally {
       System.out.printf("Client version: %s\n", properties.getGitCommitId());
     }

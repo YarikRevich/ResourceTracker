@@ -35,7 +35,7 @@ public class ApplyClientCommandService
     try {
       return terraformResourceApi.v1TerraformApplyPost(input).block();
     } catch (WebClientRequestException e) {
-      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()));
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }
   }
 }

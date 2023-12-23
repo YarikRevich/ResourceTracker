@@ -1,7 +1,8 @@
 package com.resourcetracker.service.terraform.provider.aws.command;
 
-import com.resourcetracker.entity.PropertiesEntity;
-// import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
+import com.resourcetracker.model.CredentialsFields;
+import com.resourcetracker.service.terraform.provider.aws.common.AWSProviderConfigurationHelper;
+import java.nio.file.Paths;
 import process.SProcess;
 import process.SProcessExecutor;
 import process.SProcessExecutor.OS;
@@ -12,19 +13,20 @@ public class DestroyCommandService extends SProcess {
   private final OS osType;
 
   public DestroyCommandService(
-      com.resourcetracker.model.CredentialsFields credentials, PropertiesEntity properties) {
+      String workspaceUnitDirectory, CredentialsFields credentials, String terraformDirectory) {
     this.osType = SProcessExecutor.getCommandExecutor().getOSType();
 
-    this.command = "";
-    //        this.command = switch (osType){
-    //            case WINDOWS -> null;
-    //            case UNIX, MAC, ANY -> String.format(
-    //                    "%s terraform destroy %s -chdir=%s -input=false -auto-approve -no-color",
-    //                    AWSProviderConfigurationHelper.getEnvironmentVariables(credentials),
-    //                    AWSProviderConfigurationHelper.getBackendConfig(credentials),
-    //                    Paths.get(properties.getTerraformDirectory(), Provider.AWS.toString())
-    //            );
-    //        };
+    this.command =
+        switch (osType) {
+          case WINDOWS -> null;
+          case UNIX, MAC, ANY -> String.format(
+              "cd %s && %s terraform destroy -force -input=false -auto-approve -no-color",
+              Paths.get(terraformDirectory, com.resourcetracker.model.Provider.AWS.toString()),
+              AWSProviderConfigurationHelper.getEnvironmentVariables(
+                  workspaceUnitDirectory, credentials));
+        };
+
+    System.out.println(command);
   }
 
   @Override

@@ -1,7 +1,9 @@
 package com.resourcetracker.service.terraform.provider.aws.command;
 
-import com.resourcetracker.entity.PropertiesEntity;
-// import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
+import com.resourcetracker.model.CredentialsFields;
+import com.resourcetracker.model.Provider;
+import com.resourcetracker.service.terraform.provider.aws.common.AWSProviderConfigurationHelper;
+import java.nio.file.Paths;
 import process.SProcess;
 import process.SProcessExecutor;
 import process.SProcessExecutor.OS;
@@ -12,18 +14,19 @@ public class InitCommandService extends SProcess {
   private final OS osType;
 
   public InitCommandService(
-      com.resourcetracker.model.CredentialsFields credentials, PropertiesEntity properties) {
+      String workspaceUnitDirectory, CredentialsFields credentials, String terraformDirectory) {
     this.osType = SProcessExecutor.getCommandExecutor().getOSType();
 
-    this.command = "";
-    //        this.command = switch (osType){
-    //            case WINDOWS -> null;
-    //            case UNIX, MAC, ANY -> String.format(
-    //                    "cd %s && terraform init %s -input=false -no-color -upgrade -reconfigure",
-    //                    Paths.get(properties.getTerraformDirectory(), Provider.AWS.toString()),
-    //                    AWSProviderConfigurationHelper.getBackendConfig(credentials)
-    //            );
-    //        };
+    this.command =
+        switch (osType) {
+          case WINDOWS -> null;
+          case UNIX, MAC, ANY -> String.format(
+              "cd %s && %s terraform init %s -input=false -no-color -upgrade -reconfigure",
+              Paths.get(terraformDirectory, Provider.AWS.toString()),
+              AWSProviderConfigurationHelper.getEnvironmentVariables(
+                  workspaceUnitDirectory, credentials),
+              AWSProviderConfigurationHelper.getBackendConfig(credentials));
+        };
   }
 
   @Override

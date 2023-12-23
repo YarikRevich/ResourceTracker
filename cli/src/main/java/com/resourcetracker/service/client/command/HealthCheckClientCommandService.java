@@ -30,7 +30,7 @@ public class HealthCheckClientCommandService implements IClientCommand<HealthChe
     try {
       return healthCheckResourceApi.v1HealthGet().block();
     } catch (WebClientRequestException e) {
-      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()));
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }
   }
 }

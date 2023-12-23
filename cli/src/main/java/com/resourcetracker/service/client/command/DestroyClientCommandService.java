@@ -31,7 +31,7 @@ public class DestroyClientCommandService
     try {
       return terraformResourceApi.v1TerraformDestroyPost(input).block();
     } catch (WebClientRequestException e) {
-      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()));
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }
   }
 }

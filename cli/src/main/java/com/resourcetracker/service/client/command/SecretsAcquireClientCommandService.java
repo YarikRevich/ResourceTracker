@@ -4,6 +4,7 @@ import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.ValidationResourceApi;
 import com.resourcetracker.dto.ValidationSecretsApplicationDto;
 import com.resourcetracker.exception.ApiServerException;
+import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.exception.CloudCredentialsFileNotFoundException;
 import com.resourcetracker.model.Provider;
 import com.resourcetracker.model.ValidationSecretsApplication;
@@ -41,7 +42,7 @@ public class SecretsAcquireClientCommandService
     Path filePath = Paths.get(input.getFilePath());
 
     if (Files.notExists(filePath)) {
-      throw new ApiServerException(new CloudCredentialsFileNotFoundException());
+      throw new ApiServerException(new CloudCredentialsFileNotFoundException().getMessage());
     }
 
     String content;
@@ -49,21 +50,15 @@ public class SecretsAcquireClientCommandService
     try {
       content = Files.readString(filePath);
     } catch (IOException e) {
-      throw new ApiServerException(e);
+      throw new ApiServerException(e.getMessage());
     }
 
     try {
       return validationResourceApi
           .v1SecretsAcquirePost(ValidationSecretsApplication.of(Provider.AWS, content))
           .block();
-    } catch (WebClientResponseException v) {
-      System.out.println(v.getStatusText());
-      //      System.out.println(v.getRequest().getURI().toString());
     } catch (WebClientRequestException e) {
-      System.out.println(e.getHeaders());
-      //      throw new ApiServerException(new ApiServerNotAvailableException(e.getHeaders()));
+       throw new ApiServerException(new ApiServerNotAvailableException(e.getHeaders()).getMessage());
     }
-
-    return null;
   }
 }

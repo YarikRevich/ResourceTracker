@@ -33,9 +33,13 @@ lint: ## Run Apache Spotless linter
 create-local: ## Create ResourceTracker local directory
 ifeq (,$(wildcard $(HOME)/.resourcetracker))
 	@mkdir -p $(HOME)/.resourcetracker/config
+	@mkdir -p $(HOME)/.resourcetracker/workspace
 endif
 ifeq (,$(wildcard $(HOME)/.resourcetracker/config))
 	@mkdir -p $(HOME)/.resourcetracker/config
+endif
+ifeq (,$(wildcard $(HOME)/.resourcetracker/workspace))
+	@mkdir -p $(HOME)/.resourcetracker/workspace
 endif
 
 .PHONY: clone-config

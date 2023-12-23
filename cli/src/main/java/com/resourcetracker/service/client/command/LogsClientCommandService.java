@@ -31,7 +31,7 @@ public class LogsClientCommandService implements IClientCommand<TopicLogsResult,
     try {
       return topicResourceApi.v1TopicLogsGet().block();
     } catch (WebClientRequestException e) {
-      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()));
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }
   }
 }
