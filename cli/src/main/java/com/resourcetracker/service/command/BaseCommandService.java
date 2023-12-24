@@ -31,7 +31,7 @@ public class BaseCommandService {
   /** Provides access to start command service. */
   @Command(description = "Start remote requests execution")
   void start() throws ApiServerException {
-    //    healthCheckInternalCommandService.process();
+    healthCheckInternalCommandService.process();
 
     startCommandService.process();
   }
@@ -47,7 +47,7 @@ public class BaseCommandService {
   /** Provides access to stop command service. */
   @Command(description = "Stop remote requests execution")
   void stop() throws ApiServerException {
-    // healthCheckInternalCommandService.process();
+    healthCheckInternalCommandService.process();
 
     stopCommandService.process();
   }

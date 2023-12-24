@@ -11,6 +11,7 @@ import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 /** Represents apply client command service. */
 @Service
@@ -34,6 +35,8 @@ public class ApplyClientCommandService
       throws ApiServerException {
     try {
       return terraformResourceApi.v1TerraformApplyPost(input).block();
+    } catch (WebClientResponseException e) {
+      throw new ApiServerException(e.getResponseBodyAsString());
     } catch (WebClientRequestException e) {
       throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }

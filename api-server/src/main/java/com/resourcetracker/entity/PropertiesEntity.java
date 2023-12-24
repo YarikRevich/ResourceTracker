@@ -23,6 +23,9 @@ public class PropertiesEntity {
   @ConfigProperty(name = "workspace.directory")
   String workspaceDirectory;
 
+  @ConfigProperty(name = "workspace.variables-file.name")
+  String workspaceVariablesFileName;
+
   @ConfigProperty(name = "remote-storage.name")
   String remoteStorageName;
 

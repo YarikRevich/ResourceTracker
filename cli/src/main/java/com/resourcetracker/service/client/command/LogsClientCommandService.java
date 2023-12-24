@@ -10,6 +10,7 @@ import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 /** Represents logs topic client command service. */
 @Service
@@ -30,6 +31,8 @@ public class LogsClientCommandService implements IClientCommand<TopicLogsResult,
   public TopicLogsResult process(Void input) throws ApiServerException {
     try {
       return topicResourceApi.v1TopicLogsGet().block();
+    } catch (WebClientResponseException e) {
+      throw new ApiServerException(e.getResponseBodyAsString());
     } catch (WebClientRequestException e) {
       throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }

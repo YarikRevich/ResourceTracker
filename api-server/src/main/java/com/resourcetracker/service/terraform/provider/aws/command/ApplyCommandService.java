@@ -1,7 +1,6 @@
 package com.resourcetracker.service.terraform.provider.aws.command;
 
-import com.resourcetracker.entity.PropertiesEntity;
-// import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
+import com.resourcetracker.model.CredentialsFields;
 import process.SProcess;
 import process.SProcessExecutor;
 import process.SProcessExecutor.OS;
@@ -12,7 +11,11 @@ public class ApplyCommandService extends SProcess {
   private final OS osType;
 
   public ApplyCommandService(
-      com.resourcetracker.model.CredentialsFields credentials, PropertiesEntity properties) {
+      String agentContext,
+      String workspaceUnitDirectory,
+      CredentialsFields credentials,
+      String terraformDirectory,
+      String gitCommitId) {
     this.osType = SProcessExecutor.getCommandExecutor().getOSType();
 
     this.command = "";

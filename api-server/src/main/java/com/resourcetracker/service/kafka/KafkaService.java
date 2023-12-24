@@ -16,6 +16,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.Node;
+import org.apache.kafka.common.errors.TimeoutException;
+import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -70,7 +72,10 @@ public class KafkaService {
       Collection<Node> nodes;
       try {
         nodes = kafkaAdminClient.describeCluster().nodes().get();
-      } catch (ExecutionException | InterruptedException e) {
+      } catch (ExecutionException
+          | UnsupportedVersionException
+          | TimeoutException
+          | InterruptedException e) {
         return false;
       }
 

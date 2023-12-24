@@ -1,10 +1,14 @@
 package com.resourcetracker.service.terraform.provider.aws;
 
+import com.resourcetracker.converter.AgentContextToJsonConverter;
+import com.resourcetracker.converter.DeploymentRequestsToAgentContextConverter;
 import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.entity.VariableFileEntity;
 import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.exception.TerraformException;
-import com.resourcetracker.exception.WorkspaceUnitFileNotFound;
+import com.resourcetracker.exception.WorkspaceUnitDirectoryNotFoundException;
+import com.resourcetracker.exception.WorkspaceUnitVariableFileNotFoundException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.service.terraform.provider.ITerraformProvider;
@@ -14,6 +18,7 @@ import com.resourcetracker.service.terraform.provider.executor.CommandExecutorSe
 import com.resourcetracker.service.terraform.workspace.WorkspaceService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -46,7 +51,7 @@ public class AWSTerraformProviderService implements ITerraformProvider {
 
     try {
       workspaceUnitDirectory = workspaceService.getUnitDirectory(workspaceUnitKey);
-    } catch (WorkspaceUnitFileNotFound e) {
+    } catch (WorkspaceUnitDirectoryNotFoundException e) {
       throw new TerraformException(e.getMessage());
     }
 
@@ -70,8 +75,18 @@ public class AWSTerraformProviderService implements ITerraformProvider {
       throw new TerraformException(initCommandErrorOutput);
     }
 
+    String agentContext =
+        AgentContextToJsonConverter.convert(
+            DeploymentRequestsToAgentContextConverter.convert(
+                terraformDeploymentApplication.getRequests()));
+
     //    ApplyCommandService applyCommandService =
-    //        new ApplyCommandService(terraformDeploymentApplication.getCredentials(), properties);
+    //        new ApplyCommandService(
+    //            agentContext,
+    //            workspaceUnitDirectory,
+    //            terraformDeploymentApplication.getCredentials(),
+    //            properties.getTerraformDirectory(),
+    //            properties.getGitCommitId());
     //
     //    CommandExecutorOutputDto applyCommandOutput;
     //
@@ -86,6 +101,13 @@ public class AWSTerraformProviderService implements ITerraformProvider {
     //    if (Objects.nonNull(applyCommandErrorOutput)) {
     //      throw new TerraformException(applyCommandErrorOutput);
     //    }
+
+    try {
+      workspaceService.createVariableFile(
+          workspaceUnitDirectory, VariableFileEntity.of(agentContext, properties.getGitCommitId()));
+    } catch (IOException e) {
+      throw new TerraformException(e.getMessage());
+    }
     //
     //    OutputCommandService outputCommandService =
     //        new OutputCommandService(terraformDeploymentApplication.getCredentials(), properties);
@@ -118,19 +140,36 @@ public class AWSTerraformProviderService implements ITerraformProvider {
             terraformDestructionApplication.getCredentials().getSecrets().getAccessKey(),
             terraformDestructionApplication.getCredentials().getSecrets().getSecretKey());
 
+    if (!workspaceService.isUnitDirectoryExist(workspaceUnitKey)) {
+      throw new TerraformException(new WorkspaceUnitDirectoryNotFoundException().getMessage());
+    }
+
     String workspaceUnitDirectory;
 
     try {
       workspaceUnitDirectory = workspaceService.getUnitDirectory(workspaceUnitKey);
-    } catch (WorkspaceUnitFileNotFound e) {
+    } catch (WorkspaceUnitDirectoryNotFoundException e) {
       throw new TerraformException(e.getMessage());
+    }
+
+    if (!workspaceService.isVariableFileExist(workspaceUnitDirectory)) {
+      throw new TerraformException(new WorkspaceUnitVariableFileNotFoundException().getMessage());
+    }
+
+    VariableFileEntity variableFile;
+    try {
+      variableFile = workspaceService.getVariableFileContent(workspaceUnitDirectory);
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
     }
 
     DestroyCommandService destroyCommandService =
         new DestroyCommandService(
+            variableFile.getAgentContext(),
             workspaceUnitDirectory,
             terraformDestructionApplication.getCredentials(),
-            properties.getTerraformDirectory());
+            properties.getTerraformDirectory(),
+            variableFile.getAgentVersion());
 
     CommandExecutorOutputDto destroyCommandOutput;
 

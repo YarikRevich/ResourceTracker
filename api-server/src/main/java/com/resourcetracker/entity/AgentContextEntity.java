@@ -2,16 +2,16 @@ package com.resourcetracker.entity;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
+import lombok.Getter;
 
 /** Represents context sent to ResourceTracker Agent as a variable during deployment operation. */
-@Setter
+@Getter
 @AllArgsConstructor(staticName = "of")
 public class AgentContextEntity {
   /** Represents ResourceTracker Agent requests to be executed. */
-  @Setter
+  @Getter
   @AllArgsConstructor(staticName = "of")
-  static class Request {
+  public static class Request {
     String name;
 
     String script;

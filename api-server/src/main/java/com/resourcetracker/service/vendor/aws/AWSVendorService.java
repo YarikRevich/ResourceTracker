@@ -11,7 +11,10 @@ import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.HeadBucketRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.waiters.AmazonS3Waiters;
 import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClientBuilder;
 import com.amazonaws.services.securitytoken.model.AWSSecurityTokenServiceException;
@@ -26,6 +29,7 @@ import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.AWSRunTaskFailureException;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -264,11 +268,29 @@ public class AWSVendorService {
    */
   public void removeS3Bucket(
       String name, AWSCredentialsProvider awsCredentialsProvider, String region) {
-    AmazonS3ClientBuilder.standard()
+    AmazonS3 simpleStorage = AmazonS3ClientBuilder.standard()
         .withRegion(region)
         .withCredentials(awsCredentialsProvider)
-        .build()
-        .deleteBucket(name);
+        .build();
+
+    ObjectListing objects = simpleStorage.listObjects(name);
+    while (true) {
+      Iterator<S3ObjectSummary> iter = objects.getObjectSummaries().iterator();
+      while (iter.hasNext()) {
+        simpleStorage.deleteObject(name, iter.next().getKey());
+      }
+
+      if (!objects.isTruncated()) {
+        break;
+      }
+
+      objects = simpleStorage.listNextBatchOfObjects(objects);
+    }
+
+    simpleStorage.deleteBucket(name);
+
+    AmazonS3Waiters simpleStorageWaiter = simpleStorage.waiters();
+    simpleStorageWaiter.bucketNotExists().run(new WaiterParameters<>(new HeadBucketRequest(name)));
   }
 
   /**

@@ -51,8 +51,6 @@ public class AWSStartExternalCommandService implements ICommand {
     ValidationSecretsApplicationResult validationSecretsApplicationResult =
         secretsAcquireClientCommandService.process(validationSecretsApplicationDto);
 
-    System.out.println(validationSecretsApplicationResult);
-
     if (validationSecretsApplicationResult.getValid()) {
       List<DeploymentRequest> requests =
           configService.getConfig().getRequests().stream()

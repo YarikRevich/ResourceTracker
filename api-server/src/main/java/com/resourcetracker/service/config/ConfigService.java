@@ -67,48 +67,6 @@ public class ConfigService {
   }
 
   /**
-   * Extracts data from the given script file.
-   *
-   * @param src path to the script file
-   * @return data from the given script file
-   */
-  private String getFileContent(String src) {
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new FileReader(src));
-    } catch (FileNotFoundException e) {
-      logger.fatal(e.getMessage());
-    }
-
-    StringBuilder result = new StringBuilder();
-
-    String currentLine = null;
-    try {
-      currentLine = reader.readLine();
-    } catch (IOException e) {
-      logger.fatal(e.getMessage());
-    }
-
-    while (currentLine != null) {
-      result.append(currentLine);
-
-      try {
-        currentLine = reader.readLine();
-      } catch (IOException e) {
-        logger.fatal(e.getMessage());
-      }
-    }
-
-    try {
-      reader.close();
-    } catch (IOException e) {
-      logger.fatal(e.getMessage());
-    }
-
-    return result.toString();
-  }
-
-  /**
    * @return Parsed configuration entity
    */
   public ConfigEntity getConfig() {

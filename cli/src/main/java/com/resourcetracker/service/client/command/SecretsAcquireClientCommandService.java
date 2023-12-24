@@ -57,8 +57,10 @@ public class SecretsAcquireClientCommandService
       return validationResourceApi
           .v1SecretsAcquirePost(ValidationSecretsApplication.of(Provider.AWS, content))
           .block();
+    } catch (WebClientResponseException e) {
+      throw new ApiServerException(e.getResponseBodyAsString());
     } catch (WebClientRequestException e) {
-       throw new ApiServerException(new ApiServerNotAvailableException(e.getHeaders()).getMessage());
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getHeaders()).getMessage());
     }
   }
 }

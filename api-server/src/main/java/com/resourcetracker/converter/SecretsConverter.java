@@ -7,7 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 
-/** */
+/** Represents cloud provider secrets converter */
 public class SecretsConverter {
   /**
    * Converts given credentials CSV file to a certain object. Exposed as a static method to be used

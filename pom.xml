@@ -273,6 +273,11 @@
         <version>6.0.0</version>
         <scope>provided</scope>
       </dependency>
+      <dependency>
+        <groupId>me.tongfei</groupId>
+        <artifactId>progressbar</artifactId>
+        <version>0.5.5</version>
+      </dependency>
 
       <!-- SPOTLESS -->
       <dependency>

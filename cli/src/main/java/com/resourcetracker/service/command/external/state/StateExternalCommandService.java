@@ -29,10 +29,11 @@ public class StateExternalCommandService implements ICommand {
     try {
       topicLogsResult = logsClientCommandService.process(null);
     } catch (WebClientResponseException e) {
-      throw new ApiServerException(new ApiServerNotAvailableException(e.getResponseBodyAsString()).getMessage());
+      throw new ApiServerException(
+          new ApiServerNotAvailableException(e.getResponseBodyAsString()).getMessage());
     }
 
-    var mapper = new ObjectMapper();
+    ObjectMapper mapper = new ObjectMapper();
     try {
       System.out.println(mapper.writeValueAsString(topicLogsResult));
     } catch (JsonProcessingException e) {

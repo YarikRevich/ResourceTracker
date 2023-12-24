@@ -10,6 +10,7 @@ import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 /** Represents version information client command service. */
 @Service
@@ -29,6 +30,8 @@ public class VersionClientCommandService implements IClientCommand<ApplicationIn
   public ApplicationInfoResult process(Void input) throws ApiServerException {
     try {
       return infoResourceApi.v1InfoVersionGet().block();
+    } catch (WebClientResponseException e) {
+      throw new ApiServerException(e.getResponseBodyAsString());
     } catch (WebClientRequestException e) {
       throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
     }
