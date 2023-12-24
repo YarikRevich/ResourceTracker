@@ -5,13 +5,11 @@ import com.resourcetracker.converter.DeploymentRequestsToAgentContextConverter;
 import com.resourcetracker.dto.CommandExecutorOutputDto;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.entity.VariableFileEntity;
-import com.resourcetracker.exception.CommandExecutorException;
-import com.resourcetracker.exception.TerraformException;
-import com.resourcetracker.exception.WorkspaceUnitDirectoryNotFoundException;
-import com.resourcetracker.exception.WorkspaceUnitVariableFileNotFoundException;
+import com.resourcetracker.exception.*;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.service.terraform.provider.ITerraformProvider;
+import com.resourcetracker.service.terraform.provider.aws.command.ApplyCommandService;
 import com.resourcetracker.service.terraform.provider.aws.command.DestroyCommandService;
 import com.resourcetracker.service.terraform.provider.aws.command.InitCommandService;
 import com.resourcetracker.service.terraform.provider.executor.CommandExecutorService;
@@ -40,6 +38,10 @@ public class AWSTerraformProviderService implements ITerraformProvider {
         workspaceService.createUnitKey(
             terraformDeploymentApplication.getCredentials().getSecrets().getAccessKey(),
             terraformDeploymentApplication.getCredentials().getSecrets().getSecretKey());
+
+    if (workspaceService.isUnitDirectoryExist(workspaceUnitKey)) {
+      throw new TerraformException(new WorkspaceUnitDirectoryPresentException().getMessage());
+    }
 
     try {
       workspaceService.createUnitDirectory(workspaceUnitKey);
@@ -80,14 +82,14 @@ public class AWSTerraformProviderService implements ITerraformProvider {
             DeploymentRequestsToAgentContextConverter.convert(
                 terraformDeploymentApplication.getRequests()));
 
-    //    ApplyCommandService applyCommandService =
-    //        new ApplyCommandService(
-    //            agentContext,
-    //            workspaceUnitDirectory,
-    //            terraformDeploymentApplication.getCredentials(),
-    //            properties.getTerraformDirectory(),
-    //            properties.getGitCommitId());
-    //
+        ApplyCommandService applyCommandService =
+            new ApplyCommandService(
+                agentContext,
+                workspaceUnitDirectory,
+                terraformDeploymentApplication.getCredentials(),
+                properties.getTerraformDirectory(),
+                properties.getGitCommitId());
+
     //    CommandExecutorOutputDto applyCommandOutput;
     //
     //    try {

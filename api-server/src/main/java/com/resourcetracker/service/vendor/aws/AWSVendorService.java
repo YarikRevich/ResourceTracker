@@ -11,7 +11,6 @@ import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.HeadBucketRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -268,10 +267,11 @@ public class AWSVendorService {
    */
   public void removeS3Bucket(
       String name, AWSCredentialsProvider awsCredentialsProvider, String region) {
-    AmazonS3 simpleStorage = AmazonS3ClientBuilder.standard()
-        .withRegion(region)
-        .withCredentials(awsCredentialsProvider)
-        .build();
+    AmazonS3 simpleStorage =
+        AmazonS3ClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
 
     ObjectListing objects = simpleStorage.listObjects(name);
     while (true) {

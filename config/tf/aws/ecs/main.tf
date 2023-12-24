@@ -80,10 +80,6 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
       essential : true,
       environment : [
         {
-          name : "KRAFT_CONTAINER_HOST_NAME",
-          value : "0.0.0.0",
-        },
-        {
           name : "KRAFT_CREATE_TOPICS",
           value : "logs",
         },

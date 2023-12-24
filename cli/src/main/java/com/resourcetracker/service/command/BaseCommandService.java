@@ -30,33 +30,49 @@ public class BaseCommandService {
 
   /** Provides access to start command service. */
   @Command(description = "Start remote requests execution")
-  void start() throws ApiServerException {
-    healthCheckInternalCommandService.process();
+  private void start() {
+    try {
+      healthCheckInternalCommandService.process();
 
-    startCommandService.process();
+      startCommandService.process();
+    } catch (ApiServerException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   /** Provides access to state command service. */
   @Command(description = "Retrieve state of remote requests executions")
-  void state() throws ApiServerException {
-    healthCheckInternalCommandService.process();
+  private void state() {
+    try {
+      healthCheckInternalCommandService.process();
 
-    stateCommandService.process();
+      stateCommandService.process();
+    } catch (ApiServerException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   /** Provides access to stop command service. */
   @Command(description = "Stop remote requests execution")
-  void stop() throws ApiServerException {
-    healthCheckInternalCommandService.process();
+  private void stop() {
+    try {
+      healthCheckInternalCommandService.process();
 
-    stopCommandService.process();
+      stopCommandService.process();
+    } catch (ApiServerException e) {
+      System.out.println(e.getMessage());
+    }
   }
 
   /** Provides access to version command service. */
   @Command(
       description =
           "Retrieve version of ResourceTracker CLI and ResourceTracker API Server(if available)")
-  void version() throws ApiServerException {
-    versionCommandService.process();
+  private void version() {
+    try {
+      versionCommandService.process();
+    } catch (ApiServerException e) {
+      System.out.println(e.getMessage());
+    }
   }
 }

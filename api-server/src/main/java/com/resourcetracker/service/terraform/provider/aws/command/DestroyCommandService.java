@@ -32,6 +32,8 @@ public class DestroyCommandService extends SProcess {
               TerraformConfigurationHelper.getContentEnvironmentVariables(
                   agentContext, gitCommitId));
         };
+
+    System.out.println(command);
   }
 
   @Override
