@@ -60,21 +60,21 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
   cpu                      = 256
 
   container_definitions = jsonencode([
-    {
-      name : "resourcetracker-agent",
-      essential : true,
-      environment : [
-        {
-          name : "RESOURCETRACKER_AGENT_CONTEXT",
-          value : var.resourcetracker_agent_context,
-        },
-		{
-          name : "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
-          value : "resourcetracker-kafka:9093",
-        }
-      ],
-      image : "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
-    },
+#    {
+#      name : "resourcetracker-agent",
+#      essential : true,
+#      environment : [
+#        {
+#          name : "RESOURCETRACKER_AGENT_CONTEXT",
+#          value : var.resourcetracker_agent_context,
+#        },
+#		{
+#          name : "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
+#          value : "resourcetracker-kafka:9093",
+#        }
+#      ],
+#      image : "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
+#    },
     {
       name : "resourcetracker-kafka",
       essential : true,
@@ -95,6 +95,14 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
           "hostPort" : 9093
         }
       ],
+      logConfiguration: {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "kafka-logs-test",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs/resourcetracker-kafka"
+        }
+      }
     }
   ])
 }

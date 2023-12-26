@@ -37,12 +37,10 @@ public class TerraformResource implements TerraformResourceApi {
 
     String terraformOutput = terraformAdapter.apply(terraformDeploymentApplication);
 
-    //        String machineAddress = vendorFacade.startContainerExecution(
-    //                terraformDeploymentApplication.getProvider(),
-    //                terraformOutput,
-    //                terraformDeploymentApplication.getCredentials());
+    String machineAddress =
+        vendorFacade.startContainerExecution(terraformOutput, terraformDeploymentApplication);
 
-    return TerraformDeploymentApplicationResult.of("198.123.0.2");
+    return TerraformDeploymentApplicationResult.of(machineAddress);
   }
 
   /**

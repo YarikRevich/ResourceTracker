@@ -12,6 +12,7 @@ import com.resourcetracker.service.terraform.provider.ITerraformProvider;
 import com.resourcetracker.service.terraform.provider.aws.command.ApplyCommandService;
 import com.resourcetracker.service.terraform.provider.aws.command.DestroyCommandService;
 import com.resourcetracker.service.terraform.provider.aws.command.InitCommandService;
+import com.resourcetracker.service.terraform.provider.aws.command.OutputCommandService;
 import com.resourcetracker.service.terraform.provider.executor.CommandExecutorService;
 import com.resourcetracker.service.terraform.workspace.WorkspaceService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -82,27 +83,47 @@ public class AWSTerraformProviderService implements ITerraformProvider {
             DeploymentRequestsToAgentContextConverter.convert(
                 terraformDeploymentApplication.getRequests()));
 
-        ApplyCommandService applyCommandService =
-            new ApplyCommandService(
-                agentContext,
-                workspaceUnitDirectory,
-                terraformDeploymentApplication.getCredentials(),
-                properties.getTerraformDirectory(),
-                properties.getGitCommitId());
+    ApplyCommandService applyCommandService =
+        new ApplyCommandService(
+            agentContext,
+            workspaceUnitDirectory,
+            terraformDeploymentApplication.getCredentials(),
+            properties.getTerraformDirectory(),
+            properties.getGitCommitId());
 
-    //    CommandExecutorOutputDto applyCommandOutput;
-    //
-    //    try {
-    //      applyCommandOutput = commandExecutorService.executeCommand(applyCommandService);
-    //    } catch (CommandExecutorException e) {
-    //      throw new TerraformException(e.getMessage());
-    //    }
-    //
-    //    String applyCommandErrorOutput = applyCommandOutput.getErrorOutput();
-    //
-    //    if (Objects.nonNull(applyCommandErrorOutput)) {
-    //      throw new TerraformException(applyCommandErrorOutput);
-    //    }
+    CommandExecutorOutputDto applyCommandOutput;
+
+    try {
+      applyCommandOutput = commandExecutorService.executeCommand(applyCommandService);
+    } catch (CommandExecutorException e) {
+      throw new TerraformException(e.getMessage());
+    }
+
+    String applyCommandErrorOutput = applyCommandOutput.getErrorOutput();
+
+    if (Objects.nonNull(applyCommandErrorOutput) && !applyCommandErrorOutput.isEmpty()) {
+      throw new TerraformException(applyCommandErrorOutput);
+    }
+
+    OutputCommandService outputCommandService =
+        new OutputCommandService(
+            workspaceUnitDirectory,
+            terraformDeploymentApplication.getCredentials(),
+            properties.getTerraformDirectory());
+
+    CommandExecutorOutputDto outputCommandOutput;
+
+    try {
+      outputCommandOutput = commandExecutorService.executeCommand(outputCommandService);
+    } catch (CommandExecutorException e) {
+      throw new TerraformException(e.getMessage());
+    }
+
+    String outputCommandErrorOutput = outputCommandOutput.getErrorOutput();
+
+    if (Objects.nonNull(outputCommandErrorOutput) && !outputCommandErrorOutput.isEmpty()) {
+      throw new TerraformException(outputCommandErrorOutput);
+    }
 
     try {
       workspaceService.createVariableFile(
@@ -110,26 +131,8 @@ public class AWSTerraformProviderService implements ITerraformProvider {
     } catch (IOException e) {
       throw new TerraformException(e.getMessage());
     }
-    //
-    //    OutputCommandService outputCommandService =
-    //        new OutputCommandService(terraformDeploymentApplication.getCredentials(), properties);
-    //
-    //    CommandExecutorOutputDto outputCommandOutput;
-    //
-    //    try {
-    //      outputCommandOutput = commandExecutorService.executeCommand(outputCommandService);
-    //    } catch (CommandExecutorException e) {
-    //      throw new TerraformException(e.getMessage());
-    //    }
-    //
-    //    String outputCommandErrorOutput = outputCommandOutput.getErrorOutput();
-    //
-    //    if (Objects.nonNull(outputCommandErrorOutput)) {
-    //      throw new TerraformException(outputCommandErrorOutput);
-    //    }
 
-    //    return outputCommandOutput.getNormalOutput();
-    return "";
+    return outputCommandOutput.getNormalOutput();
   }
 
   /**

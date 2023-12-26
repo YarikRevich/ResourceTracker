@@ -7,8 +7,11 @@ import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesRequest;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesResult;
 import com.amazonaws.services.ec2.model.NetworkInterface;
+import com.amazonaws.services.ecs.AmazonECS;
+import com.amazonaws.services.ecs.AmazonECSClient;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
+import com.amazonaws.services.ecs.waiters.AmazonECSWaiters;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.HeadBucketRequest;
@@ -24,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.dto.AWSDeploymentResultDto;
 import com.resourcetracker.dto.AWSSecretsDto;
-import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.AWSRunTaskFailureException;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
@@ -59,7 +61,7 @@ public class AWSVendorService {
    */
   public AWSDeploymentResultDto getEcsTaskRunDetails(String src) {
     ObjectMapper mapper = new ObjectMapper();
-    ObjectReader reader = mapper.reader().forType(new TypeReference<PropertiesEntity>() {});
+    ObjectReader reader = mapper.reader().forType(new TypeReference<AWSDeploymentResultDto>() {});
     try {
       return reader.<AWSDeploymentResultDto>readValues(src).readAll().getFirst();
     } catch (IOException e) {
@@ -157,6 +159,10 @@ public class AWSVendorService {
             .build()
             .listTasks(listTasksRequest);
 
+    while (listTasksResult.getTaskArns().isEmpty()) {
+      // waits for task arns to appear.
+    }
+
     return listTasksResult.getTaskArns().get(0);
   }
 
@@ -175,29 +181,34 @@ public class AWSVendorService {
     DescribeTasksRequest describeTaskRequest =
         new DescribeTasksRequest().withCluster(ecsClusterId).withTasks(List.of(ecsTaskArn));
 
+    AmazonECS ecsClient =
+            AmazonECSClientBuilder.standard()
+                    .withRegion(region)
+                    .withCredentials(awsCredentialsProvider)
+                    .build();
+
+    AmazonECSWaiters ecsClientWaiter = ecsClient.waiters();
+    ecsClientWaiter.tasksRunning().run(new WaiterParameters<>(describeTaskRequest));
+
     DescribeTasksResult describeTasksResult =
-        AmazonECSClientBuilder.standard()
-            .withRegion(region)
-            .withCredentials(awsCredentialsProvider)
-            .build()
-            .describeTasks(describeTaskRequest);
+            ecsClient.describeTasks(describeTaskRequest);
 
     Task task = describeTasksResult.getTasks().get(0);
 
     String taskAttachmentId =
         task.getContainers().stream()
-            .filter(element -> !Objects.equals(element.getName(), "kafka"))
+            .filter(element -> Objects.equals(element.getName(), "resourcetracker-kafka"))
             .map(element -> element.getNetworkInterfaces().get(0).getAttachmentId())
             .toList()
             .get(0);
 
     return task.getAttachments().stream()
-        .filter(element -> !Objects.equals(element.getId(), taskAttachmentId))
+        .filter(element -> Objects.equals(element.getId(), taskAttachmentId))
         .toList()
         .get(0)
         .getDetails()
         .stream()
-        .filter(detail -> !Objects.equals(detail.getName(), "networkInterfaceId"))
+        .filter(detail -> Objects.equals(detail.getName(), "networkInterfaceId"))
         .toList()
         .get(0)
         .getValue();

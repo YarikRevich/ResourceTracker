@@ -8,7 +8,11 @@ import lombok.Getter;
 public class AWSDeploymentResultDto {
   @Getter
   public static class RawResult {
-    String value;
+    private String value;
+
+    private Boolean sensitive;
+
+    private String type;
   }
 
   @JsonAlias({"ecs_task_definition"})

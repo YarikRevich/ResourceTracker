@@ -92,14 +92,14 @@ public class VendorFacade {
 
         AWSDeploymentResultDto awsDeploymentResult = awsVendorService.getEcsTaskRunDetails(input);
 
-        try {
-          awsVendorService.runEcsTask(
-              awsDeploymentResult,
-              awsCredentialsProvider,
-              terraformDeploymentApplication.getCredentials().getRegion());
-        } catch (AWSRunTaskFailureException e) {
-          throw new ContainerStartupFailureException(e.getMessage());
-        }
+//        try {
+//          awsVendorService.runEcsTask(
+//              awsDeploymentResult,
+//              awsCredentialsProvider,
+//              terraformDeploymentApplication.getCredentials().getRegion());
+//        } catch (AWSRunTaskFailureException e) {
+//          throw new ContainerStartupFailureException(e.getMessage());
+//        }
 
         yield awsVendorService.getMachineAddress(
             awsDeploymentResult.getEcsCluster().getValue(),
