@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.entity.ConfigEntity;
-import com.resourcetracker.exception.InvalidAgentContextEnvironmentVariableException;
+import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,13 +32,8 @@ public class ConfigService {
   private ConfigEntity parsedConfigFile;
 
   /** Opens YAML configuration file. */
-  public ConfigService(@Value("${RESOURCETRACKER_AGENT_CONTEXT:null}") String context)
-      throws InvalidAgentContextEnvironmentVariableException {
-    if (context.equals("null")) {
-      throw new InvalidAgentContextEnvironmentVariableException();
-    }
-
-    configFile = IOUtils.toInputStream(context, "UTF-8");
+  public ConfigService(@Autowired PropertiesEntity properties) {
+    configFile = IOUtils.toInputStream(properties.getAgentContext(), "UTF-8");
   }
 
   /** Processes configuration file. */

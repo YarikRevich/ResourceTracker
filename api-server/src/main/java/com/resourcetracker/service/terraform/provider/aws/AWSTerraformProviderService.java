@@ -9,10 +9,7 @@ import com.resourcetracker.exception.*;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.service.terraform.provider.ITerraformProvider;
-import com.resourcetracker.service.terraform.provider.aws.command.ApplyCommandService;
 import com.resourcetracker.service.terraform.provider.aws.command.DestroyCommandService;
-import com.resourcetracker.service.terraform.provider.aws.command.InitCommandService;
-import com.resourcetracker.service.terraform.provider.aws.command.OutputCommandService;
 import com.resourcetracker.service.terraform.provider.executor.CommandExecutorService;
 import com.resourcetracker.service.terraform.workspace.WorkspaceService;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -40,99 +37,102 @@ public class AWSTerraformProviderService implements ITerraformProvider {
             terraformDeploymentApplication.getCredentials().getSecrets().getAccessKey(),
             terraformDeploymentApplication.getCredentials().getSecrets().getSecretKey());
 
-    if (workspaceService.isUnitDirectoryExist(workspaceUnitKey)) {
-      throw new TerraformException(new WorkspaceUnitDirectoryPresentException().getMessage());
-    }
-
-    try {
-      workspaceService.createUnitDirectory(workspaceUnitKey);
-    } catch (IOException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    String workspaceUnitDirectory;
-
-    try {
-      workspaceUnitDirectory = workspaceService.getUnitDirectory(workspaceUnitKey);
-    } catch (WorkspaceUnitDirectoryNotFoundException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    InitCommandService initCommandService =
-        new InitCommandService(
-            workspaceUnitDirectory,
-            terraformDeploymentApplication.getCredentials(),
-            properties.getTerraformDirectory());
-
-    CommandExecutorOutputDto initCommandOutput;
-
-    try {
-      initCommandOutput = commandExecutorService.executeCommand(initCommandService);
-    } catch (CommandExecutorException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    String initCommandErrorOutput = initCommandOutput.getErrorOutput();
-
-    if (Objects.nonNull(initCommandErrorOutput) && !initCommandErrorOutput.isEmpty()) {
-      throw new TerraformException(initCommandErrorOutput);
-    }
+    //    if (workspaceService.isUnitDirectoryExist(workspaceUnitKey)) {
+    //      throw new TerraformException(new WorkspaceUnitDirectoryPresentException().getMessage());
+    //    }
+    //
+    //    try {
+    //      workspaceService.createUnitDirectory(workspaceUnitKey);
+    //    } catch (IOException e) {
+    //      throw new TerraformException(e.getMessage());
+    //    }
+    //
+    //    String workspaceUnitDirectory;
+    //
+    //    try {
+    //      workspaceUnitDirectory = workspaceService.getUnitDirectory(workspaceUnitKey);
+    //    } catch (WorkspaceUnitDirectoryNotFoundException e) {
+    //      throw new TerraformException(e.getMessage());
+    //    }
+    //
+    //    InitCommandService initCommandService =
+    //        new InitCommandService(
+    //            workspaceUnitDirectory,
+    //            terraformDeploymentApplication.getCredentials(),
+    //            properties.getTerraformDirectory());
+    //
+    //    CommandExecutorOutputDto initCommandOutput;
+    //
+    //    try {
+    //      initCommandOutput = commandExecutorService.executeCommand(initCommandService);
+    //    } catch (CommandExecutorException e) {
+    //      throw new TerraformException(e.getMessage());
+    //    }
+    //
+    //    String initCommandErrorOutput = initCommandOutput.getErrorOutput();
+    //
+    //    if (Objects.nonNull(initCommandErrorOutput) && !initCommandErrorOutput.isEmpty()) {
+    //      throw new TerraformException(initCommandErrorOutput);
+    //    }
 
     String agentContext =
         AgentContextToJsonConverter.convert(
             DeploymentRequestsToAgentContextConverter.convert(
                 terraformDeploymentApplication.getRequests()));
 
-    ApplyCommandService applyCommandService =
-        new ApplyCommandService(
-            agentContext,
-            workspaceUnitDirectory,
-            terraformDeploymentApplication.getCredentials(),
-            properties.getTerraformDirectory(),
-            properties.getGitCommitId());
+    System.out.println(agentContext);
+    //    ApplyCommandService applyCommandService =
+    //        new ApplyCommandService(
+    //            agentContext,
+    //            workspaceUnitDirectory,
+    //            terraformDeploymentApplication.getCredentials(),
+    //            properties.getTerraformDirectory(),
+    //            properties.getGitCommitId());
+    //
+    //    CommandExecutorOutputDto applyCommandOutput;
+    //
+    //    try {
+    //      applyCommandOutput = commandExecutorService.executeCommand(applyCommandService);
+    //    } catch (CommandExecutorException e) {
+    //      throw new TerraformException(e.getMessage());
+    //    }
+    //
+    //    String applyCommandErrorOutput = applyCommandOutput.getErrorOutput();
+    //
+    //    if (Objects.nonNull(applyCommandErrorOutput) && !applyCommandErrorOutput.isEmpty()) {
+    //      throw new TerraformException(applyCommandErrorOutput);
+    //    }
+    //
+    //    OutputCommandService outputCommandService =
+    //        new OutputCommandService(
+    //            workspaceUnitDirectory,
+    //            terraformDeploymentApplication.getCredentials(),
+    //            properties.getTerraformDirectory());
+    //
+    //    CommandExecutorOutputDto outputCommandOutput;
+    //
+    //    try {
+    //      outputCommandOutput = commandExecutorService.executeCommand(outputCommandService);
+    //    } catch (CommandExecutorException e) {
+    //      throw new TerraformException(e.getMessage());
+    //    }
+    //
+    //    String outputCommandErrorOutput = outputCommandOutput.getErrorOutput();
+    //
+    //    if (Objects.nonNull(outputCommandErrorOutput) && !outputCommandErrorOutput.isEmpty()) {
+    //      throw new TerraformException(outputCommandErrorOutput);
+    //    }
+    //
+    //    try {
+    //      workspaceService.createVariableFile(
+    //          workspaceUnitDirectory, VariableFileEntity.of(agentContext,
+    // properties.getGitCommitId()));
+    //    } catch (IOException e) {
+    //      throw new TerraformException(e.getMessage());
+    //    }
 
-    CommandExecutorOutputDto applyCommandOutput;
-
-    try {
-      applyCommandOutput = commandExecutorService.executeCommand(applyCommandService);
-    } catch (CommandExecutorException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    String applyCommandErrorOutput = applyCommandOutput.getErrorOutput();
-
-    if (Objects.nonNull(applyCommandErrorOutput) && !applyCommandErrorOutput.isEmpty()) {
-      throw new TerraformException(applyCommandErrorOutput);
-    }
-
-    OutputCommandService outputCommandService =
-        new OutputCommandService(
-            workspaceUnitDirectory,
-            terraformDeploymentApplication.getCredentials(),
-            properties.getTerraformDirectory());
-
-    CommandExecutorOutputDto outputCommandOutput;
-
-    try {
-      outputCommandOutput = commandExecutorService.executeCommand(outputCommandService);
-    } catch (CommandExecutorException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    String outputCommandErrorOutput = outputCommandOutput.getErrorOutput();
-
-    if (Objects.nonNull(outputCommandErrorOutput) && !outputCommandErrorOutput.isEmpty()) {
-      throw new TerraformException(outputCommandErrorOutput);
-    }
-
-    try {
-      workspaceService.createVariableFile(
-          workspaceUnitDirectory, VariableFileEntity.of(agentContext, properties.getGitCommitId()));
-    } catch (IOException e) {
-      throw new TerraformException(e.getMessage());
-    }
-
-    return outputCommandOutput.getNormalOutput();
+    //    return outputCommandOutput.getNormalOutput();
+    return "";
   }
 
   /**

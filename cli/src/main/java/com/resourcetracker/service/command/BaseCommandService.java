@@ -6,6 +6,8 @@ import com.resourcetracker.service.command.external.state.StateExternalCommandSe
 import com.resourcetracker.service.command.external.stop.StopExternalCommandService;
 import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
 import com.resourcetracker.service.command.internal.healthcheck.HealthCheckInternalCommandService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import picocli.CommandLine.Command;
@@ -18,6 +20,8 @@ import picocli.CommandLine.Command;
     description = "Cloud-based remote resource tracker",
     version = "1.0")
 public class BaseCommandService {
+  private static final Logger logger = LogManager.getLogger(BaseCommandService.class);
+
   @Autowired private StartExternalCommandService startCommandService;
 
   @Autowired private StateExternalCommandService stateCommandService;
@@ -36,7 +40,7 @@ public class BaseCommandService {
 
       startCommandService.process();
     } catch (ApiServerException e) {
-      System.out.println(e.getMessage());
+      logger.fatal(e.getMessage());
     }
   }
 
@@ -48,7 +52,7 @@ public class BaseCommandService {
 
       stateCommandService.process();
     } catch (ApiServerException e) {
-      System.out.println(e.getMessage());
+      logger.fatal(e.getMessage());
     }
   }
 
@@ -60,7 +64,7 @@ public class BaseCommandService {
 
       stopCommandService.process();
     } catch (ApiServerException e) {
-      System.out.println(e.getMessage());
+      logger.fatal(e.getMessage());
     }
   }
 
@@ -72,7 +76,7 @@ public class BaseCommandService {
     try {
       versionCommandService.process();
     } catch (ApiServerException e) {
-      System.out.println(e.getMessage());
+      logger.fatal(e.getMessage());
     }
   }
 }

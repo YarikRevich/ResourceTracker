@@ -9,20 +9,21 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor(staticName = "of")
 public class KafkaLogsTopicEntity {
-  UUID id;
+  /** Represents unique identificator of a Kafka message. */
+  private UUID id;
 
   /** Represents stdout stream output of the executed command. */
-  String data;
+  private String data;
 
   /** Represents stderr stream output of the executed command. */
-  String error;
+  private String error;
 
   /** Represents hostname of the machine where ResourceTracker Agent gets started. */
-  String hostName;
+  private String hostName;
 
   /** Represents host address of the machine where ResourceTracker Agent gets started. */
-  String hostAddress;
+  private String hostAddress;
 
   /** Represents timestamp is the event when message gets sent to Kafka cluster. */
-  Timestamp timestamp;
+  private Timestamp timestamp;
 }

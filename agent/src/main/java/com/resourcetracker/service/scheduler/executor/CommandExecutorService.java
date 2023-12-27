@@ -34,10 +34,8 @@ public class CommandExecutorService {
     }
 
     try {
-      if (!command.waitForOutput()) {
-        throw new CommandExecutorException();
-      }
-    } catch (IOException e) {
+      command.waitForCompletion();
+    } catch (SProcessNotYetStartedException | InterruptedException e) {
       throw new CommandExecutorException(e.getMessage());
     }
 

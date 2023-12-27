@@ -14,121 +14,121 @@ public class PropertiesEntity {
   private static final String GIT_CONFIG_PROPERTIES_FILE = "git.properties";
 
   @Value(value = "${window.main.name}")
-  String windowMainName;
+  private String windowMainName;
 
   @Value(value = "${window.main.scale.min.width}")
-  Double windowMainScaleMinWidth;
+  private Double windowMainScaleMinWidth;
 
   @Value(value = "${window.main.scale.min.height}")
-  Double windowMainScaleMinHeight;
+  private Double windowMainScaleMinHeight;
 
   @Value(value = "${window.main.scale.max.width}")
-  Double windowMainScaleMaxWidth;
+  private Double windowMainScaleMaxWidth;
 
   @Value(value = "${window.main.scale.max.height}")
-  Double windowMainScaleMaxHeight;
+  private Double windowMainScaleMaxHeight;
 
   @Value(value = "${window.settings.name}")
-  String windowSettingsName;
+  private String windowSettingsName;
 
   @Value(value = "${window.settings.scale.width}")
-  Double windowSettingsScaleWidth;
+  private Double windowSettingsScaleWidth;
 
   @Value(value = "${window.settings.scale.height}")
-  Double windowSettingsScaleHeight;
+  private Double windowSettingsScaleHeight;
 
   @Value(value = "${process.background.period}")
-  Integer processBackgroundPeriod;
+  private Integer processBackgroundPeriod;
 
   @Value(value = "${process.healthcheck.period}")
-  Integer processHealthcheckPeriod;
+  private Integer processHealthcheckPeriod;
 
   @Value(value = "${process.window.width.period}")
-  Integer processWindowWidthPeriod;
+  private Integer processWindowWidthPeriod;
 
   @Value(value = "${process.window.height.period}")
-  Integer processWindowHeightPeriod;
+  private Integer processWindowHeightPeriod;
 
   @Value(value = "${spinner.initial.delay}")
-  Integer spinnerInitialDelay;
+  private Integer spinnerInitialDelay;
 
   @Value(value = "${button.basic.size.width}")
-  Double basicButtonSizeWidth;
+  private Double basicButtonSizeWidth;
 
   @Value(value = "${button.basic.size.height}")
-  Double basicButtonSizeHeight;
+  private Double basicButtonSizeHeight;
 
   @Value(value = "${scene.general.background.color.r}")
-  Integer generalBackgroundColorR;
+  private Integer generalBackgroundColorR;
 
   @Value(value = "${scene.general.background.color.g}")
-  Integer generalBackgroundColorG;
+  private Integer generalBackgroundColorG;
 
   @Value(value = "${scene.general.background.color.b}")
-  Integer generalBackgroundColorB;
+  private Integer generalBackgroundColorB;
 
   @Value(value = "${scene.common.header.background.color.r}")
-  Integer commonSceneHeaderBackgroundColorR;
+  private Integer commonSceneHeaderBackgroundColorR;
 
   @Value(value = "${scene.common.header.background.color.g}")
-  Integer commonSceneHeaderBackgroundColorG;
+  private Integer commonSceneHeaderBackgroundColorG;
 
   @Value(value = "${scene.common.header.background.color.b}")
-  Integer commonSceneHeaderBackgroundColorB;
+  private Integer commonSceneHeaderBackgroundColorB;
 
   @Value(value = "${scene.common.header.connection.background.color.r}")
-  Integer commonSceneHeaderConnectionStatusBackgroundColorR;
+  private Integer commonSceneHeaderConnectionStatusBackgroundColorR;
 
   @Value(value = "${scene.common.header.connection.background.color.g}")
-  Integer commonSceneHeaderConnectionStatusBackgroundColorG;
+  private Integer commonSceneHeaderConnectionStatusBackgroundColorG;
 
   @Value(value = "${scene.common.header.connection.background.color.b}")
-  Integer commonSceneHeaderConnectionStatusBackgroundColorB;
+  private Integer commonSceneHeaderConnectionStatusBackgroundColorB;
 
   @Value(value = "${scene.common.menu.background.color.r}")
-  Integer commonSceneMenuBackgroundColorR;
+  private Integer commonSceneMenuBackgroundColorR;
 
   @Value(value = "${scene.common.menu.background.color.g}")
-  Integer commonSceneMenuBackgroundColorG;
+  private Integer commonSceneMenuBackgroundColorG;
 
   @Value(value = "${scene.common.menu.background.color.b}")
-  Integer commonSceneMenuBackgroundColorB;
+  private Integer commonSceneMenuBackgroundColorB;
 
   @Value(value = "${scene.common.content.background.color.r}")
-  Integer commonSceneContentBackgroundColorR;
+  private Integer commonSceneContentBackgroundColorR;
 
   @Value(value = "${scene.common.content.background.color.g}")
-  Integer commonSceneContentBackgroundColorG;
+  private Integer commonSceneContentBackgroundColorG;
 
   @Value(value = "${scene.common.content.background.color.b}")
-  Integer commonSceneContentBackgroundColorB;
+  private Integer commonSceneContentBackgroundColorB;
 
   @Value(value = "${scene.common.footer.background.color.r}")
-  Integer commonSceneFooterBackgroundColorR;
+  private Integer commonSceneFooterBackgroundColorR;
 
   @Value(value = "${scene.common.footer.background.color.g}")
-  Integer commonSceneFooterBackgroundColorG;
+  private Integer commonSceneFooterBackgroundColorG;
 
   @Value(value = "${scene.common.footer.background.color.b}")
-  Integer commonSceneFooterBackgroundColorB;
+  private Integer commonSceneFooterBackgroundColorB;
 
   @Value(value = "${image.status.scale}")
-  Double statusImageScale;
+  private Double statusImageScale;
 
   @Value(value = "${graph.css.location}")
-  String graphCssFileLocation;
+  private String graphCssFileLocation;
 
   @Value(value = "${graph.properties.location}")
-  String graphPropertiesLocation;
+  private String graphPropertiesLocation;
 
   @Value(value = "${api-server.directory}")
-  String apiServerDirectory;
+  private String apiServerDirectory;
 
   @Value(value = "${git.commit.id.abbrev}")
-  String gitCommitId;
+  private String gitCommitId;
 
   @Bean
-  public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+  private static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
     PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();
     propsConfig.setLocation(new ClassPathResource(GIT_CONFIG_PROPERTIES_FILE));
     propsConfig.setIgnoreResourceNotFound(true);

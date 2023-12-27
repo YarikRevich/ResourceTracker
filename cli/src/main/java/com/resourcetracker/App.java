@@ -40,7 +40,7 @@ import picocli.CommandLine;
   AWSStopExternalCommandService.class,
   ConfigService.class,
   BuildProperties.class,
-  PropertiesEntity.class,
+  PropertiesEntity.class
 })
 public class App implements ApplicationRunner, ExitCodeGenerator {
   private int exitCode;

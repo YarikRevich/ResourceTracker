@@ -14,10 +14,10 @@ public class PropertiesEntity {
   private static final String GIT_CONFIG_PROPERTIES_FILE = "git.properties";
 
   @Value(value = "${git.commit.id.abbrev}")
-  String gitCommitId;
+  private String gitCommitId;
 
   @Bean
-  public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+  private static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
     PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();
     propsConfig.setLocation(new ClassPathResource(GIT_CONFIG_PROPERTIES_FILE));
     propsConfig.setIgnoreResourceNotFound(true);

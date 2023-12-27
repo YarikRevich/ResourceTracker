@@ -7,13 +7,15 @@ import lombok.Getter;
 /** Represents context given for ResourceTracker Agent process. */
 @Getter
 public class ConfigEntity {
-  @NotBlank List<Request> requests;
+  @NotBlank private List<Request> requests;
 
   /** Represents requests, which need to be executed */
   @Getter
   public static class Request {
-    @NotBlank String script;
+    @NotBlank private String name;
 
-    @NotBlank String frequency;
+    @NotBlank private String script;
+
+    @NotBlank private String frequency;
   }
 }

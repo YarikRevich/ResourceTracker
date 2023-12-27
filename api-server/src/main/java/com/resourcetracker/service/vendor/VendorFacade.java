@@ -5,7 +5,6 @@ import com.resourcetracker.converter.SecretsConverter;
 import com.resourcetracker.dto.AWSDeploymentResultDto;
 import com.resourcetracker.dto.AWSSecretsDto;
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.exception.AWSRunTaskFailureException;
 import com.resourcetracker.exception.ContainerStartupFailureException;
 import com.resourcetracker.exception.SecretsConversionException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
@@ -92,14 +91,14 @@ public class VendorFacade {
 
         AWSDeploymentResultDto awsDeploymentResult = awsVendorService.getEcsTaskRunDetails(input);
 
-//        try {
-//          awsVendorService.runEcsTask(
-//              awsDeploymentResult,
-//              awsCredentialsProvider,
-//              terraformDeploymentApplication.getCredentials().getRegion());
-//        } catch (AWSRunTaskFailureException e) {
-//          throw new ContainerStartupFailureException(e.getMessage());
-//        }
+        //        try {
+        //          awsVendorService.runEcsTask(
+        //              awsDeploymentResult,
+        //              awsCredentialsProvider,
+        //              terraformDeploymentApplication.getCredentials().getRegion());
+        //        } catch (AWSRunTaskFailureException e) {
+        //          throw new ContainerStartupFailureException(e.getMessage());
+        //        }
 
         yield awsVendorService.getMachineAddress(
             awsDeploymentResult.getEcsCluster().getValue(),

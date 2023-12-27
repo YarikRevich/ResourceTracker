@@ -10,6 +10,8 @@ import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.machine.MachineService;
 import com.resourcetracker.service.scheduler.command.ExecCommandService;
 import com.resourcetracker.service.scheduler.executor.CommandExecutorService;
+import com.resourcetracker.service.waiter.WaiterHelper;
+import jakarta.annotation.PreDestroy;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
@@ -17,16 +19,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** Exposes opportunity to schedule incoming requests. */
 @Service
 public class SchedulerService {
-  private static final Logger logger = LogManager.getLogger(SchedulerService.class);
-
   @Autowired private ConfigService configService;
 
   @Autowired private KafkaService kafkaService;
@@ -45,24 +43,33 @@ public class SchedulerService {
    * help of local command executor service.
    */
   public void start() {
-    configService
-        .getConfig()
-        .getRequests()
+    configService.getConfig().getRequests().parallelStream()
         .forEach(
             request -> {
-              Long period = 0L;
+              long period;
               try {
-                CronExpressionConverter.convert(request.getFrequency());
+                period = CronExpressionConverter.convert(request.getFrequency());
               } catch (CronExpressionException e) {
-                logger.fatal(e.getMessage());
+                throw new RuntimeException(e);
               }
 
               scheduledExecutorService.scheduleAtFixedRate(
-                  () -> executorService.execute(() -> exec(request.getScript())),
+                  () ->
+                      executorService.execute(
+                          () -> {
+                            try {
+                              exec(request.getScript());
+                            } catch (CommandExecutorException e) {
+
+                              throw new RuntimeException(e);
+                            }
+                          }),
                   0,
                   period,
                   TimeUnit.MILLISECONDS);
             });
+
+    WaiterHelper.waitForExit();
   }
 
   /**
@@ -70,15 +77,11 @@ public class SchedulerService {
    *
    * @param input script to be executed.
    */
-  private void exec(String input) {
+  private void exec(String input) throws CommandExecutorException {
     ExecCommandService execCommandService = new ExecCommandService(input);
 
-    CommandExecutorOutputDto scriptExecCommandOutput = null;
-    try {
-      scriptExecCommandOutput = commandExecutorService.executeCommand(execCommandService);
-    } catch (CommandExecutorException e) {
-      logger.fatal(e.getMessage());
-    }
+    CommandExecutorOutputDto scriptExecCommandOutput =
+        commandExecutorService.executeCommand(execCommandService);
 
     kafkaService.send(
         KafkaLogsTopicEntity.of(
@@ -88,5 +91,19 @@ public class SchedulerService {
             machineService.getHostName(),
             machineService.getHostAddress(),
             Timestamp.from(Instant.now())));
+  }
+
+  @PreDestroy
+  private void close() {
+    scheduledExecutorService.shutdown();
+
+    try {
+      if (!scheduledExecutorService.awaitTermination(1000, TimeUnit.HOURS)) {
+        scheduledExecutorService.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      scheduledExecutorService.shutdownNow();
+      Thread.currentThread().interrupt();
+    }
   }
 }

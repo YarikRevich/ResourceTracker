@@ -8,7 +8,6 @@ import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesRequest;
 import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesResult;
 import com.amazonaws.services.ec2.model.NetworkInterface;
 import com.amazonaws.services.ecs.AmazonECS;
-import com.amazonaws.services.ecs.AmazonECSClient;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
 import com.amazonaws.services.ecs.waiters.AmazonECSWaiters;
@@ -182,16 +181,15 @@ public class AWSVendorService {
         new DescribeTasksRequest().withCluster(ecsClusterId).withTasks(List.of(ecsTaskArn));
 
     AmazonECS ecsClient =
-            AmazonECSClientBuilder.standard()
-                    .withRegion(region)
-                    .withCredentials(awsCredentialsProvider)
-                    .build();
+        AmazonECSClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
 
     AmazonECSWaiters ecsClientWaiter = ecsClient.waiters();
     ecsClientWaiter.tasksRunning().run(new WaiterParameters<>(describeTaskRequest));
 
-    DescribeTasksResult describeTasksResult =
-            ecsClient.describeTasks(describeTaskRequest);
+    DescribeTasksResult describeTasksResult = ecsClient.describeTasks(describeTaskRequest);
 
     Task task = describeTasksResult.getTasks().get(0);
 

@@ -1,5 +1,6 @@
 variable "resourcetracker_agent_version" {
 	type = string
+	default = "latest"
 	description = "ResourceTracker Agent Docker image version, which will be used for deployment"
 	nullable = false
 }

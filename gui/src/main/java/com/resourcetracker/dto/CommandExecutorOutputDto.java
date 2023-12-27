@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(staticName = "of")
 public class CommandExecutorOutputDto {
-  String normalOutput;
+  private String normalOutput;
 
-  String errorOutput;
+  private String errorOutput;
 }

@@ -60,39 +60,51 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
   cpu                      = 256
 
   container_definitions = jsonencode([
-#    {
-#      name : "resourcetracker-agent",
-#      essential : true,
-#      environment : [
-#        {
-#          name : "RESOURCETRACKER_AGENT_CONTEXT",
-#          value : var.resourcetracker_agent_context,
-#        },
-#		{
-#          name : "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
-#          value : "resourcetracker-kafka:9093",
-#        }
-#      ],
-#      image : "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
-#    },
     {
-      name : "resourcetracker-kafka",
-      essential : true,
-      environment : [
+      name: "resourcetracker-agent",
+      essential: true,
+      depends_on: {
+        condition: "START",
+        container_name: "resourcetracker-kafka",
+      },
+      environment: [
         {
-          name : "KRAFT_CREATE_TOPICS",
-          value : "logs",
+          name: "RESOURCETRACKER_AGENT_CONTEXT",
+          value: var.resourcetracker_agent_context,
+        },
+		{
+          name: "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
+          value: "resourcetracker-kafka:9093",
+        }
+      ],
+      image: "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
+      logConfiguration: {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "agent-logs-test",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs/resourcetracker-agent"
+        }
+      }
+    },
+    {
+      name: "resourcetracker-kafka",
+      essential: true,
+      environment: [
+        {
+          name: "KRAFT_CREATE_TOPICS",
+          value: "logs",
         },
         {
           name: "KRAFT_PARTITIONS_PER_TOPIC",
           value: "1"
         }
       ],
-      image : "moeenz/docker-kafka-kraft:latest",
-      portMappings : [
+      image: "moeenz/docker-kafka-kraft:latest",
+      portMappings: [
         {
-          "containerPort" : 9093,
-          "hostPort" : 9093
+          containerPort: 9093,
+          hostPort: 9093
         }
       ],
       logConfiguration: {

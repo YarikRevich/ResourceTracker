@@ -7,15 +7,15 @@ import lombok.Getter;
 /** Represents message received from Kafka 'logs' topic. */
 @Getter
 public class KafkaLogsTopicEntity {
-  UUID id;
+  private UUID id;
 
-  String data;
+  private String data;
 
-  String error;
+  private String error;
 
-  String hostName;
+  private String hostName;
 
-  String hostAddress;
+  private String hostAddress;
 
-  Timestamp timestamp;
+  private Timestamp timestamp;
 }

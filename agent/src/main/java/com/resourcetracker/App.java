@@ -1,5 +1,6 @@
 package com.resourcetracker;
 
+import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.machine.MachineService;
@@ -17,13 +18,11 @@ import org.springframework.stereotype.Component;
   ConfigService.class,
   KafkaService.class,
   MachineService.class,
-  CommandExecutorService.class
+  CommandExecutorService.class,
+  PropertiesEntity.class
 })
 public class App implements ApplicationRunner {
-  //    @Autowired
-  //    FatalAppender fatalAppender;
-
-  @Autowired SchedulerService schedulerService;
+  @Autowired private SchedulerService schedulerService;
 
   @Override
   public void run(ApplicationArguments args) {
