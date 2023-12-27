@@ -17,14 +17,8 @@ public class MachineService {
 
   private final String hostAddress;
 
-  /** Default constructor, which gathers data about machine where ResourceTracker Agent is run. */
-  public MachineService() {
-    InetAddress localHost = null;
-    try {
-      localHost = InetAddress.getLocalHost();
-    } catch (UnknownHostException e) {
-      logger.fatal(e.getMessage());
-    }
+  public MachineService() throws UnknownHostException {
+    InetAddress localHost = InetAddress.getLocalHost();
 
     this.hostName = localHost.getHostName();
     this.hostAddress = localHost.getHostAddress();

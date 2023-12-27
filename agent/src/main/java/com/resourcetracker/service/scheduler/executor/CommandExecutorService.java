@@ -14,7 +14,6 @@ import process.exceptions.SProcessNotYetStartedException;
 public class CommandExecutorService {
   private final SProcessExecutor processExecutor;
 
-  /** Default constructor, which initializes shell process executor. */
   CommandExecutorService() {
     this.processExecutor = SProcessExecutor.getCommandExecutor();
   }
