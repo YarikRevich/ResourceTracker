@@ -7,12 +7,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.exception.ConfigValidationException;
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -22,6 +32,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  *
  * @author YarikRevich
  */
+@Startup
 @ApplicationScoped
 public class ConfigService {
   private static final Logger logger = LogManager.getLogger(ConfigService.class);
@@ -35,6 +46,8 @@ public class ConfigService {
   public ConfigService(
       @ConfigProperty(name = "config.root") String configRootPath,
       @ConfigProperty(name = "config.file") String configFilePath) {
+
+    System.out.println("it works");
     try {
       configFile =
           new FileInputStream(
@@ -50,7 +63,7 @@ public class ConfigService {
    * entity.
    */
   @PostConstruct
-  private void process() {
+  private void process() throws ConfigValidationException {
     ObjectMapper mapper =
         new ObjectMapper(new YAMLFactory())
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
@@ -63,6 +76,23 @@ public class ConfigService {
       parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll().getFirst();
     } catch (IOException e) {
       logger.fatal(e.getMessage());
+      Quarkus.asyncExit(1);
+    }
+
+    System.out.println("here");
+
+    try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+      Validator validator = validatorFactory.getValidator();
+
+      Set<ConstraintViolation<ConfigEntity>> validationResult =
+              validator.validate(parsedConfigFile);
+
+      if (!validationResult.isEmpty()) {
+        throw new ConfigValidationException(validationResult
+                .stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining(", ")));
+      }
     }
   }
 

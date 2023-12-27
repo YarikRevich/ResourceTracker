@@ -122,6 +122,11 @@
         <artifactId>quarkus-arc</artifactId>
         <version>3.4.3</version>
       </dependency>
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-hibernate-validator</artifactId>
+        <version>3.4.3</version>
+      </dependency>
 
       <!-- KAFKA -->
       <dependency>
@@ -231,6 +236,7 @@
         <artifactId>jakarta.validation-api</artifactId>
         <version>3.0.2</version>
       </dependency>
+
       <dependency>
         <groupId>jakarta.ws.rs</groupId>
         <artifactId>jakarta.ws.rs-api</artifactId>
@@ -325,6 +331,13 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>Jabylon</id>
+      <url>https://www.jabylon.org/maven/</url>
+    </repository>
+  </repositories>
 
   <build>
     <pluginManagement>

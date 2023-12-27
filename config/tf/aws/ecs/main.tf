@@ -72,10 +72,6 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
           name: "RESOURCETRACKER_AGENT_CONTEXT",
           value: var.resourcetracker_agent_context,
         },
-		{
-          name: "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
-          value: "resourcetracker-kafka:9093",
-        }
       ],
       image: "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
       logConfiguration: {

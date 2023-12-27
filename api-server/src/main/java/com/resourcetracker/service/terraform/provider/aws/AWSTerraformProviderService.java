@@ -40,14 +40,12 @@ public class AWSTerraformProviderService implements ITerraformProvider {
             terraformDeploymentApplication.getCredentials().getSecrets().getAccessKey(),
             terraformDeploymentApplication.getCredentials().getSecrets().getSecretKey());
 
-    if (workspaceService.isUnitDirectoryExist(workspaceUnitKey)) {
-      throw new TerraformException(new WorkspaceUnitDirectoryPresentException().getMessage());
-    }
-
-    try {
-      workspaceService.createUnitDirectory(workspaceUnitKey);
-    } catch (IOException e) {
-      throw new TerraformException(e.getMessage());
+    if (!workspaceService.isUnitDirectoryExist(workspaceUnitKey)) {
+      try {
+        workspaceService.createUnitDirectory(workspaceUnitKey);
+      } catch (IOException e) {
+        throw new TerraformException(e.getMessage());
+      }
     }
 
     String workspaceUnitDirectory;
@@ -82,6 +80,13 @@ public class AWSTerraformProviderService implements ITerraformProvider {
         AgentContextToJsonConverter.convert(
             DeploymentRequestsToAgentContextConverter.convert(
                 terraformDeploymentApplication.getRequests()));
+
+    try {
+      workspaceService.createVariableFile(
+          workspaceUnitDirectory, VariableFileEntity.of(agentContext, properties.getGitCommitId()));
+    } catch (IOException e) {
+      throw new TerraformException(e.getMessage());
+    }
 
     ApplyCommandService applyCommandService =
         new ApplyCommandService(
@@ -123,13 +128,6 @@ public class AWSTerraformProviderService implements ITerraformProvider {
 
     if (Objects.nonNull(outputCommandErrorOutput) && !outputCommandErrorOutput.isEmpty()) {
       throw new TerraformException(outputCommandErrorOutput);
-    }
-
-    try {
-      workspaceService.createVariableFile(
-          workspaceUnitDirectory, VariableFileEntity.of(agentContext, properties.getGitCommitId()));
-    } catch (IOException e) {
-      throw new TerraformException(e.getMessage());
     }
 
     return outputCommandOutput.getNormalOutput();

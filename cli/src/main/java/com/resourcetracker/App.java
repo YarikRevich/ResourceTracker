@@ -1,6 +1,7 @@
 package com.resourcetracker;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.exception.ConfigValidationException;
 import com.resourcetracker.service.client.command.*;
 import com.resourcetracker.service.command.BaseCommandService;
 // import com.resourcetracker.service.KafkaConsumerWrapper;
@@ -12,6 +13,13 @@ import com.resourcetracker.service.command.external.stop.provider.aws.AWSStopExt
 import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
 import com.resourcetracker.service.command.internal.healthcheck.HealthCheckInternalCommandService;
 import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.config.common.ValidConfigService;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import lombok.SneakyThrows;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -39,16 +47,28 @@ import picocli.CommandLine;
   AWSStartExternalCommandService.class,
   AWSStopExternalCommandService.class,
   ConfigService.class,
+  ValidConfigService.class,
   BuildProperties.class,
   PropertiesEntity.class
 })
 public class App implements ApplicationRunner, ExitCodeGenerator {
+  private static final Logger logger = LogManager.getLogger(App.class);
+
   private int exitCode;
+
+  @Autowired private ValidConfigService validConfigService;
 
   @Autowired private BaseCommandService baseCommandService;
 
   @Override
   public void run(ApplicationArguments args) {
+    try {
+      validConfigService.validate();
+    } catch (Exception e) {
+      logger.fatal(e.getMessage());
+      return;
+    }
+
     CommandLine cmd = new CommandLine(baseCommandService);
     exitCode = cmd.execute(args.getSourceArgs());
   }

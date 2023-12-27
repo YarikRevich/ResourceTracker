@@ -18,14 +18,10 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class KafkaService {
-  private static final Logger logger = LogManager.getLogger(KafkaService.class);
-
   private AdminClient kafkaAdminClient;
 
   private final String kafkaBootstrapServer;
@@ -35,8 +31,7 @@ public class KafkaService {
   private final KafkaConsumer<String, KafkaLogsTopicEntity> kafkaConsumer;
 
   @Inject
-  public KafkaService(
-      ConfigService configService, @ConfigProperty(name = "kafka.topic") String kafkaTopic) {
+  public KafkaService(ConfigService configService, @ConfigProperty(name = "kafka.topic") String kafkaTopic) {
     Properties kafkaAdminClientProps = new Properties();
 
     this.kafkaBootstrapServer = configService.getConfig().getKafka().getHost();

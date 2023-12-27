@@ -1,6 +1,7 @@
 package com.resourcetracker.entity;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
@@ -10,8 +11,9 @@ import lombok.Getter;
 public class ConfigEntity {
   @Getter
   public static class Kafka {
-    @NotBlank String host;
+    @NotBlank public String host;
   }
 
-  Kafka kafka;
+  @Valid
+  public Kafka kafka;
 }
