@@ -29,7 +29,7 @@ public class ConfigEntity {
     public String frequency;
   }
 
-  @NotBlank @Valid public List<Request> requests;
+  @Valid @NotNull public List<Request> requests;
 
   /**
    * Represents remove cloud infrastructure configuration properties used for further deployment
@@ -58,7 +58,7 @@ public class ConfigEntity {
     public Object credentials;
   }
 
-  @NotBlank @Valid public Cloud cloud;
+  @Valid @NotNull public Cloud cloud;
 
   /** Represents API Server configuration used for further connection establishment. */
   @Getter
@@ -67,7 +67,7 @@ public class ConfigEntity {
   }
 
   @Valid
-  @NotBlank
+  @NotNull
   @JsonProperty("api-server")
   public APIServer apiServer;
 }
