@@ -2,10 +2,14 @@ package com.resourcetracker.service.kafka;
 
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.exception.KafkaProducerSendException;
 import jakarta.annotation.PreDestroy;
 import java.util.Properties;
+import java.util.concurrent.Future;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +46,12 @@ public class KafkaService {
    * @param message message to be sent to Kafka cluster via Kafka producer
    */
   public void send(KafkaLogsTopicEntity message) {
-    System.out.println(message.toString());
-    //
-    //    Future<RecordMetadata> future =
-    //        kafkaProducer.send(new ProducerRecord<>(properties.getKafkaTopic(), message));
-    //
-    //    if (!future.isDone() || future.isCancelled()) {
-    //      logger.error(new KafkaProducerSendException().getMessage());
-    //    }
+    Future<RecordMetadata> future =
+        kafkaProducer.send(new ProducerRecord<>(properties.getKafkaTopic(), message));
+
+    if (future.isCancelled()) {
+      logger.error(new KafkaProducerSendException().getMessage());
+    }
   }
 
   /** Closes a connection of Kafka producer after the application is closed. */

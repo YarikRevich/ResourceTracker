@@ -7,15 +7,21 @@ import lombok.Getter;
 /** Represents message received from Kafka 'logs' topic. */
 @Getter
 public class KafkaLogsTopicEntity {
-  private UUID id;
+  /** Represents unique identificator of a Kafka message. */
+  public UUID id;
 
-  private String data;
+  /** Represents stdout stream output of the executed command. */
+  public String data;
 
-  private String error;
+  /** Represents stderr stream output of the executed command. */
+  public String error;
 
-  private String hostName;
+  /** Represents hostname of the machine where ResourceTracker Agent gets started. */
+  public String hostName;
 
-  private String hostAddress;
+  /** Represents host address of the machine where ResourceTracker Agent gets started. */
+  public String hostAddress;
 
-  private Timestamp timestamp;
+  /** Represents timestamp is the event when message gets sent to Kafka cluster. */
+  public Timestamp timestamp;
 }

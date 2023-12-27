@@ -18,11 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Service for processing configuration file
- *
- * @author YarikRevich
- */
+/** Service for processing configuration file */
 @Service
 public class ConfigService {
   private static final Logger logger = LogManager.getLogger(ConfigService.class);
