@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,7 +41,10 @@ public class ConfigService {
     try {
       configFile =
           new FileInputStream(
-              Paths.get(System.getProperty("user.home"), properties.getConfigRootPath(), properties.getConfigUserFilePath())
+              Paths.get(
+                      System.getProperty("user.home"),
+                      properties.getConfigRootPath(),
+                      properties.getConfigUserFilePath())
                   .toString());
     } catch (FileNotFoundException e) {
       logger.fatal(e.getMessage());
@@ -73,17 +75,20 @@ public class ConfigService {
   }
 
   /**
-   * Returns command, which needs to be executed by the user to
-   * modify local ResourceTracker API Server configuration.
+   * Returns command, which needs to be executed by the user to modify local ResourceTracker API
+   * Server configuration.
+   *
    * @param machineAddress Kafka host remote machine address.
    * @return Kafka host modification command.
    */
   public String getKafkaHostModificationCommand(String machineAddress) {
-    return String.format("sed -i 's/host:.*/host: %s/g' '%s'",
-            machineAddress,
-            Paths.get(System.getProperty("user.home"), properties.getConfigRootPath(), properties.getConfigApiServerFilePath()));
-
-    //sed -i "s/staging/${{ github.event.inputs.chainimage }}/g" "values/alpha_activeset/common/p0docker-compose-sharder.yml"
+    return String.format(
+        "sed -i 's/host:.*/host: %s/g' '%s'",
+        machineAddress,
+        Paths.get(
+            System.getProperty("user.home"),
+            properties.getConfigRootPath(),
+            properties.getConfigApiServerFilePath()));
   }
 
   /**

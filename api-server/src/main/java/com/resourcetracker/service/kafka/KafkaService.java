@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.Node;
@@ -106,13 +105,13 @@ public class KafkaService {
 
     System.out.println(records.count());
 
-//    ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>> iter =
-//        (ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>>) records.iterator();
-//
-//    while (iter.hasNext()) {
-//      ConsumerRecord<String, KafkaLogsTopicEntity> record = iter.next();
-//      kafkaLogsTopicEntities.add(record.value());
-//    }
+    //    ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>> iter =
+    //        (ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>>) records.iterator();
+    //
+    //    while (iter.hasNext()) {
+    //      ConsumerRecord<String, KafkaLogsTopicEntity> record = iter.next();
+    //      kafkaLogsTopicEntities.add(record.value());
+    //    }
 
     return kafkaLogsTopicEntities;
   }
