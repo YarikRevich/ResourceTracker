@@ -83,7 +83,7 @@ public class ConfigService {
    */
   public String getKafkaHostModificationCommand(String machineAddress) {
     return String.format(
-        "sed -i 's/host:.*/host: %s/g' '%s'",
+        "sed -i 's/host:.*/host: %s:9093/g' '%s'",
         machineAddress,
         Paths.get(
             System.getProperty("user.home"),
