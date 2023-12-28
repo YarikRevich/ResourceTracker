@@ -58,8 +58,6 @@ public class BaseCommandService {
   @Command(description = "Stop remote requests execution")
   private void stop() {
     try {
-      healthCheckInternalCommandService.process();
-
       stopCommandService.process();
     } catch (ApiServerException e) {
       logger.fatal(e.getMessage());
