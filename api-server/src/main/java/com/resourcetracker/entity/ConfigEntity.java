@@ -14,6 +14,5 @@ public class ConfigEntity {
     @NotBlank public String host;
   }
 
-  @Valid
-  public Kafka kafka;
+  @Valid public Kafka kafka;
 }

@@ -2,9 +2,8 @@ package com.resourcetracker.entity;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
-
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.Getter;
 
 /** Represents context given for ResourceTracker Agent process. */

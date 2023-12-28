@@ -1,7 +1,6 @@
 package com.resourcetracker;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.exception.ConfigValidationException;
 import com.resourcetracker.service.client.command.*;
 import com.resourcetracker.service.command.BaseCommandService;
 // import com.resourcetracker.service.KafkaConsumerWrapper;
@@ -14,12 +13,8 @@ import com.resourcetracker.service.command.external.version.VersionExternalComma
 import com.resourcetracker.service.command.internal.healthcheck.HealthCheckInternalCommandService;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.config.common.ValidConfigService;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
-import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

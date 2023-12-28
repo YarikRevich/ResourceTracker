@@ -54,8 +54,7 @@ public class ConfigEntity {
       @NotBlank public String region;
     }
 
-    @NotNull
-    public Object credentials;
+    @NotNull public Object credentials;
   }
 
   @Valid @NotNull public Cloud cloud;

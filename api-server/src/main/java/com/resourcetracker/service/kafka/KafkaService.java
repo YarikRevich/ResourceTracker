@@ -31,7 +31,8 @@ public class KafkaService {
   private final KafkaConsumer<String, KafkaLogsTopicEntity> kafkaConsumer;
 
   @Inject
-  public KafkaService(ConfigService configService, @ConfigProperty(name = "kafka.topic") String kafkaTopic) {
+  public KafkaService(
+      ConfigService configService, @ConfigProperty(name = "kafka.topic") String kafkaTopic) {
     Properties kafkaAdminClientProps = new Properties();
 
     this.kafkaBootstrapServer = configService.getConfig().getKafka().getHost();
@@ -103,13 +104,15 @@ public class KafkaService {
     ConsumerRecords<String, KafkaLogsTopicEntity> records =
         kafkaConsumer.poll(Duration.ofSeconds(5));
 
-    ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>> iter =
-        (ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>>) records.iterator();
+    System.out.println(records.count());
 
-    while (iter.hasNext()) {
-      ConsumerRecord<String, KafkaLogsTopicEntity> record = iter.next();
-      kafkaLogsTopicEntities.add(record.value());
-    }
+//    ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>> iter =
+//        (ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>>) records.iterator();
+//
+//    while (iter.hasNext()) {
+//      ConsumerRecord<String, KafkaLogsTopicEntity> record = iter.next();
+//      kafkaLogsTopicEntities.add(record.value());
+//    }
 
     return kafkaLogsTopicEntities;
   }

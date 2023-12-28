@@ -16,6 +16,15 @@ public class PropertiesEntity {
   @Value(value = "${git.commit.id.abbrev}")
   private String gitCommitId;
 
+  @Value("${config.root}")
+  private String configRootPath;
+
+  @Value("${config.user.file}")
+  private String configUserFilePath;
+
+  @Value("${config.api-server.file}")
+  private String configApiServerFilePath;
+
   @Bean
   private static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
     PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();

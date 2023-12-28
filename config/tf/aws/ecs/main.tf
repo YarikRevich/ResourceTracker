@@ -96,7 +96,7 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
           value: "1"
         }
       ],
-      image: "moeenz/docker-kafka-kraft:latest",
+      image: "ghcr.io/yarikrevich/resourcetracker-kafka-starter:latest",
       portMappings: [
         {
           containerPort: 9093,

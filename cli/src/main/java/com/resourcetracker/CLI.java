@@ -1,7 +1,6 @@
 package com.resourcetracker;
 
 import com.resourcetracker.service.client.command.*;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

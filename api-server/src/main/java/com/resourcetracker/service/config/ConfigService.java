@@ -14,15 +14,14 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.io.*;
-import java.nio.file.Paths;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.io.*;
+import java.nio.file.Paths;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -85,11 +84,11 @@ public class ConfigService {
       Validator validator = validatorFactory.getValidator();
 
       Set<ConstraintViolation<ConfigEntity>> validationResult =
-              validator.validate(parsedConfigFile);
+          validator.validate(parsedConfigFile);
 
       if (!validationResult.isEmpty()) {
-        throw new ConfigValidationException(validationResult
-                .stream()
+        throw new ConfigValidationException(
+            validationResult.stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", ")));
       }

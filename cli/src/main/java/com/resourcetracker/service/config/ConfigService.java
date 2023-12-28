@@ -7,20 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
-import com.resourcetracker.exception.ConfigValidationException;
+import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +27,8 @@ import org.springframework.stereotype.Service;
 public class ConfigService {
   private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
+  private final PropertiesEntity properties;
+
   private InputStream configFile;
 
   private ConfigEntity parsedConfigFile;
@@ -40,20 +36,19 @@ public class ConfigService {
   /**
    * Default constructor, which opens configuration file at the given path.
    *
-   * @param configRootPath base path to the configuration file
-   * @param configFilePath name of the configuration file
+   * @param properties common application properties
    */
-  public ConfigService(
-      @Value("${config.root}") String configRootPath,
-      @Value("${config.file}") String configFilePath) {
+  public ConfigService(@Autowired PropertiesEntity properties) {
     try {
       configFile =
           new FileInputStream(
-              Paths.get(System.getProperty("user.home"), configRootPath, configFilePath)
+              Paths.get(System.getProperty("user.home"), properties.getConfigRootPath(), properties.getConfigUserFilePath())
                   .toString());
     } catch (FileNotFoundException e) {
       logger.fatal(e.getMessage());
     }
+
+    this.properties = properties;
   }
 
   /**
@@ -75,6 +70,20 @@ public class ConfigService {
     } catch (IOException e) {
       logger.fatal(e.getMessage());
     }
+  }
+
+  /**
+   * Returns command, which needs to be executed by the user to
+   * modify local ResourceTracker API Server configuration.
+   * @param machineAddress Kafka host remote machine address.
+   * @return Kafka host modification command.
+   */
+  public String getKafkaHostModificationCommand(String machineAddress) {
+    return String.format("sed -i 's/host:.*/host: %s/g' '%s'",
+            machineAddress,
+            Paths.get(System.getProperty("user.home"), properties.getConfigRootPath(), properties.getConfigApiServerFilePath()));
+
+    //sed -i "s/staging/${{ github.event.inputs.chainimage }}/g" "values/alpha_activeset/common/p0docker-compose-sharder.yml"
   }
 
   /**

@@ -6,7 +6,6 @@ import com.resourcetracker.service.command.external.state.StateExternalCommandSe
 import com.resourcetracker.service.command.external.stop.StopExternalCommandService;
 import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
 import com.resourcetracker.service.command.internal.healthcheck.HealthCheckInternalCommandService;
-import com.resourcetracker.service.config.common.ValidConfigService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +36,7 @@ public class BaseCommandService {
   @Command(description = "Start remote requests execution")
   private void start() {
     try {
-      healthCheckInternalCommandService.process();
-
-      //      startCommandService.process();
+      startCommandService.process();
     } catch (ApiServerException e) {
       logger.fatal(e.getMessage());
     }
