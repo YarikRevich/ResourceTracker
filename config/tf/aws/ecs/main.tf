@@ -87,6 +87,10 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
       name: "resourcetracker-kafka",
       essential: true,
       environment: [
+#        {
+#          name: "KRAFT_CONTAINER_HOST_NAME",
+#          value: "resourcetracker-kafka",
+#        },
         {
           name: "KRAFT_CREATE_TOPICS",
           value: "logs",
@@ -96,7 +100,7 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
           value: "1"
         }
       ],
-      image: "ghcr.io/yarikrevich/resourcetracker-kafka-starter:latest",
+      image: "moeenz/docker-kafka-kraft:latest",
       portMappings: [
         {
           containerPort: 9092,
