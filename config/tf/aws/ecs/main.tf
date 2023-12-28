@@ -99,6 +99,10 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
       image: "ghcr.io/yarikrevich/resourcetracker-kafka-starter:latest",
       portMappings: [
         {
+          containerPort: 9092,
+          hostPort: 9092
+        },
+        {
           containerPort: 9093,
           hostPort: 9093
         }
