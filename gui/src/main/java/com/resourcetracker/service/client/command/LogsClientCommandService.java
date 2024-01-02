@@ -1,33 +1,41 @@
 package com.resourcetracker.service.client.command;
 
+import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.TopicResourceApi;
+import com.resourcetracker.exception.ApiServerException;
+import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.model.TopicLogsApplication;
+import com.resourcetracker.model.TopicLogsResult;
+import com.resourcetracker.service.client.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+/** Represents logs topic client command service. */
 @Service
-public class LogsClientCommandService {
-  @Autowired private ConfigService configService;
+public class LogsClientCommandService implements IClientCommand<TopicLogsResult, TopicLogsApplication> {
+  private final TopicResourceApi topicResourceApi;
 
-  public void process() {
-    //
-    //        if (stateService.isMode(project, StateEntity.Mode.STARTED)) {
-    //            System.out.println(kafkaConsumerWrapper.receiveStatus(project));
-    //        } else {
-    //            System.out.println(String.format("Project %s is not run!", project));
-    //        }
-    //    } else {
-    //        int numberOfRunProjects = 0;
-    //        for (ConfigEntity configEntity : parsedConfigFile) {
-    //            if (stateService.isMode(configEntity.getProject().getName(),
-    // StateEntity.Mode.STARTED)) {
-    //
-    // System.out.println(kafkaConsumerWrapper.receiveStatus(configEntity.getProject().getName()));
-    //                numberOfRunProjects++;
-    //            }
-    //        }
-    //        if (numberOfRunProjects > 0) {
-    //            System.out.println("No projects are run!");
-    //        }
-    //    }
+  public LogsClientCommandService(@Autowired ConfigService configService) {
+    ApiClient apiClient =
+        new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
+
+    this.topicResourceApi = new TopicResourceApi(apiClient);
+  }
+
+  /**
+   * @see IClientCommand
+   */
+  @Override
+  public TopicLogsResult process(TopicLogsApplication input) throws ApiServerException {
+    try {
+      return topicResourceApi.v1TopicLogsPost(input).block();
+    } catch (WebClientResponseException e) {
+      throw new ApiServerException(e.getResponseBodyAsString());
+    } catch (WebClientRequestException e) {
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
+    }
   }
 }

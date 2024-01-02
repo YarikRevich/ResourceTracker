@@ -15,8 +15,8 @@ public class AWSDeploymentResultDto {
     private String type;
   }
 
-  @JsonAlias({"ecs_task_definition"})
-  public RawResult ecsTaskDefinition;
+  //  @JsonAlias({"ecs_task_definition"})
+  //  public RawResult ecsTaskDefinition;
 
   @JsonAlias({"ecs_cluster"})
   public RawResult ecsCluster;
@@ -27,10 +27,10 @@ public class AWSDeploymentResultDto {
   @JsonAlias({"resourcetracker_main_subnet_id"})
   public RawResult resourceTrackerMainSubnetId;
 
-  @JsonSetter
-  public void setEcsTaskDefinition(RawResult ecsTaskDefinition) {
-    this.ecsTaskDefinition = ecsTaskDefinition;
-  }
+  //  @JsonSetter
+  //  public void setEcsTaskDefinition(RawResult ecsTaskDefinition) {
+  //    this.ecsTaskDefinition = ecsTaskDefinition;
+  //  }
 
   @JsonSetter
   public void setEcsCluster(RawResult ecsCluster) {
@@ -47,10 +47,10 @@ public class AWSDeploymentResultDto {
     this.resourceTrackerMainSubnetId = resourceTrackerMainSubnetId;
   }
 
-  @JsonGetter
-  public RawResult getEcsTaskDefinition() {
-    return ecsTaskDefinition;
-  }
+  //  @JsonGetter
+  //  public RawResult getEcsTaskDefinition() {
+  //    return ecsTaskDefinition;
+  //  }
 
   @JsonGetter
   public RawResult getEcsCluster() {

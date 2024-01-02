@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.resourcetracker.entity.InternalConfigEntity;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.entity.VariableFileEntity;
 import com.resourcetracker.exception.WorkspaceUnitDirectoryNotFoundException;
@@ -100,14 +101,14 @@ public class WorkspaceService {
    */
   public void createVariableFile(String workspaceUnitDirectory, VariableFileEntity input)
       throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper mapper = new ObjectMapper();
 
     File variableFile =
         new File(
             Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
                 .toString());
 
-    objectMapper.writeValue(variableFile, input);
+    mapper.writeValue(variableFile, input);
   }
 
   /**
@@ -144,6 +145,66 @@ public class WorkspaceService {
                 .toString());
     try {
       return reader.<VariableFileEntity>readValues(variableFile).readAll().getFirst();
+    } catch (IOException e) {
+      logger.fatal(e.getMessage());
+    }
+
+    return null;
+  }
+
+  /**
+   * Writes internal config file input to the given workspace unit directory.
+   *
+   * @param workspaceUnitDirectory given workspace unit directory.
+   * @param input given internal config file entity input.
+   * @throws IOException if variable file cannot be created.
+   */
+  public void createInternalConfigFile(String workspaceUnitDirectory, InternalConfigEntity input)
+      throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+
+    File variableFile =
+        new File(
+            Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
+                .toString());
+
+    mapper.writeValue(variableFile, input);
+  }
+
+  /**
+   * Checks if internal config file exists in the given workspace unit directory.
+   *
+   * @param workspaceUnitDirectory given workspace unit directory.
+   * @return result if variable file exists in the given workspace unit directory.
+   */
+  public boolean isInternalConfigFileExist(String workspaceUnitDirectory) {
+    return Files.exists(
+        Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName()));
+  }
+
+  /**
+   * Retrieves internal config file content with the help of the given workspace unit directory.
+   *
+   * @param workspaceUnitDirectory given workspace unit directory.
+   * @return internal config file entity.
+   * @throws FileNotFoundException if the requested variable not found.
+   */
+  public InternalConfigEntity getInternalConfigFileContent(String workspaceUnitDirectory)
+      throws FileNotFoundException {
+    ObjectMapper mapper =
+        new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    ObjectReader reader = mapper.reader().forType(new TypeReference<InternalConfigEntity>() {});
+
+    InputStream variableFile =
+        new FileInputStream(
+            Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
+                .toString());
+    try {
+      return reader.<InternalConfigEntity>readValues(variableFile).readAll().getFirst();
     } catch (IOException e) {
       logger.fatal(e.getMessage());
     }

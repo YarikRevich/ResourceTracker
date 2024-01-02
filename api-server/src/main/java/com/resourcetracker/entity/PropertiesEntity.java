@@ -17,6 +17,15 @@ public class PropertiesEntity {
   @ConfigProperty(name = "quarkus.http.port")
   Integer applicationPort;
 
+  @ConfigProperty(name = "config.root")
+  String configRootPath;
+
+  @ConfigProperty(name = "config.file")
+  String configFilePath;
+
+  @ConfigProperty(name = "kafka.topic")
+  String kafkaTopic;
+
   @ConfigProperty(name = "terraform.directory")
   String terraformDirectory;
 

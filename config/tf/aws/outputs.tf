@@ -13,3 +13,7 @@ output "resourcetracker_security_group"{
 output "resourcetracker_main_subnet_id"{
 	value = module.vpc.resourcetracker_main_subnet_id
 }
+#
+#output "public_ip" {
+#	value = module.ecs.public_ip
+#}

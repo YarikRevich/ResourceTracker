@@ -30,6 +30,8 @@ public class LocalState {
 
   @Autowired private ApplicationEventPublisher applicationEventPublisher;
 
+  @Getter @Setter private static Boolean deploymentAvailable = false;
+
   @Getter @Setter private static Boolean connectionEstablished = false;
 
   @Getter @Setter private static Double prevMainWindowHeight;

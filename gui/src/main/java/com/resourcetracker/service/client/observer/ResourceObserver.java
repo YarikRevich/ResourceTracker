@@ -1,9 +1,9 @@
 package com.resourcetracker.service.client.observer;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.model.HealthCheckResult;
-import com.resourcetracker.service.client.command.HealthClientCommandService;
+import com.resourcetracker.service.client.command.HealthCheckClientCommandService;
 import com.resourcetracker.service.event.payload.ConnectionStatusEvent;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
 import jakarta.annotation.PostConstruct;
@@ -18,7 +18,7 @@ public class ResourceObserver {
 
   @Autowired private PropertiesEntity properties;
 
-  @Autowired private HealthClientCommandService healthCommandService;
+  @Autowired private HealthCheckClientCommandService healthCommandService;
 
   /** Sends healthcheck requests to API Server and updates connection status. */
   @PostConstruct
@@ -28,14 +28,14 @@ public class ResourceObserver {
           ConnectionStatusEvent connectionStatusEvent;
 
           try {
-            HealthCheckResult result = healthCommandService.process();
+            HealthCheckResult result = healthCommandService.process(null);
 
             connectionStatusEvent =
                 switch (result.getStatus()) {
                   case UP -> new ConnectionStatusEvent(true);
                   case DOWN -> new ConnectionStatusEvent(false);
                 };
-          } catch (ApiServerNotAvailableException e) {
+          } catch (ApiServerException e) {
             connectionStatusEvent = new ConnectionStatusEvent(false);
           }
 

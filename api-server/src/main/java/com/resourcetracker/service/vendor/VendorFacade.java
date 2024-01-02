@@ -90,7 +90,6 @@ public class VendorFacade {
             AWSVendorService.getAWSCredentialsProvider(secretsDto);
 
         AWSDeploymentResultDto awsDeploymentResult = awsVendorService.getEcsTaskRunDetails(input);
-
         //        try {
         //          awsVendorService.runEcsTask(
         //              awsDeploymentResult,
@@ -99,6 +98,8 @@ public class VendorFacade {
         //        } catch (AWSRunTaskFailureException e) {
         //          throw new ContainerStartupFailureException(e.getMessage());
         //        }
+
+        //        awsVendorService.runEcsTask();
 
         yield awsVendorService.getMachineAddress(
             awsDeploymentResult.getEcsCluster().getValue(),

@@ -1,10 +1,8 @@
 package com.resourcetracker.service.kafka;
 
 import com.resourcetracker.entity.KafkaLogsTopicEntity;
-import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.annotation.PreDestroy;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.io.IOException;
 import java.net.*;
 import java.time.Duration;
@@ -17,9 +15,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-@ApplicationScoped
 public class KafkaService {
   private AdminClient kafkaAdminClient;
 
@@ -29,12 +25,8 @@ public class KafkaService {
 
   private final KafkaConsumer<String, KafkaLogsTopicEntity> kafkaConsumer;
 
-  @Inject
-  public KafkaService(
-      ConfigService configService, @ConfigProperty(name = "kafka.topic") String kafkaTopic) {
+  public KafkaService(String kafkaBootstrapServer, PropertiesEntity properties) {
     Properties kafkaAdminClientProps = new Properties();
-
-    this.kafkaBootstrapServer = configService.getConfig().getKafka().getHost();
 
     kafkaAdminClientProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
     kafkaAdminClientProps.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
@@ -54,8 +46,10 @@ public class KafkaService {
         ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
         "org.springframework.kafka.support.serializer.JsonDeserializer");
 
+    this.kafkaBootstrapServer = kafkaBootstrapServer;
+
     this.kafkaConsumer = new KafkaConsumer<>(kafkaConsumerProps);
-    this.kafkaConsumer.subscribe(Collections.singletonList(kafkaTopic));
+    this.kafkaConsumer.subscribe(Collections.singletonList(properties.getKafkaTopic()));
   }
 
   public boolean isConnected() {

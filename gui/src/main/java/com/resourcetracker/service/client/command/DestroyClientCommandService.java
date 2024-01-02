@@ -1,47 +1,40 @@
 package com.resourcetracker.service.client.command;
 
+import com.resourcetracker.ApiClient;
+import com.resourcetracker.api.TerraformResourceApi;
+import com.resourcetracker.exception.ApiServerException;
+import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.model.TerraformDestructionApplication;
+import com.resourcetracker.service.client.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-/** Manages starting of each project described in a configuration file */
+/** Represents destroy client command service. */
 @Service
-public class DestroyClientCommandService {
-  @Autowired private ConfigService configService;
+public class DestroyClientCommandService
+    implements IClientCommand<Void, TerraformDestructionApplication> {
+  private final TerraformResourceApi terraformResourceApi;
 
-  public void process() {
+  public DestroyClientCommandService(@Autowired ConfigService configService) {
+    ApiClient apiClient =
+        new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 
-    //    List<ConfigEntity> parsedConfigFile = configService.getParsedConfigFile();
-    //    synchronized (this) {
-    //      for (ConfigEntity configEntity : parsedConfigFile) {
-    //        new Thread(new StopRunner(configEntity)).run();
-    //      }
-    //    }
-    //    for (ConfigEntity configEntity : parsedConfigFile) {
-    //      if (configEntity.getProject().getName() == project) {
-    //        terraformService.setConfigEntity(configEntity);
-    //        terraformService.stop();
-    //
-    //        stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
-    //
-    //        logger.info(String.format("Project %s is successfully stoped!", project));
-    //        break;
-    //      }
-    //    }
-    //  } else {
-    //    logger.info(String.format("Project %s is already stoped!", project));
-    //  }
+    this.terraformResourceApi = new TerraformResourceApi(apiClient);
   }
-  //
-  //	@Override
-  //	public void run() {
-  //		if (stateService.isMode(configEntity.getProject().getName(), StateEntity.Mode.STARTED)) {
-  //			terraformService.setConfigEntity(configEntity);
-  //			terraformService.stop();
-  //
-  //			stateService.removeKafkaBootstrapServer();
-  //			stateService.setMode(configEntity.getProject().getName(), StateEntity.Mode.STOPED);
-  //			numberOfStartedProjects++;
-  //		}
-  //	}
+
+  /**
+   * @see IClientCommand
+   */
+  public Void process(TerraformDestructionApplication input) throws ApiServerException {
+    try {
+      return terraformResourceApi.v1TerraformDestroyPost(input).block();
+    } catch (WebClientResponseException e) {
+      throw new ApiServerException(e.getResponseBodyAsString());
+    } catch (WebClientRequestException e) {
+      throw new ApiServerException(new ApiServerNotAvailableException(e.getMessage()).getMessage());
+    }
+  }
 }

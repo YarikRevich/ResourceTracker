@@ -61,8 +61,8 @@ public class GitBuildConfigSourceService implements ConfigSource {
    * @see ConfigSource
    */
   @Override
-  public String getValue(String s) {
-    return (String) config.get(s);
+  public String getValue(String key) {
+    return (String) config.get(key);
   }
 
   /**

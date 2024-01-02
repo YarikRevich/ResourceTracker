@@ -10,7 +10,6 @@ import com.resourcetracker.service.element.scene.main.MainDeploymentScene;
 import com.resourcetracker.service.element.scene.main.MainStartScene;
 import com.resourcetracker.service.element.stage.SettingsStage;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.LocalState;
 import java.util.UUID;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -49,12 +48,13 @@ public class MainMenuButtonBox implements IElement<VBox> {
                     "Deployment",
                     properties,
                     () -> {
-                      if (LocalState.getConnectionEstablished()) {
-                        ElementHelper.switchScene(
-                            getContent().getScene(), deploymentScene.getContent());
-                      } else {
-                        ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
-                      }
+                      //                      if (LocalState.getConnectionEstablished()) {
+                                              ElementHelper.switchScene(
+                                                  getContent().getScene(),
+                       deploymentScene.getContent());
+                      //                      } else {
+//                      ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
+                      //                      }
                     })
                 .getContent(),
             new BasicButton("Settings", properties, () -> settingsStage.getContent().show())

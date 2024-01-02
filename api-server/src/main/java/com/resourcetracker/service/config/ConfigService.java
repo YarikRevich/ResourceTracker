@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.ConfigValidationException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.Startup;
@@ -20,11 +21,11 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * Service for processing configuration file
@@ -40,17 +41,15 @@ public class ConfigService {
 
   private ConfigEntity parsedConfigFile;
 
-  /** Default constructor, which opens configuration file at the given path. */
   @Inject
-  public ConfigService(
-      @ConfigProperty(name = "config.root") String configRootPath,
-      @ConfigProperty(name = "config.file") String configFilePath) {
-
-    System.out.println("it works");
+  public ConfigService(PropertiesEntity properties) {
     try {
       configFile =
           new FileInputStream(
-              Paths.get(System.getProperty("user.home"), configRootPath, configFilePath)
+              Paths.get(
+                      System.getProperty("user.home"),
+                      properties.getConfigRootPath(),
+                      properties.getConfigFilePath())
                   .toString());
     } catch (FileNotFoundException e) {
       logger.fatal(e.getMessage());
@@ -72,13 +71,16 @@ public class ConfigService {
     ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {});
 
     try {
-      parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll().getFirst();
+      List<ConfigEntity> values = reader.<ConfigEntity>readValues(configFile).readAll();
+      if (!values.isEmpty()) {
+        parsedConfigFile = values.getFirst();
+      } else {
+        return;
+      }
     } catch (IOException e) {
       logger.fatal(e.getMessage());
       Quarkus.asyncExit(1);
     }
-
-    System.out.println("here");
 
     try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
       Validator validator = validatorFactory.getValidator();

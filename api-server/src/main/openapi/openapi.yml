@@ -13,14 +13,21 @@ tags:
     description: Contains all endpoints related to both data validation and its further retrieval.
   - name: InfoResource
     description: Contains all endpoints related to general info of API Server.
-  - name: HealthCheckResource
+  - name: HealthResource
     description: Contains all endpoints related to general API Server health information.
 
 paths:
   /v1/topic/logs:
-    get:
+    post:
       tags:
         - TopicResource
+      requestBody:
+        required: true
+        description: Retrieve resource state for the given user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TopicLogsApplication"
       responses:
         200:
           description: Current resource state is successfully retrieved
@@ -119,7 +126,7 @@ paths:
   /v1/health:
     get:
       tags:
-        - HealthCheckResource
+        - HealthResource
       responses:
         200:
           description: General health information about running API Server
@@ -127,8 +134,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthCheckResult"
+  /v1/readiness:
+    post:
+      tags:
+        - HealthResource
+      requestBody:
+        required: true
+        description: Check if API Server is ready to serve for the given user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReadinessCheckApplication"
+      responses:
+        200:
+          description: General health information about running API Server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessCheckResult"
 components:
   schemas:
+    TopicLogsApplication:
+      required:
+        - provider
+        - credentials
+      properties:
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          $ref: "#/components/schemas/CredentialsFields"
     TopicLogsResult:
       required:
         - result
@@ -211,11 +245,9 @@ components:
           $ref: "#/components/schemas/Provider"
         credentials:
           $ref: "#/components/schemas/CredentialsFields"
-
     CredentialsFields:
       anyOf:
         - $ref: "#/components/schemas/AWSCredentials"
-
     AWSCredentials:
       required:
         - secrets
@@ -234,46 +266,6 @@ components:
           type: string
         secretKey:
           type: string
-
-
-#    CredentialsFields:
-#      type: object
-#      properties:
-#        credentialsType:
-#          type: string
-#          enum: [ AWS, GCP ]
-#      discriminator:
-#        propertyName: credentialsType
-#        mapping:
-#          AWS: '#/components/schemas/AWSCredentials'
-#          GCP: '#/components/schemas/GCPCredentials'
-#      #---------------------------------------------------------------------------
-#      # Concrete classes
-#      #---------------------------------------------------------------------------
-#    AWSCredentials:
-#      allOf:
-#        - $ref: "#/components/schemas/CredentialsFields"
-#        - type: object
-#          properties:
-#              accessKey:
-#                type: string
-#    GCPCredentials:
-#      allOf:
-#        - $ref: "#/components/schemas/CredentialsFields"
-#        - type: object
-#          properties:
-#            key:
-#              type: string
-#
-#
-
-
-
-
-
-
-
-
     DestructionRequest:
       required:
         - name
@@ -348,6 +340,40 @@ components:
         status:
           $ref: "#/components/schemas/HealthCheckStatus"
     HealthCheckStatus:
+      type: string
+      enum:
+        - UP
+        - DOWN
+    ReadinessCheckApplication:
+      required:
+        - provider
+        - credentials
+      properties:
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          $ref: "#/components/schemas/CredentialsFields"
+    ReadinessCheckResult:
+      required:
+        - status
+        - checks
+      properties:
+        status:
+          $ref: "#/components/schemas/ReadinessCheckStatus"
+        checks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReadinessCheckUnit"
+    ReadinessCheckUnit:
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+        status:
+          $ref: "#/components/schemas/ReadinessCheckStatus"
+    ReadinessCheckStatus:
       type: string
       enum:
         - UP

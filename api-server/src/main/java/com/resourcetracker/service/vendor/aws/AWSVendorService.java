@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.dto.AWSDeploymentResultDto;
 import com.resourcetracker.dto.AWSSecretsDto;
-import com.resourcetracker.exception.AWSRunTaskFailureException;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.util.Iterator;
@@ -70,45 +69,45 @@ public class AWSVendorService {
     return null;
   }
 
-  /**
-   * Runs ECS Task with the given configuration properties.
-   *
-   * @param awsDeploymentResultDto composed ECS Task details.
-   * @throws AWSRunTaskFailureException thrown when AWS Task run action fails.
-   */
-  public void runEcsTask(
-      AWSDeploymentResultDto awsDeploymentResultDto,
-      AWSCredentialsProvider awsCredentialsProvider,
-      String region)
-      throws AWSRunTaskFailureException {
-    AwsVpcConfiguration awsVpcConfiguration =
-        new AwsVpcConfiguration()
-            .withSubnets(awsDeploymentResultDto.getResourceTrackerMainSubnetId().getValue())
-            .withSecurityGroups(
-                awsDeploymentResultDto.getResourceTrackerSecurityGroup().getValue());
-
-    NetworkConfiguration networkConfiguration =
-        new NetworkConfiguration().withAwsvpcConfiguration(awsVpcConfiguration);
-
-    RunTaskRequest runTaskRequest =
-        new RunTaskRequest()
-            .withTaskDefinition(awsDeploymentResultDto.getEcsTaskDefinition().getValue())
-            .withCluster(awsDeploymentResultDto.getEcsCluster().getValue())
-            .withNetworkConfiguration(networkConfiguration)
-            .withLaunchType(LaunchType.FARGATE);
-
-    RunTaskResult runTaskResult =
-        AmazonECSClientBuilder.standard()
-            .withRegion(region)
-            .withCredentials(awsCredentialsProvider)
-            .build()
-            .runTask(runTaskRequest);
-
-    String output = gatherRunEcsTaskResultOutput(runTaskResult);
-    if (!output.isEmpty()) {
-      throw new AWSRunTaskFailureException(output);
-    }
-  }
+  //  /**
+  //   * Runs ECS Task with the given configuration properties.
+  //   *
+  //   * @param awsDeploymentResultDto composed ECS Task details.
+  //   * @throws AWSRunTaskFailureException thrown when AWS Task run action fails.
+  //   */
+  //  public void runEcsTask(
+  //      AWSDeploymentResultDto awsDeploymentResultDto,
+  //      AWSCredentialsProvider awsCredentialsProvider,
+  //      String region)
+  //      throws AWSRunTaskFailureException {
+  //    AwsVpcConfiguration awsVpcConfiguration =
+  //        new AwsVpcConfiguration()
+  //            .withSubnets(awsDeploymentResultDto.getResourceTrackerMainSubnetId().getValue())
+  //            .withSecurityGroups(
+  //                awsDeploymentResultDto.getResourceTrackerSecurityGroup().getValue());
+  //
+  //    NetworkConfiguration networkConfiguration =
+  //        new NetworkConfiguration().withAwsvpcConfiguration(awsVpcConfiguration);
+  //
+  //    RunTaskRequest runTaskRequest =
+  //        new RunTaskRequest()
+  //            .withTaskDefinition(awsDeploymentResultDto.getEcsTaskDefinition().getValue())
+  //            .withCluster(awsDeploymentResultDto.getEcsCluster().getValue())
+  //            .withNetworkConfiguration(networkConfiguration)
+  //            .withLaunchType(LaunchType.FARGATE);
+  //
+  //    RunTaskResult runTaskResult =
+  //        AmazonECSClientBuilder.standard()
+  //            .withRegion(region)
+  //            .withCredentials(awsCredentialsProvider)
+  //            .build()
+  //            .runTask(runTaskRequest);
+  //
+  //    String output = gatherRunEcsTaskResultOutput(runTaskResult);
+  //    if (!output.isEmpty()) {
+  //      throw new AWSRunTaskFailureException(output);
+  //    }
+  //  }
 
   /**
    * Gathers output returned by ECS Task run action, if fail happens.
