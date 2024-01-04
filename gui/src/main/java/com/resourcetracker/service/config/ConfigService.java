@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.io.FileInputStream;
@@ -16,7 +17,6 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,13 +33,14 @@ public class ConfigService {
   private ConfigEntity parsedConfigFile;
 
   /** Opens YAML configuration file */
-  public ConfigService(
-      @Value("${config.root}") String configRootPath,
-      @Value("${config.file}") String configFilePath) {
+  public ConfigService(PropertiesEntity properties) {
     try {
       configFile =
           new FileInputStream(
-              Paths.get(System.getProperty("user.home"), configRootPath, configFilePath)
+              Paths.get(
+                      System.getProperty("user.home"),
+                      properties.getConfigRootPath(),
+                      properties.getConfigUserFilePath())
                   .toString());
     } catch (FileNotFoundException e) {
       logger.fatal(e.getMessage());

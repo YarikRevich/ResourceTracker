@@ -5,7 +5,7 @@ import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.LocalState;
+import com.resourcetracker.service.event.state.LocalState;
 import ink.bluecloud.css.CssResources;
 import ink.bluecloud.css.ElementButton;
 import ink.bluecloud.css.ElementButtonKt;

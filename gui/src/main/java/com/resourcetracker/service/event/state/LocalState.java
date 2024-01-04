@@ -1,8 +1,9 @@
-package com.resourcetracker.service.event;
+package com.resourcetracker.service.event.state;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.event.payload.ConnectionStatusEvent;
+import com.resourcetracker.service.event.payload.DeploymentStatusEvent;
 import com.resourcetracker.service.event.payload.MainWindowHeightUpdateEvent;
 import com.resourcetracker.service.event.payload.MainWindowWidthUpdateEvent;
 import java.util.Objects;
@@ -113,6 +114,16 @@ public class LocalState {
   @EventListener
   void handleConnectionStatusEvent(ConnectionStatusEvent event) {
     LocalState.setConnectionEstablished(event.isConnectionEstablished());
+  }
+
+  /**
+   * Handles changes of deployment availability status.
+   *
+   * @param event deployment status event, which contains deployment availability status.
+   */
+  @EventListener
+  void handleDeploymentStatusEvent(DeploymentStatusEvent event) {
+    LocalState.setDeploymentAvailable(event.isDeploymentAvailable());
   }
 
   /**

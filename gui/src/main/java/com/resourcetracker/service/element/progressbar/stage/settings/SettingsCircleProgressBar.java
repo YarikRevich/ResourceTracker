@@ -5,7 +5,7 @@ import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.LocalState;
+import com.resourcetracker.service.event.state.LocalState;
 import java.util.UUID;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;

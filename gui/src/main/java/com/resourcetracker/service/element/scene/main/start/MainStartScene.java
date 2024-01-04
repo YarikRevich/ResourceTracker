@@ -1,8 +1,8 @@
-package com.resourcetracker.service.element.scene.main;
+package com.resourcetracker.service.element.scene.main.start;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.layout.scene.main.MainStartSceneLayout;
+import com.resourcetracker.service.element.layout.scene.main.start.MainStartSceneLayout;
 import com.resourcetracker.service.element.progressbar.stage.main.MainCircleProgressBar;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import java.util.UUID;

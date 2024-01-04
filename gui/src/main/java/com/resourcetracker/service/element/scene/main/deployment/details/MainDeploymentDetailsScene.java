@@ -1,4 +1,4 @@
-package com.resourcetracker.service.element.scene.main;
+package com.resourcetracker.service.element.scene.main.deployment.details;
 
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;

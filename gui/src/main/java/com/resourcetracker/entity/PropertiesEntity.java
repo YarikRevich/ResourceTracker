@@ -43,6 +43,9 @@ public class PropertiesEntity {
   @Value(value = "${process.healthcheck.period}")
   private Integer processHealthcheckPeriod;
 
+  @Value(value = "${process.readiness.period}")
+  private Integer processReadinessPeriod;
+
   @Value(value = "${process.window.width.period}")
   private Integer processWindowWidthPeriod;
 
@@ -115,11 +118,20 @@ public class PropertiesEntity {
   @Value(value = "${image.status.scale}")
   private Double statusImageScale;
 
+  @Value(value = "${font.default.name}")
+  private String fontDefaultName;
+
   @Value(value = "${graph.css.location}")
   private String graphCssFileLocation;
 
   @Value(value = "${graph.properties.location}")
   private String graphPropertiesLocation;
+
+  @Value(value = "${config.root}")
+  private String configRootPath;
+
+  @Value(value = "${config.user.file}")
+  private String configUserFilePath;
 
   @Value(value = "${api-server.directory}")
   private String apiServerDirectory;

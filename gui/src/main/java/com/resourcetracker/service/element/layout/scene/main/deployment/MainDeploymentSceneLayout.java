@@ -1,26 +1,29 @@
-package com.resourcetracker.service.element.layout.scene.main;
+package com.resourcetracker.service.element.layout.scene.main.deployment;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.layout.common.ContentGrid;
-import com.resourcetracker.service.element.layout.scene.main.components.FooterGrid;
-import com.resourcetracker.service.element.layout.scene.main.components.HeaderGrid;
-import com.resourcetracker.service.element.layout.scene.main.components.MainMenuButtonBox;
+import com.resourcetracker.service.element.layout.scene.main.common.FooterGrid;
+import com.resourcetracker.service.element.layout.scene.main.common.HeaderGrid;
+import com.resourcetracker.service.element.layout.scene.main.common.MainMenuButtonBox;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.element.text.LandingAnnouncementText;
-import com.resourcetracker.service.event.LocalState;
+import com.resourcetracker.service.event.state.LocalState;
 import java.util.UUID;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/** Represents start scene layout of the main stage. */
+/** Represents deployment scene layout of the main stage. */
 @Service
-public class MainStartSceneLayout implements IElementResizable, IElement<GridPane> {
+public class MainDeploymentSceneLayout implements IElementResizable, IElement<GridPane> {
   UUID id = UUID.randomUUID();
 
-  public MainStartSceneLayout(
+  public MainDeploymentSceneLayout(
       @Autowired PropertiesEntity properties,
       @Autowired MainMenuButtonBox mainMenuButtonBox,
       @Autowired LandingAnnouncementText landingAnnouncementText,

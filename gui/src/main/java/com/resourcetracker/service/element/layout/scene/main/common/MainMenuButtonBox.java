@@ -1,4 +1,4 @@
-package com.resourcetracker.service.element.layout.scene.main.components;
+package com.resourcetracker.service.element.layout.scene.main.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
@@ -6,8 +6,8 @@ import com.resourcetracker.service.element.alert.ApiServerNotAvailableAlert;
 import com.resourcetracker.service.element.button.BasicButton;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.element.progressbar.stage.main.MainCircleProgressBar;
-import com.resourcetracker.service.element.scene.main.MainDeploymentScene;
-import com.resourcetracker.service.element.scene.main.MainStartScene;
+import com.resourcetracker.service.element.scene.main.deployment.MainDeploymentScene;
+import com.resourcetracker.service.element.scene.main.start.MainStartScene;
 import com.resourcetracker.service.element.stage.SettingsStage;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import java.util.UUID;
@@ -49,11 +49,11 @@ public class MainMenuButtonBox implements IElement<VBox> {
                     properties,
                     () -> {
                       //                      if (LocalState.getConnectionEstablished()) {
-                                              ElementHelper.switchScene(
-                                                  getContent().getScene(),
-                       deploymentScene.getContent());
+//                      ElementHelper.switchScene(
+//                          getContent().getScene(), deploymentScene.getContent());
                       //                      } else {
-//                      ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
+                      //
+                      // ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
                       //                      }
                     })
                 .getContent(),

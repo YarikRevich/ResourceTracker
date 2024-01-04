@@ -4,7 +4,6 @@ import com.resourcetracker.api.HealthResourceApi;
 import com.resourcetracker.converter.HealthCheckResponseToReadinessCheckResult;
 import com.resourcetracker.entity.InternalConfigEntity;
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.exception.TerraformException;
 import com.resourcetracker.exception.WorkspaceUnitDirectoryNotFoundException;
 import com.resourcetracker.exception.WorkspaceUnitInternalConfigFileNotFoundException;
 import com.resourcetracker.model.HealthCheckResult;
@@ -19,8 +18,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-
-import java.io.IOException;
 
 @ApplicationScoped
 public class HealthResource implements HealthResourceApi {

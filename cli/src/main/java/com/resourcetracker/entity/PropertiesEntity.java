@@ -22,9 +22,6 @@ public class PropertiesEntity {
   @Value("${config.user.file}")
   private String configUserFilePath;
 
-  @Value("${config.api-server.file}")
-  private String configApiServerFilePath;
-
   @Bean
   private static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
     PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();
