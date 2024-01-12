@@ -3,7 +3,8 @@ package com.resourcetracker.service.element.scene.main.start;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.layout.scene.main.start.MainStartSceneLayout;
-import com.resourcetracker.service.element.progressbar.stage.main.MainCircleProgressBar;
+import com.resourcetracker.service.element.menu.TabMenuBar;
+import com.resourcetracker.service.element.progressbar.main.start.MainStartCircleProgressBar;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import java.util.UUID;
 import javafx.scene.Group;
@@ -20,10 +21,12 @@ public class MainStartScene implements IElement<Scene> {
   public MainStartScene(
       @Autowired PropertiesEntity properties,
       @Autowired MainStartSceneLayout startSceneLayout,
-      @Autowired MainCircleProgressBar circleProgressBar) {
+      @Autowired MainStartCircleProgressBar mainStartCircleProgressBar,
+      @Autowired TabMenuBar tabMenuBar) {
     Group group = new Group();
+    group.getChildren().add(tabMenuBar.getContent());
     group.getChildren().add(startSceneLayout.getContent());
-    group.getChildren().add(circleProgressBar.getContent());
+    group.getChildren().add(mainStartCircleProgressBar.getContent());
 
     ElementStorage.setElement(
         id,

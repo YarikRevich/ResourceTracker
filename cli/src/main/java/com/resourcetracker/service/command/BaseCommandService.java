@@ -5,7 +5,8 @@ import com.resourcetracker.service.command.external.start.StartExternalCommandSe
 import com.resourcetracker.service.command.external.state.StateExternalCommandService;
 import com.resourcetracker.service.command.external.stop.StopExternalCommandService;
 import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
-import com.resourcetracker.service.command.internal.healthcheck.HealthCheckInternalCommandService;
+import com.resourcetracker.service.command.internal.health.HealthCheckInternalCommandService;
+import com.resourcetracker.service.command.internal.readiness.ReadinessCheckInternalCommandService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +33,14 @@ public class BaseCommandService {
 
   @Autowired private HealthCheckInternalCommandService healthCheckInternalCommandService;
 
+  @Autowired private ReadinessCheckInternalCommandService readinessCheckInternalCommandService;
+
   /** Provides access to start command service. */
   @Command(description = "Start remote requests execution")
   private void start() {
     try {
+      healthCheckInternalCommandService.process();
+
       startCommandService.process();
     } catch (ApiServerException e) {
       logger.fatal(e.getMessage());
@@ -47,6 +52,7 @@ public class BaseCommandService {
   private void state() {
     try {
       healthCheckInternalCommandService.process();
+      readinessCheckInternalCommandService.process();
 
       stateCommandService.process();
     } catch (ApiServerException e) {
@@ -58,6 +64,8 @@ public class BaseCommandService {
   @Command(description = "Stop remote requests execution")
   private void stop() {
     try {
+      healthCheckInternalCommandService.process();
+
       stopCommandService.process();
     } catch (ApiServerException e) {
       logger.fatal(e.getMessage());

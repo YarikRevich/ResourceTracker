@@ -89,7 +89,10 @@ public class VendorFacade {
         AWSCredentialsProvider awsCredentialsProvider =
             AWSVendorService.getAWSCredentialsProvider(secretsDto);
 
-        AWSDeploymentResultDto awsDeploymentResult = awsVendorService.getEcsTaskRunDetails(input);
+        awsVendorService.createEcsTaskDefinitions(
+                awsCredentialsProvider, terraformDeploymentApplication.getCredentials().getRegion());
+
+//        AWSDeploymentResultDto awsDeploymentResult = awsVendorService.getEcsTaskRunDetails(input);
         //        try {
         //          awsVendorService.runEcsTask(
         //              awsDeploymentResult,
@@ -102,7 +105,7 @@ public class VendorFacade {
         //        awsVendorService.runEcsTask();
 
         yield awsVendorService.getMachineAddress(
-            awsDeploymentResult.getEcsCluster().getValue(),
+            "", // awsDeploymentResult.getEcsCluster().getValue(),
             awsCredentialsProvider,
             terraformDeploymentApplication.getCredentials().getRegion());
       }

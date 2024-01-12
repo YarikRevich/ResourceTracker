@@ -3,7 +3,7 @@ package com.resourcetracker.service.element.stage;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.ElementHelper;
-import com.resourcetracker.service.element.progressbar.stage.main.MainCircleProgressBar;
+import com.resourcetracker.service.element.progressbar.main.start.MainStartCircleProgressBar;
 import com.resourcetracker.service.element.scene.main.start.MainStartScene;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.event.payload.MainWindowHeightUpdateEvent;
@@ -27,7 +27,7 @@ public class MainStage implements IElement<Stage> {
   public MainStage(
       @Autowired PropertiesEntity properties,
       @Autowired MainStartScene startScene,
-      @Autowired MainCircleProgressBar mainCircleProgressBar,
+      @Autowired MainStartCircleProgressBar mainCircleProgressBar,
       @Autowired ApplicationEventPublisher applicationEventPublisher) {
     Platform.runLater(
         () -> {

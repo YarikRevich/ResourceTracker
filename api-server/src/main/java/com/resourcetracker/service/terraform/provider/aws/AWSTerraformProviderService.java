@@ -17,7 +17,6 @@ import com.resourcetracker.service.terraform.provider.executor.CommandExecutorSe
 import com.resourcetracker.service.terraform.workspace.WorkspaceService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -162,7 +161,7 @@ public class AWSTerraformProviderService implements ITerraformProvider {
     VariableFileEntity variableFile;
     try {
       variableFile = workspaceService.getVariableFileContent(workspaceUnitDirectory);
-    } catch (FileNotFoundException e) {
+    } catch (VariableFileNotFoundException e) {
       throw new RuntimeException(e);
     }
 

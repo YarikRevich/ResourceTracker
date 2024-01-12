@@ -4,11 +4,11 @@ import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.layout.common.ContentGrid;
-import com.resourcetracker.service.element.layout.scene.main.common.FooterGrid;
-import com.resourcetracker.service.element.layout.scene.main.common.HeaderGrid;
-import com.resourcetracker.service.element.layout.scene.main.common.MainMenuButtonBox;
+import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentContentGrid;
+import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentFooterGrid;
+import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentHeaderGrid;
+import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentMenuButtonBox;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.element.text.LandingAnnouncementText;
 import com.resourcetracker.service.event.state.LocalState;
 import java.util.UUID;
 import javafx.scene.layout.ColumnConstraints;
@@ -25,10 +25,10 @@ public class MainDeploymentSceneLayout implements IElementResizable, IElement<Gr
 
   public MainDeploymentSceneLayout(
       @Autowired PropertiesEntity properties,
-      @Autowired MainMenuButtonBox mainMenuButtonBox,
-      @Autowired LandingAnnouncementText landingAnnouncementText,
-      @Autowired HeaderGrid headerGrid,
-      @Autowired FooterGrid footerGrid) {
+      @Autowired MainDeploymentMenuButtonBox mainDeploymentMenuButtonBox,
+      @Autowired MainDeploymentContentGrid mainDeploymentContentGrid,
+      @Autowired MainDeploymentHeaderGrid mainDeploymentHeaderGrid,
+      @Autowired MainDeploymentFooterGrid mainDeploymentFooterGrid) {
     GridPane grid = new GridPane();
 
     ColumnConstraints column1 = new ColumnConstraints();
@@ -39,17 +39,21 @@ public class MainDeploymentSceneLayout implements IElementResizable, IElement<Gr
     RowConstraints row1 = new RowConstraints();
     row1.setPercentHeight(5);
     RowConstraints row2 = new RowConstraints();
-    row2.setVgrow(Priority.ALWAYS);
-    row2.setPercentHeight(86);
+    row2.setPercentHeight(85);
     RowConstraints row3 = new RowConstraints();
     row3.setPercentHeight(4);
 
     grid.getRowConstraints().addAll(row1, row2, row3);
 
     ContentGrid contentGrid =
-        new ContentGrid(mainMenuButtonBox.getContent(), landingAnnouncementText.getContent());
+        new ContentGrid(
+            mainDeploymentMenuButtonBox.getContent(), mainDeploymentContentGrid.getContent());
 
-    grid.addColumn(0, headerGrid.getContent(), contentGrid.getContent(), footerGrid.getContent());
+    grid.addColumn(
+        0,
+        mainDeploymentHeaderGrid.getContent(),
+        contentGrid.getContent(),
+        mainDeploymentFooterGrid.getContent());
 
     ElementStorage.setElement(id, grid);
     ElementStorage.setResizable(this);
@@ -68,7 +72,7 @@ public class MainDeploymentSceneLayout implements IElementResizable, IElement<Gr
    */
   @Override
   public void handlePrefWidth() {
-    getContent().setMinWidth(LocalState.getMainWindowWidth());
+    getContent().setPrefWidth(LocalState.getMainWindowWidth());
   }
 
   /**
@@ -76,6 +80,6 @@ public class MainDeploymentSceneLayout implements IElementResizable, IElement<Gr
    */
   @Override
   public void handlePrefHeight() {
-    getContent().setMinHeight(LocalState.getMainWindowHeight());
+    getContent().setPrefHeight(LocalState.getMainWindowHeight());
   }
 }

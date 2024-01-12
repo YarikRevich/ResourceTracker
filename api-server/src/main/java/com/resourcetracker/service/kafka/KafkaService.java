@@ -1,6 +1,6 @@
 package com.resourcetracker.service.kafka;
 
-import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.dto.KafkaLogsTopicDto;
 import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.annotation.PreDestroy;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class KafkaService {
 
   private final Properties kafkaAdminClientProps;
 
-  private final KafkaConsumer<String, KafkaLogsTopicEntity> kafkaConsumer;
+  private final KafkaConsumer<String, KafkaLogsTopicDto> kafkaConsumer;
 
   public KafkaService(String kafkaBootstrapServer, PropertiesEntity properties) {
     Properties kafkaAdminClientProps = new Properties();
@@ -91,11 +91,10 @@ public class KafkaService {
     }
   }
 
-  public List<KafkaLogsTopicEntity> consumeLogs() {
-    List<KafkaLogsTopicEntity> kafkaLogsTopicEntities = new ArrayList<>();
+  public List<KafkaLogsTopicDto> consumeLogs() {
+    List<KafkaLogsTopicDto> kafkaLogsTopicEntities = new ArrayList<>();
 
-    ConsumerRecords<String, KafkaLogsTopicEntity> records =
-        kafkaConsumer.poll(Duration.ofSeconds(5));
+    ConsumerRecords<String, KafkaLogsTopicDto> records = kafkaConsumer.poll(Duration.ofSeconds(5));
 
     System.out.println(records.count());
 

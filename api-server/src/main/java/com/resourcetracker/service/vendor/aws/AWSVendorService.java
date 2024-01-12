@@ -69,6 +69,109 @@ public class AWSVendorService {
     return null;
   }
 
+//  #  container_definitions = jsonencode([
+//                                                #    {
+//#      name: "resourcetracker-agent",
+//#      essential: true,
+//#      depends_on: {
+//#        condition: "START",
+//#        container_name: "resourcetracker-kafka",
+//#      },
+//#      environment: [
+//#        {
+//#          name: "RESOURCETRACKER_AGENT_CONTEXT",
+//#          value: var.resourcetracker_agent_context,
+//#        },
+//#      ],
+//#      image: "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
+//#      logConfiguration: {
+//#        "logDriver": "awslogs",
+//#        "options": {
+//#          "awslogs-group": "agent-logs-test",
+//#          "awslogs-region": "us-west-2",
+//#          "awslogs-stream-prefix": "ecs/resourcetracker-agent"
+//#        }
+//#      }
+//#    },
+//          #    {
+//#      name: "resourcetracker-kafka",
+//#      essential: true,
+//#      environment: [
+//##        {
+//##          name: "KRAFT_CONTAINER_HOST_NAME",
+//##          value: data.aws_network_interface.resourcetracker_ecs_instance_interface.association[0].public_ip,
+//##        },
+//#        {
+//#          name: "KRAFT_CREATE_TOPICS",
+//#          value: "logs",
+//#        },
+//#        {
+//#          name: "KRAFT_PARTITIONS_PER_TOPIC",
+//#          value: "1"
+//#        }
+//#      ],
+//#      image: "ghcr.io/yarikrevich/resourcetracker-kafka-starter:latest",
+//#      portMappings: [
+//#        {
+//#          containerPort: 9093,
+//#          hostPort: 9093
+//#        }
+//#      ],
+//#      logConfiguration: {
+//#        "logDriver": "awslogs",
+//#        "options": {
+//#          "awslogs-group": "kafka-logs-test",
+//#          "awslogs-region": "us-west-2",
+//#          "awslogs-stream-prefix": "ecs/resourcetracker-kafka"
+//#        }
+//#      }
+//#    }
+//#  ])
+
+  public void createEcsTaskDefinitions(AWSCredentialsProvider awsCredentialsProvider, String region) {
+    //#      depends_on: {
+//#        condition: "START",
+//#        container_name: "resourcetracker-kafka",
+//#      },
+//#      environment: [
+//#        {
+//#          name: "RESOURCETRACKER_AGENT_CONTEXT",
+//#          value: var.resourcetracker_agent_context,
+//#        },
+//#      ],
+//#      image: "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
+
+    ContainerDependency containerDependency =
+            new ContainerDependency()
+                    .withContainerName("resourcetracker-kafka")
+                    .withCondition(ContainerCondition.START);
+
+    KeyValuePair agentContextEnvironmentVariable =
+            new KeyValuePair()
+                    .withName("RESOURCETRACKER_AGENT_CONTEXT")
+                    .withValue("{}");
+
+    ContainerDefinition agentContainerDefinition =
+            new ContainerDefinition()
+                    .withName("resourcetracker-agent")
+                    .withEssential(true)
+                    .withDependsOn(containerDependency)
+                    .withEnvironment(agentContextEnvironmentVariable)
+                    .withImage("ghcr.io/yarikrevich/resourcetracker-agent:latest");
+
+    RegisterTaskDefinitionRequest registerTaskDefinitionRequest =
+            new RegisterTaskDefinitionRequest()
+                    .withContainerDefinitions(agentContainerDefinition);
+
+    AmazonECS ecsClient =
+            AmazonECSClientBuilder.standard()
+                    .withRegion(region)
+                    .withCredentials(awsCredentialsProvider)
+                    .build();
+
+    ecsClient.registerTaskDefinition(registerTaskDefinitionRequest);
+  }
+
   //  /**
   //   * Runs ECS Task with the given configuration properties.
   //   *

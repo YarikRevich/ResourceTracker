@@ -1,11 +1,9 @@
 package com.resourcetracker.service.event.state;
 
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.service.element.common.ElementHelper;
-import com.resourcetracker.service.event.payload.ConnectionStatusEvent;
-import com.resourcetracker.service.event.payload.DeploymentStatusEvent;
-import com.resourcetracker.service.event.payload.MainWindowHeightUpdateEvent;
-import com.resourcetracker.service.event.payload.MainWindowWidthUpdateEvent;
+import com.resourcetracker.service.event.payload.*;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import javafx.geometry.Rectangle2D;
@@ -35,6 +33,8 @@ public class LocalState {
 
   @Getter @Setter private static Boolean connectionEstablished = false;
 
+  @Getter @Setter private static TopicLogsResult deploymentState;
+
   @Getter @Setter private static Double prevMainWindowHeight;
 
   @Getter @Setter private static Double mainWindowHeight;
@@ -48,7 +48,9 @@ public class LocalState {
   private static final CountDownLatch mainWindowHeightUpdateMutex = new CountDownLatch(1);
 
   /**
-   * @return
+   * Checks if window height has changed.
+   *
+   * @return result of the check.
    */
   @SneakyThrows
   public static synchronized Boolean isWindowHeightChanged() {
@@ -65,7 +67,9 @@ public class LocalState {
   }
 
   /**
-   * @return
+   * Checks if window width has changed.
+   *
+   * @return result of the check.
    */
   @SneakyThrows
   public static synchronized Boolean isWindowWidthChanged() {
@@ -81,16 +85,21 @@ public class LocalState {
     return !prevMainWindowWidth.equals(mainWindowWidth);
   }
 
-  /** */
+  /** Synchronizes main window height. */
   public static synchronized void synchronizeWindowHeight() {
     LocalState.setPrevMainWindowHeight(LocalState.getMainWindowHeight());
   }
 
-  /** */
+  /** Synchronizes main window width. */
   public static synchronized void synchronizeWindowWidth() {
     LocalState.setPrevMainWindowWidth(LocalState.getMainWindowWidth());
   }
 
+  /**
+   * Provides initial window resolution setup.
+   *
+   * @param contextRefreshedEvent embedded context refreshed event.
+   */
   @EventListener(classes = {ContextRefreshedEvent.class})
   public void eventListen(ContextRefreshedEvent contextRefreshedEvent) {
     Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
@@ -124,6 +133,16 @@ public class LocalState {
   @EventListener
   void handleDeploymentStatusEvent(DeploymentStatusEvent event) {
     LocalState.setDeploymentAvailable(event.isDeploymentAvailable());
+  }
+
+  /**
+   * Handles changes of deployment state.
+   *
+   * @param event deployment status update event, which contains deployment data.
+   */
+  @EventListener
+  void handleDeploymentStateUpdateEvent(DeploymentStateUpdateEvent event) {
+    LocalState.setDeploymentState(event.getDeploymentState());
   }
 
   /**

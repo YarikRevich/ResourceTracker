@@ -4,9 +4,9 @@ import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.layout.common.ContentGrid;
-import com.resourcetracker.service.element.layout.scene.main.common.FooterGrid;
-import com.resourcetracker.service.element.layout.scene.main.common.HeaderGrid;
-import com.resourcetracker.service.element.layout.scene.main.common.MainMenuButtonBox;
+import com.resourcetracker.service.element.layout.scene.main.start.common.MainStartFooterGrid;
+import com.resourcetracker.service.element.layout.scene.main.start.common.MainStartHeaderGrid;
+import com.resourcetracker.service.element.layout.scene.main.start.common.MainStartMenuButtonBox;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.element.text.LandingAnnouncementText;
 import com.resourcetracker.service.event.state.LocalState;
@@ -22,10 +22,10 @@ public class MainStartSceneLayout implements IElementResizable, IElement<GridPan
 
   public MainStartSceneLayout(
       @Autowired PropertiesEntity properties,
-      @Autowired MainMenuButtonBox mainMenuButtonBox,
+      @Autowired MainStartMenuButtonBox mainStartMenuButtonBox,
       @Autowired LandingAnnouncementText landingAnnouncementText,
-      @Autowired HeaderGrid headerGrid,
-      @Autowired FooterGrid footerGrid) {
+      @Autowired MainStartHeaderGrid mainStartHeaderGrid,
+      @Autowired MainStartFooterGrid mainStartFooterGrid) {
     GridPane grid = new GridPane();
 
     ColumnConstraints column1 = new ColumnConstraints();
@@ -36,7 +36,6 @@ public class MainStartSceneLayout implements IElementResizable, IElement<GridPan
     RowConstraints row1 = new RowConstraints();
     row1.setPercentHeight(5);
     RowConstraints row2 = new RowConstraints();
-    row2.setVgrow(Priority.ALWAYS);
     row2.setPercentHeight(86);
     RowConstraints row3 = new RowConstraints();
     row3.setPercentHeight(4);
@@ -44,10 +43,13 @@ public class MainStartSceneLayout implements IElementResizable, IElement<GridPan
     grid.getRowConstraints().addAll(row1, row2, row3);
 
     ContentGrid contentGrid =
-        new ContentGrid(mainMenuButtonBox.getContent(), landingAnnouncementText.getContent());
+        new ContentGrid(mainStartMenuButtonBox.getContent(), landingAnnouncementText.getContent());
 
-//    System.out.println("it works");
-    grid.addColumn(0, headerGrid.getContent(), contentGrid.getContent(), footerGrid.getContent());
+    grid.addColumn(
+        0,
+        mainStartHeaderGrid.getContent(),
+        contentGrid.getContent(),
+        mainStartFooterGrid.getContent());
 
     ElementStorage.setElement(id, grid);
     ElementStorage.setResizable(this);
@@ -66,7 +68,7 @@ public class MainStartSceneLayout implements IElementResizable, IElement<GridPan
    */
   @Override
   public void handlePrefWidth() {
-    getContent().setMinWidth(LocalState.getMainWindowWidth());
+    getContent().setPrefWidth(LocalState.getMainWindowWidth());
   }
 
   /**
@@ -74,6 +76,6 @@ public class MainStartSceneLayout implements IElementResizable, IElement<GridPan
    */
   @Override
   public void handlePrefHeight() {
-    getContent().setMinHeight(LocalState.getMainWindowHeight());
+    getContent().setPrefHeight(LocalState.getMainWindowHeight());
   }
 }

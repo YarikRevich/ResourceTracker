@@ -1,6 +1,6 @@
 package com.resourcetracker.service.kafka;
 
-import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.dto.KafkaLogsTopicDto;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.KafkaProducerSendException;
 import jakarta.annotation.PreDestroy;
@@ -22,7 +22,7 @@ public class KafkaService {
 
   private final PropertiesEntity properties;
 
-  private final KafkaProducer<String, KafkaLogsTopicEntity> kafkaProducer;
+  private final KafkaProducer<String, KafkaLogsTopicDto> kafkaProducer;
 
   public KafkaService(@Autowired PropertiesEntity properties) {
     Properties kafkaProducerProps = new Properties();
@@ -45,7 +45,7 @@ public class KafkaService {
    *
    * @param message message to be sent to Kafka cluster via Kafka producer
    */
-  public void send(KafkaLogsTopicEntity message) {
+  public void send(KafkaLogsTopicDto message) {
     Future<RecordMetadata> future =
         kafkaProducer.send(new ProducerRecord<>(properties.getKafkaTopic(), message));
 

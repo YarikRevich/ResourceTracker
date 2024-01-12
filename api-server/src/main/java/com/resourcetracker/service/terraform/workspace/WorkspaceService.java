@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.entity.InternalConfigEntity;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.entity.VariableFileEntity;
-import com.resourcetracker.exception.WorkspaceUnitDirectoryNotFoundException;
+import com.resourcetracker.exception.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.xml.bind.DatatypeConverter;
@@ -97,10 +97,10 @@ public class WorkspaceService {
    *
    * @param workspaceUnitDirectory given workspace unit directory.
    * @param input given variable file entity input.
-   * @throws IOException if variable file cannot be created.
+   * @throws VariableFileWriteFailureException if variable file cannot be created.
    */
   public void createVariableFile(String workspaceUnitDirectory, VariableFileEntity input)
-      throws IOException {
+      throws VariableFileWriteFailureException {
     ObjectMapper mapper = new ObjectMapper();
 
     File variableFile =
@@ -108,7 +108,11 @@ public class WorkspaceService {
             Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
                 .toString());
 
-    mapper.writeValue(variableFile, input);
+    try {
+      mapper.writeValue(variableFile, input);
+    } catch (IOException e) {
+      throw new VariableFileWriteFailureException(e.getMessage());
+    }
   }
 
   /**
@@ -127,10 +131,10 @@ public class WorkspaceService {
    *
    * @param workspaceUnitDirectory given workspace unit directory.
    * @return variable file entity.
-   * @throws FileNotFoundException if the requested variable not found.
+   * @throws VariableFileNotFoundException if the requested variable file not found.
    */
   public VariableFileEntity getVariableFileContent(String workspaceUnitDirectory)
-      throws FileNotFoundException {
+      throws VariableFileNotFoundException {
     ObjectMapper mapper =
         new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
@@ -139,10 +143,16 @@ public class WorkspaceService {
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     ObjectReader reader = mapper.reader().forType(new TypeReference<VariableFileEntity>() {});
 
-    InputStream variableFile =
-        new FileInputStream(
-            Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
-                .toString());
+    InputStream variableFile;
+    try {
+      variableFile =
+          new FileInputStream(
+              Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
+                  .toString());
+    } catch (FileNotFoundException e) {
+      throw new VariableFileNotFoundException(e.getMessage());
+    }
+
     try {
       return reader.<VariableFileEntity>readValues(variableFile).readAll().getFirst();
     } catch (IOException e) {
@@ -157,10 +167,10 @@ public class WorkspaceService {
    *
    * @param workspaceUnitDirectory given workspace unit directory.
    * @param input given internal config file entity input.
-   * @throws IOException if variable file cannot be created.
+   * @throws InternalConfigWriteFailureException if internal config file cannot be created.
    */
   public void createInternalConfigFile(String workspaceUnitDirectory, InternalConfigEntity input)
-      throws IOException {
+      throws InternalConfigWriteFailureException {
     ObjectMapper mapper = new ObjectMapper();
 
     File variableFile =
@@ -168,7 +178,11 @@ public class WorkspaceService {
             Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
                 .toString());
 
-    mapper.writeValue(variableFile, input);
+    try {
+      mapper.writeValue(variableFile, input);
+    } catch (IOException e) {
+      throw new InternalConfigWriteFailureException(e.getMessage());
+    }
   }
 
   /**
@@ -190,7 +204,7 @@ public class WorkspaceService {
    * @throws FileNotFoundException if the requested variable not found.
    */
   public InternalConfigEntity getInternalConfigFileContent(String workspaceUnitDirectory)
-      throws FileNotFoundException {
+      throws InternalConfigNotFoundException {
     ObjectMapper mapper =
         new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
@@ -199,10 +213,16 @@ public class WorkspaceService {
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     ObjectReader reader = mapper.reader().forType(new TypeReference<InternalConfigEntity>() {});
 
-    InputStream variableFile =
-        new FileInputStream(
-            Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
-                .toString());
+    InputStream variableFile;
+    try {
+      variableFile =
+          new FileInputStream(
+              Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
+                  .toString());
+    } catch (FileNotFoundException e) {
+      throw new InternalConfigNotFoundException(e.getMessage());
+    }
+
     try {
       return reader.<InternalConfigEntity>readValues(variableFile).readAll().getFirst();
     } catch (IOException e) {

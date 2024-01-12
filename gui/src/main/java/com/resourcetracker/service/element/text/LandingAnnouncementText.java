@@ -11,6 +11,7 @@ import javafx.scene.text.TextAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/** Represents landing announcement text presented at start scene. */
 @Service
 public class LandingAnnouncementText implements IElement<Label> {
   UUID id = UUID.randomUUID();
@@ -23,7 +24,6 @@ public class LandingAnnouncementText implements IElement<Label> {
     label.setFont(FontLoader.getFont20());
     label.setAlignment(Pos.TOP_CENTER);
     label.setTextAlignment(TextAlignment.CENTER);
-    //    label.setMaxWidth(MAX_VALUE);
     label.setWrapText(true);
 
     label.setStyle(

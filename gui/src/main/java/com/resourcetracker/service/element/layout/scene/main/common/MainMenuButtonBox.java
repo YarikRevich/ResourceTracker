@@ -5,11 +5,14 @@ import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.alert.ApiServerNotAvailableAlert;
 import com.resourcetracker.service.element.button.BasicButton;
 import com.resourcetracker.service.element.common.ElementHelper;
-import com.resourcetracker.service.element.progressbar.stage.main.MainCircleProgressBar;
+import com.resourcetracker.service.element.progressbar.main.deployment.MainDeploymentCircleProgressBar;
+import com.resourcetracker.service.element.progressbar.main.start.MainStartCircleProgressBar;
 import com.resourcetracker.service.element.scene.main.deployment.MainDeploymentScene;
 import com.resourcetracker.service.element.scene.main.start.MainStartScene;
 import com.resourcetracker.service.element.stage.SettingsStage;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.event.state.LocalState;
+import com.resourcetracker.service.scheduler.SchedulerHelper;
 import java.util.UUID;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -32,7 +35,8 @@ public class MainMenuButtonBox implements IElement<VBox> {
   public MainMenuButtonBox(
       @Autowired PropertiesEntity properties,
       @Autowired SettingsStage settingsStage,
-      @Autowired MainCircleProgressBar circleProgressBar) {
+      @Autowired MainStartCircleProgressBar mainStartCircleProgressBar,
+      @Autowired MainDeploymentCircleProgressBar mainDeploymentCircleProgressBar) {
     VBox vbox =
         new VBox(
             20,
@@ -40,7 +44,6 @@ public class MainMenuButtonBox implements IElement<VBox> {
                     "Start",
                     properties,
                     () -> {
-                      ElementHelper.toggleElementVisibility(circleProgressBar.getContent());
                       ElementHelper.switchScene(getContent().getScene(), startScene.getContent());
                     })
                 .getContent(),
@@ -48,13 +51,22 @@ public class MainMenuButtonBox implements IElement<VBox> {
                     "Deployment",
                     properties,
                     () -> {
-                      //                      if (LocalState.getConnectionEstablished()) {
-//                      ElementHelper.switchScene(
-//                          getContent().getScene(), deploymentScene.getContent());
-                      //                      } else {
-                      //
-                      // ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
-                      //                      }
+                      if (LocalState.getConnectionEstablished()) {
+                        ElementHelper.switchScene(
+                            getContent().getScene(), deploymentScene.getContent());
+
+                        ElementHelper.toggleElementVisibility(
+                            mainDeploymentCircleProgressBar.getContent());
+
+                        SchedulerHelper.scheduleTimer(
+                            () ->
+                                ElementHelper.toggleElementVisibility(
+                                    mainDeploymentCircleProgressBar.getContent()),
+                            properties.getSpinnerInitialDelay());
+                      } else {
+
+                        ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
+                      }
                     })
                 .getContent(),
             new BasicButton("Settings", properties, () -> settingsStage.getContent().show())

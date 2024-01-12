@@ -3,7 +3,7 @@ package com.resourcetracker.service.element.scene.settings;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.layout.scene.settings.SettingsGeneralSceneLayout;
-import com.resourcetracker.service.element.progressbar.stage.settings.SettingsCircleProgressBar;
+import com.resourcetracker.service.element.progressbar.settings.SettingsCircleProgressBar;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import java.util.UUID;
 import javafx.scene.Group;

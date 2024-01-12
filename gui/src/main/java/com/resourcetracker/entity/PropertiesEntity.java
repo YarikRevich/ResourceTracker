@@ -121,6 +121,18 @@ public class PropertiesEntity {
   @Value(value = "${font.default.name}")
   private String fontDefaultName;
 
+  @Value(value = "${image.arrow.name}")
+  private String imageArrowName;
+
+  @Value(value = "${image.edit.name}")
+  private String imageEditName;
+
+  @Value(value = "${image.refresh.name}")
+  private String imageRefreshName;
+
+  @Value(value = "${image.start.name}")
+  private String imageStartName;
+
   @Value(value = "${graph.css.location}")
   private String graphCssFileLocation;
 

@@ -1,8 +1,8 @@
 package com.resourcetracker.resource;
 
 import com.resourcetracker.api.TopicResourceApi;
+import com.resourcetracker.dto.KafkaLogsTopicDto;
 import com.resourcetracker.entity.InternalConfigEntity;
-import com.resourcetracker.entity.KafkaLogsTopicEntity;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.KafkaServiceNotAvailableException;
 import com.resourcetracker.exception.WorkspaceUnitDirectoryNotFoundException;
@@ -58,7 +58,7 @@ public class TopicResource implements TopicResourceApi {
       throw new KafkaServiceNotAvailableException();
     }
 
-    List<KafkaLogsTopicEntity> logs = kafkaService.consumeLogs();
+    List<KafkaLogsTopicDto> logs = kafkaService.consumeLogs();
 
     return TopicLogsResult.of(
         logs.stream()
@@ -66,6 +66,7 @@ public class TopicResource implements TopicResourceApi {
                 element ->
                     TopicLogsUnit.of(
                         element.getId(),
+                        element.getName(),
                         element.getData(),
                         element.getError(),
                         element.getHostName(),

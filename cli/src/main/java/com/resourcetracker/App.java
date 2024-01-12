@@ -10,7 +10,7 @@ import com.resourcetracker.service.command.external.state.StateExternalCommandSe
 import com.resourcetracker.service.command.external.stop.StopExternalCommandService;
 import com.resourcetracker.service.command.external.stop.provider.aws.AWSStopExternalCommandService;
 import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
-import com.resourcetracker.service.command.internal.healthcheck.HealthCheckInternalCommandService;
+import com.resourcetracker.service.command.internal.health.HealthCheckInternalCommandService;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.config.common.ValidConfigService;
 import org.apache.logging.log4j.LogManager;

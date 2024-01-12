@@ -2,7 +2,7 @@ package com.resourcetracker.service.scheduler;
 
 import com.resourcetracker.converter.CronExpressionConverter;
 import com.resourcetracker.dto.CommandExecutorOutputDto;
-import com.resourcetracker.entity.KafkaLogsTopicEntity;
+import com.resourcetracker.dto.KafkaLogsTopicDto;
 import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.exception.CronExpressionException;
 import com.resourcetracker.service.config.ConfigService;
@@ -58,7 +58,7 @@ public class SchedulerService {
                       executorService.execute(
                           () -> {
                             try {
-                              exec(request.getScript());
+                              exec(request.getName(), request.getScript());
                             } catch (CommandExecutorException e) {
 
                               throw new RuntimeException(e);
@@ -77,15 +77,16 @@ public class SchedulerService {
    *
    * @param input script to be executed.
    */
-  private void exec(String input) throws CommandExecutorException {
+  private void exec(String name, String input) throws CommandExecutorException {
     ExecCommandService execCommandService = new ExecCommandService(input);
 
     CommandExecutorOutputDto scriptExecCommandOutput =
         commandExecutorService.executeCommand(execCommandService);
 
     kafkaService.send(
-        KafkaLogsTopicEntity.of(
+        KafkaLogsTopicDto.of(
             UUID.randomUUID(),
+            name,
             scriptExecCommandOutput.getNormalOutput(),
             scriptExecCommandOutput.getErrorOutput(),
             machineService.getHostName(),

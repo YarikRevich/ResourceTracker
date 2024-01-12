@@ -16,7 +16,6 @@ public class SchedulerStorage {
   public static void setThread(UUID id, ScheduledFuture<?> element) {
     storage.putIfAbsent(id, element);
   }
-  ;
 
   /**
    * @param id

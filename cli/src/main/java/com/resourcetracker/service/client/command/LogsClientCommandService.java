@@ -4,6 +4,7 @@ import com.resourcetracker.ApiClient;
 import com.resourcetracker.api.TopicResourceApi;
 import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.model.TopicLogsApplication;
 import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.service.client.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
@@ -14,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 /** Represents logs topic client command service. */
 @Service
-public class LogsClientCommandService implements IClientCommand<TopicLogsResult, Void> {
+public class LogsClientCommandService implements IClientCommand<TopicLogsResult, TopicLogsApplication> {
   private final TopicResourceApi topicResourceApi;
 
   public LogsClientCommandService(@Autowired ConfigService configService) {
@@ -28,9 +29,9 @@ public class LogsClientCommandService implements IClientCommand<TopicLogsResult,
    * @see IClientCommand
    */
   @Override
-  public TopicLogsResult process(Void input) throws ApiServerException {
+  public TopicLogsResult process(TopicLogsApplication input) throws ApiServerException {
     try {
-      return topicResourceApi.v1TopicLogsGet().block();
+      return topicResourceApi.v1TopicLogsPost(input).block();
     } catch (WebClientResponseException e) {
       throw new ApiServerException(e.getResponseBodyAsString());
     } catch (WebClientRequestException e) {

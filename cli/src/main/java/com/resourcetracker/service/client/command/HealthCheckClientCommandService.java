@@ -1,7 +1,7 @@
 package com.resourcetracker.service.client.command;
 
 import com.resourcetracker.ApiClient;
-import com.resourcetracker.api.HealthCheckResourceApi;
+import com.resourcetracker.api.HealthResourceApi;
 import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.HealthCheckResult;
@@ -15,13 +15,13 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 /** Represents health check client command service. */
 @Service
 public class HealthCheckClientCommandService implements IClientCommand<HealthCheckResult, Void> {
-  private final HealthCheckResourceApi healthCheckResourceApi;
+  private final HealthResourceApi healthResourceApi;
 
   public HealthCheckClientCommandService(@Autowired ConfigService configService) {
     ApiClient apiClient =
         new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 
-    this.healthCheckResourceApi = new HealthCheckResourceApi(apiClient);
+    this.healthResourceApi = new HealthResourceApi(apiClient);
   }
 
   /**
@@ -29,7 +29,7 @@ public class HealthCheckClientCommandService implements IClientCommand<HealthChe
    */
   public HealthCheckResult process(Void input) throws ApiServerException {
     try {
-      return healthCheckResourceApi.v1HealthGet().block();
+      return healthResourceApi.v1HealthGet().block();
     } catch (WebClientResponseException e) {
       throw new ApiServerException(e.getResponseBodyAsString());
     } catch (WebClientRequestException e) {

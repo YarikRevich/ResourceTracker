@@ -5,6 +5,7 @@ import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDeploymentApplicationResult;
 import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.service.terraform.TerraformAdapter;
+import com.resourcetracker.service.terraform.workspace.facade.WorkspaceFacade;
 import com.resourcetracker.service.vendor.VendorFacade;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,6 +19,8 @@ public class TerraformResource implements TerraformResourceApi {
   @Inject TerraformAdapter terraformAdapter;
 
   @Inject VendorFacade vendorFacade;
+
+  @Inject WorkspaceFacade workspaceFacade;
 
   /**
    * Implementation for declared in OpenAPI configuration v1TerraformApplyPost method.
@@ -39,6 +42,11 @@ public class TerraformResource implements TerraformResourceApi {
 
     String machineAddress =
         vendorFacade.startContainerExecution(terraformOutput, terraformDeploymentApplication);
+
+    workspaceFacade.updateKafkaHost(
+        machineAddress,
+        terraformDeploymentApplication.getProvider(),
+        terraformDeploymentApplication.getCredentials());
 
     return TerraformDeploymentApplicationResult.of(machineAddress);
   }

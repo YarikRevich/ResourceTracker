@@ -241,7 +241,6 @@
         <artifactId>jakarta.validation-api</artifactId>
         <version>3.0.2</version>
       </dependency>
-
       <dependency>
         <groupId>jakarta.ws.rs</groupId>
         <artifactId>jakarta.ws.rs-api</artifactId>
@@ -288,6 +287,11 @@
         <groupId>me.tongfei</groupId>
         <artifactId>progressbar</artifactId>
         <version>0.5.5</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.kostaskougios</groupId>
+        <artifactId>cloning</artifactId>
+        <version>1.10.3</version>
       </dependency>
 
       <!-- SPOTLESS -->

@@ -3,7 +3,7 @@ package com.resourcetracker.service.element.stage;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.ElementHelper;
-import com.resourcetracker.service.element.progressbar.stage.settings.SettingsCircleProgressBar;
+import com.resourcetracker.service.element.progressbar.settings.SettingsCircleProgressBar;
 import com.resourcetracker.service.element.scene.settings.SettingsGeneralScene;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
