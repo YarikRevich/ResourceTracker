@@ -66,6 +66,8 @@ public class TerraformResource implements TerraformResourceApi {
 
     terraformAdapter.destroy(terraformDestructionApplication);
 
+    vendorFacade.stopContainerExecution(terraformDestructionApplication);
+
     vendorFacade.destroyBackendStorage(terraformDestructionApplication);
   }
 }

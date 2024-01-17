@@ -10,7 +10,9 @@ import com.amazonaws.services.ec2.model.NetworkInterface;
 import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
-import com.amazonaws.services.ecs.waiters.AmazonECSWaiters;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
+import com.amazonaws.services.identitymanagement.model.DeleteRoleRequest;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.HeadBucketRequest;
@@ -26,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.dto.AWSDeploymentResultDto;
 import com.resourcetracker.dto.AWSSecretsDto;
+import com.resourcetracker.dto.AWSTaskDefinitionRegistrationDto;
+import com.resourcetracker.service.vendor.common.ReadinessWaiter;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.util.Iterator;
@@ -52,12 +56,12 @@ public class AWSVendorService {
   }
 
   /**
-   * Composes ECS Task details into deployment readable format.
+   * Composes ECS Task initialization details into deployment readable format.
    *
    * @param src raw details returned by Terraform deployment application.
    * @return composed ECS Task details.
    */
-  public AWSDeploymentResultDto getEcsTaskRunDetails(String src) {
+  public AWSDeploymentResultDto getEcsTaskInitializationDetails(String src) {
     ObjectMapper mapper = new ObjectMapper();
     ObjectReader reader = mapper.reader().forType(new TypeReference<AWSDeploymentResultDto>() {});
     try {
@@ -69,148 +73,226 @@ public class AWSVendorService {
     return null;
   }
 
-//  #  container_definitions = jsonencode([
-//                                                #    {
-//#      name: "resourcetracker-agent",
-//#      essential: true,
-//#      depends_on: {
-//#        condition: "START",
-//#        container_name: "resourcetracker-kafka",
-//#      },
-//#      environment: [
-//#        {
-//#          name: "RESOURCETRACKER_AGENT_CONTEXT",
-//#          value: var.resourcetracker_agent_context,
-//#        },
-//#      ],
-//#      image: "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
-//#      logConfiguration: {
-//#        "logDriver": "awslogs",
-//#        "options": {
-//#          "awslogs-group": "agent-logs-test",
-//#          "awslogs-region": "us-west-2",
-//#          "awslogs-stream-prefix": "ecs/resourcetracker-agent"
-//#        }
-//#      }
-//#    },
-//          #    {
-//#      name: "resourcetracker-kafka",
-//#      essential: true,
-//#      environment: [
-//##        {
-//##          name: "KRAFT_CONTAINER_HOST_NAME",
-//##          value: data.aws_network_interface.resourcetracker_ecs_instance_interface.association[0].public_ip,
-//##        },
-//#        {
-//#          name: "KRAFT_CREATE_TOPICS",
-//#          value: "logs",
-//#        },
-//#        {
-//#          name: "KRAFT_PARTITIONS_PER_TOPIC",
-//#          value: "1"
-//#        }
-//#      ],
-//#      image: "ghcr.io/yarikrevich/resourcetracker-kafka-starter:latest",
-//#      portMappings: [
-//#        {
-//#          containerPort: 9093,
-//#          hostPort: 9093
-//#        }
-//#      ],
-//#      logConfiguration: {
-//#        "logDriver": "awslogs",
-//#        "options": {
-//#          "awslogs-group": "kafka-logs-test",
-//#          "awslogs-region": "us-west-2",
-//#          "awslogs-stream-prefix": "ecs/resourcetracker-kafka"
-//#        }
-//#      }
-//#    }
-//#  ])
+  /**
+   * Registers task definitions for ResourceTracker Agent and Kafka containers.
+   *
+   * @param ecsTaskDefinitionRegistrationDto given dto with properties for containers definition.
+   * @param awsCredentialsProvider given AWS credentials.
+   * @param region given AWS region.
+   * @return arn of the created ECS Task Definition.
+   */
+  public String registerEcsTaskDefinitions(
+      AWSTaskDefinitionRegistrationDto ecsTaskDefinitionRegistrationDto,
+      AWSCredentialsProvider awsCredentialsProvider,
+      String region) {
+    AmazonECS ecsClient =
+        AmazonECSClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
 
-  public void createEcsTaskDefinitions(AWSCredentialsProvider awsCredentialsProvider, String region) {
-    //#      depends_on: {
-//#        condition: "START",
-//#        container_name: "resourcetracker-kafka",
-//#      },
-//#      environment: [
-//#        {
-//#          name: "RESOURCETRACKER_AGENT_CONTEXT",
-//#          value: var.resourcetracker_agent_context,
-//#        },
-//#      ],
-//#      image: "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
+    PortMapping portMapping =
+        new PortMapping()
+            .withContainerPort(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaContainerPort())
+            .withHostPort(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaContainerPort());
+
+    KeyValuePair kraftContainerHostNameKeyPair =
+        new KeyValuePair()
+            .withName(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaHostAlias())
+            .withValue(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaHost());
+
+    KeyValuePair kraftCreateTopicsKeyPair =
+        new KeyValuePair()
+            .withName(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaCreateTopicsAlias())
+            .withValue(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaCreateTopic());
+
+    KeyValuePair kraftPartitionsPerTopicKeyPair =
+        new KeyValuePair()
+            .withName(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaPartitionsAlias())
+            .withValue(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaPartitions());
+
+    ContainerDefinition kafkaContainerDefinition =
+        new ContainerDefinition()
+            .withName(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaContainerName())
+            .withEssential(true)
+            .withPortMappings(portMapping)
+            .withEnvironment(
+                kraftContainerHostNameKeyPair,
+                kraftCreateTopicsKeyPair,
+                kraftPartitionsPerTopicKeyPair)
+            .withImage(
+                String.format(
+                    "%s:%s",
+                    ecsTaskDefinitionRegistrationDto
+                        .getAwsKafkaTaskDefinitionRegistrationDto()
+                        .getKafkaContainerImage(),
+                    ecsTaskDefinitionRegistrationDto
+                        .getAwsKafkaTaskDefinitionRegistrationDto()
+                        .getKafkaVersion()));
+
+    // ##        {
+    // ##          name: "KRAFT_CONTAINER_HOST_NAME",
+    // ##          value:
+    // data.aws_network_interface.resourcetracker_ecs_instance_interface.association[0].public_ip,
+    // ##        },
+    // #        {
+    // #          name: "KRAFT_CREATE_TOPICS",
+    // #          value: "logs",
+    // #        },
+    // #        {
+    // #          name: "KRAFT_PARTITIONS_PER_TOPIC",
+    // #          value: "1"
+    // #        }
 
     ContainerDependency containerDependency =
-            new ContainerDependency()
-                    .withContainerName("resourcetracker-kafka")
-                    .withCondition(ContainerCondition.START);
+        new ContainerDependency()
+            .withContainerName(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaContainerName())
+            .withCondition(ContainerCondition.START);
 
-    KeyValuePair agentContextEnvironmentVariable =
-            new KeyValuePair()
-                    .withName("RESOURCETRACKER_AGENT_CONTEXT")
-                    .withValue("{}");
+    KeyValuePair agentContextKeyPair =
+        new KeyValuePair()
+            .withName(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsAgentTaskDefinitionRegistrationDto()
+                    .getAgentContextAlias())
+            .withValue(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsAgentTaskDefinitionRegistrationDto()
+                    .getAgentContext());
 
     ContainerDefinition agentContainerDefinition =
-            new ContainerDefinition()
-                    .withName("resourcetracker-agent")
-                    .withEssential(true)
-                    .withDependsOn(containerDependency)
-                    .withEnvironment(agentContextEnvironmentVariable)
-                    .withImage("ghcr.io/yarikrevich/resourcetracker-agent:latest");
+        new ContainerDefinition()
+            .withName(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsAgentTaskDefinitionRegistrationDto()
+                    .getAgentContainerName())
+            .withEssential(true)
+            .withDependsOn(containerDependency)
+            .withEnvironment(agentContextKeyPair)
+            .withImage(
+                String.format(
+                    "%s:%s",
+                    ecsTaskDefinitionRegistrationDto
+                        .getAwsAgentTaskDefinitionRegistrationDto()
+                        .getAgentContainerImage(),
+                    ecsTaskDefinitionRegistrationDto
+                        .getAwsAgentTaskDefinitionRegistrationDto()
+                        .getAgentVersion()));
 
     RegisterTaskDefinitionRequest registerTaskDefinitionRequest =
-            new RegisterTaskDefinitionRequest()
-                    .withContainerDefinitions(agentContainerDefinition);
+        new RegisterTaskDefinitionRequest()
+            .withFamily(ecsTaskDefinitionRegistrationDto.getCommonFamilyName())
+            .withContainerDefinitions(agentContainerDefinition, kafkaContainerDefinition)
+            .withExecutionRoleArn(ecsTaskDefinitionRegistrationDto.getCommonTaskExecutionRole())
+            .withCpu(ecsTaskDefinitionRegistrationDto.getAwsResourceTrackerCommonCPUUnits())
+            .withMemory(ecsTaskDefinitionRegistrationDto.getAwsResourceTrackerCommonMemoryUnits())
+            .withNetworkMode(NetworkMode.Awsvpc)
+            .withRequiresCompatibilities(Compatibility.FARGATE);
 
-    AmazonECS ecsClient =
-            AmazonECSClientBuilder.standard()
-                    .withRegion(region)
-                    .withCredentials(awsCredentialsProvider)
-                    .build();
-
-    ecsClient.registerTaskDefinition(registerTaskDefinitionRequest);
+    return ecsClient
+        .registerTaskDefinition(registerTaskDefinitionRequest)
+        .getTaskDefinition()
+        .getTaskDefinitionArn();
   }
 
-  //  /**
-  //   * Runs ECS Task with the given configuration properties.
-  //   *
-  //   * @param awsDeploymentResultDto composed ECS Task details.
-  //   * @throws AWSRunTaskFailureException thrown when AWS Task run action fails.
-  //   */
-  //  public void runEcsTask(
-  //      AWSDeploymentResultDto awsDeploymentResultDto,
-  //      AWSCredentialsProvider awsCredentialsProvider,
-  //      String region)
-  //      throws AWSRunTaskFailureException {
-  //    AwsVpcConfiguration awsVpcConfiguration =
-  //        new AwsVpcConfiguration()
-  //            .withSubnets(awsDeploymentResultDto.getResourceTrackerMainSubnetId().getValue())
-  //            .withSecurityGroups(
-  //                awsDeploymentResultDto.getResourceTrackerSecurityGroup().getValue());
-  //
-  //    NetworkConfiguration networkConfiguration =
-  //        new NetworkConfiguration().withAwsvpcConfiguration(awsVpcConfiguration);
-  //
-  //    RunTaskRequest runTaskRequest =
-  //        new RunTaskRequest()
-  //            .withTaskDefinition(awsDeploymentResultDto.getEcsTaskDefinition().getValue())
-  //            .withCluster(awsDeploymentResultDto.getEcsCluster().getValue())
-  //            .withNetworkConfiguration(networkConfiguration)
-  //            .withLaunchType(LaunchType.FARGATE);
-  //
-  //    RunTaskResult runTaskResult =
-  //        AmazonECSClientBuilder.standard()
-  //            .withRegion(region)
-  //            .withCredentials(awsCredentialsProvider)
-  //            .build()
-  //            .runTask(runTaskRequest);
-  //
-  //    String output = gatherRunEcsTaskResultOutput(runTaskResult);
-  //    if (!output.isEmpty()) {
-  //      throw new AWSRunTaskFailureException(output);
-  //    }
-  //  }
+  /**
+   * Registers task definitions for ResourceTracker Agent and Kafka containers.
+   *
+   * @param ecsTaskFamily family name of the ECS Task Definitions.
+   * @param awsCredentialsProvider given AWS credentials.
+   * @param region given AWS region.
+   */
+  public void deregisterEcsTaskDefinitions(
+      String ecsTaskFamily, AWSCredentialsProvider awsCredentialsProvider, String region) {
+    ListTaskDefinitionsRequest listTaskDefinitionsRequest =
+        new ListTaskDefinitionsRequest().withFamilyPrefix(ecsTaskFamily);
+
+    AmazonECS ecsClient =
+        AmazonECSClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
+
+    ListTaskDefinitionsResult listTasksResult =
+        ecsClient.listTaskDefinitions(listTaskDefinitionsRequest);
+
+    listTasksResult
+        .getTaskDefinitionArns()
+        .forEach(
+            element -> {
+              DeregisterTaskDefinitionRequest deregisterTaskDefinitionRequest =
+                  new DeregisterTaskDefinitionRequest().withTaskDefinition(element);
+
+              ecsClient.deregisterTaskDefinition(deregisterTaskDefinitionRequest);
+            });
+  }
+
+  /** Runs ECS Task with the given configuration properties. */
+  public void runEcsTask(
+      String ecsClusterId,
+      String ecsTaskDefinitionArn,
+      String resourceTrackerMainSubnetId,
+      String resourceTrackerSecurityGroup,
+      AWSCredentialsProvider awsCredentialsProvider,
+      String region) {
+    AwsVpcConfiguration awsVpcConfiguration =
+        new AwsVpcConfiguration()
+            .withSubnets(resourceTrackerMainSubnetId)
+            .withSecurityGroups(resourceTrackerSecurityGroup);
+
+    NetworkConfiguration networkConfiguration =
+        new NetworkConfiguration().withAwsvpcConfiguration(awsVpcConfiguration);
+
+    RunTaskRequest runTaskRequest =
+        new RunTaskRequest()
+            .withCluster(ecsClusterId)
+            .withTaskDefinition(ecsTaskDefinitionArn)
+            .withNetworkConfiguration(networkConfiguration)
+            .withLaunchType(LaunchType.FARGATE);
+
+    AmazonECS ecsClient =
+        AmazonECSClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
+
+    ecsClient.runTask(runTaskRequest);
+    //
+    //    String output = gatherRunEcsTaskResultOutput(runTaskResult);
+    //    if (!output.isEmpty()) {
+    //      throw new AWSRunTaskFailureException(output);
+    //    }
+  }
 
   /**
    * Gathers output returned by ECS Task run action, if fail happens.
@@ -230,12 +312,19 @@ public class AWSVendorService {
   /**
    * Retrieves remote machine address from the given ECS Task details.
    *
+   * @param ecsTaskFamily family name of the ECS Task.
    * @param ecsClusterId cluster id of the ECS Task.
    * @return remote machine address.
    */
   public String getMachineAddress(
-      String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider, String region) {
-    String ecsTaskArn = getEcsTaskArn(ecsClusterId, awsCredentialsProvider, region);
+      String ecsTaskFamily,
+      String ecsClusterId,
+      String ecsTaskDefinitionId,
+      AWSCredentialsProvider awsCredentialsProvider,
+      String region) {
+    String ecsTaskArn =
+        mustGetEcsTaskArn(
+            ecsTaskFamily, ecsClusterId, ecsTaskDefinitionId, awsCredentialsProvider, region);
 
     String ecsTaskNetworkInterfaceId =
         getEcsTaskNetworkInterfaceId(ecsClusterId, ecsTaskArn, awsCredentialsProvider, region);
@@ -243,35 +332,121 @@ public class AWSVendorService {
     return getEcsTaskPublicIp(ecsTaskNetworkInterfaceId, awsCredentialsProvider, region);
   }
 
+  //
+  //  /**
+  //   * Checks
+  //   *
+  //   * @param ecsClusterId
+  //   * @param awsCredentialsProvider
+  //   * @param region
+  //   * @return
+  //   */
+  //  private boolean isEcsTaskOfEcsTaskDefinition(
+  //      String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider, String region) {
+  //    AmazonECS ecsClient =
+  //        AmazonECSClientBuilder.standard()
+  //            .withRegion(region)
+  //            .withCredentials(awsCredentialsProvider)
+  //            .build();
+  //
+  //    return false;
+  //  }
+
   /**
-   * Retrieves ECS Task ARN started in the given cluster id.
+   * Waits for the given ECS Task to be ready to be used.
    *
    * @param ecsClusterId cluster id of the ECS Task.
-   * @return ECS Task ARN in the given cluster id.
+   * @param ecsTaskDefinitionArn arn of the ECS Task.
+   * @param awsCredentialsProvider given credentials provider.
+   * @param region given AWS region.
+   * @param readinessPeriod given readiness period for the readiness waiter.
    */
-  private String getEcsTaskArn(
-      String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider, String region) {
-    ListTasksRequest listTasksRequest = new ListTasksRequest().withCluster(ecsClusterId);
+  public void waitForEcsTaskReadiness(
+      String ecsTaskFamily,
+      String ecsClusterId,
+      String ecsTaskDefinitionArn,
+      AWSCredentialsProvider awsCredentialsProvider,
+      String region,
+      Integer readinessPeriod) {
+    ListTasksRequest listTasksRequest =
+        new ListTasksRequest().withFamily(ecsTaskFamily).withCluster(ecsClusterId);
 
-    ListTasksResult listTasksResult =
+    AmazonECS ecsClient =
         AmazonECSClientBuilder.standard()
             .withRegion(region)
             .withCredentials(awsCredentialsProvider)
-            .build()
-            .listTasks(listTasksRequest);
+            .build();
 
-    while (listTasksResult.getTaskArns().isEmpty()) {
-      // waits for task arns to appear.
-    }
+    ReadinessWaiter.awaitFor(
+        () -> {
+          ListTasksResult listTasksResult = ecsClient.listTasks(listTasksRequest);
 
-    return listTasksResult.getTaskArns().get(0);
+          if (listTasksResult.getTaskArns().isEmpty()) {
+            return false;
+          }
+
+          DescribeTasksRequest describeTasksRequest =
+              new DescribeTasksRequest()
+                  .withCluster(ecsClusterId)
+                  .withTasks(listTasksResult.getTaskArns());
+
+          List<String> describeTasksResult =
+              ecsClient.describeTasks(describeTasksRequest).getTasks().stream()
+                  .map(Task::getTaskDefinitionArn)
+                  .filter(element -> element.equals(ecsTaskDefinitionArn))
+                  .toList();
+
+          return !describeTasksResult.isEmpty();
+        },
+        readinessPeriod);
+  }
+
+  /**
+   * Must retrieve ECS Task ARN started in the given cluster id.
+   *
+   * @param ecsTaskFamily family name of the ECS Task.
+   * @param ecsClusterId cluster id of the ECS Task.
+   * @param ecsTaskDefinitionArn arn of the ECS Task.
+   * @param awsCredentialsProvider given credentials provider.
+   * @param region given AWS region.
+   * @return ECS Task ARN in the given cluster id.
+   */
+  private String mustGetEcsTaskArn(
+      String ecsTaskFamily,
+      String ecsClusterId,
+      String ecsTaskDefinitionArn,
+      AWSCredentialsProvider awsCredentialsProvider,
+      String region) {
+    ListTasksRequest listTasksRequest =
+        new ListTasksRequest().withFamily(ecsTaskFamily).withCluster(ecsClusterId);
+
+    AmazonECS ecsClient =
+        AmazonECSClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
+
+    ListTasksResult listTasksResult = ecsClient.listTasks(listTasksRequest);
+
+    DescribeTasksRequest describeTasksRequest =
+        new DescribeTasksRequest()
+            .withCluster(ecsClusterId)
+            .withTasks(listTasksResult.getTaskArns());
+
+    List<String> describeTasksResult =
+        ecsClient.describeTasks(describeTasksRequest).getTasks().stream()
+            .filter(element -> element.getTaskDefinitionArn().equals(ecsTaskDefinitionArn))
+            .map(Task::getTaskArn)
+            .toList();
+
+    return describeTasksResult.get(0);
   }
 
   /**
    * Retrieves network interface ID of the ECS Task container.
    *
    * @param ecsClusterId ECS Task cluster ID.
-   * @param ecsTaskArn ECS Task ARN.
+   * @param ecsTaskArn arn of the ECS Task.
    * @return network interface ID of the ECS Task container.
    */
   private String getEcsTaskNetworkInterfaceId(
@@ -288,16 +463,13 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
-    AmazonECSWaiters ecsClientWaiter = ecsClient.waiters();
-    ecsClientWaiter.tasksRunning().run(new WaiterParameters<>(describeTaskRequest));
-
     DescribeTasksResult describeTasksResult = ecsClient.describeTasks(describeTaskRequest);
 
     Task task = describeTasksResult.getTasks().get(0);
 
     String taskAttachmentId =
         task.getContainers().stream()
-            .filter(element -> Objects.equals(element.getName(), "resourcetracker-kafka"))
+            .filter(element -> Objects.equals(element.getTaskArn(), ecsTaskArn))
             .map(element -> element.getNetworkInterfaces().get(0).getAttachmentId())
             .toList()
             .get(0);
@@ -336,6 +508,25 @@ public class AWSVendorService {
         describeNetworkInterfacesResult.getNetworkInterfaces().get(0);
 
     return networkInterfaces.getAssociation().getPublicIp();
+  }
+
+  /**
+   * @param ecsExecutionRoleName
+   * @param awsCredentialsProvider
+   * @param region
+   */
+  public void removeEcsExecutionRole(
+      String ecsExecutionRoleName, AWSCredentialsProvider awsCredentialsProvider, String region) {
+    AmazonIdentityManagement iamClient =
+        AmazonIdentityManagementClientBuilder.standard()
+            .withRegion(region)
+            .withCredentials(awsCredentialsProvider)
+            .build();
+
+    DeleteRoleRequest deleteRoleRequest =
+        new DeleteRoleRequest().withRoleName(ecsExecutionRoleName);
+
+    iamClient.deleteRole(deleteRoleRequest);
   }
 
   /**

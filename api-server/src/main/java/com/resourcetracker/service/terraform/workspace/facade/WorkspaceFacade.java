@@ -7,6 +7,7 @@ import com.resourcetracker.model.Provider;
 import com.resourcetracker.service.terraform.workspace.WorkspaceService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 /** Provides high-level access to workspace operations. */
 @ApplicationScoped
@@ -46,8 +47,16 @@ public class WorkspaceFacade {
 
     String workspaceUnitDirectory = workspaceService.getUnitDirectory(workspaceUnitKey);
 
-    InternalConfigEntity internalConfig =
-        workspaceService.getInternalConfigFileContent(workspaceUnitDirectory);
+    InternalConfigEntity internalConfig = null;
+
+    if (workspaceService.isInternalConfigFileExist(workspaceUnitDirectory)) {
+      internalConfig = workspaceService.getInternalConfigFileContent(workspaceUnitDirectory);
+    }
+
+    if (Objects.isNull(internalConfig)) {
+      internalConfig = new InternalConfigEntity();
+    }
+
     internalConfig.getKafka().setHost(machineAddress);
 
     workspaceService.createInternalConfigFile(workspaceUnitDirectory, internalConfig);

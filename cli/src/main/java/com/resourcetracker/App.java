@@ -11,6 +11,8 @@ import com.resourcetracker.service.command.external.stop.StopExternalCommandServ
 import com.resourcetracker.service.command.external.stop.provider.aws.AWSStopExternalCommandService;
 import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
 import com.resourcetracker.service.command.internal.health.HealthCheckInternalCommandService;
+import com.resourcetracker.service.command.internal.readiness.ReadinessCheckInternalCommandService;
+import com.resourcetracker.service.command.internal.readiness.provider.aws.AWSReadinessCheckInternalCommandService;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.config.common.ValidConfigService;
 import org.apache.logging.log4j.LogManager;
@@ -32,9 +34,12 @@ import picocli.CommandLine;
   StopExternalCommandService.class,
   VersionExternalCommandService.class,
   HealthCheckInternalCommandService.class,
+  ReadinessCheckInternalCommandService.class,
+  AWSReadinessCheckInternalCommandService.class,
   ApplyClientCommandService.class,
   DestroyClientCommandService.class,
   HealthCheckClientCommandService.class,
+  ReadinessCheckClientCommandService.class,
   LogsClientCommandService.class,
   ScriptAcquireClientCommandService.class,
   SecretsAcquireClientCommandService.class,

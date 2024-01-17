@@ -66,7 +66,7 @@ build-agent: clean ## Build Agent Docker image
         -Djib.auth.password=${DOCKER_REGISTRY_PASSWORD}
 
 .PHONY: build-api-server
-build-api-server: clean ## Build API Server application
+build-api-server: clean clone-terraform ## Build API Server application
 ifneq (,$(wildcard ./bin/api-server))
 	@rm -r ./bin/api-server
 endif
@@ -77,7 +77,7 @@ else
 endif
 
 .PHONY: build-cli
-build-cli: clean clone-terraform ## Build CLI application
+build-cli: clean ## Build CLI application
 ifneq (,$(wildcard ./bin/cli))
 	@rm -r ./bin/cli
 endif

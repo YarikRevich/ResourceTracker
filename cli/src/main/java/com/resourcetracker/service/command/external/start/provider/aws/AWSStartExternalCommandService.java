@@ -85,14 +85,9 @@ public class AWSStartExternalCommandService implements ICommand {
         TerraformDeploymentApplication terraformDeploymentApplication =
             TerraformDeploymentApplication.of(requests, Provider.AWS, credentialsFields);
 
-        TerraformDeploymentApplicationResult terraformDeploymentApplicationResult =
-            applyClientCommandService.process(terraformDeploymentApplication);
+        applyClientCommandService.process(terraformDeploymentApplication);
 
-        System.out.printf(
-            "Deployment with the given configuration was started, please execute the following"
-                + " command:\n'%s'",
-            configService.getKafkaHostModificationCommand(
-                terraformDeploymentApplicationResult.getMachineAddress()));
+        System.out.println("Deployment with the given configuration was started!");
       } else {
         logger.fatal(new ScriptDataValidationException().getMessage());
       }

@@ -1,7 +1,9 @@
 package com.resourcetracker.service.command.internal.health;
 
 import com.resourcetracker.exception.ApiServerException;
+import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.HealthCheckResult;
+import com.resourcetracker.model.HealthCheckStatus;
 import com.resourcetracker.service.client.command.HealthCheckClientCommandService;
 import com.resourcetracker.service.command.ICommand;
 import org.apache.logging.log4j.LogManager;
@@ -21,12 +23,12 @@ public class HealthCheckInternalCommandService implements ICommand {
    */
   @Override
   public void process() throws ApiServerException {
-    HealthCheckResult healthCheckResult =
-            healthCheckClientCommandService.process(null);
+    HealthCheckResult healthCheckResult = healthCheckClientCommandService.process(null);
 
-    switch (healthCheckResult.getStatus()) {
-      case UP -> System.out.println("API Server is up");
-      case DOWN -> System.out.println("API Server is down");
+    if (healthCheckResult.getStatus() == HealthCheckStatus.DOWN) {
+      throw new ApiServerException(
+          new ApiServerNotAvailableException(healthCheckResult.getChecks().toString())
+              .getMessage());
     }
   }
 }

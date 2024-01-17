@@ -15,7 +15,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 /** Represents logs topic client command service. */
 @Service
-public class LogsClientCommandService implements IClientCommand<TopicLogsResult, TopicLogsApplication> {
+public class LogsClientCommandService
+    implements IClientCommand<TopicLogsResult, TopicLogsApplication> {
   private final TopicResourceApi topicResourceApi;
 
   public LogsClientCommandService(@Autowired ConfigService configService) {

@@ -62,11 +62,10 @@ data "aws_network_interface" "resourcetracker_ecs_instance_interface" {
   depends_on = [aws_ecs_service.resourcetracker_ecs_instance]
 }
 
-
 resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definitions" {
   family                   = "resourcetracker_ecs_instance_task_definition"
   network_mode             = "awsvpc"
-  execution_role_arn       = module.iam.resourcetracker_ecs_task_execution_role_arn
+  execution_role_arn       = module.iam.ecs_task_execution_role
   requires_compatibilities = ["FARGATE"]
   memory                   = 512
   cpu                      = 256
@@ -75,7 +74,8 @@ resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definition
     {
       name: "resourcetracker-init",
       essential: true,
-      image: "scratch"
+      command: ["/bin/ash", "-c", "echo 'ResourceTracker initialization ${var.resourcetracker_agent_version}' && sleep 60m"],
+      image: "busybox"
     }
   ])
 #  container_definitions = jsonencode([

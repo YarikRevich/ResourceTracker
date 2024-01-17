@@ -1,9 +1,10 @@
 package com.resourcetracker.service.vendor;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.resourcetracker.converter.AgentContextToJsonConverter;
+import com.resourcetracker.converter.DeploymentRequestsToAgentContextConverter;
 import com.resourcetracker.converter.SecretsConverter;
-import com.resourcetracker.dto.AWSDeploymentResultDto;
-import com.resourcetracker.dto.AWSSecretsDto;
+import com.resourcetracker.dto.*;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.ContainerStartupFailureException;
 import com.resourcetracker.exception.SecretsConversionException;
@@ -75,7 +76,14 @@ public class VendorFacade {
     }
   }
 
-  /** Starts container execution of a certain cloud provider. */
+  /**
+   * Starts container execution for a certain cloud provider.
+   *
+   * @param input Terraform deployment output.
+   * @param terraformDeploymentApplication given Terraform deployment application.
+   * @return public ip for the Kafka container.
+   * @throws ContainerStartupFailureException if container startup flow failed to be processed.
+   */
   public String startContainerExecution(
       String input, TerraformDeploymentApplication terraformDeploymentApplication)
       throws ContainerStartupFailureException {
@@ -89,27 +97,114 @@ public class VendorFacade {
         AWSCredentialsProvider awsCredentialsProvider =
             AWSVendorService.getAWSCredentialsProvider(secretsDto);
 
-        awsVendorService.createEcsTaskDefinitions(
-                awsCredentialsProvider, terraformDeploymentApplication.getCredentials().getRegion());
+        AWSDeploymentResultDto awsDeploymentResult =
+            awsVendorService.getEcsTaskInitializationDetails(input);
 
-//        AWSDeploymentResultDto awsDeploymentResult = awsVendorService.getEcsTaskRunDetails(input);
-        //        try {
-        //          awsVendorService.runEcsTask(
-        //              awsDeploymentResult,
-        //              awsCredentialsProvider,
-        //              terraformDeploymentApplication.getCredentials().getRegion());
-        //        } catch (AWSRunTaskFailureException e) {
-        //          throw new ContainerStartupFailureException(e.getMessage());
-        //        }
+        awsVendorService.waitForEcsTaskReadiness(
+            properties.getAwsResourceTrackerCommonFamily(),
+            awsDeploymentResult.getEcsCluster().getValue(),
+            awsDeploymentResult.getEcsTaskDefinition().getValue(),
+            awsCredentialsProvider,
+            terraformDeploymentApplication.getCredentials().getRegion(),
+            properties.getAwsReadinessPeriod());
 
-        //        awsVendorService.runEcsTask();
+        String serviceMachineAddress =
+            awsVendorService.getMachineAddress(
+                properties.getAwsResourceTrackerCommonFamily(),
+                awsDeploymentResult.getEcsCluster().getValue(),
+                awsDeploymentResult.getEcsTaskDefinition().getValue(),
+                awsCredentialsProvider,
+                terraformDeploymentApplication.getCredentials().getRegion());
 
-        yield awsVendorService.getMachineAddress(
-            "", // awsDeploymentResult.getEcsCluster().getValue(),
+        String agentContext =
+            AgentContextToJsonConverter.convert(
+                DeploymentRequestsToAgentContextConverter.convert(
+                    terraformDeploymentApplication.getRequests()));
+
+        AWSTaskDefinitionRegistrationDto ecsTaskDefinitionRegistrationDto =
+            AWSTaskDefinitionRegistrationDto.of(
+                AWSAgentTaskDefinitionRegistrationDto.of(
+                    properties.getResourceTrackerAgentImage(),
+                    properties.getAwsResourceTrackerAgentName(),
+                    agentContext,
+                    properties.getResourceTrackerAgentContextAlias(),
+                    properties.getGitCommitId()),
+                AWSKafkaTaskDefinitionRegistrationDto.of(
+                    properties.getResourceTrackerKafkaImage(),
+                    properties.getResourceTrackerKafkaImageVersion(),
+                    properties.getAwsResourceTrackerKafkaName(),
+                    properties.getResourceTrackerKafkaPort(),
+                    serviceMachineAddress,
+                    properties.getResourceTrackerKafkaHostAlias(),
+                    properties.getKafkaTopic(),
+                    properties.getResourceTrackerKafkaCreateTopicsAlias(),
+                    properties.getKafkaPartitions(),
+                    properties.getResourceTrackerKafkaPartitionsAlias()),
+                properties.getAwsResourceTrackerCommonFamily(),
+                awsDeploymentResult.getEcsTaskExecutionRole().getValue(),
+                properties.getAwsResourceTrackerCommonCPUUnits(),
+                properties.getAwsResourceTrackerCommonMemoryUnits());
+
+        String ecsTaskDefinitionsArn =
+            awsVendorService.registerEcsTaskDefinitions(
+                ecsTaskDefinitionRegistrationDto,
+                awsCredentialsProvider,
+                terraformDeploymentApplication.getCredentials().getRegion());
+
+        awsVendorService.runEcsTask(
+            awsDeploymentResult.getEcsCluster().getValue(),
+            ecsTaskDefinitionsArn,
+            awsDeploymentResult.getResourceTrackerMainSubnetId().getValue(),
+            awsDeploymentResult.getResourceTrackerSecurityGroup().getValue(),
             awsCredentialsProvider,
             terraformDeploymentApplication.getCredentials().getRegion());
+
+        awsVendorService.waitForEcsTaskReadiness(
+            properties.getAwsResourceTrackerCommonFamily(),
+            awsDeploymentResult.getEcsCluster().getValue(),
+            ecsTaskDefinitionsArn,
+            awsCredentialsProvider,
+            terraformDeploymentApplication.getCredentials().getRegion(),
+            properties.getAwsReadinessPeriod());
+
+        //        yield awsVendorService.getMachineAddress(
+        //            properties.getAwsResourceTrackerKafkaName(),
+        //            awsDeploymentResult.getEcsCluster().getValue(),
+        //            awsCredentialsProvider,
+        //            terraformDeploymentApplication.getCredentials().getRegion());
+        yield "0.0.0.0";
       }
     };
+  }
+
+  /**
+   * Stops container execution for a certain cloud provider.
+   *
+   * @param terraformDestructionApplication given Terraform destruction application.
+   */
+  public void stopContainerExecution(
+      TerraformDestructionApplication terraformDestructionApplication) {
+    switch (terraformDestructionApplication.getProvider()) {
+      case AWS -> {
+        AWSSecretsDto secretsDto =
+            AWSSecretsDto.of(
+                terraformDestructionApplication.getCredentials().getSecrets().getAccessKey(),
+                terraformDestructionApplication.getCredentials().getSecrets().getSecretKey());
+
+        AWSCredentialsProvider awsCredentialsProvider =
+            AWSVendorService.getAWSCredentialsProvider(secretsDto);
+
+        awsVendorService.deregisterEcsTaskDefinitions(
+            properties.getAwsResourceTrackerCommonFamily(),
+            awsCredentialsProvider,
+            terraformDestructionApplication.getCredentials().getRegion());
+
+        //        awsVendorService.removeEcsExecutionRole(
+        //            properties.getAwsResourceTrackerExecutionRole(),
+        //            awsCredentialsProvider,
+        //            terraformDestructionApplication.getCredentials().getRegion());
+      }
+    }
   }
 
   /**

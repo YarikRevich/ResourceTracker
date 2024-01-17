@@ -175,7 +175,7 @@ public class WorkspaceService {
 
     File variableFile =
         new File(
-            Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
+            Paths.get(workspaceUnitDirectory, properties.getWorkspaceInternalConfigFileName())
                 .toString());
 
     try {
@@ -193,7 +193,7 @@ public class WorkspaceService {
    */
   public boolean isInternalConfigFileExist(String workspaceUnitDirectory) {
     return Files.exists(
-        Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName()));
+        Paths.get(workspaceUnitDirectory, properties.getWorkspaceInternalConfigFileName()));
   }
 
   /**
@@ -201,7 +201,7 @@ public class WorkspaceService {
    *
    * @param workspaceUnitDirectory given workspace unit directory.
    * @return internal config file entity.
-   * @throws FileNotFoundException if the requested variable not found.
+   * @throws InternalConfigNotFoundException if the requested internal config file not found.
    */
   public InternalConfigEntity getInternalConfigFileContent(String workspaceUnitDirectory)
       throws InternalConfigNotFoundException {
@@ -217,7 +217,7 @@ public class WorkspaceService {
     try {
       variableFile =
           new FileInputStream(
-              Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName())
+              Paths.get(workspaceUnitDirectory, properties.getWorkspaceInternalConfigFileName())
                   .toString());
     } catch (FileNotFoundException e) {
       throw new InternalConfigNotFoundException(e.getMessage());

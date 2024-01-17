@@ -75,23 +75,6 @@ public class ConfigService {
   }
 
   /**
-   * Returns command, which needs to be executed by the user to modify local ResourceTracker API
-   * Server configuration.
-   *
-   * @param machineAddress Kafka host remote machine address.
-   * @return Kafka host modification command.
-   */
-  public String getKafkaHostModificationCommand(String machineAddress) {
-    return String.format(
-        "sed -i 's/host:.*/host: %s:9093/g' '%s'",
-        machineAddress,
-        Paths.get(
-            System.getProperty("user.home"),
-            properties.getConfigRootPath(),
-            properties.getConfigApiServerFilePath()));
-  }
-
-  /**
    * @return Parsed configuration entity
    */
   public ConfigEntity getConfig() {
