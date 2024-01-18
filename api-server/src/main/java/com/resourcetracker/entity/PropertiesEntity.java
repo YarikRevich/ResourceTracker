@@ -2,6 +2,7 @@ package com.resourcetracker.entity;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /** Exposes access to properties setup to be used for further configuration. */
@@ -68,8 +69,11 @@ public class PropertiesEntity {
   @ConfigProperty(name = "resourcetracker-kafka.partitions.alias")
   String resourceTrackerKafkaPartitionsAlias;
 
-  @ConfigProperty(name = "resourcetracker-kafka.port")
-  Integer resourceTrackerKafkaPort;
+  @ConfigProperty(name = "resourcetracker-kafka.main.port")
+  Integer resourceTrackerKafkaMainPort;
+
+  @ConfigProperty(name = "resourcetracker-kafka.starter.port")
+  Integer resourceTrackerKafkaStarterPort;
 
   @ConfigProperty(name = "aws.default.region")
   String awsDefaultRegion;
@@ -97,4 +101,13 @@ public class PropertiesEntity {
 
   @ConfigProperty(name = "aws.resourcetracker-execution.role")
   String awsResourceTrackerExecutionRole;
+
+  /**
+   * Removes the last symbol in git commit id of the repository
+   *
+   * @return chopped repository git commit id.
+   */
+  public String getGitCommitId() {
+    return StringUtils.chop(gitCommitId);
+  }
 }

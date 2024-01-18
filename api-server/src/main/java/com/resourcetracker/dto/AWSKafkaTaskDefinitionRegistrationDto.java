@@ -16,8 +16,11 @@ public class AWSKafkaTaskDefinitionRegistrationDto {
   /** Represents Kafka Docker container name. */
   private String kafkaContainerName;
 
-  /** Represents Kafka port used in Docker container. */
-  private Integer kafkaContainerPort;
+  /** Represents Kafka main port used in Docker container. */
+  private Integer kafkaContainerMainPort;
+
+  /** Represents Kafka starter port used in Docker container. */
+  private Integer kafkaContainerStarterPort;
 
   /** Represents Kafka host used in a Docker container. */
   private String kafkaHost;

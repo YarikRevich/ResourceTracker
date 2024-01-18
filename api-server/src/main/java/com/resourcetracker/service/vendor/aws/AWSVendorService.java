@@ -4,8 +4,7 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
-import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesRequest;
-import com.amazonaws.services.ec2.model.DescribeNetworkInterfacesResult;
+import com.amazonaws.services.ec2.model.*;
 import com.amazonaws.services.ec2.model.NetworkInterface;
 import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
@@ -91,27 +90,27 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
-    PortMapping portMapping =
+    PortMapping mainPortMapping =
         new PortMapping()
             .withContainerPort(
                 ecsTaskDefinitionRegistrationDto
                     .getAwsKafkaTaskDefinitionRegistrationDto()
-                    .getKafkaContainerPort())
+                    .getKafkaContainerMainPort())
             .withHostPort(
                 ecsTaskDefinitionRegistrationDto
                     .getAwsKafkaTaskDefinitionRegistrationDto()
-                    .getKafkaContainerPort());
+                    .getKafkaContainerMainPort());
 
-    KeyValuePair kraftContainerHostNameKeyPair =
-        new KeyValuePair()
-            .withName(
-                ecsTaskDefinitionRegistrationDto
-                    .getAwsKafkaTaskDefinitionRegistrationDto()
-                    .getKafkaHostAlias())
-            .withValue(
-                ecsTaskDefinitionRegistrationDto
-                    .getAwsKafkaTaskDefinitionRegistrationDto()
-                    .getKafkaHost());
+    PortMapping starterPortMapping =
+            new PortMapping()
+                    .withContainerPort(
+                            ecsTaskDefinitionRegistrationDto
+                                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                                    .getKafkaContainerStarterPort())
+                    .withHostPort(
+                            ecsTaskDefinitionRegistrationDto
+                                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                                    .getKafkaContainerStarterPort());
 
     KeyValuePair kraftCreateTopicsKeyPair =
         new KeyValuePair()
@@ -142,9 +141,8 @@ public class AWSVendorService {
                     .getAwsKafkaTaskDefinitionRegistrationDto()
                     .getKafkaContainerName())
             .withEssential(true)
-            .withPortMappings(portMapping)
+            .withPortMappings(mainPortMapping, starterPortMapping)
             .withEnvironment(
-                kraftContainerHostNameKeyPair,
                 kraftCreateTopicsKeyPair,
                 kraftPartitionsPerTopicKeyPair)
             .withImage(
@@ -156,20 +154,6 @@ public class AWSVendorService {
                     ecsTaskDefinitionRegistrationDto
                         .getAwsKafkaTaskDefinitionRegistrationDto()
                         .getKafkaVersion()));
-
-    // ##        {
-    // ##          name: "KRAFT_CONTAINER_HOST_NAME",
-    // ##          value:
-    // data.aws_network_interface.resourcetracker_ecs_instance_interface.association[0].public_ip,
-    // ##        },
-    // #        {
-    // #          name: "KRAFT_CREATE_TOPICS",
-    // #          value: "logs",
-    // #        },
-    // #        {
-    // #          name: "KRAFT_PARTITIONS_PER_TOPIC",
-    // #          value: "1"
-    // #        }
 
     ContainerDependency containerDependency =
         new ContainerDependency()
@@ -257,28 +241,26 @@ public class AWSVendorService {
             });
   }
 
-  /** Runs ECS Task with the given configuration properties. */
+  /**
+   * Runs ECS Task with the given configuration properties.
+   *
+   * @param ecsClusterId
+   * @param ecsServiceId
+   * @param ecsTaskDefinitionArn
+   * @param awsCredentialsProvider
+   * @param region
+   */
   public void runEcsTask(
       String ecsClusterId,
+      String ecsServiceId,
       String ecsTaskDefinitionArn,
-      String resourceTrackerMainSubnetId,
-      String resourceTrackerSecurityGroup,
       AWSCredentialsProvider awsCredentialsProvider,
       String region) {
-    AwsVpcConfiguration awsVpcConfiguration =
-        new AwsVpcConfiguration()
-            .withSubnets(resourceTrackerMainSubnetId)
-            .withSecurityGroups(resourceTrackerSecurityGroup);
-
-    NetworkConfiguration networkConfiguration =
-        new NetworkConfiguration().withAwsvpcConfiguration(awsVpcConfiguration);
-
-    RunTaskRequest runTaskRequest =
-        new RunTaskRequest()
+    UpdateServiceRequest updateServiceRequest =
+        new UpdateServiceRequest()
             .withCluster(ecsClusterId)
-            .withTaskDefinition(ecsTaskDefinitionArn)
-            .withNetworkConfiguration(networkConfiguration)
-            .withLaunchType(LaunchType.FARGATE);
+            .withService(ecsServiceId)
+            .withTaskDefinition(ecsTaskDefinitionArn);
 
     AmazonECS ecsClient =
         AmazonECSClientBuilder.standard()
@@ -286,28 +268,23 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
-    ecsClient.runTask(runTaskRequest);
-    //
-    //    String output = gatherRunEcsTaskResultOutput(runTaskResult);
-    //    if (!output.isEmpty()) {
-    //      throw new AWSRunTaskFailureException(output);
-    //    }
+    ecsClient.updateService(updateServiceRequest);
   }
 
-  /**
-   * Gathers output returned by ECS Task run action, if fail happens.
-   *
-   * @param runTaskResult embedded result of ECS Task run action.
-   * @return gathered output of ECS Task run action.
-   */
-  private String gatherRunEcsTaskResultOutput(RunTaskResult runTaskResult) {
-    return runTaskResult.getFailures().stream()
-        .map(
-            element ->
-                String.format(
-                    "%s, %s, %s", element.getArn(), element.getDetail(), element.getReason()))
-        .collect(Collectors.joining(";"));
-  }
+//  /**
+//   * Gathers output returned by ECS Task run action, if fail happens.
+//   *
+//   * @param runTaskResult embedded result of ECS Task run action.
+//   * @return gathered output of ECS Task run action.
+//   */
+//  private String gatherRunEcsTaskResultOutput(RunTaskResult runTaskResult) {
+//    return runTaskResult.getFailures().stream()
+//        .map(
+//            element ->
+//                String.format(
+//                    "%s, %s, %s", element.getArn(), element.getDetail(), element.getReason()))
+//        .collect(Collectors.joining(";"));
+//  }
 
   /**
    * Retrieves remote machine address from the given ECS Task details.
@@ -331,26 +308,6 @@ public class AWSVendorService {
 
     return getEcsTaskPublicIp(ecsTaskNetworkInterfaceId, awsCredentialsProvider, region);
   }
-
-  //
-  //  /**
-  //   * Checks
-  //   *
-  //   * @param ecsClusterId
-  //   * @param awsCredentialsProvider
-  //   * @param region
-  //   * @return
-  //   */
-  //  private boolean isEcsTaskOfEcsTaskDefinition(
-  //      String ecsClusterId, AWSCredentialsProvider awsCredentialsProvider, String region) {
-  //    AmazonECS ecsClient =
-  //        AmazonECSClientBuilder.standard()
-  //            .withRegion(region)
-  //            .withCredentials(awsCredentialsProvider)
-  //            .build();
-  //
-  //    return false;
-  //  }
 
   /**
    * Waits for the given ECS Task to be ready to be used.
@@ -392,8 +349,9 @@ public class AWSVendorService {
 
           List<String> describeTasksResult =
               ecsClient.describeTasks(describeTasksRequest).getTasks().stream()
+                  .filter(element -> element.getTaskDefinitionArn().equals(ecsTaskDefinitionArn))
+                  .filter(element -> element.getLastStatus().equals("RUNNING"))
                   .map(Task::getTaskDefinitionArn)
-                  .filter(element -> element.equals(ecsTaskDefinitionArn))
                   .toList();
 
           return !describeTasksResult.isEmpty();
@@ -508,25 +466,6 @@ public class AWSVendorService {
         describeNetworkInterfacesResult.getNetworkInterfaces().get(0);
 
     return networkInterfaces.getAssociation().getPublicIp();
-  }
-
-  /**
-   * @param ecsExecutionRoleName
-   * @param awsCredentialsProvider
-   * @param region
-   */
-  public void removeEcsExecutionRole(
-      String ecsExecutionRoleName, AWSCredentialsProvider awsCredentialsProvider, String region) {
-    AmazonIdentityManagement iamClient =
-        AmazonIdentityManagementClientBuilder.standard()
-            .withRegion(region)
-            .withCredentials(awsCredentialsProvider)
-            .build();
-
-    DeleteRoleRequest deleteRoleRequest =
-        new DeleteRoleRequest().withRoleName(ecsExecutionRoleName);
-
-    iamClient.deleteRole(deleteRoleRequest);
   }
 
   /**

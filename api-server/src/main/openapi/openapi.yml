@@ -9,6 +9,8 @@ tags:
     description: Contains all endpoints related to specific topics and their data filtering
   - name: TerraformResource
     description: Contains endpoints related to Terraform deployment operations
+  - name: WebhookResource
+    description: Contains webhook endpoints related to deployment operations
   - name: ValidationResource
     description: Contains all endpoints related to both data validation and its further retrieval.
   - name: InfoResource

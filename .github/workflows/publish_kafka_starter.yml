@@ -1,0 +1,38 @@
+name: Publish Kafka starter
+
+on:
+  release:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python@3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+      - name: "Retrieve latest commit hash"
+        run: |
+          echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: "Build Kafka starter Docker image"
+        run: |
+          cd script/aws/deployment/kafka
+          
+          docker build -t ghcr.io/yarikrevich/resourcetracker-kafka-starter:${{ env.hash }} .
+
+      - name: "Push Kafka starter Docker image"
+        run: |
+          docker push ghcr.io/yarikrevich/resourcetracker-kafka-starter:${{ env.hash }}
+      

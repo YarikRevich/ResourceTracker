@@ -82,11 +82,9 @@ public class VendorFacade {
    * @param input Terraform deployment output.
    * @param terraformDeploymentApplication given Terraform deployment application.
    * @return public ip for the Kafka container.
-   * @throws ContainerStartupFailureException if container startup flow failed to be processed.
    */
   public String startContainerExecution(
-      String input, TerraformDeploymentApplication terraformDeploymentApplication)
-      throws ContainerStartupFailureException {
+      String input, TerraformDeploymentApplication terraformDeploymentApplication) {
     return switch (terraformDeploymentApplication.getProvider()) {
       case AWS -> {
         AWSSecretsDto secretsDto =
@@ -133,7 +131,8 @@ public class VendorFacade {
                     properties.getResourceTrackerKafkaImage(),
                     properties.getResourceTrackerKafkaImageVersion(),
                     properties.getAwsResourceTrackerKafkaName(),
-                    properties.getResourceTrackerKafkaPort(),
+                    properties.getResourceTrackerKafkaMainPort(),
+                        properties.getResourceTrackerKafkaStarterPort(),
                     serviceMachineAddress,
                     properties.getResourceTrackerKafkaHostAlias(),
                     properties.getKafkaTopic(),
@@ -153,9 +152,8 @@ public class VendorFacade {
 
         awsVendorService.runEcsTask(
             awsDeploymentResult.getEcsCluster().getValue(),
+            awsDeploymentResult.getEcsService().getValue(),
             ecsTaskDefinitionsArn,
-            awsDeploymentResult.getResourceTrackerMainSubnetId().getValue(),
-            awsDeploymentResult.getResourceTrackerSecurityGroup().getValue(),
             awsCredentialsProvider,
             terraformDeploymentApplication.getCredentials().getRegion());
 

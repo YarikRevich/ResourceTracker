@@ -1,4 +1,4 @@
-.PHONY: help, clean, prepare, test, lint, create-local, clone-config, clone-terraform, clone-api-server, build-agent, build-api-server, build-cli, build-gui
+.PHONY: help, clean, prepare, test, lint, create-local, clone-config, clone-terraform, clone-api-server, build-kafka-starter, build-agent, build-api-server, build-cli, build-gui
 
 dev := $(or $(dev), 'false')
 
@@ -56,6 +56,10 @@ ifeq (,$(wildcard $(HOME)/.resourcetracker/bin/api-server))
 	@mkdir -p $(HOME)/.resourcetracker/bin
 endif
 	@cp -r ./bin/api-server $(HOME)/.resourcetracker/bin/
+
+#.PHONY: build-kafka-starter
+#build-kafka-starter: clean ## Build Kafka starter Docker image
+#
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
