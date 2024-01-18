@@ -1,23 +1,23 @@
 package com.resourcetracker.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Setter;
-
-import java.io.Serializable;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Setter
+/** Represents context sent to ResourceTracker Agent as a variable during deployment operation. */
+@Getter
 @AllArgsConstructor(staticName = "of")
-public class AgentContextEntity implements Serializable {
-    @Setter
-    @AllArgsConstructor(staticName = "of")
-    static class Request {
-        String name;
+public class AgentContextEntity {
+  /** Represents ResourceTracker Agent requests to be executed. */
+  @Getter
+  @AllArgsConstructor(staticName = "of")
+  public static class Request {
+    String name;
 
-        String script;
+    String script;
 
-        String frequency;
-    }
+    String frequency;
+  }
 
-    List<Request> requests;
+  List<Request> requests;
 }

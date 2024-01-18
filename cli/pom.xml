@@ -96,6 +96,10 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
+    <dependency>
+      <groupId>me.tongfei</groupId>
+      <artifactId>progressbar</artifactId>
+    </dependency>
 
     <!-- LOGGING -->
     <dependency>
@@ -177,6 +181,7 @@
               <generateSupportingFiles>true</generateSupportingFiles>
               <auth>false</auth>
               <configOptions>
+                <additionalModelTypeAnnotations>@lombok.Data @lombok.AllArgsConstructor(staticName = "of")</additionalModelTypeAnnotations>
                 <sourceFolder>src/main/java</sourceFolder>
                 <useSpringController>true</useSpringController>
                 <interfaceOnly>false</interfaceOnly>
@@ -191,6 +196,10 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

@@ -49,4 +49,8 @@ resource "aws_security_group" "resourcetracker_security_group" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle {
+    replace_triggered_by = [aws_internet_gateway.resourcetracker_internet_gateway.id]
+  }
 }

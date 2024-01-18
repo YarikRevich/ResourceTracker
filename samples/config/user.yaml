@@ -1,0 +1,11 @@
+requests:
+    - name: "first"
+      frequency: "10 * * * *"
+      file: "script.sh"
+cloud:
+    provider: "aws"
+    credentials:
+      file: "~/.aws/credentials"
+      region: "us-west-2"
+api-server:
+    host: "http://localhost:8080"

@@ -1,4 +1,5 @@
 variable "ecs_task_execution_role" {
-	default     = ""
+	type = string
+	default = ""
 	description = "ECS task execution role name"
 }

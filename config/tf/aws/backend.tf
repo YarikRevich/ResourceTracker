@@ -1,7 +1,7 @@
 terraform {
-	backend "s3" {
-		bucket                  = "resourcetracker-backend"
-		key                     = "terraform.tfstate"
-		encrypt = true
-	}
+  backend "s3" {
+    bucket                  = "resourcetracker-state"
+    key                     = "terraform.tfstate"
+    encrypt = true
+  }
 }

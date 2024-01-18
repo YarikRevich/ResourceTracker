@@ -1,6 +1,15 @@
-provider "aws" {
+provider "aws" {}
+
+module "ecs" {
+    source = "./ecs"
+#    resourcetracker_agent_version = var.resourcetracker_agent_version
+    resourcetracker_agent_context = var.resourcetracker_agent_context
 }
 
-module "ecs"{
-    source = "./ecs"
+module "vpc" {
+    source = "./vpc"
+}
+
+module "iam" {
+    source = "./iam"
 }

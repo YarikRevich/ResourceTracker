@@ -1,27 +1,23 @@
 package com.resourcetracker.entity;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.Getter;
 
-import java.util.List;
-
-/**
- * Represents context given for ResourceTracker Agent process.
- */
+/** Represents context given for ResourceTracker Agent process. */
 @Getter
 public class ConfigEntity {
-    @NotBlank
-    List<Request> requests;
+  /** Represents requests, which need to be executed. */
+  @Getter
+  public static class Request {
+    @NotBlank public String name;
 
-    /**
-     * Represents requests, which need to be executed
-     */
-    @Getter
-    public static class Request {
-        @NotBlank
-        String script;
+    @NotBlank public String script;
 
-        @NotBlank
-        String frequency;
-    }
+    @NotBlank public String frequency;
+  }
+
+  @Valid @NotNull public List<Request> requests;
 }

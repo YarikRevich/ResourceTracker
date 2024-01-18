@@ -20,6 +20,10 @@ jobs:
       run: |
         make prepare
 
+    - name: "Linter"
+      run: |
+        make lint
+
     - name: "Build API Server"
       run: |
         make build-api-server

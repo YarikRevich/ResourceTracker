@@ -9,24 +9,42 @@ tags:
     description: Contains all endpoints related to specific topics and their data filtering
   - name: TerraformResource
     description: Contains endpoints related to Terraform deployment operations
+  - name: WebhookResource
+    description: Contains webhook endpoints related to deployment operations
+  - name: ValidationResource
+    description: Contains all endpoints related to both data validation and its further retrieval.
+  - name: InfoResource
+    description: Contains all endpoints related to general info of API Server.
+  - name: HealthResource
+    description: Contains all endpoints related to general API Server health information.
 
 paths:
   /v1/topic/logs:
-    get:
+    post:
       tags:
         - TopicResource
+      requestBody:
+        required: true
+        description: Retrieve resource state for the given user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TopicLogsApplication"
       responses:
         200:
           description: Current resource state is successfully retrieved
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TopicLogs"
+                $ref: "#/components/schemas/TopicLogsResult"
+        500:
+          description: Kafka service is not available
   /v1/terraform/apply:
     post:
       tags:
         - TerraformResource
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -45,6 +63,7 @@ paths:
       tags:
         - TerraformResource
       requestBody:
+        required: true
         description: Destroys new Terraform infrastructure
         content:
           application/json:
@@ -53,19 +72,122 @@ paths:
       responses:
         201:
           description: Deployed remote infrastructure is successfully destroyed
+        400:
+          description: Given destruction application contains incorrect data
+  /v1/secrets/acquire:
+    post:
+      tags:
+        - ValidationResource
+      requestBody:
+        required: true
+        description: Checks if the given secrets file contains correct data
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidationSecretsApplication"
+      responses:
+        201:
+          description: Given secrets file is confirmed to be correct
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationSecretsApplicationResult"
+        400:
+          description: Given secrets application contains incorrect data
+  /v1/script/acquire:
+    post:
+      tags:
+        - ValidationResource
+      requestBody:
+        required: true
+        description: Checks if the given script file contains allowed data
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidationScriptApplication"
+      responses:
+        201:
+          description: Given script file is confirmed to be correct
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationScriptApplicationResult"
+        400:
+          description: Given script application contains incorrect data
+  /v1/info/version:
+    get:
+      tags:
+        - InfoResource
+      responses:
+        200:
+          description: General information about running API Server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationInfoResult"
+  /v1/health:
+    get:
+      tags:
+        - HealthResource
+      responses:
+        200:
+          description: General health information about running API Server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthCheckResult"
+  /v1/readiness:
+    post:
+      tags:
+        - HealthResource
+      requestBody:
+        required: true
+        description: Check if API Server is ready to serve for the given user
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReadinessCheckApplication"
+      responses:
+        200:
+          description: General health information about running API Server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadinessCheckResult"
 components:
   schemas:
-    TopicLogs:
+    TopicLogsApplication:
+      required:
+        - provider
+        - credentials
+      properties:
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          $ref: "#/components/schemas/CredentialsFields"
+    TopicLogsResult:
+      required:
+        - result
       properties:
         result:
           type: array
           items:
-            $ref: "#/components/schemas/TopicLogsResult"
-    TopicLogsResult:
+            $ref: "#/components/schemas/TopicLogsUnit"
+    TopicLogsUnit:
+      required:
+        - id
+        - name
+        - data
+        - error
+        - hostname
+        - hostaddress
+        - timestamp
       properties:
         id:
           type: string
           format: uuid
+        name:
+          type: string
         data:
           type: string
         error:
@@ -78,12 +200,24 @@ components:
           type: string
           format: timestamp
     TerraformDeploymentApplication:
+      required:
+        - requests
+        - provider
+        - credentials
       properties:
         requests:
           type: array
           items:
-            $ref: "#/components/schemas/Request"
-    Request:
+            $ref: "#/components/schemas/DeploymentRequest"
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          $ref: "#/components/schemas/CredentialsFields"
+    DeploymentRequest:
+      required:
+        - name
+        - script
+        - frequency
       properties:
         name:
           type: string
@@ -91,32 +225,161 @@ components:
           type: string
         frequency:
           type: string
-        provider:
-          $ref: "#/components/schemas/Provider"
-        credentials:
-          oneOf:
-            - $ref: "#/components/schemas/AWSCredentials"
+          pattern: "(((([0-9]|[0-5][0-9])(-([0-9]|[0-5][0-9]))?,)*([0-9]|[0-5][0-9])(-([0-9]|[0-5][0-9]))?)|(([\\*]|[0-9]|[0-5][0-9])/([0-9]|[0-5][0-9]))|([\\?])|([\\*]))[\\s](((([0-9]|[0-5][0-9])(-([0-9]|[0-5][0-9]))?,)*([0-9]|[0-5][0-9])(-([0-9]|[0-5][0-9]))?)|(([\\*]|[0-9]|[0-5][0-9])/([0-9]|[0-5][0-9]))|([\\?])|([\\*]))[\\s](((([0-9]|[0-1][0-9]|[2][0-3])(-([0-9]|[0-1][0-9]|[2][0-3]))?,)*([0-9]|[0-1][0-9]|[2][0-3])(-([0-9]|[0-1][0-9]|[2][0-3]))?)|(([\\*]|[0-9]|[0-1][0-9]|[2][0-3])/([0-9]|[0-1][0-9]|[2][0-3]))|([\\?])|([\\*]))[\\s](((([1-9]|[0][1-9]|[1-2][0-9]|[3][0-1])(-([1-9]|[0][1-9]|[1-2][0-9]|[3][0-1]))?,)*([1-9]|[0][1-9]|[1-2][0-9]|[3][0-1])(-([1-9]|[0][1-9]|[1-2][0-9]|[3][0-1]))?(C)?)|(([1-9]|[0][1-9]|[1-2][0-9]|[3][0-1])/([1-9]|[0][1-9]|[1-2][0-9]|[3][0-1])(C)?)|(L(-[0-9])?)|(L(-[1-2][0-9])?)|(L(-[3][0-1])?)|(LW)|([1-9]W)|([1-3][0-9]W)|([\\?])|([\\*]))[\\s](((([1-9]|0[1-9]|1[0-2])(-([1-9]|0[1-9]|1[0-2]))?,)*([1-9]|0[1-9]|1[0-2])(-([1-9]|0[1-9]|1[0-2]))?)|(([1-9]|0[1-9]|1[0-2])/([1-9]|0[1-9]|1[0-2]))|(((JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?,)*(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?)|((JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)/(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))|([\\?])|([\\*]))[\\s]((([1-7](-([1-7]))?,)*([1-7])(-([1-7]))?)|([1-7]/([1-7]))|(((MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?,)*(MON|TUE|WED|THU|FRI|SAT|SUN)(-(MON|TUE|WED|THU|FRI|SAT|SUN))?(C)?)|((MON|TUE|WED|THU|FRI|SAT|SUN)/(MON|TUE|WED|THU|FRI|SAT|SUN)(C)?)|(([1-7]|(MON|TUE|WED|THU|FRI|SAT|SUN))?(L|LW)?)|(([1-7]|MON|TUE|WED|THU|FRI|SAT|SUN)#([1-7])?)|([\\?])|([\\*]))([\\s]?(([\\*])?|(19[7-9][0-9])|(20[0-9][0-9]))?| (((19[7-9][0-9])|(20[0-9][0-9]))/((19[7-9][0-9])|(20[0-9][0-9])))?| ((((19[7-9][0-9])|(20[0-9][0-9]))(-((19[7-9][0-9])|(20[0-9][0-9])))?,)*((19[7-9][0-9])|(20[0-9][0-9]))(-((19[7-9][0-9])|(20[0-9][0-9])))?)?)"
     Provider:
       type: string
       enum:
         - aws
-    AWSCredentials:
-      properties:
-        access_key:
-          type: string
-        secret_key:
-          type: string
-        profile:
-          type: string
-        region:
-          type: string
     TerraformDeploymentApplicationResult:
+      required:
+        - machineAddress
       properties:
         machineAddress:
           type: string
     TerraformDestructionApplication:
+      required:
+        - requests
+        - provider
+        - credentials
+      properties:
+        requests:
+          type: array
+          items:
+            $ref: "#/components/schemas/DestructionRequest"
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          $ref: "#/components/schemas/CredentialsFields"
+    CredentialsFields:
+      anyOf:
+        - $ref: "#/components/schemas/AWSCredentials"
+    AWSCredentials:
+      required:
+        - secrets
+        - region
+      properties:
+        secrets:
+          $ref: "#/components/schemas/AWSSecrets"
+        region:
+          type: string
+    AWSSecrets:
+      required:
+        - accessKey
+        - secretKey
+      properties:
+        accessKey:
+          type: string
+        secretKey:
+          type: string
+    DestructionRequest:
+      required:
+        - name
       properties:
         name:
+          type: string
+    ValidationSecretsApplication:
+      required:
+        - provider
+        - file
+      properties:
+        provider:
+          $ref: "#/components/schemas/Provider"
+        file:
+          type: string
+    ValidationSecretsApplicationResult:
+      required:
+        - valid
+        - credentials
+      properties:
+        valid:
+          type: boolean
+        secrets:
+          oneOf:
+            - $ref: "#/components/schemas/AWSSecrets"
+    ValidationScriptApplication:
+      required:
+        - files
+      type: object
+      properties:
+        files:
           type: array
           items:
             type: string
+    ValidationScriptApplicationResult:
+      required:
+        - valid
+      properties:
+        valid:
+          type: boolean
+    ApplicationInfoResult:
+      properties:
+        externalApi:
+          $ref: "#/components/schemas/ApplicationExternalApiInfoResult"
+    ApplicationExternalApiInfoResult:
+      required:
+        - version
+        - hash
+      properties:
+        version:
+          type: string
+        hash:
+          type: string
+    HealthCheckResult:
+      required:
+        - status
+        - checks
+      properties:
+        status:
+          $ref: "#/components/schemas/HealthCheckStatus"
+        checks:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthCheckUnit"
+    HealthCheckUnit:
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+        status:
+          $ref: "#/components/schemas/HealthCheckStatus"
+    HealthCheckStatus:
+      type: string
+      enum:
+        - UP
+        - DOWN
+    ReadinessCheckApplication:
+      required:
+        - provider
+        - credentials
+      properties:
+        provider:
+          $ref: "#/components/schemas/Provider"
+        credentials:
+          $ref: "#/components/schemas/CredentialsFields"
+    ReadinessCheckResult:
+      required:
+        - status
+        - checks
+      properties:
+        status:
+          $ref: "#/components/schemas/ReadinessCheckStatus"
+        checks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReadinessCheckUnit"
+    ReadinessCheckUnit:
+      required:
+        - name
+        - status
+      properties:
+        name:
+          type: string
+        status:
+          $ref: "#/components/schemas/ReadinessCheckStatus"
+    ReadinessCheckStatus:
+      type: string
+      enum:
+        - UP
+        - DOWN

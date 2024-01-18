@@ -33,6 +33,8 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
   task_definition      = aws_ecs_task_definition.resourcetracker_ecs_instance_task_definitions.arn
   launch_type          = "FARGATE"
   desired_count        = 1
+  wait_for_steady_state = true
+  enable_ecs_managed_tags = true
   force_new_deployment = true
 
   lifecycle {
@@ -51,54 +53,87 @@ resource "aws_ecs_service" "resourcetracker_ecs_instance" {
   depends_on = [module.iam]
 }
 
+data "aws_network_interface" "resourcetracker_ecs_instance_interface" {
+  filter {
+    name   = "tag:aws:ecs:serviceName"
+    values = ["resourcetracker_ecs_instance"]
+  }
+
+  depends_on = [aws_ecs_service.resourcetracker_ecs_instance]
+}
+
 resource "aws_ecs_task_definition" "resourcetracker_ecs_instance_task_definitions" {
   family                   = "resourcetracker_ecs_instance_task_definition"
   network_mode             = "awsvpc"
-  execution_role_arn       = module.iam.resourcetracker_ecs_task_execution_role_arn
+  execution_role_arn       = module.iam.ecs_task_execution_role
   requires_compatibilities = ["FARGATE"]
   memory                   = 512
   cpu                      = 256
-  depends_on = []
 
   container_definitions = jsonencode([
     {
-      name : "resourcetracker-agent",
-      essential : true,
-      environment : [
-        {
-          name : "RESOURCETRACKER_AGENT_CONTEXT",
-          value : var.resourcetracker_agent_context,
-        },
-		{
-          name : "RESOURCETRACKER_KAFKA_BOOTSTRAP_SERVER",
-          value : "resourcetracker-kafka:9091",
-        }
-      ],
-      image : "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
-    },
-    {
-      name : "resourcetracker-kafka",
-      essential : true,
-      environment : [
-        {
-          name : "ALLOW_PLAINTEXT_LISTENER",
-          value : "yes",
-          }, {
-          name : "KAFKA_CFG_ZOOKEEPER_CONNECT",
-          value : "resourcetracker_zookeeper:2181"
-        },
-        {
-          name: "KAFKA_ENABLE_KRAFT",
-          value: ""
-        }
-      ],
-      image : "bitnami/kafka:latest",
-      portMappings : [
-        {
-          "containerPort" : 9091,
-          "hostPort" : 9091
-        }
-      ],
+      name: "resourcetracker-init",
+      essential: true,
+      command: ["/bin/ash", "-c", "echo 'ResourceTracker initialization ${var.resourcetracker_agent_version}' && sleep 60m"],
+      image: "busybox"
     }
   ])
+#  container_definitions = jsonencode([
+#    {
+#      name: "resourcetracker-agent",
+#      essential: true,
+#      depends_on: {
+#        condition: "START",
+#        container_name: "resourcetracker-kafka",
+#      },
+#      environment: [
+#        {
+#          name: "RESOURCETRACKER_AGENT_CONTEXT",
+#          value: var.resourcetracker_agent_context,
+#        },
+#      ],
+#      image: "ghcr.io/yarikrevich/resourcetracker-agent:${var.resourcetracker_agent_version}",
+#      logConfiguration: {
+#        "logDriver": "awslogs",
+#        "options": {
+#          "awslogs-group": "agent-logs-test",
+#          "awslogs-region": "us-west-2",
+#          "awslogs-stream-prefix": "ecs/resourcetracker-agent"
+#        }
+#      }
+#    },
+#    {
+#      name: "resourcetracker-kafka",
+#      essential: true,
+#      environment: [
+##        {
+##          name: "KRAFT_CONTAINER_HOST_NAME",
+##          value: data.aws_network_interface.resourcetracker_ecs_instance_interface.association[0].public_ip,
+##        },
+#        {
+#          name: "KRAFT_CREATE_TOPICS",
+#          value: "logs",
+#        },
+#        {
+#          name: "KRAFT_PARTITIONS_PER_TOPIC",
+#          value: "1"
+#        }
+#      ],
+#      image: "ghcr.io/yarikrevich/resourcetracker-kafka-starter:latest",
+#      portMappings: [
+#        {
+#          containerPort: 9093,
+#          hostPort: 9093
+#        }
+#      ],
+#      logConfiguration: {
+#        "logDriver": "awslogs",
+#        "options": {
+#          "awslogs-group": "kafka-logs-test",
+#          "awslogs-region": "us-west-2",
+#          "awslogs-stream-prefix": "ecs/resourcetracker-kafka"
+#        }
+#      }
+#    }
+#  ])
 }

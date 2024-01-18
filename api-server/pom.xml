@@ -14,6 +14,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+
     <dependencies>
         <!-- LOCAL -->
         <dependency>
@@ -38,6 +39,10 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-health</artifactId>
         </dependency>
         <dependency>
@@ -47,6 +52,16 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-validator</artifactId>
+        </dependency>
+
+        <!-- SPRING -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <!-- KAFKA -->
@@ -135,6 +150,10 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+        </dependency>
 
         <!-- LOGGING -->
         <dependency>
@@ -144,6 +163,10 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
     </dependencies>
 
@@ -193,10 +216,11 @@
                             <generateSupportingFiles>true</generateSupportingFiles>
                             <auth>false</auth>
                             <configOptions>
+                                <additionalModelTypeAnnotations>@lombok.Data @lombok.NoArgsConstructor @lombok.AllArgsConstructor(staticName = "of")</additionalModelTypeAnnotations>
                                 <sourceFolder>src/main/java</sourceFolder>
                                 <unhandledException>true</unhandledException>
                                 <serializableModel>true</serializableModel>
-                                <interfaceOnly>false</interfaceOnly>
+                                <interfaceOnly>true</interfaceOnly>
                                 <useTags>true</useTags>
                                 <useJakartaEe>true</useJakartaEe>
                                 <useSwaggerAnnotations>false</useSwaggerAnnotations>
@@ -220,6 +244,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
