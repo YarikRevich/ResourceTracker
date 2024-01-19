@@ -506,13 +506,15 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
-    for (ObjectListing objects = simpleStorage.listObjects(name);
-        !objects.isTruncated();
-        objects = simpleStorage.listNextBatchOfObjects(objects)) {
-      for (S3ObjectSummary s3ObjectSummary : objects.getObjectSummaries()) {
-        simpleStorage.deleteObject(name, s3ObjectSummary.getKey());
+    ObjectListing objects = simpleStorage.listObjects(name);
+
+    do {
+      for (S3ObjectSummary summary : objects.getObjectSummaries()) {
+        simpleStorage.deleteObject(name, summary.getKey());
       }
-    }
+
+      objects = simpleStorage.listNextBatchOfObjects(objects);
+    } while (objects.isTruncated());
 
     simpleStorage.deleteBucket(name);
 

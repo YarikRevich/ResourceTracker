@@ -16,6 +16,7 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 
+/** */
 public class KafkaService {
   private AdminClient kafkaAdminClient;
 
@@ -25,7 +26,13 @@ public class KafkaService {
 
   private final KafkaConsumer<String, KafkaLogsTopicDto> kafkaConsumer;
 
-  public KafkaService(String kafkaBootstrapServer, PropertiesEntity properties) {
+  public KafkaService(String kafkaBootstrapServerHost, PropertiesEntity properties) {
+    String kafkaBootstrapServer =
+        String.format(
+            "%s:%d", kafkaBootstrapServerHost, properties.getResourceTrackerKafkaMainPort());
+
+    System.out.println(kafkaBootstrapServerHost);
+
     Properties kafkaAdminClientProps = new Properties();
 
     kafkaAdminClientProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
@@ -52,6 +59,11 @@ public class KafkaService {
     this.kafkaConsumer.subscribe(Collections.singletonList(properties.getKafkaTopic()));
   }
 
+  /**
+   * Checks if Kafka service is connected to Kafka cluster at the given address.
+   *
+   * @return result of the check.
+   */
   public boolean isConnected() {
     if (isAvailable()) {
       if (Objects.isNull(kafkaAdminClient)) {
@@ -74,10 +86,16 @@ public class KafkaService {
     return false;
   }
 
-  private boolean isAvailable() {
+  /**
+   * Checks if Kafka service is available at the given address.
+   *
+   * @return result of the check.
+   */
+  public boolean isAvailable() {
     URL url;
+
     try {
-      url = URI.create(kafkaBootstrapServer).toURL();
+      url = URI.create(String.format("http://%s", kafkaBootstrapServer)).toURL();
     } catch (MalformedURLException e) {
       return false;
     }
@@ -91,6 +109,26 @@ public class KafkaService {
     }
   }
 
+  /**
+   * Checks if the given Kafka topic exists.
+   *
+   * @param name given Kafka topic name.
+   * @return result of the check.
+   */
+  public boolean isTopicExist(String name) {
+    kafkaAdminClient.listTopics().names().whenComplete((e, b) -> System.out.println(e.stream().toList()));
+
+//      return !kafkaConsumer.listTopics().keySet().stream()
+//          .filter(element -> !element.equals(name))
+//          .toList()
+//          .isEmpty();
+
+    return false;
+  }
+
+  /**
+   * @return
+   */
   public List<KafkaLogsTopicDto> consumeLogs() {
     List<KafkaLogsTopicDto> kafkaLogsTopicEntities = new ArrayList<>();
 

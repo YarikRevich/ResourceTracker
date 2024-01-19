@@ -22,12 +22,14 @@ All setup related operations are processed via **Makefile** placed in the root d
 
 ### CLI
 
-In order to build CLI it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
+In order to build CLI it's required to execute the following command. Initially it cleans the environment and builds Java project using **Maven**
 ```shell
 make build-cli
 ```
 
 After the execution of command given above the executable will be generated and placed into **bin** folder in the root directory of the project
+
+**CLI** build automatically places default **user.yaml** configuration file into ~/.resourcetracker/config directory.
 
 ### GUI
 
@@ -38,15 +40,23 @@ make build-gui
 
 After the execution of command given above the executable will be generated and placed into **bin** folder in the root directory of the project
 
-GUI build automatically compiles API Server and places both executable JAR and other dependencies into **~/.resourcetracker/bin/api-server** directory
+**GUI** build automatically compiles **API Server** and places both executable JAR and other dependencies into **~/.resourcetracker/bin/api-server** directory
 
-It's highly recommended not to move API Server files from the default local directory
+It's highly recommended not to move **API Server** files from the default local directory
 
 ### API Server
 
-In order to build API Server it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
+In order to build **API Server** it's required to execute the following command. Initially it cleans the environment and build Java project using **Maven**
 ```shell
 make build-api-server
 ```
 
 After the execution of command given above the executable will be generated and placed into **bin** folder in the root directory of the project
+
+## Use cases
+
+### CLI
+
+
+
+### GUI

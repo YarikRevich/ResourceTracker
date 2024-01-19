@@ -13,7 +13,9 @@ import com.resourcetracker.model.ValidationSecretsApplication;
 import com.resourcetracker.model.ValidationSecretsApplicationResult;
 import com.resourcetracker.model.ValidationSecretsApplicationResultSecrets;
 import com.resourcetracker.service.client.kafkastarter.KafkaStarterClientServiceFacade;
+import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.vendor.aws.AWSVendorService;
+import com.resourcetracker.service.vendor.common.VendorWaiter;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -178,6 +180,24 @@ public class VendorFacade {
                 serviceMachineAddress, properties.getResourceTrackerKafkaStarterPort());
 
         kafkaStarterClientServiceFacade.deploy(serviceMachineAddress);
+
+        KafkaService kafkaService = new KafkaService(serviceMachineAddress, properties);
+
+        VendorWaiter.awaitFor(
+            () -> {
+              if (kafkaService.isAvailable()) {
+                return true;
+              }
+
+              System.out.println("before");
+
+              System.out.println(kafkaService.isTopicExist(properties.getKafkaTopic()));
+
+              System.out.println("after");
+
+              return kafkaService.isTopicExist(properties.getKafkaTopic());
+            },
+            properties.getKafkaReadinessPeriod());
 
         yield serviceMachineAddress;
       }
