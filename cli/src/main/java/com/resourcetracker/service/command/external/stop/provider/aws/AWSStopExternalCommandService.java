@@ -15,6 +15,7 @@ import com.resourcetracker.service.client.command.DestroyClientCommandService;
 import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
 import com.resourcetracker.service.command.ICommand;
 import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class AWSStopExternalCommandService implements ICommand {
   @Autowired private DestroyClientCommandService destroyClientCommandService;
 
   @Autowired private SecretsAcquireClientCommandService secretsAcquireClientCommandService;
+
+  @Autowired private VisualizationState visualizationState;
 
   /**
    * @see ICommand
@@ -65,7 +68,7 @@ public class AWSStopExternalCommandService implements ICommand {
 
       destroyClientCommandService.process(terraformDestructionApplication);
 
-      System.out.println("Deployment with the given configuration file was stopped!");
+      visualizationState.addResult("Deployment with the given configuration file was stopped!");
     } else {
       logger.fatal(new CloudCredentialsValidationException().getMessage());
     }

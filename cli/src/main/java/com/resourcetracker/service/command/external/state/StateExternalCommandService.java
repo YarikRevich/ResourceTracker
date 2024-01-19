@@ -7,6 +7,7 @@ import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.service.client.command.LogsClientCommandService;
 import com.resourcetracker.service.command.ICommand;
+import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class StateExternalCommandService implements ICommand {
   private static final Logger logger = LogManager.getLogger(StateExternalCommandService.class);
 
   @Autowired private LogsClientCommandService logsClientCommandService;
+
+  @Autowired private VisualizationState visualizationState;
 
   /**
    * @see ICommand
@@ -35,7 +38,7 @@ public class StateExternalCommandService implements ICommand {
 
     ObjectMapper mapper = new ObjectMapper();
     try {
-      System.out.println(mapper.writeValueAsString(topicLogsResult));
+      visualizationState.addResult(mapper.writeValueAsString(topicLogsResult));
     } catch (JsonProcessingException e) {
       logger.fatal(e.getMessage());
     }

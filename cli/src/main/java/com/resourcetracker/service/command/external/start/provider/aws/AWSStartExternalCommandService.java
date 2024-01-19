@@ -13,6 +13,7 @@ import com.resourcetracker.service.client.command.ScriptAcquireClientCommandServ
 import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
 import com.resourcetracker.service.command.ICommand;
 import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.visualization.state.VisualizationState;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,11 +36,15 @@ public class AWSStartExternalCommandService implements ICommand {
 
   @Autowired private ScriptAcquireClientCommandService scriptAcquireClientCommandService;
 
+  @Autowired private VisualizationState visualizationState;
+
   /**
    * @see ICommand
    */
   @Override
   public void process() throws ApiServerException {
+    visualizationState.getLabel().pushNext();
+
     ConfigEntity.Cloud.AWSCredentials credentials =
         CredentialsConverter.convert(
             configService.getConfig().getCloud().getCredentials(),
@@ -52,6 +57,8 @@ public class AWSStartExternalCommandService implements ICommand {
         secretsAcquireClientCommandService.process(validationSecretsApplicationDto);
 
     if (validationSecretsApplicationResult.getValid()) {
+      visualizationState.getLabel().pushNext();
+
       List<DeploymentRequest> requests =
           configService.getConfig().getRequests().stream()
               .map(
@@ -87,7 +94,7 @@ public class AWSStartExternalCommandService implements ICommand {
 
         applyClientCommandService.process(terraformDeploymentApplication);
 
-        System.out.println("Deployment with the given configuration was started!");
+        visualizationState.addResult("Deployment with the given configuration was started!");
       } else {
         logger.fatal(new ScriptDataValidationException().getMessage());
       }

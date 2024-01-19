@@ -22,6 +22,18 @@ public class PropertiesEntity {
   @Value("${config.user.file}")
   private String configUserFilePath;
 
+  @Value("${progress.visualization.period}")
+  private Integer progressVisualizationPeriod;
+
+  @Value("${progress.visualization.secrets-acquire-request}")
+  private String progressVisualizationSecretsAcquireRequestLabel;
+
+  @Value("${progress.visualization.script-acquire-request}")
+  private String progressVisualizationScriptAcquireRequestLabel;
+
+  @Value("${progress.visualization.version-info-request}")
+  private String progressVisualizationVersionInfoRequestLabel;
+
   @Bean
   private static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
     PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();

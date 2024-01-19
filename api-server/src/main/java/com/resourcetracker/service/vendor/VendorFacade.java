@@ -183,21 +183,7 @@ public class VendorFacade {
 
         KafkaService kafkaService = new KafkaService(serviceMachineAddress, properties);
 
-        VendorWaiter.awaitFor(
-            () -> {
-              if (kafkaService.isAvailable()) {
-                return true;
-              }
-
-              System.out.println("before");
-
-              System.out.println(kafkaService.isTopicExist(properties.getKafkaTopic()));
-
-              System.out.println("after");
-
-              return kafkaService.isTopicExist(properties.getKafkaTopic());
-            },
-            properties.getKafkaReadinessPeriod());
+        VendorWaiter.awaitFor(kafkaService::isAvailable, properties.getKafkaReadinessPeriod());
 
         yield serviceMachineAddress;
       }

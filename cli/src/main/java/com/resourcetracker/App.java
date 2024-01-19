@@ -15,6 +15,10 @@ import com.resourcetracker.service.command.internal.readiness.ReadinessCheckInte
 import com.resourcetracker.service.command.internal.readiness.provider.aws.AWSReadinessCheckInternalCommandService;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.config.common.ValidConfigService;
+import com.resourcetracker.service.visualization.VisualizationService;
+import com.resourcetracker.service.visualization.common.label.StartCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.common.label.VersionCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +53,11 @@ import picocli.CommandLine;
   ConfigService.class,
   ValidConfigService.class,
   BuildProperties.class,
-  PropertiesEntity.class
+  PropertiesEntity.class,
+  StartCommandVisualizationLabel.class,
+  VersionCommandVisualizationLabel.class,
+  VisualizationService.class,
+  VisualizationState.class
 })
 public class App implements ApplicationRunner, ExitCodeGenerator {
   private static final Logger logger = LogManager.getLogger(App.class);

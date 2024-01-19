@@ -6,6 +6,7 @@ import com.resourcetracker.model.ApplicationInfoResult;
 import com.resourcetracker.service.client.command.HealthCheckClientCommandService;
 import com.resourcetracker.service.client.command.VersionClientCommandService;
 import com.resourcetracker.service.command.ICommand;
+import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +19,23 @@ public class VersionExternalCommandService implements ICommand {
 
   @Autowired private HealthCheckClientCommandService healthCheckClientCommandService;
 
+  @Autowired private VisualizationState visualizationState;
+
   /**
    * @see ICommand
    */
   public void process() throws ApiServerException {
+    visualizationState.getLabel().pushNext();
+
     try {
       ApplicationInfoResult applicationInfoResult = versionClientCommandService.process(null);
 
-      System.out.printf(
-          "API Server version: %s\n", applicationInfoResult.getExternalApi().getHash());
+      visualizationState.addResult(
+          String.format(
+              "API Server version: %s", applicationInfoResult.getExternalApi().getHash()));
     } finally {
-      System.out.printf("Client version: %s\n", properties.getGitCommitId());
+      visualizationState.addResult(
+          String.format("Client version: %s", properties.getGitCommitId()));
     }
   }
 }

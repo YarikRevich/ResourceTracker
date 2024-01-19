@@ -110,24 +110,9 @@ public class KafkaService {
   }
 
   /**
-   * Checks if the given Kafka topic exists.
+   * Retrieves messages from "logs" topic.
    *
-   * @param name given Kafka topic name.
-   * @return result of the check.
-   */
-  public boolean isTopicExist(String name) {
-    kafkaAdminClient.listTopics().names().whenComplete((e, b) -> System.out.println(e.stream().toList()));
-
-//      return !kafkaConsumer.listTopics().keySet().stream()
-//          .filter(element -> !element.equals(name))
-//          .toList()
-//          .isEmpty();
-
-    return false;
-  }
-
-  /**
-   * @return
+   * @return retrieved messages.
    */
   public List<KafkaLogsTopicDto> consumeLogs() {
     List<KafkaLogsTopicDto> kafkaLogsTopicEntities = new ArrayList<>();
