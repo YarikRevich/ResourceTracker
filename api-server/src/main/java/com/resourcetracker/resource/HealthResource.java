@@ -9,7 +9,7 @@ import com.resourcetracker.exception.WorkspaceUnitInternalConfigFileNotFoundExce
 import com.resourcetracker.model.HealthCheckResult;
 import com.resourcetracker.model.ReadinessCheckApplication;
 import com.resourcetracker.model.ReadinessCheckResult;
-import com.resourcetracker.service.client.SmallRyeHealthCheckClientService;
+import com.resourcetracker.service.client.smallrye.ISmallRyeHealthCheckClientService;
 import com.resourcetracker.service.healthcheck.readiness.ReadinessCheckService;
 import com.resourcetracker.service.terraform.workspace.WorkspaceService;
 import com.resourcetracker.service.terraform.workspace.facade.WorkspaceFacade;
@@ -27,7 +27,7 @@ public class HealthResource implements HealthResourceApi {
 
   @Inject WorkspaceService workspaceService;
 
-  @Inject @RestClient SmallRyeHealthCheckClientService smallRyeHealthCheckClientService;
+  @Inject @RestClient ISmallRyeHealthCheckClientService smallRyeHealthCheckClientService;
 
   @Override
   public HealthCheckResult v1HealthGet() {

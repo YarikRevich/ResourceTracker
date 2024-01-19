@@ -1,4 +1,4 @@
-package com.resourcetracker.service.client;
+package com.resourcetracker.service.client.smallrye;
 
 import com.resourcetracker.model.HealthCheckResult;
 import jakarta.ws.rs.GET;
@@ -10,7 +10,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 /** Represents client for SmallRye health check endpoints. */
 @Path("/q")
 @RegisterRestClient(configKey = "small-rye-health-check")
-public interface SmallRyeHealthCheckClientService {
+public interface ISmallRyeHealthCheckClientService {
   @GET
   @Path("/health")
   @Produces(MediaType.APPLICATION_JSON)

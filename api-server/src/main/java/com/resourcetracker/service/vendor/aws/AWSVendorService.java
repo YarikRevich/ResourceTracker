@@ -9,9 +9,6 @@ import com.amazonaws.services.ec2.model.NetworkInterface;
 import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.AmazonECSClientBuilder;
 import com.amazonaws.services.ecs.model.*;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
-import com.amazonaws.services.identitymanagement.model.DeleteRoleRequest;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.HeadBucketRequest;
@@ -28,13 +25,12 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.resourcetracker.dto.AWSDeploymentResultDto;
 import com.resourcetracker.dto.AWSSecretsDto;
 import com.resourcetracker.dto.AWSTaskDefinitionRegistrationDto;
-import com.resourcetracker.service.vendor.common.ReadinessWaiter;
+import com.resourcetracker.service.vendor.common.VendorWaiter;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -90,6 +86,18 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
+    LogConfiguration logConfiguration =
+        new LogConfiguration()
+            .withLogDriver(LogDriver.Awslogs)
+            .withOptions(
+                new HashMap<>() {
+                  {
+                    put("awslogs-group", "agent-logs-test");
+                    put("awslogs-region", "us-west-2");
+                    put("awslogs-stream-prefix", "ecs/resourcetracker-kafka");
+                  }
+                });
+
     PortMapping mainPortMapping =
         new PortMapping()
             .withContainerPort(
@@ -102,15 +110,15 @@ public class AWSVendorService {
                     .getKafkaContainerMainPort());
 
     PortMapping starterPortMapping =
-            new PortMapping()
-                    .withContainerPort(
-                            ecsTaskDefinitionRegistrationDto
-                                    .getAwsKafkaTaskDefinitionRegistrationDto()
-                                    .getKafkaContainerStarterPort())
-                    .withHostPort(
-                            ecsTaskDefinitionRegistrationDto
-                                    .getAwsKafkaTaskDefinitionRegistrationDto()
-                                    .getKafkaContainerStarterPort());
+        new PortMapping()
+            .withContainerPort(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaContainerStarterPort())
+            .withHostPort(
+                ecsTaskDefinitionRegistrationDto
+                    .getAwsKafkaTaskDefinitionRegistrationDto()
+                    .getKafkaContainerStarterPort());
 
     KeyValuePair kraftCreateTopicsKeyPair =
         new KeyValuePair()
@@ -142,9 +150,8 @@ public class AWSVendorService {
                     .getKafkaContainerName())
             .withEssential(true)
             .withPortMappings(mainPortMapping, starterPortMapping)
-            .withEnvironment(
-                kraftCreateTopicsKeyPair,
-                kraftPartitionsPerTopicKeyPair)
+            .withLogConfiguration(logConfiguration)
+            .withEnvironment(kraftCreateTopicsKeyPair, kraftPartitionsPerTopicKeyPair)
             .withImage(
                 String.format(
                     "%s:%s",
@@ -271,21 +278,6 @@ public class AWSVendorService {
     ecsClient.updateService(updateServiceRequest);
   }
 
-//  /**
-//   * Gathers output returned by ECS Task run action, if fail happens.
-//   *
-//   * @param runTaskResult embedded result of ECS Task run action.
-//   * @return gathered output of ECS Task run action.
-//   */
-//  private String gatherRunEcsTaskResultOutput(RunTaskResult runTaskResult) {
-//    return runTaskResult.getFailures().stream()
-//        .map(
-//            element ->
-//                String.format(
-//                    "%s, %s, %s", element.getArn(), element.getDetail(), element.getReason()))
-//        .collect(Collectors.joining(";"));
-//  }
-
   /**
    * Retrieves remote machine address from the given ECS Task details.
    *
@@ -334,7 +326,7 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
-    ReadinessWaiter.awaitFor(
+    VendorWaiter.awaitFor(
         () -> {
           ListTasksResult listTasksResult = ecsClient.listTasks(listTasksRequest);
 
@@ -514,18 +506,12 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
-    ObjectListing objects = simpleStorage.listObjects(name);
-    while (true) {
-      Iterator<S3ObjectSummary> iter = objects.getObjectSummaries().iterator();
-      while (iter.hasNext()) {
-        simpleStorage.deleteObject(name, iter.next().getKey());
+    for (ObjectListing objects = simpleStorage.listObjects(name);
+        !objects.isTruncated();
+        objects = simpleStorage.listNextBatchOfObjects(objects)) {
+      for (S3ObjectSummary s3ObjectSummary : objects.getObjectSummaries()) {
+        simpleStorage.deleteObject(name, s3ObjectSummary.getKey());
       }
-
-      if (!objects.isTruncated()) {
-        break;
-      }
-
-      objects = simpleStorage.listNextBatchOfObjects(objects);
     }
 
     simpleStorage.deleteBucket(name);

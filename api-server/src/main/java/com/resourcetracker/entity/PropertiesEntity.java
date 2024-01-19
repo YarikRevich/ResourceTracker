@@ -57,8 +57,9 @@ public class PropertiesEntity {
   @ConfigProperty(name = "resourcetracker-kafka.image")
   String resourceTrackerKafkaImage;
 
-  @ConfigProperty(name = "resourcetracker-kafka.image.version")
-  String resourceTrackerKafkaImageVersion;
+  //
+  //  @ConfigProperty(name = "resourcetracker-kafka.image.version")
+  //  String resourceTrackerKafkaImageVersion;
 
   @ConfigProperty(name = "resourcetracker-kafka.host.alias")
   String resourceTrackerKafkaHostAlias;
