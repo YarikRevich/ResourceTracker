@@ -9,6 +9,8 @@ import com.resourcetracker.service.command.internal.health.HealthCheckInternalCo
 import com.resourcetracker.service.command.internal.readiness.ReadinessCheckInternalCommandService;
 import com.resourcetracker.service.visualization.VisualizationService;
 import com.resourcetracker.service.visualization.common.label.StartCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.common.label.StateCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.common.label.StopCommandVisualizationLabel;
 import com.resourcetracker.service.visualization.common.label.VersionCommandVisualizationLabel;
 import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +43,10 @@ public class BaseCommandService {
 
   @Autowired private StartCommandVisualizationLabel startCommandVisualizationLabel;
 
+  @Autowired private StopCommandVisualizationLabel stopCommandVisualizationLabel;
+
+  @Autowired private StateCommandVisualizationLabel stateCommandVisualizationLabel;
+
   @Autowired private VersionCommandVisualizationLabel versionCommandVisualizationLabel;
 
   @Autowired private VisualizationService visualizationService;
@@ -69,6 +75,8 @@ public class BaseCommandService {
   /** Provides access to state command service. */
   @Command(description = "Retrieve state of remote requests executions")
   private void state() {
+    visualizationState.setLabel(stateCommandVisualizationLabel);
+
     visualizationService.process();
 
     try {
@@ -87,6 +95,8 @@ public class BaseCommandService {
   /** Provides access to stop command service. */
   @Command(description = "Stop remote requests execution")
   private void stop() {
+    visualizationState.setLabel(stopCommandVisualizationLabel);
+
     visualizationService.process();
 
     try {
@@ -111,6 +121,8 @@ public class BaseCommandService {
     visualizationService.process();
 
     try {
+      healthCheckInternalCommandService.process();
+
       versionCommandService.process();
     } catch (ApiServerException e) {
       logger.fatal(e.getMessage());

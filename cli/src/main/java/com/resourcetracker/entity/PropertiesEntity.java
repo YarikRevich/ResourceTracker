@@ -31,8 +31,32 @@ public class PropertiesEntity {
   @Value("${progress.visualization.script-acquire-request}")
   private String progressVisualizationScriptAcquireRequestLabel;
 
+  @Value("${progress.visualization.apply-request}")
+  private String progressVisualizationApplyRequestLabel;
+
+  @Value("${progress.visualization.apply-response}")
+  private String progressVisualizationApplyResponseLabel;
+
+  @Value("${progress.visualization.destroy-request}")
+  private String progressVisualizationDestroyRequestLabel;
+
+  @Value("${progress.visualization.destroy-response}")
+  private String progressVisualizationDestroyResponseLabel;
+
+  @Value("${progress.visualization.state-request}")
+  private String progressVisualizationStateRequestLabel;
+
+  @Value("${progress.visualization.state-response}")
+  private String progressVisualizationStateResponseLabel;
+
   @Value("${progress.visualization.version-info-request}")
   private String progressVisualizationVersionInfoRequestLabel;
+
+  @Value("${progress.visualization.health-check-request}")
+  private String progressVisualizationHealthCheckRequestLabel;
+
+  @Value("${progress.visualization.readiness-check-request}")
+  private String progressVisualizationReadinessCheckRequestLabel;
 
   @Bean
   private static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {

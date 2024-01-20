@@ -27,7 +27,7 @@ public class VisualizationService {
             System.out.println(visualizationState.getLabel().getCurrent());
           }
 
-          if (visualizationState.getLabel().isEmpty()) {
+          if (visualizationState.getLabel().isEmpty() && !visualizationState.getLabel().isNext()) {
             latch.countDown();
           }
         },
@@ -41,7 +41,9 @@ public class VisualizationService {
   public void await() {
     latch.await();
 
-    System.out.print("\n");
+    if (!visualizationState.getResult().isEmpty()) {
+      System.out.print("\n");
+    }
 
     visualizationState.getResult().forEach(System.out::println);
   }

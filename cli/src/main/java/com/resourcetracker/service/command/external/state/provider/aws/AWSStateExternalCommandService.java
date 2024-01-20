@@ -1,26 +1,30 @@
-package com.resourcetracker.service.command.internal.readiness.provider.aws;
+package com.resourcetracker.service.command.external.state.provider.aws;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resourcetracker.converter.CredentialsConverter;
 import com.resourcetracker.dto.ValidationSecretsApplicationDto;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.*;
-import com.resourcetracker.service.client.command.ReadinessCheckClientCommandService;
+import com.resourcetracker.service.client.command.LogsClientCommandService;
 import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
 import com.resourcetracker.service.command.ICommand;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+/** Represents start external command service for AWS provider. */
 @Service
-public class AWSReadinessCheckInternalCommandService implements ICommand {
+public class AWSStateExternalCommandService implements ICommand {
   @Autowired private ConfigService configService;
 
   @Autowired private SecretsAcquireClientCommandService secretsAcquireClientCommandService;
 
-  @Autowired private ReadinessCheckClientCommandService readinessCheckClientCommandService;
+  @Autowired private LogsClientCommandService logsClientCommandService;
 
   @Autowired private VisualizationState visualizationState;
 
@@ -43,6 +47,8 @@ public class AWSReadinessCheckInternalCommandService implements ICommand {
         secretsAcquireClientCommandService.process(validationSecretsApplicationDto);
 
     if (validationSecretsApplicationResult.getValid()) {
+      visualizationState.getLabel().pushNext();
+
       CredentialsFields credentialsFields =
           CredentialsFields.of(
               AWSSecrets.of(
@@ -50,17 +56,31 @@ public class AWSReadinessCheckInternalCommandService implements ICommand {
                   validationSecretsApplicationResult.getSecrets().getSecretKey()),
               credentials.getRegion());
 
-      ReadinessCheckApplication readinessCheckApplication =
-          ReadinessCheckApplication.of(Provider.AWS, credentialsFields);
+      TopicLogsResult topicLogsResult;
 
-      ReadinessCheckResult readinessCheckResult =
-          readinessCheckClientCommandService.process(readinessCheckApplication);
+      TopicLogsApplication topicLogsApplication =
+          TopicLogsApplication.of(Provider.AWS, credentialsFields);
 
-      if (readinessCheckResult.getStatus() == ReadinessCheckStatus.DOWN) {
+      try {
+        topicLogsResult = logsClientCommandService.process(topicLogsApplication);
+      } catch (WebClientResponseException e) {
         throw new ApiServerException(
-            new ApiServerNotAvailableException(readinessCheckResult.getData().toString())
-                .getMessage());
+            new ApiServerNotAvailableException(e.getResponseBodyAsString()).getMessage());
       }
+
+      visualizationState.getLabel().pushNext();
+
+      ObjectMapper mapper = new ObjectMapper();
+      topicLogsResult
+          .getResult()
+          .forEach(
+              element -> {
+                try {
+                  visualizationState.addResult(mapper.writeValueAsString(element));
+                } catch (JsonProcessingException e) {
+                  throw new RuntimeException(e);
+                }
+              });
     }
   }
 }

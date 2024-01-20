@@ -39,6 +39,8 @@ public class AWSStopExternalCommandService implements ICommand {
    */
   @Override
   public void process() throws ApiServerException {
+    visualizationState.getLabel().pushNext();
+
     ConfigEntity.Cloud.AWSCredentials credentials =
         CredentialsConverter.convert(
             configService.getConfig().getCloud().getCredentials(),
@@ -51,6 +53,8 @@ public class AWSStopExternalCommandService implements ICommand {
         secretsAcquireClientCommandService.process(validationSecretsApplicationDto);
 
     if (validationSecretsApplicationResult.getValid()) {
+      visualizationState.getLabel().pushNext();
+
       CredentialsFields credentialsFields =
           CredentialsFields.of(
               AWSSecrets.of(
@@ -68,7 +72,7 @@ public class AWSStopExternalCommandService implements ICommand {
 
       destroyClientCommandService.process(terraformDestructionApplication);
 
-      visualizationState.addResult("Deployment with the given configuration file was stopped!");
+      visualizationState.getLabel().pushNext();
     } else {
       logger.fatal(new CloudCredentialsValidationException().getMessage());
     }

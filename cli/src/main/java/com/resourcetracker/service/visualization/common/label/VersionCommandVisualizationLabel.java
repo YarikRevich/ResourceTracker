@@ -4,11 +4,12 @@ import com.resourcetracker.dto.VisualizationLabelDto;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.service.visualization.common.IVisualizationLabel;
 import java.util.ArrayDeque;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/** Represents label set used for apply command service. */
+/** Represents label set used for version command service. */
 @Service
 public class VersionCommandVisualizationLabel implements IVisualizationLabel {
   private final ArrayDeque<VisualizationLabelDto> stepsQueue = new ArrayDeque<>();
@@ -18,9 +19,12 @@ public class VersionCommandVisualizationLabel implements IVisualizationLabel {
   private final ReentrantLock mutex = new ReentrantLock();
 
   public VersionCommandVisualizationLabel(@Autowired PropertiesEntity properties) {
-    stepsQueue.add(
-        VisualizationLabelDto.of(
-            properties.getProgressVisualizationVersionInfoRequestLabel(), 100));
+    stepsQueue.addAll(
+        List.of(
+            VisualizationLabelDto.of(
+                properties.getProgressVisualizationHealthCheckRequestLabel(), 10),
+            VisualizationLabelDto.of(
+                properties.getProgressVisualizationVersionInfoRequestLabel(), 100)));
   }
 
   /**
@@ -50,13 +54,11 @@ public class VersionCommandVisualizationLabel implements IVisualizationLabel {
    */
   @Override
   public void pushNext() {
-    if (!isEmpty()) {
-      mutex.lock();
+    mutex.lock();
 
-      batchQueue.push(stepsQueue.pop().toString());
+    batchQueue.push(stepsQueue.pop().toString());
 
-      mutex.unlock();
-    }
+    mutex.unlock();
   }
 
   /**
@@ -64,6 +66,12 @@ public class VersionCommandVisualizationLabel implements IVisualizationLabel {
    */
   @Override
   public String getCurrent() {
-    return batchQueue.pop();
+    mutex.lock();
+
+    try {
+      return batchQueue.pollLast();
+    } finally {
+      mutex.unlock();
+    }
   }
 }

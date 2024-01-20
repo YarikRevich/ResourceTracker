@@ -10,11 +10,13 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 /** */
 public class KafkaService {
@@ -31,8 +33,6 @@ public class KafkaService {
         String.format(
             "%s:%d", kafkaBootstrapServerHost, properties.getResourceTrackerKafkaMainPort());
 
-    System.out.println(kafkaBootstrapServerHost);
-
     Properties kafkaAdminClientProps = new Properties();
 
     kafkaAdminClientProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
@@ -44,7 +44,15 @@ public class KafkaService {
 
     Properties kafkaConsumerProps = new Properties();
 
-    kafkaConsumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
+    String groupId = UUID.randomUUID().toString();
+
+    kafkaConsumerProps.put(
+        ConsumerConfig.GROUP_INSTANCE_ID_CONFIG,
+        String.format("scheduler_coordinator_%s", groupId));
+    kafkaConsumerProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+    kafkaConsumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+    kafkaConsumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    kafkaConsumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
     kafkaConsumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServer);
     kafkaConsumerProps.put(
         ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
@@ -115,21 +123,15 @@ public class KafkaService {
    * @return retrieved messages.
    */
   public List<KafkaLogsTopicDto> consumeLogs() {
-    List<KafkaLogsTopicDto> kafkaLogsTopicEntities = new ArrayList<>();
+    List<KafkaLogsTopicDto> result = new ArrayList<>();
 
-    ConsumerRecords<String, KafkaLogsTopicDto> records = kafkaConsumer.poll(Duration.ofSeconds(5));
+    ConsumerRecords<String, KafkaLogsTopicDto> records = kafkaConsumer.poll(Duration.ofSeconds(30));
 
-    System.out.println(records.count());
+    for (ConsumerRecord<String, KafkaLogsTopicDto> record : records) {
+      result.add(record.value());
+    }
 
-    //    ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>> iter =
-    //        (ListIterator<ConsumerRecord<String, KafkaLogsTopicEntity>>) records.iterator();
-    //
-    //    while (iter.hasNext()) {
-    //      ConsumerRecord<String, KafkaLogsTopicEntity> record = iter.next();
-    //      kafkaLogsTopicEntities.add(record.value());
-    //    }
-
-    return kafkaLogsTopicEntities;
+    return result;
   }
 
   @PreDestroy

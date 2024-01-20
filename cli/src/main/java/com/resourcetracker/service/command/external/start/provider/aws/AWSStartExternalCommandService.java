@@ -82,6 +82,8 @@ public class AWSStartExternalCommandService implements ICommand {
           scriptAcquireClientCommandService.process(validationScriptApplicationDto);
 
       if (validationScriptApplicationResult.getValid()) {
+        visualizationState.getLabel().pushNext();
+
         CredentialsFields credentialsFields =
             CredentialsFields.of(
                 AWSSecrets.of(
@@ -94,7 +96,7 @@ public class AWSStartExternalCommandService implements ICommand {
 
         applyClientCommandService.process(terraformDeploymentApplication);
 
-        visualizationState.addResult("Deployment with the given configuration was started!");
+        visualizationState.getLabel().pushNext();
       } else {
         logger.fatal(new ScriptDataValidationException().getMessage());
       }

@@ -11,25 +11,25 @@ import org.springframework.stereotype.Service;
 
 /** Represents label set used for apply command service. */
 @Service
-public class StartCommandVisualizationLabel implements IVisualizationLabel {
+public class StateCommandVisualizationLabel implements IVisualizationLabel {
   private final ArrayDeque<VisualizationLabelDto> stepsQueue = new ArrayDeque<>();
 
   private final ArrayDeque<String> batchQueue = new ArrayDeque<>();
 
   private final ReentrantLock mutex = new ReentrantLock();
 
-  public StartCommandVisualizationLabel(@Autowired PropertiesEntity properties) {
+  public StateCommandVisualizationLabel(@Autowired PropertiesEntity properties) {
     stepsQueue.addAll(
         List.of(
             VisualizationLabelDto.of(
                 properties.getProgressVisualizationHealthCheckRequestLabel(), 10),
             VisualizationLabelDto.of(
-                properties.getProgressVisualizationSecretsAcquireRequestLabel(), 30),
+                properties.getProgressVisualizationReadinessCheckRequestLabel(), 30),
             VisualizationLabelDto.of(
-                properties.getProgressVisualizationScriptAcquireRequestLabel(), 60),
-            VisualizationLabelDto.of(properties.getProgressVisualizationApplyRequestLabel(), 90),
+                properties.getProgressVisualizationSecretsAcquireRequestLabel(), 50),
+            VisualizationLabelDto.of(properties.getProgressVisualizationStateRequestLabel(), 90),
             VisualizationLabelDto.of(
-                properties.getProgressVisualizationApplyResponseLabel(), 100)));
+                properties.getProgressVisualizationStateResponseLabel(), 100)));
   }
 
   /**
