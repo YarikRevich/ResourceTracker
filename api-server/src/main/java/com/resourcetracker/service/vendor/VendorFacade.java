@@ -6,14 +6,16 @@ import com.resourcetracker.converter.DeploymentRequestsToAgentContextConverter;
 import com.resourcetracker.converter.SecretsConverter;
 import com.resourcetracker.dto.*;
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.exception.ContainerStartupFailureException;
 import com.resourcetracker.exception.SecretsConversionException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.model.ValidationSecretsApplication;
 import com.resourcetracker.model.ValidationSecretsApplicationResult;
 import com.resourcetracker.model.ValidationSecretsApplicationResultSecrets;
+import com.resourcetracker.service.client.kafkastarter.KafkaStarterClientServiceFacade;
+import com.resourcetracker.service.kafka.KafkaService;
 import com.resourcetracker.service.vendor.aws.AWSVendorService;
+import com.resourcetracker.service.vendor.common.VendorWaiter;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -129,10 +131,10 @@ public class VendorFacade {
                     properties.getGitCommitId()),
                 AWSKafkaTaskDefinitionRegistrationDto.of(
                     properties.getResourceTrackerKafkaImage(),
-                    properties.getResourceTrackerKafkaImageVersion(),
+                    properties.getGitCommitId(),
                     properties.getAwsResourceTrackerKafkaName(),
                     properties.getResourceTrackerKafkaMainPort(),
-                        properties.getResourceTrackerKafkaStarterPort(),
+                    properties.getResourceTrackerKafkaStarterPort(),
                     serviceMachineAddress,
                     properties.getResourceTrackerKafkaHostAlias(),
                     properties.getKafkaTopic(),
@@ -165,12 +167,25 @@ public class VendorFacade {
             terraformDeploymentApplication.getCredentials().getRegion(),
             properties.getAwsReadinessPeriod());
 
-        //        yield awsVendorService.getMachineAddress(
-        //            properties.getAwsResourceTrackerKafkaName(),
-        //            awsDeploymentResult.getEcsCluster().getValue(),
-        //            awsCredentialsProvider,
-        //            terraformDeploymentApplication.getCredentials().getRegion());
-        yield "0.0.0.0";
+        serviceMachineAddress =
+            awsVendorService.getMachineAddress(
+                properties.getAwsResourceTrackerCommonFamily(),
+                awsDeploymentResult.getEcsCluster().getValue(),
+                ecsTaskDefinitionsArn,
+                awsCredentialsProvider,
+                terraformDeploymentApplication.getCredentials().getRegion());
+
+        KafkaStarterClientServiceFacade kafkaStarterClientServiceFacade =
+            new KafkaStarterClientServiceFacade(
+                serviceMachineAddress, properties.getResourceTrackerKafkaStarterPort());
+
+        kafkaStarterClientServiceFacade.deploy(serviceMachineAddress);
+
+        KafkaService kafkaService = new KafkaService(serviceMachineAddress, properties);
+
+        VendorWaiter.awaitFor(kafkaService::isAvailable, properties.getKafkaReadinessPeriod());
+
+        yield serviceMachineAddress;
       }
     };
   }

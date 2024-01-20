@@ -7,6 +7,7 @@ import com.resourcetracker.service.command.BaseCommandService;
 import com.resourcetracker.service.command.external.start.StartExternalCommandService;
 import com.resourcetracker.service.command.external.start.provider.aws.AWSStartExternalCommandService;
 import com.resourcetracker.service.command.external.state.StateExternalCommandService;
+import com.resourcetracker.service.command.external.state.provider.aws.AWSStateExternalCommandService;
 import com.resourcetracker.service.command.external.stop.StopExternalCommandService;
 import com.resourcetracker.service.command.external.stop.provider.aws.AWSStopExternalCommandService;
 import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
@@ -15,6 +16,12 @@ import com.resourcetracker.service.command.internal.readiness.ReadinessCheckInte
 import com.resourcetracker.service.command.internal.readiness.provider.aws.AWSReadinessCheckInternalCommandService;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.config.common.ValidConfigService;
+import com.resourcetracker.service.visualization.VisualizationService;
+import com.resourcetracker.service.visualization.common.label.StartCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.common.label.StateCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.common.label.StopCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.common.label.VersionCommandVisualizationLabel;
+import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +37,7 @@ import picocli.CommandLine;
 @Import({
   BaseCommandService.class,
   StartExternalCommandService.class,
+  AWSStateExternalCommandService.class,
   StateExternalCommandService.class,
   StopExternalCommandService.class,
   VersionExternalCommandService.class,
@@ -49,7 +57,13 @@ import picocli.CommandLine;
   ConfigService.class,
   ValidConfigService.class,
   BuildProperties.class,
-  PropertiesEntity.class
+  PropertiesEntity.class,
+  StartCommandVisualizationLabel.class,
+  StopCommandVisualizationLabel.class,
+  StateCommandVisualizationLabel.class,
+  VersionCommandVisualizationLabel.class,
+  VisualizationService.class,
+  VisualizationState.class
 })
 public class App implements ApplicationRunner, ExitCodeGenerator {
   private static final Logger logger = LogManager.getLogger(App.class);

@@ -16,7 +16,7 @@ def deploy():
    
     host = request.args.get('host')
 
-    os.system(f'KRAFT_CONTAINER_HOST_NAME={host} bash /opt/docker-entrypoint.sh')
+    os.system(f'KRAFT_CONTAINER_HOST_NAME={host} bash /opt/docker-entrypoint.sh &')
 
     return "", 201
 

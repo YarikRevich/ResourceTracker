@@ -8,6 +8,7 @@ import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/** Represents readiness check internal command service. */
 @Service
 public class ReadinessCheckInternalCommandService implements ICommand {
   @Autowired private ConfigService configService;

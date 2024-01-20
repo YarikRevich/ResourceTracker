@@ -27,8 +27,6 @@ public class InitCommandService extends SProcess {
                   workspaceUnitDirectory, credentials),
               AWSProviderConfigurationHelper.getBackendConfig(credentials));
         };
-
-    System.out.println(command);
   }
 
   @Override

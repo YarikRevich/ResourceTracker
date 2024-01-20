@@ -360,15 +360,16 @@ components:
           $ref: "#/components/schemas/CredentialsFields"
     ReadinessCheckResult:
       required:
+        - name
         - status
-        - checks
+        - data
       properties:
+        name:
+          type: string
         status:
           $ref: "#/components/schemas/ReadinessCheckStatus"
-        checks:
-          type: array
-          items:
-            $ref: "#/components/schemas/ReadinessCheckUnit"
+        data:
+          type: object
     ReadinessCheckUnit:
       required:
         - name

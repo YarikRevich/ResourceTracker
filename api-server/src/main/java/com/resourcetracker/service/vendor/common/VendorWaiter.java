@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import lombok.SneakyThrows;
 
 /** Represents readiness waiter used for to wait for resource availability. */
-public class ReadinessWaiter {
+public class VendorWaiter {
   private static final ScheduledExecutorService scheduledExecutorService =
       Executors.newScheduledThreadPool(4);
 

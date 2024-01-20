@@ -15,6 +15,7 @@ import com.resourcetracker.service.client.command.DestroyClientCommandService;
 import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
 import com.resourcetracker.service.command.ICommand;
 import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,15 @@ public class AWSStopExternalCommandService implements ICommand {
 
   @Autowired private SecretsAcquireClientCommandService secretsAcquireClientCommandService;
 
+  @Autowired private VisualizationState visualizationState;
+
   /**
    * @see ICommand
    */
   @Override
   public void process() throws ApiServerException {
+    visualizationState.getLabel().pushNext();
+
     ConfigEntity.Cloud.AWSCredentials credentials =
         CredentialsConverter.convert(
             configService.getConfig().getCloud().getCredentials(),
@@ -48,6 +53,8 @@ public class AWSStopExternalCommandService implements ICommand {
         secretsAcquireClientCommandService.process(validationSecretsApplicationDto);
 
     if (validationSecretsApplicationResult.getValid()) {
+      visualizationState.getLabel().pushNext();
+
       CredentialsFields credentialsFields =
           CredentialsFields.of(
               AWSSecrets.of(
@@ -65,7 +72,7 @@ public class AWSStopExternalCommandService implements ICommand {
 
       destroyClientCommandService.process(terraformDestructionApplication);
 
-      System.out.println("Deployment with the given configuration file was stopped!");
+      visualizationState.getLabel().pushNext();
     } else {
       logger.fatal(new CloudCredentialsValidationException().getMessage());
     }
