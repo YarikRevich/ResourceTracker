@@ -22,6 +22,10 @@ public class VendorWaiter {
     ScheduledFuture<?> awaitTask =
         scheduledExecutorService.scheduleAtFixedRate(
             () -> {
+                if (latch.getCount() == 0){
+                    return;
+                }
+
               if (callback.get()) {
                 latch.countDown();
               }
