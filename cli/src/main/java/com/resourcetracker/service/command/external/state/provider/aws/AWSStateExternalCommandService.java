@@ -6,20 +6,23 @@ import com.resourcetracker.converter.CredentialsConverter;
 import com.resourcetracker.dto.ValidationSecretsApplicationDto;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.exception.ApiServerException;
-import com.resourcetracker.exception.ApiServerNotAvailableException;
+import com.resourcetracker.exception.CloudCredentialsValidationException;
 import com.resourcetracker.model.*;
 import com.resourcetracker.service.client.command.LogsClientCommandService;
 import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
-import com.resourcetracker.service.command.ICommand;
+import com.resourcetracker.service.command.common.ICommand;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.visualization.state.VisualizationState;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 /** Represents start external command service for AWS provider. */
 @Service
 public class AWSStateExternalCommandService implements ICommand {
+  private static final Logger logger = LogManager.getLogger(AWSStateExternalCommandService.class);
+
   @Autowired private ConfigService configService;
 
   @Autowired private SecretsAcquireClientCommandService secretsAcquireClientCommandService;
@@ -61,12 +64,7 @@ public class AWSStateExternalCommandService implements ICommand {
       TopicLogsApplication topicLogsApplication =
           TopicLogsApplication.of(Provider.AWS, credentialsFields);
 
-      try {
-        topicLogsResult = logsClientCommandService.process(topicLogsApplication);
-      } catch (WebClientResponseException e) {
-        throw new ApiServerException(
-            new ApiServerNotAvailableException(e.getResponseBodyAsString()).getMessage());
-      }
+      topicLogsResult = logsClientCommandService.process(topicLogsApplication);
 
       visualizationState.getLabel().pushNext();
 
@@ -81,6 +79,8 @@ public class AWSStateExternalCommandService implements ICommand {
                   throw new RuntimeException(e);
                 }
               });
+    } else {
+      logger.fatal(new CloudCredentialsValidationException().getMessage());
     }
   }
 }

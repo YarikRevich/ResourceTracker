@@ -1,10 +1,10 @@
 package com.resourcetracker.service.element.layout.scene.main.deployment.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.list.ListVisualizer;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.element.text.common.IElementResizable;
 import com.resourcetracker.service.event.state.LocalState;
 import java.util.UUID;
 import javafx.scene.layout.*;
@@ -21,6 +21,7 @@ public class MainDeploymentContentGrid implements IElementResizable, IElement<Gr
       @Autowired MainDeploymentBarGrid mainDeploymentBarGrid,
       @Autowired ListVisualizer listVisualizer) {
     GridPane grid = new GridPane();
+    grid.setVgap(properties.getCommonSceneContentVerticalGap());
 
     ColumnConstraints column1 = new ColumnConstraints();
     column1.setHgrow(Priority.ALWAYS);
@@ -28,9 +29,9 @@ public class MainDeploymentContentGrid implements IElementResizable, IElement<Gr
     grid.getColumnConstraints().add(column1);
 
     RowConstraints row1 = new RowConstraints();
-    row1.setPercentHeight(10);
+    row1.setPercentHeight(9);
     RowConstraints row2 = new RowConstraints();
-    row2.setPercentHeight(90);
+    row2.setPercentHeight(91);
 
     grid.getRowConstraints().addAll(row1, row2);
 
@@ -41,7 +42,7 @@ public class MainDeploymentContentGrid implements IElementResizable, IElement<Gr
   }
 
   /**
-   * @see com.resourcetracker.service.element.IElement
+   * @see IElement
    */
   @Override
   public GridPane getContent() {
@@ -53,7 +54,7 @@ public class MainDeploymentContentGrid implements IElementResizable, IElement<Gr
    */
   @Override
   public void handlePrefWidth() {
-    getContent().setPrefWidth(LocalState.getMainWindowWidth());
+    getContent().setMaxWidth(LocalState.getMainWindowWidth());
   }
 
   /**
@@ -61,6 +62,6 @@ public class MainDeploymentContentGrid implements IElementResizable, IElement<Gr
    */
   @Override
   public void handlePrefHeight() {
-    getContent().setPrefHeight(LocalState.getMainWindowHeight());
+    getContent().setMaxHeight(LocalState.getMainWindowHeight());
   }
 }

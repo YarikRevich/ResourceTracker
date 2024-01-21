@@ -5,6 +5,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
+/** Represents mapper for KafkaServiceNotAvailableException exception. */
 @Provider
 public class KafkaServiceNotAvailableExceptionMapper
     implements ExceptionMapper<KafkaServiceNotAvailableException> {

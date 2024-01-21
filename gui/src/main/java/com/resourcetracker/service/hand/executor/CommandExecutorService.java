@@ -21,6 +21,15 @@ public class CommandExecutorService {
   }
 
   /**
+   * Returns type of the currently used operating system.
+   *
+   * @return retrieved current operating system type.
+   */
+  public SProcessExecutor.OS getOSType() {
+    return processExecutor.getOSType();
+  }
+
+  /**
    * Executes given command.
    *
    * @param command standalone command

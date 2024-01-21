@@ -2,10 +2,14 @@ package com.resourcetracker.service.element.image.view.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.ApplicationImageFileNotFoundException;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementActualizable;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.element.text.common.IElementActualizable;
+import com.resourcetracker.service.element.text.common.IElementResizable;
+import com.resourcetracker.service.event.payload.DeploymentStateRetrievalEvent;
+import ink.bluecloud.css.CssResources;
+import ink.bluecloud.css.ElementButton;
+import ink.bluecloud.css.ElementButtonKt;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.UUID;
@@ -17,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 /** Represents deployment refresh image. */
@@ -26,9 +31,18 @@ public class RefreshDeploymentStateImageView implements IElementResizable, IElem
 
   private static final String REFRESH_DEPLOYMENT_DESCRIPTION = "refresh deployment state";
 
-  public RefreshDeploymentStateImageView(@Autowired PropertiesEntity properties)
+  public RefreshDeploymentStateImageView(
+      @Autowired PropertiesEntity properties,
+      @Autowired ApplicationEventPublisher applicationEventPublisher)
       throws ApplicationImageFileNotFoundException {
     Button button = new Button();
+    ElementButtonKt.theme(button, ElementButton.redButton);
+    button.getStylesheets().add(CssResources.globalCssFile);
+    button.getStylesheets().add(CssResources.buttonCssFile);
+    button.getStylesheets().add(CssResources.textFieldCssFile);
+
+    button.setOnMouseClicked(
+        event -> applicationEventPublisher.publishEvent(new DeploymentStateRetrievalEvent()));
 
     InputStream imageSource =
         getClass().getClassLoader().getResourceAsStream(properties.getImageRefreshName());
@@ -37,6 +51,9 @@ public class RefreshDeploymentStateImageView implements IElementResizable, IElem
     }
 
     ImageView imageView = new ImageView(new Image(imageSource));
+    imageView.setFitHeight(properties.getImageBarHeight());
+    imageView.setFitWidth(properties.getImageBarWidth());
+
     button.setGraphic(imageView);
 
     button.setAlignment(Pos.CENTER_RIGHT);

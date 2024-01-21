@@ -2,13 +2,11 @@ package com.resourcetracker.service.element.image.view.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.ApplicationImageFileNotFoundException;
-import com.resourcetracker.exception.CommandExecutorException;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementActualizable;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.hand.config.command.OpenConfigEditorCommandService;
-import com.resourcetracker.service.hand.executor.CommandExecutorService;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.element.text.common.IElementActualizable;
+import com.resourcetracker.service.element.text.common.IElementResizable;
+import com.resourcetracker.service.event.payload.EditorOpenWindowEvent;
 import ink.bluecloud.css.CssResources;
 import ink.bluecloud.css.ElementButton;
 import ink.bluecloud.css.ElementButtonKt;
@@ -23,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 /** Represents deployment edit configuration image. */
@@ -36,27 +35,16 @@ public class EditDeploymentConfigurationImageView
 
   public EditDeploymentConfigurationImageView(
       @Autowired PropertiesEntity properties,
-      @Autowired CommandExecutorService commandExecutorService)
+      @Autowired ApplicationEventPublisher applicationEventPublisher)
       throws ApplicationImageFileNotFoundException {
     Button button = new Button();
     ElementButtonKt.theme(button, ElementButton.redButton);
     button.getStylesheets().add(CssResources.globalCssFile);
     button.getStylesheets().add(CssResources.buttonCssFile);
     button.getStylesheets().add(CssResources.textFieldCssFile);
-    button.getStylesheets().add("-fx-focus-color: transparent;");
 
-    button.setOnAction(
-        event -> {
-          OpenConfigEditorCommandService openConfigEditorCommandService =
-              new OpenConfigEditorCommandService(
-                  properties.getConfigRootPath(), properties.getConfigUserFilePath());
-
-          try {
-            commandExecutorService.executeCommand(openConfigEditorCommandService);
-          } catch (CommandExecutorException e) {
-            throw new RuntimeException(e);
-          }
-        });
+    button.setOnMouseClicked(
+        event -> applicationEventPublisher.publishEvent(new EditorOpenWindowEvent()));
 
     InputStream imageSource =
         getClass().getClassLoader().getResourceAsStream(properties.getImageEditName());
@@ -65,6 +53,9 @@ public class EditDeploymentConfigurationImageView
     }
 
     ImageView imageView = new ImageView(new Image(imageSource));
+    imageView.setFitHeight(properties.getImageBarHeight());
+    imageView.setFitWidth(properties.getImageBarWidth());
+
     button.setGraphic(imageView);
 
     button.setAlignment(Pos.CENTER_RIGHT);

@@ -6,7 +6,7 @@ import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.TopicLogsApplication;
 import com.resourcetracker.model.TopicLogsResult;
-import com.resourcetracker.service.client.IClientCommand;
+import com.resourcetracker.service.client.common.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,10 @@ public class LogsClientCommandService
 
     this.topicResourceApi = new TopicResourceApi(apiClient);
   }
+
+  /** */
+  @Override
+  public void configure() {}
 
   /**
    * @see IClientCommand

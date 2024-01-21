@@ -5,8 +5,7 @@ import process.SProcess;
 import process.SProcessExecutor;
 
 /**
- * Represents command, which is responsible for a startup of the API Server in the background as
- * system service.
+ * Represents command, which is responsible for a startup of the configuration file editor.
  */
 public class OpenConfigEditorCommandService extends SProcess {
   private final String command;
@@ -18,7 +17,7 @@ public class OpenConfigEditorCommandService extends SProcess {
     this.command =
         switch (osType) {
           case MAC -> String.format(
-              "open -e %s",
+              "open -eW %s",
               Paths.get(System.getProperty("user.home"), configRootPath, configUserFilePath));
           case WINDOWS, UNIX, ANY -> null;
         };

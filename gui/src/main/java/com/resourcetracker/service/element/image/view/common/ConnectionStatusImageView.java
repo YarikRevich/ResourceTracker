@@ -1,12 +1,12 @@
 package com.resourcetracker.service.element.image.view.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementActualizable;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.element.image.collection.ConnectionStatusImageCollection;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.element.text.common.IElementActualizable;
+import com.resourcetracker.service.element.text.common.IElementResizable;
 import com.resourcetracker.service.event.state.LocalState;
 import java.util.Objects;
 import java.util.UUID;

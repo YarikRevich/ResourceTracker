@@ -9,8 +9,9 @@ import com.resourcetracker.exception.CloudCredentialsFileNotFoundException;
 import com.resourcetracker.model.Provider;
 import com.resourcetracker.model.ValidationSecretsApplication;
 import com.resourcetracker.model.ValidationSecretsApplicationResult;
-import com.resourcetracker.service.client.IClientCommand;
+import com.resourcetracker.service.client.common.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,9 +25,16 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @Service
 public class SecretsAcquireClientCommandService
     implements IClientCommand<ValidationSecretsApplicationResult, ValidationSecretsApplicationDto> {
-  private final ValidationResourceApi validationResourceApi;
+  @Autowired private ConfigService configService;
 
-  public SecretsAcquireClientCommandService(@Autowired ConfigService configService) {
+  private ValidationResourceApi validationResourceApi;
+
+  /**
+   * @see IClientCommand
+   */
+  @Override
+  @PostConstruct
+  public void configure() {
     ApiClient apiClient =
         new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 

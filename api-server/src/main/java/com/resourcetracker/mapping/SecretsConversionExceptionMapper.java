@@ -5,6 +5,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
+/** Represents mapper for SecretsConversionException exception. */
 @Provider
 public class SecretsConversionExceptionMapper
     implements ExceptionMapper<SecretsConversionException> {

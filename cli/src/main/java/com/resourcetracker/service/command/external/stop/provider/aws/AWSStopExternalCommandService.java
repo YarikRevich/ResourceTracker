@@ -13,7 +13,7 @@ import com.resourcetracker.model.TerraformDestructionApplication;
 import com.resourcetracker.model.ValidationSecretsApplicationResult;
 import com.resourcetracker.service.client.command.DestroyClientCommandService;
 import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
-import com.resourcetracker.service.command.ICommand;
+import com.resourcetracker.service.command.common.ICommand;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.apache.logging.log4j.LogManager;

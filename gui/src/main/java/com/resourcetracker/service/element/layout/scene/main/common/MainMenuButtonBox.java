@@ -1,8 +1,7 @@
 package com.resourcetracker.service.element.layout.scene.main.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.alert.ApiServerNotAvailableAlert;
+import com.resourcetracker.service.element.alert.ErrorAlert;
 import com.resourcetracker.service.element.button.BasicButton;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.element.progressbar.main.deployment.MainDeploymentCircleProgressBar;
@@ -11,6 +10,8 @@ import com.resourcetracker.service.element.scene.main.deployment.MainDeploymentS
 import com.resourcetracker.service.element.scene.main.start.MainStartScene;
 import com.resourcetracker.service.element.stage.SettingsStage;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.event.payload.DeploymentStateRetrievalEvent;
 import com.resourcetracker.service.event.state.LocalState;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +32,11 @@ public class MainMenuButtonBox implements IElement<VBox> {
 
   @Lazy @Autowired private MainDeploymentScene deploymentScene;
 
-  @Lazy @Autowired private ApiServerNotAvailableAlert apiServerNotAvailableAlert;
+  @Lazy @Autowired private ErrorAlert errorAlert;
 
   public MainMenuButtonBox(
       @Autowired PropertiesEntity properties,
+      @Autowired ApplicationEventPublisher applicationEventPublisher,
       @Autowired SettingsStage settingsStage,
       @Autowired MainStartCircleProgressBar mainStartCircleProgressBar,
       @Autowired MainDeploymentCircleProgressBar mainDeploymentCircleProgressBar) {
@@ -45,6 +48,15 @@ public class MainMenuButtonBox implements IElement<VBox> {
                     properties,
                     () -> {
                       ElementHelper.switchScene(getContent().getScene(), startScene.getContent());
+
+                      ElementHelper.toggleElementVisibility(
+                          mainStartCircleProgressBar.getContent());
+
+                      SchedulerHelper.scheduleTimer(
+                          () ->
+                              ElementHelper.toggleElementVisibility(
+                                  mainStartCircleProgressBar.getContent()),
+                          properties.getSpinnerInitialDelay());
                     })
                 .getContent(),
             new BasicButton(
@@ -52,20 +64,18 @@ public class MainMenuButtonBox implements IElement<VBox> {
                     properties,
                     () -> {
                       if (LocalState.getConnectionEstablished()) {
-                        ElementHelper.switchScene(
-                            getContent().getScene(), deploymentScene.getContent());
+                        if (!ElementHelper.areElementsEqual(
+                            getContent().getScene(), deploymentScene.getContent())) {
+                          ElementHelper.switchScene(
+                              getContent().getScene(), deploymentScene.getContent());
 
-                        ElementHelper.toggleElementVisibility(
-                            mainDeploymentCircleProgressBar.getContent());
-
-                        SchedulerHelper.scheduleTimer(
-                            () ->
-                                ElementHelper.toggleElementVisibility(
-                                    mainDeploymentCircleProgressBar.getContent()),
-                            properties.getSpinnerInitialDelay());
+                          applicationEventPublisher.publishEvent(
+                              new DeploymentStateRetrievalEvent());
+                        }
                       } else {
-
-                        ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
+                        ElementHelper.showAlert(
+                            errorAlert.getContent(),
+                            properties.getAlertApiServerUnavailableMessage());
                       }
                     })
                 .getContent(),

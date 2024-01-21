@@ -1,6 +1,7 @@
 package com.resourcetracker.entity;
 
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -106,6 +107,12 @@ public class PropertiesEntity {
   @Value(value = "${scene.common.content.background.color.b}")
   private Integer commonSceneContentBackgroundColorB;
 
+  @Value(value = "${scene.common.content.vertical-gap}")
+  private Double commonSceneContentVerticalGap;
+
+  @Value(value = "${scene.common.content.bar.horizontal-gap}")
+  private Double sceneCommonContentBarHorizontalGap;
+
   @Value(value = "${scene.common.footer.background.color.r}")
   private Integer commonSceneFooterBackgroundColorR;
 
@@ -121,6 +128,9 @@ public class PropertiesEntity {
   @Value(value = "${font.default.name}")
   private String fontDefaultName;
 
+  @Value(value = "${image.icon.name}")
+  private String imageIconName;
+
   @Value(value = "${image.arrow.name}")
   private String imageArrowName;
 
@@ -133,6 +143,33 @@ public class PropertiesEntity {
   @Value(value = "${image.start.name}")
   private String imageStartName;
 
+  @Value(value = "${image.stop.name}")
+  private String imageStopName;
+
+  @Value(value = "${image.bar.width}")
+  private Integer imageBarWidth;
+
+  @Value(value = "${image.bar.height}")
+  private Integer imageBarHeight;
+
+  @Value(value = "${list-view.stub.name}")
+  private String listViewStubName;
+
+  @Value(value = "${alert.api-server-unavailable.message}")
+  private String alertApiServerUnavailableMessage;
+
+  @Value(value = "${alert.deployment-finished.message}")
+  private String alertDeploymentFinishedMessage;
+
+  @Value(value = "${alert.destruction-finished.message}")
+  private String alertDestructionFinishedMessage;
+
+  @Value(value = "${alert.version-mismatch.message}")
+  private String alertVersionMismatchMessage;
+
+  @Value(value = "${alert.editor-close-reminder.message}")
+  private String alertEditorCloseReminderMessage;
+
   @Value(value = "${graph.css.location}")
   private String graphCssFileLocation;
 
@@ -141,6 +178,9 @@ public class PropertiesEntity {
 
   @Value(value = "${config.root}")
   private String configRootPath;
+
+  @Value(value = "${swap.root}")
+  private String swapRootPath;
 
   @Value(value = "${config.user.file}")
   private String configUserFilePath;
@@ -158,5 +198,14 @@ public class PropertiesEntity {
     propsConfig.setIgnoreResourceNotFound(true);
     propsConfig.setIgnoreUnresolvablePlaceholders(true);
     return propsConfig;
+  }
+
+  /**
+   * Removes the last symbol in git commit id of the repository.
+   *
+   * @return chopped repository git commit id.
+   */
+  public String getGitCommitId() {
+    return StringUtils.chop(gitCommitId);
   }
 }

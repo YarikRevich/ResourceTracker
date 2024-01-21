@@ -43,6 +43,9 @@ public class App extends Application {
    */
   @Override
   public void init() {
+    System.setProperty("apple.laf.useScreenMenuBar", "true");
+    System.setProperty("apple.awt.UIElement", "true");
+
     ApplicationContextInitializer<GenericApplicationContext> initializer =
         applicationContext -> {
           applicationContext.registerBean(Application.class, () -> App.this);
@@ -55,8 +58,6 @@ public class App extends Application {
             .sources(GUI.class)
             .initializers(initializer)
             .run(getParameters().getRaw().toArray(new String[0]));
-
-    System.setProperty("apple.laf.useScreenMenuBar", "true");
   }
 
   /**

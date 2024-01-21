@@ -1,11 +1,12 @@
 package com.resourcetracker.service.element.stage;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.common.ElementHelper;
+import com.resourcetracker.service.element.image.view.common.IconImageView;
 import com.resourcetracker.service.element.progressbar.main.start.MainStartCircleProgressBar;
 import com.resourcetracker.service.element.scene.main.start.MainStartScene;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
 import com.resourcetracker.service.event.payload.MainWindowHeightUpdateEvent;
 import com.resourcetracker.service.event.payload.MainWindowWidthUpdateEvent;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
@@ -28,11 +29,13 @@ public class MainStage implements IElement<Stage> {
       @Autowired PropertiesEntity properties,
       @Autowired MainStartScene startScene,
       @Autowired MainStartCircleProgressBar mainCircleProgressBar,
+      @Autowired IconImageView iconImageView,
       @Autowired ApplicationEventPublisher applicationEventPublisher) {
     Platform.runLater(
         () -> {
           Stage mainStage = new Stage();
           mainStage.setTitle(properties.getWindowMainName());
+          mainStage.getIcons().add(iconImageView.getContent());
 
           Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
 

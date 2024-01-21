@@ -61,7 +61,7 @@ public class ConfigService {
    * entity.
    */
   @PostConstruct
-  private void process() throws ConfigValidationException {
+  private void configure() throws ConfigValidationException {
     ObjectMapper mapper =
         new ObjectMapper(new YAMLFactory())
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)

@@ -26,8 +26,6 @@ import org.springframework.stereotype.Service;
 public class ConfigService {
   private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-  private final PropertiesEntity properties;
-
   private InputStream configFile;
 
   private ConfigEntity parsedConfigFile;
@@ -49,8 +47,6 @@ public class ConfigService {
     } catch (FileNotFoundException e) {
       logger.fatal(e.getMessage());
     }
-
-    this.properties = properties;
   }
 
   /**
@@ -58,7 +54,7 @@ public class ConfigService {
    * entity.
    */
   @PostConstruct
-  private void process() {
+  private void configure() {
     ObjectMapper mapper =
         new ObjectMapper(new YAMLFactory())
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)

@@ -1,11 +1,11 @@
 package com.resourcetracker.service.element.scene.main.deployment;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.layout.scene.main.deployment.MainDeploymentSceneLayout;
 import com.resourcetracker.service.element.menu.TabMenuBar;
 import com.resourcetracker.service.element.progressbar.main.deployment.MainDeploymentCircleProgressBar;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
 import java.util.UUID;
 import javafx.scene.Group;
 import javafx.scene.Scene;

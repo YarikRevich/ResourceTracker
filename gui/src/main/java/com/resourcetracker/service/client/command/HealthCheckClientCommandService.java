@@ -5,8 +5,9 @@ import com.resourcetracker.api.HealthResourceApi;
 import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.HealthCheckResult;
-import com.resourcetracker.service.client.IClientCommand;
+import com.resourcetracker.service.client.common.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -15,9 +16,16 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 /** Represents health check client command service. */
 @Service
 public class HealthCheckClientCommandService implements IClientCommand<HealthCheckResult, Void> {
-  private final HealthResourceApi healthResourceApi;
+  @Autowired private ConfigService configService;
 
-  public HealthCheckClientCommandService(@Autowired ConfigService configService) {
+  private HealthResourceApi healthResourceApi;
+
+  /**
+   * @see IClientCommand
+   */
+  @Override
+  @PostConstruct
+  public void configure() {
     ApiClient apiClient =
         new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 

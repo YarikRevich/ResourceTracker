@@ -3,7 +3,10 @@ package com.resourcetracker.mapping;
 import com.resourcetracker.exception.InternalConfigNotFoundException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
+/** Represents mapper for InternalConfigNotFoundException exception. */
+@Provider
 public class InternalConfigNotFoundExceptionMapper
     implements ExceptionMapper<InternalConfigNotFoundException> {
   @Override

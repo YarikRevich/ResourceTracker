@@ -5,8 +5,9 @@ import com.resourcetracker.api.InfoResourceApi;
 import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.ApplicationInfoResult;
-import com.resourcetracker.service.client.IClientCommand;
+import com.resourcetracker.service.client.common.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -15,9 +16,16 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 /** Represents version information client command service. */
 @Service
 public class VersionClientCommandService implements IClientCommand<ApplicationInfoResult, Void> {
-  private final InfoResourceApi infoResourceApi;
+  @Autowired private ConfigService configService;
 
-  public VersionClientCommandService(@Autowired ConfigService configService) {
+  private InfoResourceApi infoResourceApi;
+
+  /**
+   * @see IClientCommand
+   */
+  @Override
+  @PostConstruct
+  public void configure() {
     ApiClient apiClient =
         new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 

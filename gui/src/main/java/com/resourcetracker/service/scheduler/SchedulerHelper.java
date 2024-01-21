@@ -7,10 +7,10 @@ import java.util.concurrent.*;
 /** Provides access to task schedule opportunities. */
 public class SchedulerHelper {
   private static final ScheduledExecutorService scheduledExecutorService =
-      Executors.newScheduledThreadPool(4);
+      Executors.newScheduledThreadPool(8);
 
   // TODO: Make it possible to configure thread pool from properties.
-  private static final ExecutorService executorService = Executors.newScheduledThreadPool(4);
+  private static final ExecutorService executorService = Executors.newScheduledThreadPool(8);
 
   /**
    * Schedules given task with the specified period.

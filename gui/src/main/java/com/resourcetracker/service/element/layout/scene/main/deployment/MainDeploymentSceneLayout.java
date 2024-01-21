@@ -1,14 +1,14 @@
 package com.resourcetracker.service.element.layout.scene.main.deployment;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.layout.common.ContentGrid;
 import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentContentGrid;
 import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentFooterGrid;
 import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentHeaderGrid;
 import com.resourcetracker.service.element.layout.scene.main.deployment.common.MainDeploymentMenuButtonBox;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.element.text.common.IElementResizable;
 import com.resourcetracker.service.event.state.LocalState;
 import java.util.UUID;
 import javafx.scene.layout.ColumnConstraints;

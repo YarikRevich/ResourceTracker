@@ -1,7 +1,7 @@
 package com.resourcetracker.service.element.menu;
 
-import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
 import java.util.UUID;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;

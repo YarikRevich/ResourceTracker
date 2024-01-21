@@ -1,8 +1,6 @@
 package com.resourcetracker.service.element.text.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.font.FontLoader;
 import com.resourcetracker.service.element.storage.ElementStorage;
 import java.util.UUID;

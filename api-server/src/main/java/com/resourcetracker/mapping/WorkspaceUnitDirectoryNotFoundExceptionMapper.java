@@ -3,7 +3,10 @@ package com.resourcetracker.mapping;
 import com.resourcetracker.exception.WorkspaceUnitDirectoryNotFoundException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
+/** Represents mapper for WorkspaceUnitDirectoryNotFoundException exception. */
+@Provider
 public class WorkspaceUnitDirectoryNotFoundExceptionMapper
     implements ExceptionMapper<WorkspaceUnitDirectoryNotFoundException> {
   @Override

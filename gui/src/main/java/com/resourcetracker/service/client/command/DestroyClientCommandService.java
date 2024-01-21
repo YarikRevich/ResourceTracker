@@ -5,8 +5,9 @@ import com.resourcetracker.api.TerraformResourceApi;
 import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.TerraformDestructionApplication;
-import com.resourcetracker.service.client.IClientCommand;
+import com.resourcetracker.service.client.common.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -16,9 +17,15 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @Service
 public class DestroyClientCommandService
     implements IClientCommand<Void, TerraformDestructionApplication> {
-  private final TerraformResourceApi terraformResourceApi;
+  @Autowired private ConfigService configService;
+  private TerraformResourceApi terraformResourceApi;
 
-  public DestroyClientCommandService(@Autowired ConfigService configService) {
+  /**
+   * @see IClientCommand
+   */
+  @Override
+  @PostConstruct
+  public void configure() {
     ApiClient apiClient =
         new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 

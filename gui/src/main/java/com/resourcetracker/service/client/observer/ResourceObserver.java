@@ -49,46 +49,4 @@ public class ResourceObserver {
         },
         properties.getProcessHealthcheckPeriod());
   }
-
-  //  @SneakyThrows
-  //  @PostConstruct
-  //  private void handleReadinessCommand() {
-  //    OpenConfigEditorCommandService initCommandService =
-  //        new OpenConfigEditorCommandService(properties);
-  //
-  //    CommandExecutorOutputDto initCommandOutput = null;
-  //
-  //    try {
-  //      initCommandOutput = commandExecutorService.executeCommand(initCommandService);
-  //    } catch (CommandExecutorException e) {
-  //      System.out.println(e.getMessage());
-  //    }
-  //
-  //    String initCommandErrorOutput = initCommandOutput.getErrorOutput();
-  //
-  //    if (Objects.nonNull(initCommandErrorOutput) && !initCommandErrorOutput.isEmpty()) {
-  //      System.out.println(initCommandErrorOutput);
-  //    }
-
-  //    SchedulerHelper.scheduleTask(
-  //        () -> {
-  //                    DeploymentStatusEvent deploymentStatusEvent;
-  //
-  //                    try {
-  //                        HealthCheckResult result =
-  // readinessCommandService.process(null);
-  //
-  //                        deploymentStatusEvent =
-  //                                switch (result.getStatus()) {
-  //                                    case UP -> new DeploymentStatusEvent(true);
-  //                                    case DOWN -> new DeploymentStatusEvent(false);
-  //                                };
-  //                    } catch (ApiServerException e) {
-  //                        deploymentStatusEvent = new DeploymentStatusEvent(false);
-  //                    }
-  //
-  //                    applicationEventPublisher.publishEvent(deploymentStatusEvent);
-  //        },
-  //        properties.getProcessReadinessPeriod());
-  //  }
 }

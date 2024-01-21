@@ -1,9 +1,27 @@
 package com.resourcetracker.service.event.state;
 
+import com.resourcetracker.dto.*;
 import com.resourcetracker.entity.PropertiesEntity;
+import com.resourcetracker.exception.CommandExecutorException;
 import com.resourcetracker.model.TopicLogsResult;
+import com.resourcetracker.service.client.command.*;
+import com.resourcetracker.service.command.external.start.StartExternalCommandService;
+import com.resourcetracker.service.command.external.state.StateExternalCommandService;
+import com.resourcetracker.service.command.external.stop.StopExternalCommandService;
+import com.resourcetracker.service.command.external.version.VersionExternalCommandService;
+import com.resourcetracker.service.command.internal.health.HealthCheckInternalCommandService;
+import com.resourcetracker.service.command.internal.readiness.ReadinessCheckInternalCommandService;
+import com.resourcetracker.service.config.ConfigService;
+import com.resourcetracker.service.element.alert.ErrorAlert;
+import com.resourcetracker.service.element.alert.InformationAlert;
 import com.resourcetracker.service.element.common.ElementHelper;
+import com.resourcetracker.service.element.progressbar.main.deployment.MainDeploymentCircleProgressBar;
+import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.event.payload.*;
+import com.resourcetracker.service.hand.config.command.OpenConfigEditorCommandService;
+import com.resourcetracker.service.hand.config.command.OpenSwapFileEditorCommandService;
+import com.resourcetracker.service.hand.executor.CommandExecutorService;
+import com.resourcetracker.service.scheduler.SchedulerHelper;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import javafx.geometry.Rectangle2D;
@@ -17,6 +35,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+import process.SProcessExecutor;
 
 /**
  * Represents local state management model, which is used to handle application state changes and
@@ -29,7 +48,43 @@ public class LocalState {
 
   @Autowired private ApplicationEventPublisher applicationEventPublisher;
 
-  @Getter @Setter private static Boolean deploymentAvailable = false;
+  @Autowired private ConfigService configService;
+
+  @Autowired private CommandExecutorService commandExecutorService;
+
+  @Autowired private MainDeploymentCircleProgressBar mainDeploymentCircleProgressBar;
+
+  @Autowired private ApplyClientCommandService applyClientCommandService;
+
+  @Autowired private DestroyClientCommandService destroyClientCommandService;
+
+  @Autowired private LogsClientCommandService logsClientCommandService;
+
+  @Autowired private HealthCheckClientCommandService healthCheckClientCommandService;
+
+  @Autowired private ReadinessCheckClientCommandService readinessCheckClientCommandService;
+
+  @Autowired private ScriptAcquireClientCommandService scriptAcquireClientCommandService;
+
+  @Autowired private SecretsAcquireClientCommandService secretsAcquireClientCommandService;
+
+  @Autowired private VersionClientCommandService versionClientCommandService;
+
+  @Autowired private VersionExternalCommandService versionExternalCommandService;
+
+  @Autowired private HealthCheckInternalCommandService healthCheckInternalCommandService;
+
+  @Autowired private ReadinessCheckInternalCommandService readinessCheckInternalCommandService;
+
+  @Autowired private StartExternalCommandService startExternalCommandService;
+
+  @Autowired private StopExternalCommandService stopExternalCommandService;
+
+  @Autowired private StateExternalCommandService stateExternalCommandService;
+
+  @Autowired private InformationAlert informationAlert;
+
+  @Autowired private ErrorAlert errorAlert;
 
   @Getter @Setter private static Boolean connectionEstablished = false;
 
@@ -101,7 +156,7 @@ public class LocalState {
    * @param contextRefreshedEvent embedded context refreshed event.
    */
   @EventListener(classes = {ContextRefreshedEvent.class})
-  public void eventListen(ContextRefreshedEvent contextRefreshedEvent) {
+  public void eventListener(ContextRefreshedEvent contextRefreshedEvent) {
     Rectangle2D defaultBounds = Screen.getPrimary().getVisualBounds();
 
     Rectangle2D window =
@@ -121,28 +176,147 @@ public class LocalState {
    * @param event connection status event, which contains connection establishment status.
    */
   @EventListener
-  void handleConnectionStatusEvent(ConnectionStatusEvent event) {
+  public void handleConnectionStatusEvent(ConnectionStatusEvent event) {
     LocalState.setConnectionEstablished(event.isConnectionEstablished());
   }
 
   /**
-   * Handles changes of deployment availability status.
+   * Handles changes of start deployment status.
    *
-   * @param event deployment status event, which contains deployment availability status.
+   * @param event deployment start event.
    */
   @EventListener
-  void handleDeploymentStatusEvent(DeploymentStatusEvent event) {
-    LocalState.setDeploymentAvailable(event.isDeploymentAvailable());
+  public void handleStartDeploymentEvent(StartDeploymentEvent event) {
+    SchedulerHelper.scheduleOnce(
+        () -> {
+          ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+
+          try {
+            HealthCheckInternalCommandResultDto healthCheckInternalCommandResultDto =
+                healthCheckInternalCommandService.process();
+
+            if (!healthCheckInternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), healthCheckInternalCommandResultDto.getError());
+              return;
+            }
+
+            VersionExternalCommandResultDto versionExternalCommandResultDto =
+                versionExternalCommandService.process();
+
+            if (!versionExternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), versionExternalCommandResultDto.getError());
+              return;
+            }
+
+            if (!versionExternalCommandResultDto.getData().equals(properties.getGitCommitId())) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), properties.getAlertVersionMismatchMessage());
+              return;
+            }
+
+            StartExternalCommandResultDto startExternalCommandResultDto =
+                startExternalCommandService.process();
+
+            if (!startExternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), startExternalCommandResultDto.getError());
+              return;
+            }
+
+            ElementHelper.showAlert(
+                informationAlert.getContent(), properties.getAlertDeploymentFinishedMessage());
+          } finally {
+            ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+          }
+        });
+  }
+
+  /**
+   * Handles changes of stop deployment status.
+   *
+   * @param event deployment stop event.
+   */
+  @EventListener
+  public void handleStopDeploymentEvent(StopDeploymentEvent event) {
+    SchedulerHelper.scheduleOnce(
+        () -> {
+          ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+
+          try {
+            HealthCheckInternalCommandResultDto healthCheckInternalCommandResultDto =
+                healthCheckInternalCommandService.process();
+
+            if (!healthCheckInternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), healthCheckInternalCommandResultDto.getError());
+              return;
+            }
+
+            StopExternalCommandResultDto stopExternalCommandResultDto =
+                stopExternalCommandService.process();
+
+            if (!stopExternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), stopExternalCommandResultDto.getError());
+              return;
+            }
+
+            LocalState.setDeploymentState(null);
+
+            ElementHelper.showAlert(
+                informationAlert.getContent(), properties.getAlertDestructionFinishedMessage());
+          } finally {
+            ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+          }
+        });
   }
 
   /**
    * Handles changes of deployment state.
    *
-   * @param event deployment status update event, which contains deployment data.
+   * @param event deployment status retrieval event.
    */
   @EventListener
-  void handleDeploymentStateUpdateEvent(DeploymentStateUpdateEvent event) {
-    LocalState.setDeploymentState(event.getDeploymentState());
+  public void handleDeploymentStateRetrievalEvent(DeploymentStateRetrievalEvent event) {
+    SchedulerHelper.scheduleOnce(
+        () -> {
+          ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+
+          try {
+            HealthCheckInternalCommandResultDto healthCheckInternalCommandResultDto =
+                healthCheckInternalCommandService.process();
+
+            if (!healthCheckInternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), healthCheckInternalCommandResultDto.getError());
+              return;
+            }
+
+            ReadinessCheckInternalCommandResultDto readinessCheckInternalCommandResultDto =
+                readinessCheckInternalCommandService.process();
+
+            if (!readinessCheckInternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), readinessCheckInternalCommandResultDto.getError());
+              return;
+            }
+
+            StateExternalCommandResultDto stateExternalCommandResultDto =
+                stateExternalCommandService.process();
+
+            if (!stateExternalCommandResultDto.getStatus()) {
+              ElementHelper.showAlert(
+                  errorAlert.getContent(), stateExternalCommandResultDto.getError());
+              return;
+            }
+
+            LocalState.setDeploymentState(stateExternalCommandResultDto.getTopicLogsResult());
+          } finally {
+            ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+          }
+        });
   }
 
   /**
@@ -167,5 +341,81 @@ public class LocalState {
     LocalState.setMainWindowWidth(event.getWidth());
 
     mainWindowWidthUpdateMutex.countDown();
+  }
+
+  /**
+   * Handles requests to open editor window.
+   *
+   * @param event editor open window event.
+   */
+  @EventListener
+  synchronized void handleEditorOpenWindowEvent(EditorOpenWindowEvent event) {
+    SchedulerHelper.scheduleOnce(
+        () -> {
+          ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+
+          try {
+            OpenConfigEditorCommandService openConfigEditorCommandService =
+                new OpenConfigEditorCommandService(
+                    properties.getConfigRootPath(), properties.getConfigUserFilePath());
+
+            if (commandExecutorService.getOSType() == SProcessExecutor.OS.MAC) {
+              ElementHelper.showAlert(
+                  informationAlert.getContent(), properties.getAlertEditorCloseReminderMessage());
+            }
+
+            try {
+              commandExecutorService.executeCommand(openConfigEditorCommandService);
+            } catch (CommandExecutorException e) {
+              throw new RuntimeException(e);
+            }
+
+            configService.configure();
+            applyClientCommandService.configure();
+            destroyClientCommandService.configure();
+            logsClientCommandService.configure();
+            healthCheckClientCommandService.configure();
+            readinessCheckClientCommandService.configure();
+            scriptAcquireClientCommandService.configure();
+            secretsAcquireClientCommandService.configure();
+            versionClientCommandService.configure();
+          } finally {
+            ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+          }
+        });
+  }
+
+  /**
+   * Handles requests to open swap file window.
+   *
+   * @param event swap file open window event.
+   */
+  @EventListener
+  synchronized void handleSwapFileOpenWindowEvent(SwapFileOpenWindowEvent event) {
+    SchedulerHelper.scheduleOnce(
+            () -> {
+              ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+
+              try {
+                OpenSwapFileEditorCommandService openSwapFileEditorCommandService =
+                        new OpenSwapFileEditorCommandService(
+                                properties.getSwapRootPath(), "");
+
+                if (commandExecutorService.getOSType() == SProcessExecutor.OS.MAC) {
+                  ElementHelper.showAlert(
+                          informationAlert.getContent(), properties.getAlertEditorCloseReminderMessage());
+                }
+
+                try {
+                  commandExecutorService.executeCommand(openSwapFileEditorCommandService);
+                } catch (CommandExecutorException e) {
+                  throw new RuntimeException(e);
+                }
+
+
+              } finally {
+                ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+              }
+            });
   }
 }

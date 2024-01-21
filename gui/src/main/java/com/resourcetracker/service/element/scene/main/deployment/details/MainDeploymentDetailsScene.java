@@ -1,7 +1,7 @@
 package com.resourcetracker.service.element.scene.main.deployment.details;
 
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementResizable;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.element.text.common.IElementResizable;
 import javafx.scene.Scene;
 import org.springframework.stereotype.Service;
 

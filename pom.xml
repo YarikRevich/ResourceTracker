@@ -391,10 +391,6 @@
                 <include>src/main/java/**/*.java</include>
               </includes>
               <endWithNewline/>
-<!--              <indent>-->
-<!--                <spaces>true</spaces>-->
-<!--                <spacesPerTab>4</spacesPerTab>-->
-<!--              </indent>-->
               <indent>
                 <tabs>true</tabs>
                 <spacesPerTab>2</spacesPerTab>
@@ -407,10 +403,8 @@
                 <version>1.18.1</version>
                 <style>GOOGLE</style>
                 <reflowLongStrings>true</reflowLongStrings>
-<!--                <formatJavadoc>false</formatJavadoc>-->
                 <groupArtifact>com.google.googlejavaformat:google-java-format</groupArtifact>
               </googleJavaFormat>
-<!--              <removeUnusedImports />-->
             </java>
           </configuration>
         </plugin>
