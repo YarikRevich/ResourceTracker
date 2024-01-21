@@ -1,7 +1,7 @@
 package com.resourcetracker.service.element.layout.common;
 
-import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
 import java.util.UUID;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

@@ -1,7 +1,7 @@
 package com.resourcetracker.service.element.storage;
 
-import com.resourcetracker.service.element.IElementActualizable;
-import com.resourcetracker.service.element.IElementResizable;
+import com.resourcetracker.service.element.text.common.IElementActualizable;
+import com.resourcetracker.service.element.text.common.IElementResizable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +39,15 @@ public class ElementStorage {
   @SuppressWarnings("unchecked")
   public static <T> T getElement(UUID id) {
     return (T) storage.get(id);
+  }
+
+  public static UUID getElementId(Object element) {
+    for (Map.Entry<UUID, Object> entry : storage.entrySet()) {
+      if (entry.getValue().equals(element)) {
+        return entry.getKey();
+      }
+    }
+    return null;
   }
 
   /**

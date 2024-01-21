@@ -5,7 +5,7 @@ import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.model.ApplicationInfoResult;
 import com.resourcetracker.service.client.command.HealthCheckClientCommandService;
 import com.resourcetracker.service.client.command.VersionClientCommandService;
-import com.resourcetracker.service.command.ICommand;
+import com.resourcetracker.service.command.common.ICommand;
 import com.resourcetracker.service.visualization.state.VisualizationState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

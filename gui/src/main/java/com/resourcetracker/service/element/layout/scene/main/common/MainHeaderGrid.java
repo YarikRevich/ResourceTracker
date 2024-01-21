@@ -1,9 +1,9 @@
 package com.resourcetracker.service.element.layout.scene.main.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
 import com.resourcetracker.service.element.image.view.common.ConnectionStatusImageView;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
 import java.util.UUID;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;

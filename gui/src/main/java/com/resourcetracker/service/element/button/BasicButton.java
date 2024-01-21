@@ -1,10 +1,10 @@
 package com.resourcetracker.service.element.button;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.IElementResizable;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.element.storage.ElementStorage;
+import com.resourcetracker.service.element.text.common.IElement;
+import com.resourcetracker.service.element.text.common.IElementResizable;
 import com.resourcetracker.service.event.state.LocalState;
 import ink.bluecloud.css.CssResources;
 import ink.bluecloud.css.ElementButton;

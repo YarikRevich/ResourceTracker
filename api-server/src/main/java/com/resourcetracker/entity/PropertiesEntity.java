@@ -103,7 +103,7 @@ public class PropertiesEntity {
   String awsResourceTrackerExecutionRole;
 
   /**
-   * Removes the last symbol in git commit id of the repository
+   * Removes the last symbol in git commit id of the repository.
    *
    * @return chopped repository git commit id.
    */

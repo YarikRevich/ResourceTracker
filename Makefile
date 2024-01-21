@@ -1,5 +1,3 @@
-.PHONY: help, clean, prepare, test, lint, create-local, clone-config, clone-terraform, clone-api-server, build-kafka-starter, build-agent, build-api-server, build-cli, build-gui
-
 dev := $(or $(dev), 'false')
 
 ifneq (,$(wildcard .env))
@@ -29,37 +27,40 @@ test: clean ## Run both unit and integration tests
 lint: ## Run Apache Spotless linter
 	@mvn spotless:apply
 
-.PHONY: create-local
-create-local: ## Create ResourceTracker local directory
+.PHONY: create-local-client
+create-local-client: ## Create ResourceTracker local directory for client
 ifeq (,$(wildcard $(HOME)/.resourcetracker))
-	@mkdir -p $(HOME)/.resourcetracker/config
-	@mkdir -p $(HOME)/.resourcetracker/workspace
+	@mkdir -p $(HOME)/.resourcetracker/config/swap
 endif
-ifeq (,$(wildcard $(HOME)/.resourcetracker/config))
-	@mkdir -p $(HOME)/.resourcetracker/config
+ifeq (,$(wildcard $(HOME)/.resourcetracker/config/swap))
+	@mkdir -p $(HOME)/.resourcetracker/config/swap
+endif
+
+.PHONY: create-local-api-server
+create-local-api-server: ## Create ResourceTracker local directory for API Server
+ifeq (,$(wildcard $(HOME)/.resourcetracker))
+	@mkdir -p $(HOME)/.resourcetracker/workspace
 endif
 ifeq (,$(wildcard $(HOME)/.resourcetracker/workspace))
 	@mkdir -p $(HOME)/.resourcetracker/workspace
 endif
 
-.PHONY: clone-config
-clone-config: create-local ## Clone configuration files to local directory
-	@cp -r ./samples/config/* $(HOME)/.resourcetracker/config
+.PHONY: clone-client-config
+clone-client-config: ## Clone configuration files to local directory
+ifeq (,$(wildcard $(HOME)/.resourcetracker/config/user.yaml))
+	@cp -r ./samples/config/client/user.yaml $(HOME)/.resourcetracker/config
+endif
 
 .PHONY: clone-terraform
-clone-terraform: create-local ## Clone Terraform configuration files to local directory
+clone-terraform: ## Clone Terraform configuration files to local directory
 	@cp -r ./config/tf $(HOME)/.resourcetracker
 
 .PHONY: clone-api-server
-clone-api-server: create-local ## Clone API Server JAR into a ResourceTracker local directory
+clone-api-server: ## Clone API Server JAR into a ResourceTracker local directory
 ifeq (,$(wildcard $(HOME)/.resourcetracker/bin/api-server))
 	@mkdir -p $(HOME)/.resourcetracker/bin
 endif
 	@cp -r ./bin/api-server $(HOME)/.resourcetracker/bin/
-
-#.PHONY: build-kafka-starter
-#build-kafka-starter: clean ## Build Kafka starter Docker image
-#
 
 .PHONY: build-agent
 build-agent: clean ## Build Agent Docker image
@@ -70,7 +71,7 @@ build-agent: clean ## Build Agent Docker image
         -Djib.auth.password=${DOCKER_REGISTRY_PASSWORD}
 
 .PHONY: build-api-server
-build-api-server: clean clone-terraform ## Build API Server application
+build-api-server: clean create-local-api-server clone-terraform ## Build API Server application
 ifneq (,$(wildcard ./bin/api-server))
 	@rm -r ./bin/api-server
 endif
@@ -81,7 +82,7 @@ else
 endif
 
 .PHONY: build-cli
-build-cli: clean ## Build CLI application
+build-cli: clean create-local-client clone-client-config ## Build CLI application
 ifneq (,$(wildcard ./bin/cli))
 	@rm -r ./bin/cli
 endif
@@ -92,7 +93,7 @@ else
 endif
 
 .PHONY: build-gui
-build-gui: clean build-api-server clone-api-server clone-terraform ## Build GUI application
+build-gui: clean create-local-client clone-client-config create-local-api-server clone-api-server clone-terraform build-api-server ## Build GUI application
 ifneq (,$(wildcard ./bin/gui))
 	@rm -r ./bin/gui
 endif

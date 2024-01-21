@@ -3,7 +3,10 @@ package com.resourcetracker.mapping;
 import com.resourcetracker.exception.WorkspaceUnitInternalConfigFileNotFoundException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
+/** Represents mapper for WorkspaceUnitInternalConfigFileNotFoundException exception. */
+@Provider
 public class WorkspaceUnitInternalConfigFileNotFoundExceptionMapper
     implements ExceptionMapper<WorkspaceUnitInternalConfigFileNotFoundException> {
   @Override

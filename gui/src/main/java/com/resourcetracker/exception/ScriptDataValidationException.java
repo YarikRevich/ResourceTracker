@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Formatter;
 
-/** Represents exception, when given file and */
+/** Represents exception, when given file is not valid. */
 public class ScriptDataValidationException extends IOException {
   public ScriptDataValidationException() {
     this("");

@@ -6,8 +6,9 @@ import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.ApiServerNotAvailableException;
 import com.resourcetracker.model.TerraformDeploymentApplication;
 import com.resourcetracker.model.TerraformDeploymentApplicationResult;
-import com.resourcetracker.service.client.IClientCommand;
+import com.resourcetracker.service.client.common.IClientCommand;
 import com.resourcetracker.service.config.ConfigService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -18,9 +19,16 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 public class ApplyClientCommandService
     implements IClientCommand<
         TerraformDeploymentApplicationResult, TerraformDeploymentApplication> {
-  private final TerraformResourceApi terraformResourceApi;
+  @Autowired private ConfigService configService;
 
-  public ApplyClientCommandService(@Autowired ConfigService configService) {
+  private TerraformResourceApi terraformResourceApi;
+
+  /**
+   * @see IClientCommand
+   */
+  @Override
+  @PostConstruct
+  public void configure() {
     ApiClient apiClient =
         new ApiClient().setBasePath(configService.getConfig().getApiServer().getHost());
 

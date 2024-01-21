@@ -4,14 +4,17 @@ import com.resourcetracker.converter.CredentialsConverter;
 import com.resourcetracker.dto.ValidationScriptApplicationDto;
 import com.resourcetracker.dto.ValidationSecretsApplicationDto;
 import com.resourcetracker.entity.ConfigEntity;
+import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.ApiServerException;
 import com.resourcetracker.exception.CloudCredentialsValidationException;
 import com.resourcetracker.exception.ScriptDataValidationException;
+import com.resourcetracker.exception.VersionMismatchException;
 import com.resourcetracker.model.*;
 import com.resourcetracker.service.client.command.ApplyClientCommandService;
 import com.resourcetracker.service.client.command.ScriptAcquireClientCommandService;
 import com.resourcetracker.service.client.command.SecretsAcquireClientCommandService;
-import com.resourcetracker.service.command.ICommand;
+import com.resourcetracker.service.client.command.VersionClientCommandService;
+import com.resourcetracker.service.command.common.ICommand;
 import com.resourcetracker.service.config.ConfigService;
 import com.resourcetracker.service.visualization.state.VisualizationState;
 import java.io.IOException;
@@ -30,7 +33,11 @@ public class AWSStartExternalCommandService implements ICommand {
 
   @Autowired private ConfigService configService;
 
+  @Autowired private PropertiesEntity properties;
+
   @Autowired private ApplyClientCommandService applyClientCommandService;
+
+  @Autowired private VersionClientCommandService versionClientCommandService;
 
   @Autowired private SecretsAcquireClientCommandService secretsAcquireClientCommandService;
 
@@ -58,6 +65,12 @@ public class AWSStartExternalCommandService implements ICommand {
 
     if (validationSecretsApplicationResult.getValid()) {
       visualizationState.getLabel().pushNext();
+
+      ApplicationInfoResult applicationInfoResult = versionClientCommandService.process(null);
+
+      if (!applicationInfoResult.getExternalApi().getHash().equals(properties.getGitCommitId())) {
+        throw new ApiServerException(new VersionMismatchException().getMessage());
+      }
 
       List<DeploymentRequest> requests =
           configService.getConfig().getRequests().stream()

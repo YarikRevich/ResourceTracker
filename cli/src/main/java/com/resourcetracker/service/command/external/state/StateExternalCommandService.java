@@ -1,7 +1,7 @@
 package com.resourcetracker.service.command.external.state;
 
 import com.resourcetracker.exception.ApiServerException;
-import com.resourcetracker.service.command.ICommand;
+import com.resourcetracker.service.command.common.ICommand;
 import com.resourcetracker.service.command.external.state.provider.aws.AWSStateExternalCommandService;
 import com.resourcetracker.service.config.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;

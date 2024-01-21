@@ -9,7 +9,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.resourcetracker.entity.ConfigEntity;
 import com.resourcetracker.entity.PropertiesEntity;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,23 +16,23 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Service for processing configuration file
- *
- * @author YarikRevich
- */
+/** Represents service used for configuration processing. */
 @Service
 public class ConfigService {
   private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-  private InputStream configFile;
+  @Autowired private PropertiesEntity properties;
 
   private ConfigEntity parsedConfigFile;
 
-  /** Opens YAML configuration file */
-  public ConfigService(PropertiesEntity properties) {
+  /** Processes configuration file */
+  @PostConstruct
+  public void configure() {
+    InputStream configFile;
+
     try {
       configFile =
           new FileInputStream(
@@ -44,12 +43,9 @@ public class ConfigService {
                   .toString());
     } catch (FileNotFoundException e) {
       logger.fatal(e.getMessage());
+      return;
     }
-  }
 
-  /** Processes configuration file */
-  @PostConstruct
-  private void process() {
     ObjectMapper mapper =
         new ObjectMapper(new YAMLFactory())
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
@@ -62,22 +58,21 @@ public class ConfigService {
       parsedConfigFile = reader.<ConfigEntity>readValues(configFile).readAll().getFirst();
     } catch (IOException e) {
       logger.fatal(e.getMessage());
+    } finally {
+      try {
+        configFile.close();
+      } catch (IOException e) {
+        logger.fatal(e.getMessage());
+      }
     }
   }
 
   /**
-   * @return Parsed configuration entity
+   * Retrieves parsed configuration file entity.
+   *
+   * @return retrieved parsed configuration file entity.
    */
   public ConfigEntity getConfig() {
     return parsedConfigFile;
-  }
-
-  @PreDestroy
-  private void close() {
-    try {
-      configFile.close();
-    } catch (IOException e) {
-      logger.fatal(e.getMessage());
-    }
   }
 }

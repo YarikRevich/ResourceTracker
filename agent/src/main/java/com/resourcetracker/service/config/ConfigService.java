@@ -34,7 +34,7 @@ public class ConfigService {
 
   /** Processes configuration file. */
   @PostConstruct
-  private void process() {
+  private void configure() {
     ObjectMapper mapper =
         new ObjectMapper(new JsonFactory())
             .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)

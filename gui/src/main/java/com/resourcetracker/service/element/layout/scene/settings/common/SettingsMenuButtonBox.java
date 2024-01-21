@@ -1,14 +1,11 @@
 package com.resourcetracker.service.element.layout.scene.settings.common;
 
 import com.resourcetracker.entity.PropertiesEntity;
-import com.resourcetracker.service.element.IElement;
-import com.resourcetracker.service.element.alert.ApiServerNotAvailableAlert;
 import com.resourcetracker.service.element.button.BasicButton;
 import com.resourcetracker.service.element.common.ElementHelper;
-import com.resourcetracker.service.element.scene.main.deployment.MainDeploymentScene;
 import com.resourcetracker.service.element.scene.main.start.MainStartScene;
 import com.resourcetracker.service.element.storage.ElementStorage;
-import com.resourcetracker.service.event.state.LocalState;
+import com.resourcetracker.service.element.text.common.IElement;
 import java.util.UUID;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,10 +21,6 @@ public class SettingsMenuButtonBox implements IElement<VBox> {
 
   @Lazy @Autowired private MainStartScene startScene;
 
-  @Lazy @Autowired private MainDeploymentScene deploymentScene;
-
-  @Lazy @Autowired private ApiServerNotAvailableAlert apiServerNotAvailableAlert;
-
   public SettingsMenuButtonBox(@Autowired PropertiesEntity properties) {
     VBox vbox =
         new VBox(
@@ -39,18 +32,7 @@ public class SettingsMenuButtonBox implements IElement<VBox> {
                       ElementHelper.switchScene(getContent().getScene(), startScene.getContent());
                     })
                 .getContent(),
-            new BasicButton(
-                    "API Server",
-                    properties,
-                    () -> {
-                      if (LocalState.getConnectionEstablished()) {
-                        ElementHelper.switchScene(
-                            getContent().getScene(), deploymentScene.getContent());
-                      } else {
-                        ElementHelper.showAlert(apiServerNotAvailableAlert.getContent());
-                      }
-                    })
-                .getContent());
+            new BasicButton("API Server", properties, () -> {}).getContent());
     vbox.setPadding(new Insets(10, 0, 10, 0));
     vbox.setAlignment(Pos.TOP_CENTER);
     vbox.setFillWidth(true);

@@ -37,79 +37,84 @@ import org.apache.logging.log4j.Logger;
 public class ConfigService {
   private static final Logger logger = LogManager.getLogger(ConfigService.class);
 
-  private InputStream configFile;
+  @Inject PropertiesEntity properties;
 
   private ConfigEntity parsedConfigFile;
-
-  @Inject
-  public ConfigService(PropertiesEntity properties) {
-    try {
-      configFile =
-          new FileInputStream(
-              Paths.get(
-                      System.getProperty("user.home"),
-                      properties.getConfigRootPath(),
-                      properties.getConfigFilePath())
-                  .toString());
-    } catch (FileNotFoundException e) {
-      logger.fatal(e.getMessage());
-    }
-  }
 
   /**
    * Reads configuration from the opened configuration file using mapping with a configuration
    * entity.
    */
-  @PostConstruct
-  private void process() throws ConfigValidationException {
-    ObjectMapper mapper =
-        new ObjectMapper(new YAMLFactory())
-            .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {});
+  @Deprecated
+  private void configure() throws ConfigValidationException {
+    InputStream configFile = null;
 
     try {
-      List<ConfigEntity> values = reader.<ConfigEntity>readValues(configFile).readAll();
-      if (!values.isEmpty()) {
-        parsedConfigFile = values.getFirst();
-      } else {
+      try {
+        configFile =
+                new FileInputStream(
+                        Paths.get(
+                                        System.getProperty("user.home"),
+                                        properties.getConfigRootPath(),
+                                        properties.getConfigFilePath())
+                                .toString());
+      } catch (FileNotFoundException e) {
+        logger.fatal(e.getMessage());
+        Quarkus.asyncExit(1);
         return;
       }
-    } catch (IOException e) {
-      logger.fatal(e.getMessage());
-      Quarkus.asyncExit(1);
-    }
 
-    try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
-      Validator validator = validatorFactory.getValidator();
+      ObjectMapper mapper =
+              new ObjectMapper(new YAMLFactory())
+                      .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
+                      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+                      .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+      mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+      ObjectReader reader = mapper.reader().forType(new TypeReference<ConfigEntity>() {
+      });
 
-      Set<ConstraintViolation<ConfigEntity>> validationResult =
-          validator.validate(parsedConfigFile);
+      try {
+        List<ConfigEntity> values = reader.<ConfigEntity>readValues(configFile).readAll();
+        if (!values.isEmpty()) {
+          parsedConfigFile = values.getFirst();
+        } else {
+          return;
+        }
+      } catch (IOException e) {
+        logger.fatal(e.getMessage());
+        Quarkus.asyncExit(1);
+        return;
+      }
 
-      if (!validationResult.isEmpty()) {
-        throw new ConfigValidationException(
-            validationResult.stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining(", ")));
+      try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+        Validator validator = validatorFactory.getValidator();
+
+        Set<ConstraintViolation<ConfigEntity>> validationResult =
+                validator.validate(parsedConfigFile);
+
+        if (!validationResult.isEmpty()) {
+          throw new ConfigValidationException(
+                  validationResult.stream()
+                          .map(ConstraintViolation::getMessage)
+                          .collect(Collectors.joining(", ")));
+        }
+      }
+    } finally {
+      try {
+        configFile.close();
+      } catch (IOException e) {
+        logger.fatal(e.getMessage());
+        Quarkus.asyncExit(1);
       }
     }
   }
 
   /**
-   * @return Parsed configuration entity
+   * Retrieves parsed configuration file entity.
+   *
+   * @return retrieved parsed configuration file entity.
    */
   public ConfigEntity getConfig() {
     return parsedConfigFile;
-  }
-
-  @PreDestroy
-  private void close() {
-    try {
-      configFile.close();
-    } catch (IOException e) {
-      logger.fatal(e.getMessage());
-    }
   }
 }
