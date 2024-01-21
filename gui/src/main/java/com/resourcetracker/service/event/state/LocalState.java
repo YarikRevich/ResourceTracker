@@ -3,6 +3,8 @@ package com.resourcetracker.service.event.state;
 import com.resourcetracker.dto.*;
 import com.resourcetracker.entity.PropertiesEntity;
 import com.resourcetracker.exception.CommandExecutorException;
+import com.resourcetracker.exception.SwapFileCreationFailedException;
+import com.resourcetracker.exception.SwapFileDeletionFailedException;
 import com.resourcetracker.model.TopicLogsResult;
 import com.resourcetracker.service.client.command.*;
 import com.resourcetracker.service.command.external.start.StartExternalCommandService;
@@ -16,12 +18,13 @@ import com.resourcetracker.service.element.alert.ErrorAlert;
 import com.resourcetracker.service.element.alert.InformationAlert;
 import com.resourcetracker.service.element.common.ElementHelper;
 import com.resourcetracker.service.element.progressbar.main.deployment.MainDeploymentCircleProgressBar;
-import com.resourcetracker.service.element.storage.ElementStorage;
 import com.resourcetracker.service.event.payload.*;
 import com.resourcetracker.service.hand.config.command.OpenConfigEditorCommandService;
 import com.resourcetracker.service.hand.config.command.OpenSwapFileEditorCommandService;
 import com.resourcetracker.service.hand.executor.CommandExecutorService;
 import com.resourcetracker.service.scheduler.SchedulerHelper;
+import com.resourcetracker.service.swap.SwapService;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import javafx.geometry.Rectangle2D;
@@ -51,6 +54,8 @@ public class LocalState {
   @Autowired private ConfigService configService;
 
   @Autowired private CommandExecutorService commandExecutorService;
+
+  @Autowired private SwapService swapService;
 
   @Autowired private MainDeploymentCircleProgressBar mainDeploymentCircleProgressBar;
 
@@ -367,7 +372,8 @@ public class LocalState {
             try {
               commandExecutorService.executeCommand(openConfigEditorCommandService);
             } catch (CommandExecutorException e) {
-              throw new RuntimeException(e);
+              ElementHelper.showAlert(errorAlert.getContent(), e.getMessage());
+              return;
             }
 
             configService.configure();
@@ -393,29 +399,45 @@ public class LocalState {
   @EventListener
   synchronized void handleSwapFileOpenWindowEvent(SwapFileOpenWindowEvent event) {
     SchedulerHelper.scheduleOnce(
-            () -> {
+        () -> {
+          ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
+
+          String swapFilePath = null;
+          try {
+            try {
+              swapFilePath =
+                  swapService.createSwapFile(
+                      Paths.get(System.getProperty("user.home"), properties.getSwapRootPath())
+                          .toString(),
+                      event.getContent());
+            } catch (SwapFileCreationFailedException e) {
+              ElementHelper.showAlert(errorAlert.getContent(), e.getMessage());
+              return;
+            }
+
+            OpenSwapFileEditorCommandService openSwapFileEditorCommandService =
+                new OpenSwapFileEditorCommandService(swapFilePath);
+
+            if (commandExecutorService.getOSType() == SProcessExecutor.OS.MAC) {
+              ElementHelper.showAlert(
+                  informationAlert.getContent(), properties.getAlertEditorCloseReminderMessage());
+            }
+
+            try {
+              commandExecutorService.executeCommand(openSwapFileEditorCommandService);
+            } catch (CommandExecutorException e) {
+              ElementHelper.showAlert(errorAlert.getContent(), e.getMessage());
+              return;
+            }
+          } finally {
+            try {
+              swapService.deleteSwapFile(swapFilePath);
+            } catch (SwapFileDeletionFailedException e) {
+              ElementHelper.showAlert(errorAlert.getContent(), e.getMessage());
+            } finally {
               ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
-
-              try {
-                OpenSwapFileEditorCommandService openSwapFileEditorCommandService =
-                        new OpenSwapFileEditorCommandService(
-                                properties.getSwapRootPath(), "");
-
-                if (commandExecutorService.getOSType() == SProcessExecutor.OS.MAC) {
-                  ElementHelper.showAlert(
-                          informationAlert.getContent(), properties.getAlertEditorCloseReminderMessage());
-                }
-
-                try {
-                  commandExecutorService.executeCommand(openSwapFileEditorCommandService);
-                } catch (CommandExecutorException e) {
-                  throw new RuntimeException(e);
-                }
-
-
-              } finally {
-                ElementHelper.toggleElementVisibility(mainDeploymentCircleProgressBar.getContent());
-              }
-            });
+            }
+          }
+        });
   }
 }

@@ -35,11 +35,15 @@ public class ListVisualizer
     ListView<String> listView = new ListView<>();
     listView.setOnMouseClicked(
         event -> {
-          applicationEventPublisher.publishEvent(new SwapFileOpenWindowEvent(
-                  LocalState.getDeploymentState().getResult()
-                          .stream()
-                          .filter(element -> !element.getName().equals(listView.getSelectionModel().getSelectedItem()))
-                          .toList()));
+          applicationEventPublisher.publishEvent(
+              new SwapFileOpenWindowEvent(
+                  LocalState.getDeploymentState().getResult().stream()
+                      .filter(
+                          element ->
+                              !element
+                                  .getName()
+                                  .equals(listView.getSelectionModel().getSelectedItem()))
+                      .toList()));
         });
 
     ElementStorage.setElement(id, listView);

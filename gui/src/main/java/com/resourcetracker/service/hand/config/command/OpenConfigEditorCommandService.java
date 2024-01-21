@@ -4,9 +4,7 @@ import java.nio.file.Paths;
 import process.SProcess;
 import process.SProcessExecutor;
 
-/**
- * Represents command, which is responsible for a startup of the configuration file editor.
- */
+/** Represents command, which is responsible for a startup of the configuration file editor. */
 public class OpenConfigEditorCommandService extends SProcess {
   private final String command;
   private final SProcessExecutor.OS osType;
