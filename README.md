@@ -3,6 +3,7 @@
 [![Build](https://github.com/YarikRevich/ResourceTracker/actions/workflows/build.yml/badge.svg)](https://github.com/YarikRevich/ResourceTracker/actions/workflows/build.yml)
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![MacOS](https://img.shields.io/badge/MacOS-8773f5?style=for-the-badge&logo=macos&logoColor=black)
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
 ## General Information
@@ -55,8 +56,32 @@ After the execution of command given above the executable will be generated and 
 
 ## Use cases
 
+For both **CLI** and **GUI** examples, there was used the following user configuration file:
+```yaml
+requests:
+    - name: "first"
+      frequency: "10 * * * * *"
+      file: "/Volumes/Files/first.sh"
+cloud:
+    provider: "aws"
+    credentials:
+      file: "/Volumes/Files/aws.csv"
+      region: "us-west-2"
+api-server:
+    host: "http://localhost:8080"
+```
+
+And the following request script file:
+```shell
+#!/bin/bash
+
+echo "Hello world!"
+```
+
 ### CLI
 
-
+![cli](./docs/example/cli.gif)
 
 ### GUI
+
+![gui](./docs/example/gui.gif)
