@@ -17,6 +17,7 @@ import com.resourcetracker.service.config.ConfigService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,20 +55,18 @@ public class AWSStartExternalCommandService implements ICommand<StartExternalCom
     }
 
     if (validationSecretsApplicationResult.getValid()) {
-      List<DeploymentRequest> requests =
-          configService.getConfig().getRequests().stream()
-              .map(
-                  element -> {
-                    try {
-                      return DeploymentRequest.of(
-                          element.getName(),
-                          Files.readString(Paths.get(element.getFile())),
-                          element.getFrequency());
-                    } catch (IOException e) {
-                      throw new RuntimeException(e);
-                    }
-                  })
-              .toList();
+      List<DeploymentRequest> requests = new ArrayList<>();
+
+      for (ConfigEntity.Request request : configService.getConfig().getRequests()) {
+        try {
+          requests.add(DeploymentRequest.of(
+                  request.getName(),
+                  Files.readString(Paths.get(request.getFile())),
+                  request.getFrequency()));
+        } catch (IOException e) {
+          return StartExternalCommandResultDto.of(false, new ScriptDataValidationException(e.getMessage()).getMessage());
+        }
+      }
 
       ValidationScriptApplicationDto validationScriptApplicationDto =
           ValidationScriptApplicationDto.of(

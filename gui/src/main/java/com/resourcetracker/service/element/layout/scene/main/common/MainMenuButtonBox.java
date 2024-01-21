@@ -78,8 +78,6 @@ public class MainMenuButtonBox implements IElement<VBox> {
                             properties.getAlertApiServerUnavailableMessage());
                       }
                     })
-                .getContent(),
-            new BasicButton("Settings", properties, () -> settingsStage.getContent().show())
                 .getContent());
     vbox.setPadding(new Insets(10, 0, 10, 0));
     vbox.setAlignment(Pos.TOP_CENTER);

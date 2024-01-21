@@ -40,7 +40,7 @@ public class ListVisualizer
                   LocalState.getDeploymentState().getResult().stream()
                       .filter(
                           element ->
-                              !element
+                              element
                                   .getName()
                                   .equals(listView.getSelectionModel().getSelectedItem()))
                       .toList()));

@@ -21,10 +21,8 @@ public class MainStartScene implements IElement<Scene> {
   public MainStartScene(
       @Autowired PropertiesEntity properties,
       @Autowired MainStartSceneLayout startSceneLayout,
-      @Autowired MainStartCircleProgressBar mainStartCircleProgressBar,
-      @Autowired TabMenuBar tabMenuBar) {
+      @Autowired MainStartCircleProgressBar mainStartCircleProgressBar) {
     Group group = new Group();
-    group.getChildren().add(tabMenuBar.getContent());
     group.getChildren().add(startSceneLayout.getContent());
     group.getChildren().add(mainStartCircleProgressBar.getContent());
 

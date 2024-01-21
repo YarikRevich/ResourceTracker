@@ -20,10 +20,8 @@ public class MainDeploymentScene implements IElement<Scene> {
   public MainDeploymentScene(
       @Autowired PropertiesEntity properties,
       @Autowired MainDeploymentSceneLayout deploymentSceneLayout,
-      @Autowired MainDeploymentCircleProgressBar mainDeploymentCircleProgressBar,
-      @Autowired TabMenuBar tabMenuBar) {
+      @Autowired MainDeploymentCircleProgressBar mainDeploymentCircleProgressBar) {
     Group group = new Group();
-    group.getChildren().add(tabMenuBar.getContent());
     group.getChildren().add(deploymentSceneLayout.getContent());
     group.getChildren().add(mainDeploymentCircleProgressBar.getContent());
 
