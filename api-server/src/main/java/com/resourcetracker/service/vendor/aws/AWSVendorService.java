@@ -86,18 +86,6 @@ public class AWSVendorService {
             .withCredentials(awsCredentialsProvider)
             .build();
 
-    LogConfiguration logConfiguration =
-        new LogConfiguration()
-            .withLogDriver(LogDriver.Awslogs)
-            .withOptions(
-                new HashMap<>() {
-                  {
-                    put("awslogs-group", "agent-logs-test");
-                    put("awslogs-region", "us-west-2");
-                    put("awslogs-stream-prefix", "ecs/resourcetracker-kafka");
-                  }
-                });
-
     PortMapping mainPortMapping =
         new PortMapping()
             .withContainerPort(
@@ -150,7 +138,6 @@ public class AWSVendorService {
                     .getKafkaContainerName())
             .withEssential(true)
             .withPortMappings(mainPortMapping, starterPortMapping)
-            .withLogConfiguration(logConfiguration)
             .withEnvironment(kraftCreateTopicsKeyPair, kraftPartitionsPerTopicKeyPair)
             .withImage(
                 String.format(
@@ -251,11 +238,11 @@ public class AWSVendorService {
   /**
    * Runs ECS Task with the given configuration properties.
    *
-   * @param ecsClusterId
-   * @param ecsServiceId
-   * @param ecsTaskDefinitionArn
-   * @param awsCredentialsProvider
-   * @param region
+   * @param ecsClusterId cluster id of the ECS Task.
+   * @param ecsServiceId service id of the ECS Task.
+   * @param ecsTaskDefinitionArn arn of the ECS Task.
+   * @param awsCredentialsProvider given credentials provider.
+   * @param region given AWS region.
    */
   public void runEcsTask(
       String ecsClusterId,
