@@ -8,35 +8,35 @@ import lombok.Getter;
 @AllArgsConstructor(staticName = "of")
 public class AWSKafkaTaskDefinitionRegistrationDto {
   /** Represents Kafka Docker container image. */
-  private String kafkaContainerImage;
+  private final String kafkaContainerImage;
 
   /** Represents Kafka Docker container image version. */
-  private String kafkaVersion;
+  private final String kafkaVersion;
 
   /** Represents Kafka Docker container name. */
-  private String kafkaContainerName;
+  private final String kafkaContainerName;
 
   /** Represents Kafka main port used in Docker container. */
-  private Integer kafkaContainerMainPort;
+  private final Integer kafkaContainerMainPort;
 
   /** Represents Kafka starter port used in Docker container. */
-  private Integer kafkaContainerStarterPort;
+  private final Integer kafkaContainerStarterPort;
 
   /** Represents Kafka host used in a Docker container. */
-  private String kafkaHost;
+  private final String kafkaHost;
 
   /** Represents alias used for Kafka host. */
-  private String kafkaHostAlias;
+  private final String kafkaHostAlias;
 
   /** Represents Kafka topic used for the deployment. */
-  private String kafkaCreateTopic;
+  private final String kafkaCreateTopic;
 
   /** Represents alias used for Kafka topic creation. */
-  private String kafkaCreateTopicsAlias;
+  private final String kafkaCreateTopicsAlias;
 
   /** Represents Kafka partitions used for the deployment. */
-  private String kafkaPartitions;
+  private final String kafkaPartitions;
 
   /** Represents alias used for Kafka partitions creation. */
-  private String kafkaPartitionsAlias;
+  private final String kafkaPartitionsAlias;
 }

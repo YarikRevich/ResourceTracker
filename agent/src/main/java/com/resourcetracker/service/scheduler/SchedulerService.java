@@ -15,10 +15,8 @@ import jakarta.annotation.PreDestroy;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,16 +52,7 @@ public class SchedulerService {
               }
 
               scheduledExecutorService.scheduleAtFixedRate(
-                  () ->
-                      executorService.execute(
-                          () -> {
-                            try {
-                              exec(request.getName(), request.getScript());
-                            } catch (CommandExecutorException e) {
-
-                              throw new RuntimeException(e);
-                            }
-                          }),
+                      register(request.getName(), request.getScript()),
                   0,
                   period,
                   TimeUnit.MILLISECONDS);
@@ -72,9 +61,41 @@ public class SchedulerService {
     WaiterHelper.waitForExit();
   }
 
+    /**
+     * Registers the execution of the given request.
+     *
+     * @param name name of the request to be processed.
+     * @param input script to be executed.
+     * @return execution callback.
+     */
+  private Runnable register(String name, String input) {
+      return () -> {
+          CountDownLatch latch = new CountDownLatch(1);
+
+          executorService.execute(
+                  () -> {
+                      try {
+                          exec(name, input);
+                      } catch (CommandExecutorException e) {
+
+                          throw new RuntimeException(e);
+                      }
+
+                      latch.countDown();
+                  });
+
+          try {
+              latch.await();
+          } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+          }
+      };
+  }
+
   /**
    * Executes given script and sends result as message to Kafka cluster.
    *
+   * @param name name of the request to be processed.
    * @param input script to be executed.
    */
   private void exec(String name, String input) throws CommandExecutorException {

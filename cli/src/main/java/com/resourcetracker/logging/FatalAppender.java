@@ -25,6 +25,7 @@ public class FatalAppender extends AbstractAppender {
 
   private ConcurrentMap<String, LogEvent> eventMap = new ConcurrentHashMap<>();
 
+  @SuppressWarnings("deprecation")
   protected FatalAppender(String name, Filter filter) {
     super(name, filter, null);
   }

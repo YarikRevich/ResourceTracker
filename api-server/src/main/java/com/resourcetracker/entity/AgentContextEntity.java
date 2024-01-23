@@ -12,12 +12,12 @@ public class AgentContextEntity {
   @Getter
   @AllArgsConstructor(staticName = "of")
   public static class Request {
-    String name;
+    private String name;
 
-    String script;
+    private String script;
 
-    String frequency;
+    private String frequency;
   }
 
-  List<Request> requests;
+  private List<Request> requests;
 }
