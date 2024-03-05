@@ -4,7 +4,7 @@ requests:
     - name: "first"
 
       # Represents frequency used for the request execution.
-      frequency: "10 * * * *"
+      frequency: "10 * * * * *"
 
       # Represents path to the file used as a main script, which is expected to be executed
       # on a remotely deployed ResourceTracker infrastructure.
