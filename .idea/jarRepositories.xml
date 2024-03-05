@@ -67,6 +67,11 @@
       <option name="url" value="file://$PROJECT_DIR$/cli/lib" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="Jabylon" />
+      <option name="name" value="Jabylon" />
+      <option name="url" value="https://www.jabylon.org/maven/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="local" />
       <option name="name" value="In Project Lib Repo" />
       <option name="url" value="file://$PROJECT_DIR$/agent/lib" />

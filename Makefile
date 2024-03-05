@@ -39,16 +39,23 @@ endif
 .PHONY: create-local-api-server
 create-local-api-server: ## Create ResourceTracker local directory for API Server
 ifeq (,$(wildcard $(HOME)/.resourcetracker))
-	@mkdir -p $(HOME)/.resourcetracker/workspace
+	@mkdir -p $(HOME)/.resourcetracker/config
+	@mkdir $(HOME)/.resourcetracker/workspace
 endif
 ifeq (,$(wildcard $(HOME)/.resourcetracker/workspace))
 	@mkdir -p $(HOME)/.resourcetracker/workspace
 endif
 
 .PHONY: clone-client-config
-clone-client-config: ## Clone configuration files to local directory
+clone-client-config: ## Clone client configuration files to local directory
 ifeq (,$(wildcard $(HOME)/.resourcetracker/config/user.yaml))
 	@cp -r ./samples/config/client/user.yaml $(HOME)/.resourcetracker/config
+endif
+
+.PHONY: clone-api-server-config
+clone-api-server-config: ## Clone api-server configuration files to local directory
+ifeq (,$(wildcard $(HOME)/.resourcetracker/config/api-server.yaml))
+	@cp -r ./samples/config/api-server/api-server.yaml $(HOME)/.resourcetracker/config
 endif
 
 .PHONY: clone-terraform
@@ -71,7 +78,7 @@ build-agent: clean ## Build Agent Docker image
         -Djib.auth.password=${DOCKER_REGISTRY_PASSWORD}
 
 .PHONY: build-api-server
-build-api-server: clean create-local-api-server clone-terraform ## Build API Server application
+build-api-server: clean create-local-api-server clone-api-server-config clone-terraform ## Build API Server application
 ifneq (,$(wildcard ./bin/api-server))
 	@rm -r ./bin/api-server
 endif
@@ -102,5 +109,3 @@ ifeq ($(dev), 'false')
 else
 	@mvn -P dev -pl gui -T10 install
 endif
-
-

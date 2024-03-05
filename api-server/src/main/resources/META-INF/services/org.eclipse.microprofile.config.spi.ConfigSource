@@ -1,1 +1,1 @@
-com.resourcetracker.service.integration.GitBuildConfigSourceService
+com.resourcetracker.service.integration.git.GitBuildConfigSourceService

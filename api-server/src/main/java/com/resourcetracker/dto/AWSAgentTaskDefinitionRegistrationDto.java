@@ -8,17 +8,17 @@ import lombok.Getter;
 @AllArgsConstructor(staticName = "of")
 public class AWSAgentTaskDefinitionRegistrationDto {
   /** Represents ResourceTracker Agent Docker image name. */
-  private String agentContainerImage;
+  private final String agentContainerImage;
 
   /** Represents ResourceTracker Agent Docker container name. */
-  private String agentContainerName;
+  private final String agentContainerName;
 
   /** Represents serialized ResourceTracker Agent context entity. */
-  private String agentContext;
+  private final String agentContext;
 
   /** Represents alias used for serialized ResourceTracker Agent context entity. */
-  private String agentContextAlias;
+  private final String agentContextAlias;
 
   /** Represents serialized ResourceTracker Agent version of Docker image to be used. */
-  private String agentVersion;
+  private final String agentVersion;
 }

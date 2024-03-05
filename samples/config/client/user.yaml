@@ -1,11 +1,35 @@
+# Represents section used for ResourceTracker requests declaration.
 requests:
+    # Represents name of the request. Should be unique for all declared requests.
     - name: "first"
-      frequency: "10 * * * *"
+
+      # Represents frequency used for the request execution.
+      frequency: "10 * * * * *"
+
+      # Represents path to the file used as a main script, which is expected to be executed
+      # on a remotely deployed ResourceTracker infrastructure.
       file: "script.sh"
+
+# Represents section used for ResourceTracker cloud provider configuration.
 cloud:
+    # Represents currently selected provider, used for ResourceTracker infrastructure deployment.
     provider: "aws"
+
+    # 'credentials' section represents additional properties used for authentication purposes.
+    # It's considered to be unique for every supported provider. For now the only supported
+    # cloud provider remains to be AWS.
+
+    # Represents credentials properties for AWS cloud provider.
     credentials:
+      # Represents a path to the credentials CSV file, which contains both access
+      # and secret keys.
       file: "~/.aws/credentials"
+
+      # Represents a select region where the deployment of infrastructure will be performed.
+      # Remember that it may influence the availability of the ResourceTracker deployed infrastructure.
       region: "us-west-2"
+
+# Represents section used for ResourceTracker API Server configuration.
 api-server:
+    # Represents address for the host of ResourceTracker API Server.
     host: "http://localhost:8080"

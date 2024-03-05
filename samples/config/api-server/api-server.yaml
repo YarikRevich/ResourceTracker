@@ -1,0 +1,7 @@
+# Represents section used for ResourceTracker API Server connection configuration.
+connection:
+  # Represents host of ResourceTracker API Server used for connection establishment.
+  host: "localhost"
+
+  # Represents port of ResourceTracker API Server used for connection establishment.
+  port: 8080
