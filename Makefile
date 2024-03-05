@@ -39,7 +39,8 @@ endif
 .PHONY: create-local-api-server
 create-local-api-server: ## Create ResourceTracker local directory for API Server
 ifeq (,$(wildcard $(HOME)/.resourcetracker))
-	@mkdir -p $(HOME)/.resourcetracker/workspace
+	@mkdir -p $(HOME)/.resourcetracker/config
+	@mkdir $(HOME)/.resourcetracker/workspace
 endif
 ifeq (,$(wildcard $(HOME)/.resourcetracker/workspace))
 	@mkdir -p $(HOME)/.resourcetracker/workspace
