@@ -45,7 +45,7 @@ public class ConfigService {
    * Reads configuration from the opened configuration file using mapping with a configuration
    * entity.
    */
-  @Deprecated
+  @PostConstruct
   private void configure() throws ConfigValidationException {
     InputStream configFile = null;
 

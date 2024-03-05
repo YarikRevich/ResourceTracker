@@ -13,6 +13,7 @@ import com.resourcetracker.service.client.smallrye.ISmallRyeHealthCheckClientSer
 import com.resourcetracker.service.healthcheck.readiness.ReadinessCheckService;
 import com.resourcetracker.service.terraform.workspace.WorkspaceService;
 import com.resourcetracker.service.terraform.workspace.facade.WorkspaceFacade;
+import io.quarkus.vertx.http.HttpServerOptionsCustomizer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;

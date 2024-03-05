@@ -1,4 +1,4 @@
-package com.resourcetracker.service.integration;
+package com.resourcetracker.service.integration.git;
 
 import io.quarkus.runtime.annotations.StaticInitSafe;
 import java.io.IOException;
