@@ -42,8 +42,7 @@ public class ConfigService {
   private ConfigEntity parsedConfigFile;
 
   /**
-   * Reads configuration from the opened configuration file using mapping with a configuration
-   * entity.
+   * Reads configuration from the opened configuration file using mapping with a configuration entity.
    */
   @PostConstruct
   private void configure() throws ConfigValidationException {
@@ -51,13 +50,7 @@ public class ConfigService {
 
     try {
       try {
-        configFile =
-                new FileInputStream(
-                        Paths.get(
-                                        System.getProperty("user.home"),
-                                        properties.getConfigRootPath(),
-                                        properties.getConfigFilePath())
-                                .toString());
+        configFile = new FileInputStream(properties.getConfigDirectory());
       } catch (FileNotFoundException e) {
         logger.fatal(e.getMessage());
         Quarkus.asyncExit(1);

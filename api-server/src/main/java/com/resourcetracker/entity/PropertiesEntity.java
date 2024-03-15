@@ -18,11 +18,8 @@ public class PropertiesEntity {
   @ConfigProperty(name = "quarkus.http.port")
   Integer applicationPort;
 
-  @ConfigProperty(name = "config.root")
-  String configRootPath;
-
-  @ConfigProperty(name = "config.file")
-  String configFilePath;
+  @ConfigProperty(name = "config.directory")
+  String configDirectory;
 
   @ConfigProperty(name = "kafka.topic")
   String kafkaTopic;
