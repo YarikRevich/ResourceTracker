@@ -362,7 +362,7 @@ public class LocalState {
           try {
             OpenConfigEditorCommandService openConfigEditorCommandService =
                 new OpenConfigEditorCommandService(
-                    properties.getConfigRootPath(), properties.getConfigUserFilePath());
+                    properties.getConfigDirectory());
 
             if (commandExecutorService.getOSType() == SProcessExecutor.OS.MAC) {
               ElementHelper.showAlert(
