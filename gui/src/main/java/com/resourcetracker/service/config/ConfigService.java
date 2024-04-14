@@ -34,13 +34,7 @@ public class ConfigService {
     InputStream configFile;
 
     try {
-      configFile =
-          new FileInputStream(
-              Paths.get(
-                      System.getProperty("user.home"),
-                      properties.getConfigRootPath(),
-                      properties.getConfigUserFilePath())
-                  .toString());
+      configFile = new FileInputStream(properties.getConfigDirectory());
     } catch (FileNotFoundException e) {
       logger.fatal(e.getMessage());
       return;

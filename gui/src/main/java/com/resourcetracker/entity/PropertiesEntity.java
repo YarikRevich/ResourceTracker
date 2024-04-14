@@ -176,14 +176,11 @@ public class PropertiesEntity {
   @Value(value = "${graph.properties.location}")
   private String graphPropertiesLocation;
 
-  @Value(value = "${config.root}")
-  private String configRootPath;
+  @Value(value = "${config.directory}")
+  private String configDirectory;
 
-  @Value(value = "${swap.root}")
-  private String swapRootPath;
-
-  @Value(value = "${config.user.file}")
-  private String configUserFilePath;
+  @Value(value = "${swap.directory}")
+  private String swapDirectory;
 
   @Value(value = "${api-server.directory}")
   private String apiServerDirectory;

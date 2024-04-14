@@ -362,7 +362,7 @@ public class LocalState {
           try {
             OpenConfigEditorCommandService openConfigEditorCommandService =
                 new OpenConfigEditorCommandService(
-                    properties.getConfigRootPath(), properties.getConfigUserFilePath());
+                    properties.getConfigDirectory());
 
             if (commandExecutorService.getOSType() == SProcessExecutor.OS.MAC) {
               ElementHelper.showAlert(
@@ -405,11 +405,7 @@ public class LocalState {
           String swapFilePath = null;
           try {
             try {
-              swapFilePath =
-                  swapService.createSwapFile(
-                      Paths.get(System.getProperty("user.home"), properties.getSwapRootPath())
-                          .toString(),
-                      event.getContent());
+              swapFilePath = swapService.createSwapFile(properties.getSwapDirectory(), event.getContent());
             } catch (SwapFileCreationFailedException e) {
               ElementHelper.showAlert(errorAlert.getContent(), e.getMessage());
               return;
@@ -427,7 +423,6 @@ public class LocalState {
               commandExecutorService.executeCommand(openSwapFileEditorCommandService);
             } catch (CommandExecutorException e) {
               ElementHelper.showAlert(errorAlert.getContent(), e.getMessage());
-              return;
             }
           } finally {
             try {

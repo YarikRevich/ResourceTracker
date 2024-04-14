@@ -9,14 +9,14 @@ public class OpenConfigEditorCommandService extends SProcess {
   private final String command;
   private final SProcessExecutor.OS osType;
 
-  public OpenConfigEditorCommandService(String configRootPath, String configUserFilePath) {
+  public OpenConfigEditorCommandService(String configDirectory) {
     this.osType = SProcessExecutor.getCommandExecutor().getOSType();
 
     this.command =
         switch (osType) {
           case MAC -> String.format(
               "open -eW %s",
-              Paths.get(System.getProperty("user.home"), configRootPath, configUserFilePath));
+                  configDirectory);
           case WINDOWS, UNIX, ANY -> null;
         };
   }
