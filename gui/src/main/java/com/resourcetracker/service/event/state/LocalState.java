@@ -182,7 +182,7 @@ public class LocalState {
    */
   @EventListener
   public void handleConnectionStatusEvent(ConnectionStatusEvent event) {
-    LocalState.setConnectionEstablished(event.isConnectionEstablished());
+    LocalState.setConnectionEstablished(event.getConnectionEstablished());
   }
 
   /**

@@ -71,7 +71,7 @@ public class WorkspaceService {
    * @param key given workspace unit key.
    * @return result if workspace unit directory exists with the help of the given key.
    */
-  public boolean isUnitDirectoryExist(String key) {
+  public Boolean isUnitDirectoryExist(String key) {
     return Files.exists(Paths.get(properties.getWorkspaceDirectory(), key));
   }
 
@@ -121,7 +121,7 @@ public class WorkspaceService {
    * @param workspaceUnitDirectory given workspace unit directory.
    * @return result if variable file exists in the given workspace unit directory.
    */
-  public boolean isVariableFileExist(String workspaceUnitDirectory) {
+  public Boolean isVariableFileExist(String workspaceUnitDirectory) {
     return Files.exists(
         Paths.get(workspaceUnitDirectory, properties.getWorkspaceVariablesFileName()));
   }
@@ -191,7 +191,7 @@ public class WorkspaceService {
    * @param workspaceUnitDirectory given workspace unit directory.
    * @return result if variable file exists in the given workspace unit directory.
    */
-  public boolean isInternalConfigFileExist(String workspaceUnitDirectory) {
+  public Boolean isInternalConfigFileExist(String workspaceUnitDirectory) {
     return Files.exists(
         Paths.get(workspaceUnitDirectory, properties.getWorkspaceInternalConfigFileName()));
   }

@@ -1,7 +1,5 @@
 package com.resourcetracker.service.terraform.provider.aws.common;
 
-// import com.resourcetracker.model.TerraformDeploymentApplicationCredentials;
-
 import com.resourcetracker.model.CredentialsFields;
 // import com.resourcetracker.dto.AWSSecretsDto;
 import com.resourcetracker.service.terraform.common.TerraformConfigurationHelper;
