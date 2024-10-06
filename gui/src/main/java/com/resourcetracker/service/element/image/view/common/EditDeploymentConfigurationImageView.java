@@ -38,7 +38,7 @@ public class EditDeploymentConfigurationImageView
       @Autowired ApplicationEventPublisher applicationEventPublisher)
       throws ApplicationImageFileNotFoundException {
     Button button = new Button();
-    ElementButtonKt.theme(button, ElementButton.redButton);
+    ElementButtonKt.theme(button, ElementButton.greenButton);
     button.getStylesheets().add(CssResources.globalCssFile);
     button.getStylesheets().add(CssResources.buttonCssFile);
     button.getStylesheets().add(CssResources.textFieldCssFile);

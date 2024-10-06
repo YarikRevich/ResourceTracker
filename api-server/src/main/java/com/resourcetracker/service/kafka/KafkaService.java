@@ -72,7 +72,7 @@ public class KafkaService {
    *
    * @return result of the check.
    */
-  public boolean isConnected() {
+  public Boolean isConnected() {
     if (isAvailable()) {
       if (Objects.isNull(kafkaAdminClient)) {
         this.kafkaAdminClient = AdminClient.create(kafkaAdminClientProps);
@@ -99,7 +99,7 @@ public class KafkaService {
    *
    * @return result of the check.
    */
-  public boolean isAvailable() {
+  public Boolean isAvailable() {
     URL url;
 
     try {

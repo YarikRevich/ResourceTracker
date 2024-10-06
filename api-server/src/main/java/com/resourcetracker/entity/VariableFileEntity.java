@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 public class VariableFileEntity {
-  @JsonProperty("agent_context")
-  private String agentContext;
+    @JsonProperty("agent_context")
+    private String agentContext;
 
-  @JsonProperty("agent_version")
-  private String agentVersion;
+    @JsonProperty("agent_version")
+    private String agentVersion;
 }

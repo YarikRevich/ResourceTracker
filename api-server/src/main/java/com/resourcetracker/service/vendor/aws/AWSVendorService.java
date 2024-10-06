@@ -453,7 +453,7 @@ public class AWSVendorService {
    * @param name name of the S3 bucket.
    * @return result of the check.
    */
-  public boolean isS3BucketExist(
+  public Boolean isS3BucketExist(
       String name, AWSCredentialsProvider awsCredentialsProvider, String region) {
     return AmazonS3ClientBuilder.standard()
         .withRegion(region)
@@ -514,7 +514,7 @@ public class AWSVendorService {
    *
    * @return result of credentials validation.
    */
-  public boolean isCallerValid(AWSCredentialsProvider awsCredentialsProvider, String region) {
+  public Boolean isCallerValid(AWSCredentialsProvider awsCredentialsProvider, String region) {
     try {
       return !Objects.isNull(
           AWSSecurityTokenServiceClientBuilder.standard()
