@@ -2,7 +2,7 @@ FROM openjdk:8u292-slim-buster as kafka
 
 WORKDIR /opt
 
-ARG kafkaversion=3.6.1
+ARG kafkaversion=3.6.2
 ARG scalaversion=2.12
 
 ENV KRAFT_CREATE_TOPICS=
@@ -21,7 +21,6 @@ COPY ./configs/server.properties ./config/kraft
 COPY ./*.sh .
 
 EXPOSE 9092 9093
-
 
 FROM debian:bullseye-slim as python
 
